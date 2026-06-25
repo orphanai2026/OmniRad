@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Smart Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  /* Medical Teal — base (overridden per theme below) */
+  --teal-bright:   oklch(0.72 0.14 192);
+  --teal-mid:      oklch(0.60 0.13 192);
+  --teal-dim:      oklch(0.38 0.08 192);
+  --teal-glow:     oklch(0.72 0.14 192 / 0.18);
+  --teal-subtle:   oklch(0.72 0.14 192 / 0.08);
+
+  /* Semantic z-index */
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    300;
+  --z-toast:    400;
+}
+
+[data-theme="dark"] {
+  --bg-base:      oklch(0.13 0.010 240);
+  --bg-surface:   oklch(0.17 0.010 240);
+  --bg-raised:    oklch(0.21 0.012 240);
+  --bg-overlay:   oklch(0.25 0.012 240);
+  --border:       oklch(0.30 0.010 240);
+  --border-subtle:oklch(0.22 0.008 240);
+  --text-primary: oklch(0.93 0.008 240);
+  --text-secondary:oklch(0.68 0.010 240);
+  --text-muted:   oklch(0.50 0.008 240);
+  --shadow:       0 2px 12px oklch(0 0 0 / 0.45);
+  --shadow-lg:    0 8px 32px oklch(0 0 0 / 0.55);
+  /* Teal on dark bg — vivid */
+  --teal-bright:  oklch(0.76 0.16 192);
+  --teal-mid:     oklch(0.62 0.13 192);
+  --teal-dim:     oklch(0.40 0.09 192);
+  --teal-glow:    oklch(0.76 0.16 192 / 0.22);
+  --teal-subtle:  oklch(0.76 0.16 192 / 0.11);
+}
+
+[data-theme="dim"] {
+  --bg-base:      oklch(0.82 0.010 240);
+  --bg-surface:   oklch(0.86 0.010 240);
+  --bg-raised:    oklch(0.88 0.010 240);
+  --bg-overlay:   oklch(0.91 0.010 240);
+  --border:       oklch(0.74 0.012 240);
+  --border-subtle:oklch(0.79 0.010 240);
+  --text-primary: oklch(0.18 0.012 240);
+  --text-secondary:oklch(0.34 0.012 240);
+  --text-muted:   oklch(0.50 0.010 240);
+  --shadow:       0 2px 12px oklch(0 0 0 / 0.12);
+  --shadow-lg:    0 8px 32px oklch(0 0 0 / 0.18);
+  /* Teal on dim/light bg — much darker for contrast */
+  --teal-bright:  oklch(0.42 0.14 192);
+  --teal-mid:     oklch(0.35 0.12 192);
+  --teal-dim:     oklch(0.28 0.09 192);
+  --teal-glow:    oklch(0.42 0.14 192 / 0.18);
+  --teal-subtle:  oklch(0.42 0.14 192 / 0.10);
+}
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ─── TOPBAR ──────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 56px;
+  gap: 1rem;
+}
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+.topbar-logo .logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal-bright);
+  box-shadow: 0 0 8px var(--teal-bright);
+}
+.topbar-breadcrumb {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.topbar-breadcrumb span { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+
+/* theme toggle */
+.theme-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.theme-btn:hover { border-color: var(--teal-mid); color: var(--teal-bright); }
+
+/* ─── LAYOUT ──────────────────────────────────────────────── */
+.page-wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 56px);
+}
+
+/* ─── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar {
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+.sidebar-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 1.25rem 0.6rem;
+}
+.structure-list { list-style: none; }
+.structure-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  transition: background 0.12s, color 0.12s;
+  border-left: 2px solid transparent;
+  position: relative;
+}
+.structure-item:hover { background: var(--bg-raised); color: var(--text-primary); }
+.structure-item.active {
+  background: var(--teal-subtle);
+  color: var(--teal-bright);
+  border-left-color: var(--teal-bright);
+  font-weight: 500;
+}
+.structure-item .struct-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--bg-overlay);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.structure-item.active .struct-icon { background: var(--teal-glow); }
+.struct-name { flex: 1; }
+.struct-arabic { font-size: 0.72rem; color: var(--text-muted); direction: rtl; }
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 1rem 1.25rem;
+}
+
+/* ─── MAIN CONTENT ────────────────────────────────────────── */
+.main-content { padding: 2rem 2.5rem; max-width: 1100px; }
+
+/* ─── STRUCTURE HEADER ────────────────────────────────────── */
+.structure-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.structure-title-group { min-width: 0; }
+.structure-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-bright);
+  margin-bottom: 0.4rem;
+}
+.structure-name-en {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  line-height: 1.2;
+}
+.structure-name-ar {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  direction: rtl;
+}
+.structure-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+.tag {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.tag.tag-system { border-color: var(--teal-dim); color: var(--teal-bright); background: var(--teal-subtle); }
+
+.structure-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+.meta-item {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+}
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.15rem; }
+.meta-value { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
+
+/* ─── INFO CARDS ──────────────────────────────────────────── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.info-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+.info-card-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--teal-bright);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+.info-card-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ─── IMAGE VIEWER ────────────────────────────────────────── */
+.viewer-section { margin-bottom: 2rem; }
+.viewer-section-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* Modality selector */
+.selector-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.selector-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+.selector-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: all 0.12s;
+}
+.selector-btn:hover { border-color: var(--teal-mid); color: var(--text-primary); }
+.selector-btn.active {
+  background: var(--teal-glow);
+  border-color: var(--teal-bright);
+  color: var(--teal-bright);
+  box-shadow: 0 0 0 1px var(--teal-dim);
+}
+.selector-divider { width: 1px; height: 20px; background: var(--border); margin: 0 0.25rem; }
+
+/* Image display */
+.image-viewer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.image-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.image-panel:hover { border-color: var(--border); }
+.image-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.image-panel-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-secondary);
+}
+.image-panel-modality {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+}
+.mod-ct   { background: oklch(0.35 0.08 50  / 0.6); color: oklch(0.78 0.10 50);  }
+.mod-mri  { background: oklch(0.28 0.08 270 / 0.6); color: oklch(0.72 0.12 270); }
+.mod-us   { background: oklch(0.28 0.08 160 / 0.6); color: oklch(0.68 0.12 160); }
+
+.image-placeholder {
+  aspect-ratio: 1 / 1;
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  position: relative;
+  overflow: hidden;
+}
+/* Simulated scan lines for medical feel */
+.image-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    oklch(0.72 0.14 192 / 0.03) 2px,
+    oklch(0.72 0.14 192 / 0.03) 4px
+  );
+  pointer-events: none;
+}
+.placeholder-icon { font-size: 2rem; opacity: 0.35; }
+.placeholder-text { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; opacity: 0.5; text-align: center; }
+
+/* ─── CROSS REFERENCES ────────────────────────────────────── */
+.crossref-section { margin-bottom: 2rem; }
+.crossref-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.crossref-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  transition: all 0.12s;
+}
+.crossref-btn:hover {
+  border-color: var(--teal-mid);
+  color: var(--teal-bright);
+  background: var(--teal-subtle);
+}
+.crossref-arrow { font-size: 0.75rem; opacity: 0.5; }
+
+/* ─── SECTION TITLE ───────────────────────────────────────── */
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ─── STATUS BAR ──────────────────────────────────────────── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-bright); flex-shrink: 0; }
+.status-bar strong { color: var(--text-secondary); font-weight: 500; }
+
+/* ─── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .page-wrapper { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .structure-list { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0 1rem 1rem; }
+  .structure-item { padding: 0.4rem 0.75rem; border-radius: 8px; border-left: none; border: 1px solid var(--border); }
+  .structure-item.active { border-color: var(--teal-bright); }
+  .sidebar-label { padding: 1rem 1rem 0.5rem; }
+  .sidebar-divider { display: none; }
+  .struct-arabic { display: none; }
+  .main-content { padding: 1.5rem 1.25rem; }
+  .info-grid { grid-template-columns: 1fr; }
+  .image-viewer-grid { grid-template-columns: 1fr; }
+  .structure-header { flex-direction: column; gap: 1rem; }
+  .structure-meta { flex-direction: row; min-width: auto; }
+  .structure-name-en { font-size: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .image-viewer-grid { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── REDUCED MOTION ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* ─── TRANSITIONS ─────────────────────────────────────────── */
+.main-content { transition: opacity 0.18s ease; }
+.main-content.fading { opacity: 0; }
+</style>
+</head>
+<body>
+
+<!-- ─── TOPBAR ───────────────────────────────────────────── -->
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <span class="logo-dot"></span>
+    OmniRad
+  </a>
+  <nav class="topbar-breadcrumb">
+    <span>Atlas</span>
+    <span style="opacity:0.4">›</span>
+    <span id="breadcrumb-name">Liver</span>
+  </nav>
+  <div class="topbar-right">
+    <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+      <span id="theme-icon">☾</span>
+      <span id="theme-label">Dim</span>
+    </button>
+  </div>
+</header>
+
+<!-- ─── LAYOUT ───────────────────────────────────────────── -->
+<div class="page-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="Structure navigation">
+    <div class="sidebar-label">Upper Abdomen</div>
+    <ul class="structure-list" id="structure-list">
+      <li class="structure-item active" data-id="liver" tabindex="0" role="button" aria-pressed="true">
+        <span class="struct-icon">🫀</span>
+        <span class="struct-name">Liver</span>
+        <span class="struct-arabic">الكبد</span>
+      </li>
+      <li class="structure-item" data-id="spleen" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">🫘</span>
+        <span class="struct-name">Spleen</span>
+        <span class="struct-arabic">الطحال</span>
+      </li>
+      <li class="structure-item" data-id="kidney" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">🫙</span>
+        <span class="struct-name">Right Kidney</span>
+        <span class="struct-arabic">الكلية اليمنى</span>
+      </li>
+      <li class="structure-item" data-id="pancreas" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">🧬</span>
+        <span class="struct-name">Pancreas</span>
+        <span class="struct-arabic">البنكرياس</span>
+      </li>
+      <li class="structure-item" data-id="gallbladder" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">💧</span>
+        <span class="struct-name">Gallbladder</span>
+        <span class="struct-arabic">المرارة</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content" id="main-content" aria-live="polite">
+    <!-- Content rendered by JS -->
+  </main>
+
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const STRUCTURES = {
+  liver: {
+    name: 'Liver',
+    arabic: 'الكبد',
+    system: 'Hepatobiliary',
+    region: 'Upper Abdomen',
+    location: 'Right hypochondriac region, extending to epigastric region',
+    function: 'Metabolic processing, bile production, detoxification, glycogen storage, synthesis of plasma proteins and clotting factors.',
+    clinicalNote: 'Largest solid organ in the body. Divided into right and left lobes by the falciform ligament; further divided into 8 Couinaud segments.',
+    tags: ['Solid Organ', 'Hepatobiliary', 'Retroperitoneal: No', 'Couinaud Segments: 8'],
+    crossRefs: ['Gallbladder', 'Portal Vein', 'Hepatic Artery', 'IVC'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal', 'Sagittal'], note: 'Best assessed in portal venous phase (65–70 s)' },
+      MRI: { planes: ['Axial', 'Coronal', 'Sagittal'], note: 'T1 in-phase/out-phase for fat assessment; T2 for lesion characterization' },
+      US:  { planes: ['Transverse', 'Longitudinal', 'Oblique'], note: 'Echogenicity reference: isoechoic to mildly hyperechoic vs. renal cortex' },
+    },
+  },
+  spleen: {
+    name: 'Spleen',
+    arabic: 'الطحال',
+    system: 'Lymphoreticular',
+    region: 'Upper Abdomen',
+    location: 'Left hypochondriac region, posterior to stomach',
+    function: 'Filtration of blood, immune surveillance, red blood cell sequestration, extramedullary haematopoiesis in pathologic states.',
+    clinicalNote: 'Normal length ≤ 12 cm. Accessory spleen (splenule) found in ~10% of individuals near the splenic hilum.',
+    tags: ['Solid Organ', 'Lymphoreticular', 'Retroperitoneal: No', 'Length: ≤12 cm'],
+    crossRefs: ['Pancreatic Tail', 'Splenic Artery', 'Left Kidney', 'Stomach'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal'], note: 'Homogeneous enhancement; mottled in arterial phase — normal' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'Markedly hypointense on T1, markedly hyperintense on T2' },
+      US:  { planes: ['Coronal', 'Transverse'], note: 'Homogeneously hyperechoic compared to adjacent renal cortex' },
+    },
+  },
+  kidney: {
+    name: 'Right Kidney',
+    arabic: 'الكلية اليمنى',
+    system: 'Urinary',
+    region: 'Retroperitoneal',
+    location: 'Right retroperitoneal space, T12–L3 level; lower than left kidney',
+    function: 'Blood filtration, urine production, electrolyte balance, acid-base regulation, erythropoietin and renin secretion.',
+    clinicalNote: 'Divided into cortex (nephrons) and medulla (pyramids). The right kidney is 1–2 cm lower than the left due to the liver.',
+    tags: ['Solid Organ', 'Urinary', 'Retroperitoneal: Yes', 'Length: 9–12 cm'],
+    crossRefs: ['Renal Artery', 'Renal Vein', 'Ureter', 'Adrenal Gland'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal', 'Sagittal'], note: 'Corticomedullary phase (25–70 s) best shows cortex; nephrographic phase for masses' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'T2: medullary pyramids hyperintense; T1 C+: cortex enhances earlier' },
+      US:  { planes: ['Longitudinal', 'Transverse'], note: 'Renal sinus fat hyperechoic; cortex isoechoic to liver; pyramids hypoechoic' },
+    },
+  },
+  pancreas: {
+    name: 'Pancreas',
+    arabic: 'البنكرياس',
+    system: 'Hepatobiliary / Endocrine',
+    region: 'Retroperitoneal',
+    location: 'Retroperitoneal, oblique course at L1–L2 level from head (right) to tail (left)',
+    function: 'Exocrine: digestive enzyme secretion (amylase, lipase). Endocrine: insulin and glucagon secretion (islets of Langerhans).',
+    clinicalNote: 'Divided into head, neck, body, and tail. The uncinate process hooks posterior to the superior mesenteric vessels.',
+    tags: ['Retroperitoneal: Yes', 'Dual Function', 'Head / Neck / Body / Tail'],
+    crossRefs: ['Common Bile Duct', 'Duodenum', 'Splenic Vein', 'Superior Mesenteric Artery'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal'], note: 'Pancreatic protocol: thin slices (0.5–1 mm), arterial + portal phases' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'MRCP for duct anatomy; T1 fat-sat: pancreas normally hyperintense' },
+      US:  { planes: ['Transverse', 'Oblique'], note: 'Often partially obscured by bowel gas; isoechoic to slightly hyperechoic to liver' },
+    },
+  },
+  gallbladder: {
+    name: 'Gallbladder',
+    arabic: 'المرارة',
+    system: 'Hepatobiliary',
+    region: 'Upper Abdomen',
+    location: 'Gallbladder fossa, undersurface of right hepatic lobe (segments IV/V)',
+    function: 'Bile concentration and storage between meals; contraction (CCK-stimulated) releases bile into duodenum via cystic duct → CBD.',
+    clinicalNote: 'Normal wall thickness ≤ 3 mm (fasting). Phrygian cap (folded fundus) is a normal variant seen in ~4% of individuals.',
+    tags: ['Hollow Organ', 'Hepatobiliary', 'Wall: ≤3 mm fasting', 'Volume: 30–50 mL'],
+    crossRefs: ['Common Bile Duct', 'Liver', 'Cystic Duct', 'Duodenum'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal'], note: 'Non-contrast for stones; contrast for wall thickening assessment' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'T2: bile markedly hyperintense; MRCP shows biliary anatomy exquisitely' },
+      US:  { planes: ['Transverse', 'Longitudinal', 'Oblique'], note: 'First-line modality. Fasting required. Stones: echogenic focus with posterior acoustic shadowing' },
+    },
+  },
+};
+
+// ─── STATE ───────────────────────────────────────────────────
+let currentStructure = 'liver';
+let currentModality  = 'CT';
+let currentPlane     = 'Axial';
+
+// ─── THEME ───────────────────────────────────────────────────
+const html         = document.documentElement;
+const themeToggle  = document.getElementById('theme-toggle');
+const themeIcon    = document.getElementById('theme-icon');
+const themeLabel   = document.getElementById('theme-label');
+
+function applyTheme(t) {
+  html.dataset.theme = t;
+  if (t === 'dark') { themeIcon.textContent = '☾'; themeLabel.textContent = 'Dim'; }
+  else              { themeIcon.textContent = '◑'; themeLabel.textContent = 'Dark'; }
+  localStorage.setItem('omnirad-theme', t);
+}
+themeToggle.addEventListener('click', () => {
+  applyTheme(html.dataset.theme === 'dark' ? 'dim' : 'dark');
+});
+applyTheme(localStorage.getItem('omnirad-theme') || 'dark');
+
+// ─── RENDER ──────────────────────────────────────────────────
+function getPlanes(struct, mod) {
+  return struct.modalities[mod]?.planes || [];
+}
+
+function buildImagePanels(struct, mod, plane) {
+  const planes   = getPlanes(struct, mod);
+  const modClass = { CT: 'mod-ct', MRI: 'mod-mri', US: 'mod-us' }[mod] || 'mod-ct';
+  const modNote  = struct.modalities[mod]?.note || '';
+
+  if (!planes.length) {
+    return `<div class="image-placeholder" style="grid-column:1/-1;height:180px">
+      <span class="placeholder-icon">⚠</span>
+      <span class="placeholder-text">No ${mod} images available</span>
+    </div>`;
+  }
+
+  return planes.map(p => `
+    <div class="image-panel" data-plane="${p}">
+      <div class="image-panel-header">
+        <span class="image-panel-label">${p}</span>
+        <span class="image-panel-modality ${modClass}">${mod}</span>
+      </div>
+      <div class="image-placeholder">
+        <span class="placeholder-icon">🔬</span>
+        <span class="placeholder-text">${struct.name}<br>${mod} · ${p}</span>
+      </div>
+    </div>`).join('') +
+    `<div style="grid-column:1/-1;padding:0.5rem 0">
+      <p style="font-size:0.75rem;color:var(--text-muted);font-style:italic;font-family:'IBM Plex Mono',monospace">
+        📋 ${modNote}
+      </p>
+    </div>`;
+}
+
+function buildContent(id) {
+  const s = STRUCTURES[id];
+  if (!s) return '';
+
+  const planes = getPlanes(s, currentModality);
+
+  return `
+  <div class="status-bar">
+    <span class="status-dot"></span>
+    <span>Phase 1 · MVP · <strong>Upper Abdomen</strong> · 5 structures · Placeholder images</span>
+  </div>
+
+  <!-- Header -->
+  <div class="structure-header">
+    <div class="structure-title-group">
+      <div class="structure-eyebrow">${s.system} · ${s.region}</div>
+      <h1 class="structure-name-en">${s.name}</h1>
+      <div class="structure-name-ar">${s.arabic}</div>
+      <div class="structure-tags">
+        ${s.tags.map((t,i) => `<span class="tag${i===0?' tag-system':''}">${t}</span>`).join('')}
+      </div>
+    </div>
+    <div class="structure-meta">
+      <div class="meta-item">
+        <div class="meta-label">Region</div>
+        <div class="meta-value">${s.region}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">System</div>
+        <div class="meta-value">${s.system}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-label">Location</div>
+      <div class="info-card-text">${s.location}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Function</div>
+      <div class="info-card-text">${s.function}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Clinical Note</div>
+      <div class="info-card-text">${s.clinicalNote}</div>
+    </div>
+  </div>
+
+  <!-- Image Viewer -->
+  <div class="viewer-section">
+    <div class="viewer-section-title">Multimodal Viewer</div>
+
+    <!-- Modality selector -->
+    <div class="selector-row">
+      <span class="selector-label">Modality</span>
+      ${Object.keys(s.modalities).map(m =>
+        `<button class="selector-btn${m === currentModality ? ' active' : ''}" data-mod="${m}">${m}</button>`
+      ).join('')}
+    </div>
+
+    <!-- Image panels -->
+    <div class="image-viewer-grid" id="image-grid">
+      ${buildImagePanels(s, currentModality, currentPlane)}
+    </div>
+  </div>
+
+  <!-- Cross References -->
+  <div class="crossref-section">
+    <div class="section-title">Related Structures</div>
+    <div class="crossref-grid">
+      ${s.crossRefs.map(r => `
+        <button class="crossref-btn" onclick="alert('${r} — available in future content update')">
+          ${r} <span class="crossref-arrow">→</span>
+        </button>`).join('')}
+    </div>
+  </div>
+  `;
+}
+
+function render(id, animate = true) {
+  const main = document.getElementById('main-content');
+  document.getElementById('breadcrumb-name').textContent = STRUCTURES[id]?.name || id;
+
+  if (animate) {
+    main.classList.add('fading');
+    setTimeout(() => {
+      main.innerHTML = buildContent(id);
+      main.classList.remove('fading');
+      bindViewerEvents();
+    }, 150);
+  } else {
+    main.innerHTML = buildContent(id);
+    bindViewerEvents();
+  }
+}
+
+function bindViewerEvents() {
+  // Modality buttons
+  document.querySelectorAll('.selector-btn[data-mod]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentModality = btn.dataset.mod;
+      currentPlane    = getPlanes(STRUCTURES[currentStructure], currentModality)[0] || 'Axial';
+      // Update active state
+      document.querySelectorAll('.selector-btn[data-mod]').forEach(b => b.classList.toggle('active', b.dataset.mod === currentModality));
+      document.getElementById('image-grid').innerHTML = buildImagePanels(STRUCTURES[currentStructure], currentModality, currentPlane);
+    });
+  });
+}
+
+// ─── SIDEBAR NAV ─────────────────────────────────────────────
+document.getElementById('structure-list').addEventListener('click', e => {
+  const item = e.target.closest('.structure-item');
+  if (!item) return;
+  const id = item.dataset.id;
+  if (id === currentStructure) return;
+
+  currentStructure = id;
+  currentModality  = 'CT';
+  currentPlane     = 'Axial';
+
+  // Update sidebar active state
+  document.querySelectorAll('.structure-item').forEach(el => {
+    const active = el.dataset.id === id;
+    el.classList.toggle('active', active);
+    el.setAttribute('aria-pressed', active);
+  });
+
+  render(id);
+});
+
+// Keyboard nav on sidebar items
+document.getElementById('structure-list').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    e.target.closest('.structure-item')?.click();
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────
+render('liver', false);
+</script>
+</body>
+</html>
