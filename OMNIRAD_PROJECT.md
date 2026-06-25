@@ -455,8 +455,8 @@ OmniRad/
 
 | # | Task | Phase | Status |
 |---|------|-------|--------|
-| 0 | Write OMNIRAD_PROJECT.md (this file) | Plan | 🔜 Current |
-| 1 | Design visual mockups (no code) | Phase 1 | ⏳ |
+| 0 | Write OMNIRAD_PROJECT.md (this file) | Plan | ✅ Done |
+| 1 | Design visual mockups (no code) | Phase 1 | ✅ Done — 2026-06-25 |
 | 2 | Build main page + base layout | Phase 1 | ⏳ |
 | 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ⏳ |
 | 4 | Build Multimodal Comparison Engine | Phase 1 | ⏳ |
@@ -660,6 +660,12 @@ If any step missing → task still in progress.
 ---
 
 # ⑫ Version History
+
+- **v1.1 — 2026-06-25**
+  - Task #1 approved: Visual Mockups (Home + Atlas + Comparison)
+  - Delivered: mockup-home.html, mockup-atlas.html, mockup-comparison.html, theme.css
+  - Design decisions: Dark Mode primary, medical teal accent, IBM Plex Sans, OKLCH colors
+  - Issue logged: Light Mode too bright → Dim Mode planned
 
 - **v1.0 — 2026-06-25**
   - First release of OMNIRAD_PROJECT.md

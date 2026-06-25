@@ -30,17 +30,18 @@
 
 ## Issues Log
 
-*(No issues or ideas logged yet — added here upon discovery)*
-
 | # | Description | Discovered In | Belongs to Task | Priority | Status | Resolution Date |
 |---|-------------|---------------|-----------------|----------|--------|----------------|
-| — | — | — | — | — | — | — |
+| 1 | Light Mode too bright/harsh vs Dark Mode — replace with Dim Mode (warm blue-gray `oklch(0.88...)`) | Task #1 Mockups | Task #2 (main layout) | 🟡 Medium | 🔴 Open | — |
+| 2 | Brand Identity + Logo (visual + text logo) requested — needs dedicated conversation | Task #1 Mockups | Future Task | 💡 Idea | 🔴 Open | — |
 
 ---
 
 ## Task Completion Records
 
-*(One line added per completed and approved task)*
+| # | Task | Completed | Approved By | Notes |
+|---|------|-----------|-------------|-------|
+| 1 | Design visual mockups — Home, Atlas, Comparison pages | 2026-06-25 | Mohammed Saeed Alzahrani | Dark Mode primary · medical teal · IBM Plex Sans · OKLCH · Vanilla JS |
 
 ---
 
