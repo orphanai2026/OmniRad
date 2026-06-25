@@ -3,8 +3,8 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v1.4 |
-| Date | 2026-06-25 |
+| Version | v1.5 |
+| Date | 2026-06-26 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
@@ -20,6 +20,13 @@
 # ① Working Protocol — Collaboration Rules with Claude
 
 > These are not recommendations. They are **mandatory commitments** that must appear in every Claude response in every OmniRad conversation.
+
+## Language Policy
+```
+Conversation language : Arabic (محادثة بالعربي)
+Work output language  : English (كود، ملفات، تسميات بالإنجليزي)
+Technical terms       : Always English (CT, MRI, HTML, JS…)
+```
 
 ## The 8 Mandatory Rules
 
@@ -260,17 +267,78 @@ Tech:
   - Both versions stored
 ```
 
-### ⑤.4 Image Tools Suite
+### ⑤.4 Image Tools Suite ✅ COMPLETED (Task #5)
 ```
-🔍 Zoom & Pan
-📏 Measurement (mm)
-🎚️ Window/Level (Bone/Lung/Soft tissue presets)
-✂️ Segmentation Highlight (click → highlight organ)
-📐 Angle Measurement
-🔄 Compare Slices
-📸 Save Marked Image
+Canvas-based professional tools per modality:
 
-Foundation: OHIF Viewer components (open source)
+BASE TOOLS (all modalities):
+  🔍 Zoom & Pan (independent per panel)
+  📏 Measure (mm*)
+  📐 Angle
+  ⬜ ROI Rectangle + area
+  ⭕ ROI Ellipse + A×B axes
+  🏷 Annotate (free text)
+  ↻ Rotate CW/CCW
+  ↔ Flip H/V
+  ◑ Invert
+  ✕ Reset (active panel)
+  📸 Save PNG
+
+CT SPECIFIC:
+  🔢 HU Probe (illustrative)
+  🦴 Cobb Angle
+  🎚 Window/Level (7 presets + manual sliders)
+
+MRI SPECIFIC:
+  📊 ROI Signal Intensity
+  📈 TIC Curve
+  Sequence labels: T1/T2/FLAIR/DWI/ADC/T1+C/STIR
+
+US SPECIFIC:
+  📏 Depth cm scale
+  ⭕ Follicle Volume (A×B×C)
+  Mode: B-Mode/Color Doppler/Power Doppler/Spectral
+  Gain slider
+
+NM SPECIFIC:
+  🔢 ROI Counts
+  — H-Line (horizontal reference)
+  Colormaps: Hot/Rainbow/Grayscale/Spectrum/Cold Metal
+  Tracers: Tc-99m/Tl-201/I-131/Ga-67/F-18 FDG
+
+PET SPECIFIC:
+  ☢ SUV Probe (illustrative)
+  📊 SUV ROI
+  🧬 MTV Estimate
+  Colormaps: Hot Metal/Rainbow/PET Std/Grayscale
+  PERCIST: CR/PR/SD/PD
+
+RT-IGRT (Educational):
+  〰 Isodose Lines (100/80/50/20%)
+  ⬜ Field Size (cm×cm)
+  ↕ SSD Marker
+  ✏ GTV/CTV/PTV/OAR Contour
+  ⚠ Not for clinical use — educational only
+
+VIEW MODES:
+  ⊞ Normal: 1-3 panels, plane toggle per modality
+  ⛶ Expand: fullscreen with floating toolbar
+  ⊟ Split: 2 modalities side by side
+
+ACTIVE PANEL SYSTEM:
+  - Click panel → becomes Active (teal border)
+  - All tools apply to active panel only
+  - Zoom/Pan always independent per panel
+  - Auto-activates first panel on load
+
+PLANE TOGGLE:
+  - Per-modality plane selector
+  - Default: first plane only
+  - Toggle on/off each plane
+  - Grid auto-adapts: 1→fullscreen, 2→side-by-side, 3→3-col
+
+FOUNDATION: Canvas API — no external libraries
+DISCLAIMER: Values marked * are illustrative (no DICOM)
 ```
 
 ### ⑤.5 AI Assistant (AR/EN) ⭐
@@ -295,20 +363,14 @@ Organized library:
   - Arabic mnemonics (locally invented)
   - Visual: image + story + coloring
   - User contributions + supervisor review
-
-Example:
-  Carpal Bones (8 bones)
-  EN: "Some Lovers Try Positions That They Can't Handle"
 ```
 
 ### ⑤.7 TTS Pronunciation ⭐
 ```
 Every Latin term has button:
-  🔊 Hippocampus
-  → correct voice pronunciation
-  
+  🔊 Hippocampus → correct voice pronunciation
 + Adjustable speed
-+ Arabic pronunciation also (for translations)
++ Arabic pronunciation also
 
 Tech:
   - Web Speech API (free, instant)
@@ -339,7 +401,7 @@ System:
 ⑤.15 Memory Palace
 ```
 
-## Supported Modalities (8)
+## Supported Modalities (9 + future)
 
 ```
 1. Anatomy (Normal/3D)
@@ -350,6 +412,7 @@ System:
 6. NM (Nuclear Medicine + SPECT)
 7. Angio (Angiography: CT, MR, DSA)
 8. Mammo (Mammography)
+9. RT (Radiation Therapy — educational, Task #5)
 + PET / PET-CT (mixed, Phase 2)
 + Fluoroscopy (Phase 2)
 ```
@@ -368,6 +431,7 @@ System:
 ✅ Browser-only deployment (no CLI)
 ✅ Self-contained HTML files (file:// works)
 ✅ Web Standards only (no polyfills)
+✅ Canvas API for image tools
 
 ❌ FORBIDDEN: React, Vue, Angular, jQuery
 ❌ FORBIDDEN: Tailwind, Bootstrap, Material UI
@@ -382,39 +446,14 @@ System:
 - Separate assets/ folder used when deploying to server/GitHub Pages
 ```
 
-## Layers
-
-### Frontend
+## Canvas Architecture (learned in Task #5)
 ```
-- Vanilla JS modules
-- Web Components for reusable elements
-- IndexedDB for local storage
-- Service Worker for offline
-- Web Speech API for pronunciation
-```
-
-### Backend (Future)
-```
-- Cloudflare Workers (if needed)
-- D1 Database (for accounts)
-- R2 Storage (for radiologic images)
-- No backend in Phase 1 — fully client-side
-```
-
-### Approved Open-Source Libraries
-```
-- TensorFlow.js (browser segmentation)
-- Daikon (DICOM reader in JS)
-- OHIF Viewer components (Image tools)
-- TotalSegmentator (pre-colorization)
-```
-
-### AI Integration
-```
-- Claude API (for AI assistant)
-- Rate-limited
-- RAG on OmniRad content only
-- Strict system prompts
+Critical lessons:
+1. Never use H as variable name (conflicts with document.documentElement)
+2. Use offsetWidth/offsetHeight not getBoundingClientRect for sizing
+3. Clone event targets before re-binding to prevent listener accumulation
+4. Use requestAnimationFrame(()=>rAF(()=>init())) for proper timing
+5. Active Panel State: all tools target activePanel only except zoom/pan
 ```
 
 ## File Structure
@@ -423,9 +462,9 @@ System:
 OmniRad/
 ├── index.html              ← Main page (self-contained for local dev)
 ├── assets/
-│   ├── theme.css           ← Unified CSS Variables (used in server deploy)
-│   ├── fonts/              ← IBM Plex
-│   ├── icons/              ← SVG inline
+│   ├── theme.css
+│   ├── fonts/
+│   ├── icons/
 │   └── logo.svg
 ├── modules/
 │   ├── atlas.js
@@ -442,12 +481,8 @@ OmniRad/
 │   └── relationships.json
 ├── images/
 │   └── [structure-id]/
-│       ├── ct-axial.webp
-│       ├── ct-axial-colored.webp
-│       ├── mri-t1.webp
-│       └── ...
 └── pages/
-    ├── atlas.html          ← Task #3 ✅ (+ Compare button → Task #4)
+    ├── atlas.html          ← Task #3 ✅ + Task #5 ✅
     ├── comparison.html     ← Task #4 ✅
     ├── library.html
     └── settings.html
@@ -466,7 +501,7 @@ OmniRad/
 | 2 | Build main page + base layout | Phase 1 | ✅ Done — 2026-06-25 |
 | 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ✅ Done — 2026-06-25 |
 | 4 | Build Multimodal Comparison Engine | Phase 1 | ✅ Done — 2026-06-25 |
-| 5 | Build Image Tools Suite | Phase 1 | ⏳ |
+| 5 | Build Image Tools Suite | Phase 1 | ✅ Done — 2026-06-26 |
 | 6 | Build Colorization Toggle (trial) | Phase 1 | ⏳ |
 | 7 | Build TTS Module | Phase 1 | ⏳ |
 | 8 | MVP test with 5-7 students | Phase 1 | ⏳ |
@@ -479,49 +514,6 @@ OmniRad/
 | 15 | Expand to additional body regions | Phase 3 | ⏳ |
 | 16 | Build Daily Challenge + Community | Phase 3 | ⏳ |
 | 17 | Official launch + marketing | Phase 3 | ⏳ |
-
-## Phase 1 — MVP (4-6 weeks)
-
-```
-Goal: Prove the concept with one region only
-
-Scope:
-- One region (e.g., Upper Abdomen)
-- 5-10 anatomical structures only
-- 3 core modalities (CT, MRI, US)
-- Core features without AI/SRS
-- No accounts (localStorage)
-
-Output:
-Shareable prototype for 5-7 students
-```
-
-## Phase 2 — Expansion (8-12 weeks)
-
-```
-Goal: Complete platform for one region
-
-Scope:
-- Same region expanded (20-30 structures)
-- 6 modalities (+ X-Ray, NM, Angio)
-- AI Assistant activated
-- SRS activated
-- Mnemonics Library
-- Testing with 20-30 students
-```
-
-## Phase 3 — Maturity (12-20 weeks)
-
-```
-Goal: Comprehensive platform for real-world use
-
-Scope:
-- Multiple regions (Thorax, Head, MSK)
-- All modalities
-- User accounts + sync
-- Community features
-- Official launch
-```
 
 ---
 
@@ -576,15 +568,6 @@ Scope:
 | Image copyright | Medium | Only CC-licensed sources |
 | Wrong mnemonics | Medium | Pre-publication review |
 
-## Personal Risks
-
-| Risk | Probability | Mitigation |
-|------|-------------|-----------|
-| Focus drift from goal | Very High | OMNIRAD_ISSUES.md + Rule #8 |
-| Frustration from slow progress | High | Small milestones + phasing |
-| Academic load conflict | High | Flexible schedule + no deadline pressure |
-| Motivation loss | Medium | 4-week evaluations (Pivot/Persevere) |
-
 ---
 
 # ⑩ What We Will NOT Do (No-Goes)
@@ -592,14 +575,14 @@ Scope:
 ```
 ❌ Build mobile app (web-only through Phase 1-3)
 ❌ Real-time DICOM from PACS
-❌ AI image generation (images exist, we don't generate)
-❌ Diagnostic tools (education only, no diagnosis)
+❌ AI image generation
+❌ Diagnostic tools (education only)
 ❌ Multi-user real-time collaboration (Phase 4+)
 ❌ Video tutorials (Phase 4+)
-❌ Live streaming from imaging
+❌ RT dose calculation (educational tools only, no clinical use)
 ❌ Open forum without moderation
-❌ Publish patient images (even CC-licensed)
-❌ Social features (chat, follow, like) before Phase 3
+❌ Publish patient images
+❌ Social features before Phase 3
 ❌ Multiple themes (one professional theme only)
 ❌ Excessive gamification before Phase 2
 ❌ Translation to 5 languages (Arabic/English only initially)
@@ -648,60 +631,35 @@ At end of each task before requesting approval:
 Then: "Do you approve? yes/no/edit"
 ```
 
-## Approval Rule
-
-```
-Task is NOT considered complete until:
-1. Explicit approval "approved ✅"
-2. OMNIRAD_PROJECT.md updated
-3. OMNIRAD_ISSUES.md updated
-4. Both updated files delivered to user
-5. Uploaded to GitHub (if applicable)
-
-If any step missing → task still in progress.
-```
-
 ---
 
 # ⑫ Version History
 
+- **v1.5 — 2026-06-26**
+  - Task #5 approved: Build Image Tools Suite
+  - Delivered: pages/atlas.html (self-contained, CSS+JS embedded)
+  - Canvas-based tools: Base + CT + MRI + US + NM + PET + RT-IGRT (7 modalities)
+  - Active Panel System: tools target active panel only, zoom/pan always independent
+  - Plane Toggle: per-modality, default first plane, auto-grid layout
+  - View Modes: Normal (plane toggle) · Expand (fullscreen + floating toolbar) · Split (2 modalities)
+  - Fullscreen: keyboard hints · ESC to close · modality switcher in header
+  - Tooltips on all tool buttons
+  - Uploaded to GitHub: orphanai2026/OmniRad
+
 - **v1.4 — 2026-06-25**
   - Task #4 approved: Build Multimodal Comparison Engine
-  - Delivered: pages/comparison.html (self-contained, CSS embedded)
-  - Modalities: CT · MRI · US · X-Ray · Angio · NM · Mammo (7 total)
-  - Adaptive layout: 1→fullscreen · 2→columns · 3→3col · 4→2×2 · 5+→auto-grid
-  - Features: Quick Presets · Sync Mode · Plane Tabs · URL Parameters
-  - Atlas integration: Compare button via ?structure=&modalities= URL params
-  - Uploaded to GitHub: orphanai2026/OmniRad
 
 - **v1.3 — 2026-06-25**
   - Task #3 approved: Build Smart Atlas (5 trial structures)
-  - Delivered: pages/atlas.html (self-contained, CSS embedded)
-  - Structures: Liver · Spleen · Right Kidney · Pancreas · Gallbladder
-  - Modalities: CT · MRI · US with plane selectors
-  - Fix: Teal contrast in Dim Mode (oklch 0.72→0.42 on light bg)
-  - Uploaded to GitHub: orphanai2026/OmniRad
 
 - **v1.2 — 2026-06-25**
   - Task #2 approved: Build main page + base layout
-  - Delivered: index.html (self-contained, CSS embedded)
-  - Design: Dark Mode default, Dim Mode toggle (replaces Light Mode)
-  - Theme toggle persists via localStorage
-  - Issue #1 resolved: Light Mode → Dim Mode (warm blue-gray)
-  - Technical note: self-contained HTML preferred for local dev (avoids file:// path issues)
 
 - **v1.1 — 2026-06-25**
-  - Task #1 approved: Visual Mockups (Home + Atlas + Comparison)
-  - Delivered: mockup-home.html, mockup-atlas.html, mockup-comparison.html, theme.css
-  - Design decisions: Dark Mode primary, medical teal accent, IBM Plex Sans, OKLCH colors
-  - Issue logged: Light Mode too bright → Dim Mode planned
+  - Task #1 approved: Visual Mockups
 
 - **v1.0 — 2026-06-25**
   - First release of OMNIRAD_PROJECT.md
-  - Brand-new project from scratch
-  - 12 core sections defined
-  - 8 mandatory collaboration rules
-  - 17 tasks across 3 phases
 
 ---
 
@@ -723,4 +681,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v1.4**
+**End of Document — OmniRad Master Plan v1.5**
