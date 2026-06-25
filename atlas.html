@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Smart Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  /* Medical Teal — base (overridden per theme below) */
+  --teal-bright:   oklch(0.72 0.14 192);
+  --teal-mid:      oklch(0.60 0.13 192);
+  --teal-dim:      oklch(0.38 0.08 192);
+  --teal-glow:     oklch(0.72 0.14 192 / 0.18);
+  --teal-subtle:   oklch(0.72 0.14 192 / 0.08);
+
+  /* Semantic z-index */
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    300;
+  --z-toast:    400;
+}
+
+[data-theme="dark"] {
+  --bg-base:      oklch(0.13 0.010 240);
+  --bg-surface:   oklch(0.17 0.010 240);
+  --bg-raised:    oklch(0.21 0.012 240);
+  --bg-overlay:   oklch(0.25 0.012 240);
+  --border:       oklch(0.30 0.010 240);
+  --border-subtle:oklch(0.22 0.008 240);
+  --text-primary: oklch(0.93 0.008 240);
+  --text-secondary:oklch(0.68 0.010 240);
+  --text-muted:   oklch(0.50 0.008 240);
+  --shadow:       0 2px 12px oklch(0 0 0 / 0.45);
+  --shadow-lg:    0 8px 32px oklch(0 0 0 / 0.55);
+  /* Teal on dark bg — vivid */
+  --teal-bright:  oklch(0.76 0.16 192);
+  --teal-mid:     oklch(0.62 0.13 192);
+  --teal-dim:     oklch(0.40 0.09 192);
+  --teal-glow:    oklch(0.76 0.16 192 / 0.22);
+  --teal-subtle:  oklch(0.76 0.16 192 / 0.11);
+}
+
+[data-theme="dim"] {
+  --bg-base:      oklch(0.82 0.010 240);
+  --bg-surface:   oklch(0.86 0.010 240);
+  --bg-raised:    oklch(0.88 0.010 240);
+  --bg-overlay:   oklch(0.91 0.010 240);
+  --border:       oklch(0.74 0.012 240);
+  --border-subtle:oklch(0.79 0.010 240);
+  --text-primary: oklch(0.18 0.012 240);
+  --text-secondary:oklch(0.34 0.012 240);
+  --text-muted:   oklch(0.50 0.010 240);
+  --shadow:       0 2px 12px oklch(0 0 0 / 0.12);
+  --shadow-lg:    0 8px 32px oklch(0 0 0 / 0.18);
+  /* Teal on dim/light bg — much darker for contrast */
+  --teal-bright:  oklch(0.42 0.14 192);
+  --teal-mid:     oklch(0.35 0.12 192);
+  --teal-dim:     oklch(0.28 0.09 192);
+  --teal-glow:    oklch(0.42 0.14 192 / 0.18);
+  --teal-subtle:  oklch(0.42 0.14 192 / 0.10);
+}
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ─── TOPBAR ──────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 56px;
+  gap: 1rem;
+}
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+.topbar-logo .logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal-bright);
+  box-shadow: 0 0 8px var(--teal-bright);
+}
+.topbar-breadcrumb {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.topbar-breadcrumb span { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+
+/* theme toggle */
+.theme-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.theme-btn:hover { border-color: var(--teal-mid); color: var(--teal-bright); }
+
+/* ─── LAYOUT ──────────────────────────────────────────────── */
+.page-wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 56px);
+}
+
+/* ─── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar {
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+.sidebar-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 1.25rem 0.6rem;
+}
+.structure-list { list-style: none; }
+.structure-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  transition: background 0.12s, color 0.12s;
+  border-left: 2px solid transparent;
+  position: relative;
+}
+.structure-item:hover { background: var(--bg-raised); color: var(--text-primary); }
+.structure-item.active {
+  background: var(--teal-subtle);
+  color: var(--teal-bright);
+  border-left-color: var(--teal-bright);
+  font-weight: 500;
+}
+.structure-item .struct-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--bg-overlay);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.structure-item.active .struct-icon { background: var(--teal-glow); }
+.struct-name { flex: 1; }
+.struct-arabic { font-size: 0.72rem; color: var(--text-muted); direction: rtl; }
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 1rem 1.25rem;
+}
+
+/* ─── MAIN CONTENT ────────────────────────────────────────── */
+.main-content { padding: 2rem 2.5rem; max-width: 1100px; }
+
+/* ─── STRUCTURE HEADER ────────────────────────────────────── */
+.structure-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.structure-title-group { min-width: 0; }
+.structure-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-bright);
+  margin-bottom: 0.4rem;
+}
+.structure-name-en {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  line-height: 1.2;
+}
+.structure-name-ar {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  direction: rtl;
+}
+.structure-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+.tag {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.tag.tag-system { border-color: var(--teal-dim); color: var(--teal-bright); background: var(--teal-subtle); }
+
+.structure-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+.meta-item {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+}
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.15rem; }
+.meta-value { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
+
+/* ─── INFO CARDS ──────────────────────────────────────────── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.info-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+.info-card-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--teal-bright);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+.info-card-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ─── IMAGE VIEWER ────────────────────────────────────────── */
+.viewer-section { margin-bottom: 2rem; }
+.viewer-section-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* Modality selector */
+.selector-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.selector-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+.selector-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: all 0.12s;
+}
+.selector-btn:hover { border-color: var(--teal-mid); color: var(--text-primary); }
+.selector-btn.active {
+  background: var(--teal-glow);
+  border-color: var(--teal-bright);
+  color: var(--teal-bright);
+  box-shadow: 0 0 0 1px var(--teal-dim);
+}
+.selector-divider { width: 1px; height: 20px; background: var(--border); margin: 0 0.25rem; }
+
+/* Image display */
+.image-viewer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.image-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.image-panel:hover { border-color: var(--border); }
+.image-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.image-panel-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-secondary);
+}
+.image-panel-modality {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+}
+.mod-ct   { background: oklch(0.35 0.08 50  / 0.6); color: oklch(0.78 0.10 50);  }
+.mod-mri  { background: oklch(0.28 0.08 270 / 0.6); color: oklch(0.72 0.12 270); }
+.mod-us   { background: oklch(0.28 0.08 160 / 0.6); color: oklch(0.68 0.12 160); }
+.mod-nm   { background: oklch(0.28 0.10 310 / 0.6); color: oklch(0.72 0.13 310); }
+.mod-pet  { background: oklch(0.30 0.10 25  / 0.6); color: oklch(0.76 0.13 25);  }
+.mod-rt   { background: oklch(0.30 0.10 0   / 0.6); color: oklch(0.74 0.14 0);   }
+.mod-angio{ background: oklch(0.28 0.08 220 / 0.6); color: oklch(0.70 0.12 220); }
+.mod-xray { background: oklch(0.30 0.04 240 / 0.6); color: oklch(0.80 0.06 240); }
+.mod-mammo{ background: oklch(0.28 0.08 340 / 0.6); color: oklch(0.72 0.12 340); }
+
+.image-placeholder {
+  aspect-ratio: 1 / 1;
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  position: relative;
+  overflow: hidden;
+}
+/* Simulated scan lines for medical feel */
+.image-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    oklch(0.72 0.14 192 / 0.03) 2px,
+    oklch(0.72 0.14 192 / 0.03) 4px
+  );
+  pointer-events: none;
+}
+.placeholder-icon { font-size: 2rem; opacity: 0.35; }
+.placeholder-text { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; opacity: 0.5; text-align: center; }
+
+/* ─── CROSS REFERENCES ────────────────────────────────────── */
+.crossref-section { margin-bottom: 2rem; }
+.crossref-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.crossref-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  transition: all 0.12s;
+}
+.crossref-btn:hover {
+  border-color: var(--teal-mid);
+  color: var(--teal-bright);
+  background: var(--teal-subtle);
+}
+.crossref-arrow { font-size: 0.75rem; opacity: 0.5; }
+
+/* ─── SECTION TITLE ───────────────────────────────────────── */
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ─── STATUS BAR ──────────────────────────────────────────── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-bright); flex-shrink: 0; }
+.status-bar strong { color: var(--text-secondary); font-weight: 500; }
+
+/* ─── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .page-wrapper { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .structure-list { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0 1rem 1rem; }
+  .structure-item { padding: 0.4rem 0.75rem; border-radius: 8px; border-left: none; border: 1px solid var(--border); }
+  .structure-item.active { border-color: var(--teal-bright); }
+  .sidebar-label { padding: 1rem 1rem 0.5rem; }
+  .sidebar-divider { display: none; }
+  .struct-arabic { display: none; }
+  .main-content { padding: 1.5rem 1.25rem; }
+  .info-grid { grid-template-columns: 1fr; }
+  .image-viewer-grid { grid-template-columns: 1fr; }
+  .structure-header { flex-direction: column; gap: 1rem; }
+  .structure-meta { flex-direction: row; min-width: auto; }
+  .structure-name-en { font-size: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .image-viewer-grid { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── REDUCED MOTION ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* ─── TRANSITIONS ─────────────────────────────────────────── */
+.main-content { transition: opacity 0.18s ease; }
+.main-content.fading { opacity: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   IMAGE TOOLS SUITE — Task #5
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── TOOLS SECTION WRAPPER ──────────────────────────────── */
+.tools-section {
+  margin-bottom: 2rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tools-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-raised);
+}
+
+.tools-section-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tools-modality-badge {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.tools-disclaimer {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ─── TOOLBAR ────────────────────────────────────────────── */
+.toolbar-body {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.toolbar-group-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.tool-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+  margin: 0 0.15rem;
+  flex-shrink: 0;
+}
+
+/* ─── TOOL BUTTON ────────────────────────────────────────── */
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.32rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+  font-weight: 500;
+  font-family: 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tool-btn:hover {
+  border-color: var(--teal-mid);
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+}
+
+.tool-btn.active {
+  background: var(--teal-glow);
+  border-color: var(--teal-bright);
+  color: var(--teal-bright);
+  box-shadow: 0 0 0 1px var(--teal-dim);
+}
+
+.tool-btn.danger-btn {
+  border-color: oklch(0.45 0.12 25 / 0.5);
+  color: oklch(0.68 0.12 25);
+}
+.tool-btn.danger-btn:hover {
+  border-color: oklch(0.65 0.14 25);
+  background: oklch(0.45 0.12 25 / 0.12);
+  color: oklch(0.75 0.14 25);
+}
+
+.tool-btn.save-btn {
+  border-color: oklch(0.45 0.10 160 / 0.5);
+  color: oklch(0.62 0.11 160);
+}
+.tool-btn.save-btn:hover {
+  border-color: oklch(0.62 0.12 160);
+  background: oklch(0.45 0.10 160 / 0.12);
+  color: oklch(0.72 0.12 160);
+}
+
+.tool-icon { font-size: 0.85rem; line-height: 1; }
+
+/* ─── PRESET BUTTONS (Window/Level, Colormap) ────────────── */
+.preset-btn {
+  padding: 0.25rem 0.55rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-overlay);
+  color: var(--text-muted);
+  font-size: 0.67rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.preset-btn:hover { border-color: var(--teal-dim); color: var(--teal-bright); }
+.preset-btn.active {
+  background: var(--teal-subtle);
+  border-color: var(--teal-mid);
+  color: var(--teal-bright);
+}
+
+/* ─── SLIDER ROW ─────────────────────────────────────────── */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.slider-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.slider-label {
+  font-size: 0.67rem;
+  color: var(--text-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
+  min-width: 38px;
+}
+
+.slider-val {
+  font-size: 0.67rem;
+  color: var(--teal-bright);
+  font-family: 'IBM Plex Mono', monospace;
+  min-width: 28px;
+  text-align: right;
+}
+
+input[type="range"].tool-slider {
+  -webkit-appearance: none;
+  width: 90px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"].tool-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--teal-bright);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+input[type="range"].tool-slider::-webkit-slider-thumb:hover { transform: scale(1.25); }
+
+/* ─── CANVAS VIEWER WRAPPER ──────────────────────────────── */
+.canvas-viewer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-base);
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.canvas-viewer canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+.canvas-bg   { z-index: 1; cursor: inherit; }
+.canvas-draw { z-index: 2; cursor: inherit; pointer-events: none; }
+
+/* ─── VIEWER PANELS WITH CANVAS ─────────────────────────── */
+.image-panel-with-tools {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.image-panel-with-tools:hover { border-color: var(--border); }
+
+/* ─── MEASUREMENT DISPLAY ────────────────────────────────── */
+.measure-overlay {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  pointer-events: none;
+}
+
+.measure-tag {
+  background: oklch(0 0 0 / 0.72);
+  color: var(--teal-bright);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid var(--teal-dim);
+  backdrop-filter: blur(4px);
+}
+
+/* ─── STATUS INDICATOR ───────────────────────────────────── */
+.tool-status {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 5;
+  background: oklch(0 0 0 / 0.65);
+  color: var(--teal-bright);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .toolbar-group { gap: 0.25rem; }
+  .tool-btn { font-size: 0.68rem; padding: 0.28rem 0.5rem; }
+  input[type="range"].tool-slider { width: 70px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── TOPBAR ───────────────────────────────────────────── -->
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <span class="logo-dot"></span>
+    OmniRad
+  </a>
+  <nav class="topbar-breadcrumb">
+    <span>Atlas</span>
+    <span style="opacity:0.4">›</span>
+    <span id="breadcrumb-name">Liver</span>
+  </nav>
+  <div class="topbar-right">
+    <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+      <span id="theme-icon">☾</span>
+      <span id="theme-label">Dim</span>
+    </button>
+  </div>
+</header>
+
+<!-- ─── LAYOUT ───────────────────────────────────────────── -->
+<div class="page-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="Structure navigation">
+    <div class="sidebar-label">Upper Abdomen</div>
+    <ul class="structure-list" id="structure-list">
+      <li class="structure-item active" data-id="liver" tabindex="0" role="button" aria-pressed="true">
+        <span class="struct-icon">🫀</span>
+        <span class="struct-name">Liver</span>
+        <span class="struct-arabic">الكبد</span>
+      </li>
+      <li class="structure-item" data-id="spleen" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">🫘</span>
+        <span class="struct-name">Spleen</span>
+        <span class="struct-arabic">الطحال</span>
+      </li>
+      <li class="structure-item" data-id="kidney" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">🫙</span>
+        <span class="struct-name">Right Kidney</span>
+        <span class="struct-arabic">الكلية اليمنى</span>
+      </li>
+      <li class="structure-item" data-id="pancreas" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">🧬</span>
+        <span class="struct-name">Pancreas</span>
+        <span class="struct-arabic">البنكرياس</span>
+      </li>
+      <li class="structure-item" data-id="gallbladder" tabindex="0" role="button" aria-pressed="false">
+        <span class="struct-icon">💧</span>
+        <span class="struct-name">Gallbladder</span>
+        <span class="struct-arabic">المرارة</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content" id="main-content" aria-live="polite">
+    <!-- Content rendered by JS -->
+  </main>
+
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const STRUCTURES = {
+  liver: {
+    name: 'Liver',
+    arabic: 'الكبد',
+    system: 'Hepatobiliary',
+    region: 'Upper Abdomen',
+    location: 'Right hypochondriac region, extending to epigastric region',
+    function: 'Metabolic processing, bile production, detoxification, glycogen storage, synthesis of plasma proteins and clotting factors.',
+    clinicalNote: 'Largest solid organ in the body. Divided into right and left lobes by the falciform ligament; further divided into 8 Couinaud segments.',
+    tags: ['Solid Organ', 'Hepatobiliary', 'Retroperitoneal: No', 'Couinaud Segments: 8'],
+    crossRefs: ['Gallbladder', 'Portal Vein', 'Hepatic Artery', 'IVC'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal', 'Sagittal'], note: 'Best assessed in portal venous phase (65–70 s)' },
+      MRI: { planes: ['Axial', 'Coronal', 'Sagittal'], note: 'T1 in-phase/out-phase for fat assessment; T2 for lesion characterization' },
+      US:  { planes: ['Transverse', 'Longitudinal', 'Oblique'], note: 'Echogenicity reference: isoechoic to mildly hyperechoic vs. renal cortex' },
+    },
+  },
+  spleen: {
+    name: 'Spleen',
+    arabic: 'الطحال',
+    system: 'Lymphoreticular',
+    region: 'Upper Abdomen',
+    location: 'Left hypochondriac region, posterior to stomach',
+    function: 'Filtration of blood, immune surveillance, red blood cell sequestration, extramedullary haematopoiesis in pathologic states.',
+    clinicalNote: 'Normal length ≤ 12 cm. Accessory spleen (splenule) found in ~10% of individuals near the splenic hilum.',
+    tags: ['Solid Organ', 'Lymphoreticular', 'Retroperitoneal: No', 'Length: ≤12 cm'],
+    crossRefs: ['Pancreatic Tail', 'Splenic Artery', 'Left Kidney', 'Stomach'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal'], note: 'Homogeneous enhancement; mottled in arterial phase — normal' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'Markedly hypointense on T1, markedly hyperintense on T2' },
+      US:  { planes: ['Coronal', 'Transverse'], note: 'Homogeneously hyperechoic compared to adjacent renal cortex' },
+    },
+  },
+  kidney: {
+    name: 'Right Kidney',
+    arabic: 'الكلية اليمنى',
+    system: 'Urinary',
+    region: 'Retroperitoneal',
+    location: 'Right retroperitoneal space, T12–L3 level; lower than left kidney',
+    function: 'Blood filtration, urine production, electrolyte balance, acid-base regulation, erythropoietin and renin secretion.',
+    clinicalNote: 'Divided into cortex (nephrons) and medulla (pyramids). The right kidney is 1–2 cm lower than the left due to the liver.',
+    tags: ['Solid Organ', 'Urinary', 'Retroperitoneal: Yes', 'Length: 9–12 cm'],
+    crossRefs: ['Renal Artery', 'Renal Vein', 'Ureter', 'Adrenal Gland'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal', 'Sagittal'], note: 'Corticomedullary phase (25–70 s) best shows cortex; nephrographic phase for masses' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'T2: medullary pyramids hyperintense; T1 C+: cortex enhances earlier' },
+      US:  { planes: ['Longitudinal', 'Transverse'], note: 'Renal sinus fat hyperechoic; cortex isoechoic to liver; pyramids hypoechoic' },
+    },
+  },
+  pancreas: {
+    name: 'Pancreas',
+    arabic: 'البنكرياس',
+    system: 'Hepatobiliary / Endocrine',
+    region: 'Retroperitoneal',
+    location: 'Retroperitoneal, oblique course at L1–L2 level from head (right) to tail (left)',
+    function: 'Exocrine: digestive enzyme secretion (amylase, lipase). Endocrine: insulin and glucagon secretion (islets of Langerhans).',
+    clinicalNote: 'Divided into head, neck, body, and tail. The uncinate process hooks posterior to the superior mesenteric vessels.',
+    tags: ['Retroperitoneal: Yes', 'Dual Function', 'Head / Neck / Body / Tail'],
+    crossRefs: ['Common Bile Duct', 'Duodenum', 'Splenic Vein', 'Superior Mesenteric Artery'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal'], note: 'Pancreatic protocol: thin slices (0.5–1 mm), arterial + portal phases' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'MRCP for duct anatomy; T1 fat-sat: pancreas normally hyperintense' },
+      US:  { planes: ['Transverse', 'Oblique'], note: 'Often partially obscured by bowel gas; isoechoic to slightly hyperechoic to liver' },
+    },
+  },
+  gallbladder: {
+    name: 'Gallbladder',
+    arabic: 'المرارة',
+    system: 'Hepatobiliary',
+    region: 'Upper Abdomen',
+    location: 'Gallbladder fossa, undersurface of right hepatic lobe (segments IV/V)',
+    function: 'Bile concentration and storage between meals; contraction (CCK-stimulated) releases bile into duodenum via cystic duct → CBD.',
+    clinicalNote: 'Normal wall thickness ≤ 3 mm (fasting). Phrygian cap (folded fundus) is a normal variant seen in ~4% of individuals.',
+    tags: ['Hollow Organ', 'Hepatobiliary', 'Wall: ≤3 mm fasting', 'Volume: 30–50 mL'],
+    crossRefs: ['Common Bile Duct', 'Liver', 'Cystic Duct', 'Duodenum'],
+    modalities: {
+      CT:  { planes: ['Axial', 'Coronal'], note: 'Non-contrast for stones; contrast for wall thickening assessment' },
+      MRI: { planes: ['Axial', 'Coronal'], note: 'T2: bile markedly hyperintense; MRCP shows biliary anatomy exquisitely' },
+      US:  { planes: ['Transverse', 'Longitudinal', 'Oblique'], note: 'First-line modality. Fasting required. Stones: echogenic focus with posterior acoustic shadowing' },
+    },
+  },
+};
+
+// ─── STATE ───────────────────────────────────────────────────
+let currentStructure = 'liver';
+let currentModality  = 'CT';
+let currentPlane     = 'Axial';
+
+// ─── THEME ───────────────────────────────────────────────────
+const html         = document.documentElement;
+const themeToggle  = document.getElementById('theme-toggle');
+const themeIcon    = document.getElementById('theme-icon');
+const themeLabel   = document.getElementById('theme-label');
+
+function applyTheme(t) {
+  html.dataset.theme = t;
+  if (t === 'dark') { themeIcon.textContent = '☾'; themeLabel.textContent = 'Dim'; }
+  else              { themeIcon.textContent = '◑'; themeLabel.textContent = 'Dark'; }
+  localStorage.setItem('omnirad-theme', t);
+}
+themeToggle.addEventListener('click', () => {
+  applyTheme(html.dataset.theme === 'dark' ? 'dim' : 'dark');
+});
+applyTheme(localStorage.getItem('omnirad-theme') || 'dark');
+
+// ─── RENDER ──────────────────────────────────────────────────
+function getPlanes(struct, mod) {
+  return struct.modalities[mod]?.planes || [];
+}
+
+function buildImagePanels(struct, mod, plane) {
+  const planes   = getPlanes(struct, mod);
+  const modClass = { CT:'mod-ct', MRI:'mod-mri', US:'mod-us' }[mod] || 'mod-ct';
+  const modNote  = struct.modalities[mod]?.note || '';
+
+  if (!planes.length) {
+    return `<div class="image-placeholder" style="grid-column:1/-1;height:180px">
+      <span class="placeholder-icon">⚠</span>
+      <span class="placeholder-text">No ${mod} images available</span>
+    </div>`;
+  }
+
+  const panels = planes.map((p, i) => `
+    <div class="image-panel-with-tools" data-plane="${p}">
+      <div class="image-panel-header">
+        <span class="image-panel-label">${p}</span>
+        <span class="image-panel-modality ${modClass}">${mod}</span>
+      </div>
+      <div class="canvas-viewer" id="viewer-${i}" data-panel="${i}">
+        <canvas class="canvas-bg"   id="canvas-bg-${i}"></canvas>
+        <canvas class="canvas-draw" id="canvas-draw-${i}"></canvas>
+        <div class="tool-status" id="tool-status-${i}">Pan / Zoom</div>
+        <div class="measure-overlay" id="measure-overlay-${i}"></div>
+      </div>
+    </div>`).join('');
+
+  return panels + `<div style="grid-column:1/-1;padding:0.5rem 0">
+    <p style="font-size:0.75rem;color:var(--text-muted);font-style:italic;font-family:'IBM Plex Mono',monospace">
+      📋 ${modNote}
+    </p></div>`;
+}
+
+function buildContent(id) {
+  const s = STRUCTURES[id];
+  if (!s) return '';
+
+  const planes = getPlanes(s, currentModality);
+
+  return `
+  <div class="status-bar">
+    <span class="status-dot"></span>
+    <span>Phase 1 · MVP · <strong>Upper Abdomen</strong> · 5 structures · Placeholder images</span>
+  </div>
+
+  <!-- Header -->
+  <div class="structure-header">
+    <div class="structure-title-group">
+      <div class="structure-eyebrow">${s.system} · ${s.region}</div>
+      <h1 class="structure-name-en">${s.name}</h1>
+      <div class="structure-name-ar">${s.arabic}</div>
+      <div class="structure-tags">
+        ${s.tags.map((t,i) => `<span class="tag${i===0?' tag-system':''}">${t}</span>`).join('')}
+      </div>
+    </div>
+    <div class="structure-meta">
+      <div class="meta-item">
+        <div class="meta-label">Region</div>
+        <div class="meta-value">${s.region}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">System</div>
+        <div class="meta-value">${s.system}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-label">Location</div>
+      <div class="info-card-text">${s.location}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Function</div>
+      <div class="info-card-text">${s.function}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Clinical Note</div>
+      <div class="info-card-text">${s.clinicalNote}</div>
+    </div>
+  </div>
+
+  <!-- Image Viewer -->
+  <div class="viewer-section">
+    <div class="viewer-section-title">Multimodal Viewer</div>
+
+    <!-- Modality selector — all modalities, unavailable dimmed -->
+    <div class="selector-row">
+      <span class="selector-label">Modality</span>
+      ${['CT','MRI','US','NM','PET','RT','Angio','X-Ray','Mammo'].map(m => {
+        const available = !!s.modalities[m];
+        const active    = m === currentModality ? ' active' : '';
+        const dimmed    = !available ? ' style="opacity:0.38;cursor:not-allowed;" title="Not yet available for this structure"' : '';
+        return `<button class="selector-btn${active}"${dimmed} data-mod="${m}" ${!available?'disabled':''}>${m}</button>`;
+      }).join('')}
+    </div>
+
+    <!-- Image panels -->
+    <div class="image-viewer-grid" id="image-grid">
+      ${buildImagePanels(s, currentModality, currentPlane)}
+    </div>
+  </div>
+
+  <!-- ── IMAGE TOOLS SUITE ───────────────────────────────── -->
+  <div class="tools-section" id="tools-section">
+    <div class="tools-section-header">
+      <div class="tools-section-title">
+        🛠 Image Tools Suite
+        <span class="tools-modality-badge mod-ct" id="tools-mod-badge">${currentModality}</span>
+      </div>
+      <span class="tools-disclaimer" id="tools-disclaimer">⚠ Educational use only — values are illustrative</span>
+    </div>
+    <div class="toolbar-body" id="toolbar-body">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- Cross References -->
+  <div class="crossref-section">
+    <div class="section-title">Related Structures</div>
+    <div class="crossref-grid">
+      ${s.crossRefs.map(r => `
+        <button class="crossref-btn" onclick="alert('${r} — available in future content update')">
+          ${r} <span class="crossref-arrow">→</span>
+        </button>`).join('')}
+    </div>
+  </div>
+  `;
+}
+
+function render(id, animate = true) {
+  const main = document.getElementById('main-content');
+  document.getElementById('breadcrumb-name').textContent = STRUCTURES[id]?.name || id;
+
+  if (animate) {
+    main.classList.add('fading');
+    setTimeout(() => {
+      main.innerHTML = buildContent(id);
+      main.classList.remove('fading');
+      bindViewerEvents();
+    }, 150);
+  } else {
+    main.innerHTML = buildContent(id);
+    bindViewerEvents();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// IMAGE TOOLS SUITE — Task #5
+// ═══════════════════════════════════════════════════════════
+const MODALITY_BADGES = { CT:'mod-ct',MRI:'mod-mri',US:'mod-us',NM:'mod-nm',PET:'mod-pet',RT:'mod-rt',Angio:'mod-angio','X-Ray':'mod-xray',Mammo:'mod-mammo' };
+const WL_PRESETS_CT   = [{label:'Soft Tissue',w:400,l:40},{label:'Lung',w:1500,l:-600},{label:'Bone',w:1800,l:400},{label:'Brain',w:80,l:40},{label:'Liver',w:150,l:60},{label:'Abdomen',w:350,l:40},{label:'Mediastinum',w:350,l:50}];
+const COLORMAPS_NM    = ['Hot','Rainbow','Grayscale','Spectrum','Cold Metal'];
+const COLORMAPS_PET   = ['Hot Metal','Rainbow','PET Std','Grayscale','Parula'];
+const SIGNAL_LABELS   = ['T1','T2','FLAIR','DWI','ADC','T1+C','STIR'];
+const DOPPLER_LABELS  = ['B-Mode','Color Doppler','Power Doppler','Spectral'];
+const TRACER_LABELS   = ['Tc-99m','Tl-201','I-131','Ga-67','In-111','F-18 FDG'];
+const PERCIST_LABELS  = ['CR','PR','SD','PD'];
+const OAR_LABELS      = ['GTV','CTV','PTV','OAR — Cord','OAR — Parotid','OAR — Lens'];
+const CONTOUR_COLORS  = {GTV:'#ff4040',CTV:'#ff8c00',PTV:'#ffd700','OAR — Cord':'#60d0ff','OAR — Parotid':'#c060ff','OAR — Lens':'#60ff90'};
+
+let activeTool         = 'pan';
+let activeContourLabel = 'GTV';
+let activeContourColor = '#ff4040';
+const panelStates      = {};
+
+// ── Toolbar HTML ──────────────────────────────────────────
+function buildToolbar(mod) {
+  const badge   = MODALITY_BADGES[mod] || 'mod-ct';
+  const badgeEl = document.getElementById('tools-mod-badge');
+  if (badgeEl) { badgeEl.textContent = mod; badgeEl.className = `tools-modality-badge ${badge}`; }
+
+  const base = `
+  <div class="toolbar-group">
+    <span class="toolbar-group-label">Navigate</span>
+    <button class="tool-btn active" data-tool="pan"><span class="tool-icon">✥</span> Pan/Zoom</button>
+    <div class="tool-divider"></div>
+    <button class="tool-btn" data-tool="measure"><span class="tool-icon">📏</span> Measure</button>
+    <button class="tool-btn" data-tool="angle"><span class="tool-icon">📐</span> Angle</button>
+    <button class="tool-btn" data-tool="roi-rect"><span class="tool-icon">⬜</span> ROI Rect</button>
+    <button class="tool-btn" data-tool="roi-ellipse"><span class="tool-icon">⭕</span> ROI Ellipse</button>
+    <button class="tool-btn" data-tool="polyline"><span class="tool-icon">📎</span> Polyline</button>
+    <button class="tool-btn" data-tool="annotate"><span class="tool-icon">🏷</span> Annotate</button>
+  </div>
+  <div class="toolbar-group">
+    <span class="toolbar-group-label">Transform</span>
+    <button class="tool-btn" data-tool="rotate-cw"><span class="tool-icon">↻</span> Rotate CW</button>
+    <button class="tool-btn" data-tool="rotate-ccw"><span class="tool-icon">↺</span> Rotate CCW</button>
+    <button class="tool-btn" data-tool="flip-h"><span class="tool-icon">↔</span> Flip H</button>
+    <button class="tool-btn" data-tool="flip-v"><span class="tool-icon">↕</span> Flip V</button>
+    <button class="tool-btn" data-tool="invert"><span class="tool-icon">◑</span> Invert</button>
+    <div class="tool-divider"></div>
+    <button class="tool-btn danger-btn" data-tool="reset"><span class="tool-icon">✕</span> Reset All</button>
+    <button class="tool-btn save-btn"   data-tool="save"><span class="tool-icon">📸</span> Save PNG</button>
+  </div>`;
+
+  let specific = '';
+  if (mod === 'CT') {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">CT Tools</span>
+      <button class="tool-btn" data-tool="hu-probe"><span class="tool-icon">🔢</span> HU Probe</button>
+      <button class="tool-btn" data-tool="cobb"><span class="tool-icon">🦴</span> Cobb Angle</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">W / L</span>
+      ${WL_PRESETS_CT.map(p=>`<button class="preset-btn" data-wl-w="${p.w}" data-wl-l="${p.l}">${p.label}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Manual</span>
+      <div class="slider-row">
+        <div class="slider-item"><span class="slider-label">Window</span><input type="range" class="tool-slider" id="sl-window" min="1" max="4000" value="400"><span class="slider-val" id="sv-window">400</span></div>
+        <div class="slider-item"><span class="slider-label">Level</span><input type="range" class="tool-slider" id="sl-level" min="-1000" max="1000" value="40"><span class="slider-val" id="sv-level">40</span></div>
+      </div>
+    </div>`;
+  } else if (mod === 'MRI') {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">MRI Tools</span>
+      <button class="tool-btn" data-tool="roi-signal"><span class="tool-icon">📊</span> ROI Signal</button>
+      <button class="tool-btn" data-tool="tic"><span class="tool-icon">📈</span> TIC Curve</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Sequence</span>
+      ${SIGNAL_LABELS.map(l=>`<button class="preset-btn" data-label="${l}">${l}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Display</span>
+      <div class="slider-row">
+        <div class="slider-item"><span class="slider-label">Brightness</span><input type="range" class="tool-slider" id="sl-bright" min="0" max="200" value="100"><span class="slider-val" id="sv-bright">100%</span></div>
+        <div class="slider-item"><span class="slider-label">Contrast</span><input type="range" class="tool-slider" id="sl-contrast" min="0" max="300" value="100"><span class="slider-val" id="sv-contrast">100%</span></div>
+      </div>
+    </div>`;
+  } else if (mod === 'US') {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">US Tools</span>
+      <button class="tool-btn" data-tool="depth"><span class="tool-icon">📏</span> Depth cm</button>
+      <button class="tool-btn" data-tool="follicle"><span class="tool-icon">⭕</span> Follicle Vol</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Mode</span>
+      ${DOPPLER_LABELS.map(l=>`<button class="preset-btn" data-label="${l}">${l}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Display</span>
+      <div class="slider-row">
+        <div class="slider-item"><span class="slider-label">Gain</span><input type="range" class="tool-slider" id="sl-gain" min="0" max="200" value="100"><span class="slider-val" id="sv-gain">100%</span></div>
+      </div>
+    </div>`;
+  } else if (mod === 'NM') {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">NM Tools</span>
+      <button class="tool-btn" data-tool="roi-counts"><span class="tool-icon">🔢</span> ROI Counts</button>
+      <button class="tool-btn" data-tool="tb-ratio"><span class="tool-icon">📊</span> T/B Ratio</button>
+      <button class="tool-btn" data-tool="h-line"><span class="tool-icon">—</span> H-Line</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Colormap</span>
+      ${COLORMAPS_NM.map(c=>`<button class="preset-btn" data-colormap="${c}">${c}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Tracer</span>
+      ${TRACER_LABELS.map(t=>`<button class="preset-btn" data-label="${t}">${t}</button>`).join('')}
+    </div>`;
+  } else if (mod === 'PET') {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">PET Tools</span>
+      <button class="tool-btn" data-tool="suv-probe"><span class="tool-icon">☢</span> SUV Probe</button>
+      <button class="tool-btn" data-tool="suv-roi"><span class="tool-icon">📊</span> SUV ROI</button>
+      <button class="tool-btn" data-tool="mtv"><span class="tool-icon">🧬</span> MTV Est.</button>
+      <button class="tool-btn" data-tool="pet-fusion"><span class="tool-icon">🔀</span> CT Fusion</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Colormap</span>
+      ${COLORMAPS_PET.map(c=>`<button class="preset-btn" data-colormap="${c}">${c}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">PERCIST</span>
+      ${PERCIST_LABELS.map(l=>`<button class="preset-btn" data-label="${l}">${l}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Fusion</span>
+      <div class="slider-row">
+        <div class="slider-item"><span class="slider-label">Opacity</span><input type="range" class="tool-slider" id="sl-petopacity" min="0" max="100" value="60"><span class="slider-val" id="sv-petopacity">60%</span></div>
+      </div>
+    </div>`;
+  } else if (mod === 'RT') {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">RT-IGRT</span>
+      <button class="tool-btn" data-tool="isodose"><span class="tool-icon">〰</span> Isodose</button>
+      <button class="tool-btn" data-tool="field-size"><span class="tool-icon">⬜</span> Field Size</button>
+      <button class="tool-btn" data-tool="ssd"><span class="tool-icon">↕</span> SSD Marker</button>
+      <button class="tool-btn" data-tool="contour"><span class="tool-icon">✏</span> Contour</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Volumes</span>
+      ${OAR_LABELS.map(l=>`<button class="preset-btn" data-label="${l}">${l}</button>`).join('')}
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Display</span>
+      <div class="slider-row">
+        <div class="slider-item"><span class="slider-label">Isodose α</span><input type="range" class="tool-slider" id="sl-isodose" min="0" max="100" value="60"><span class="slider-val" id="sv-isodose">60%</span></div>
+      </div>
+    </div>
+    <div class="toolbar-group" style="background:oklch(0.45 0.12 25/0.08);border:1px solid oklch(0.45 0.12 25/0.25);border-radius:6px;padding:0.4rem 0.7rem;">
+      <span style="font-size:0.67rem;color:oklch(0.68 0.12 25);font-family:'IBM Plex Mono',monospace;">⚠ RT tools are for anatomical education only — not for clinical RT planning or dose prescription</span>
+    </div>`;
+  } else {
+    specific = `
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">${mod} Tools</span>
+      <button class="tool-btn" data-tool="magnify"><span class="tool-icon">🔎</span> Magnify</button>
+      <button class="tool-btn" data-tool="ctr"><span class="tool-icon">❤</span> CTR</button>
+    </div>
+    <div class="toolbar-group">
+      <span class="toolbar-group-label">Display</span>
+      <div class="slider-row">
+        <div class="slider-item"><span class="slider-label">Brightness</span><input type="range" class="tool-slider" id="sl-xbright" min="0" max="200" value="100"><span class="slider-val" id="sv-xbright">100%</span></div>
+        <div class="slider-item"><span class="slider-label">Contrast</span><input type="range" class="tool-slider" id="sl-xcontrast" min="0" max="300" value="100"><span class="slider-val" id="sv-xcontrast">100%</span></div>
+      </div>
+    </div>`;
+  }
+  return base + specific;
+}
+
+// ── Canvas Engine ─────────────────────────────────────────
+function initCanvasPanels() {
+  document.querySelectorAll('.canvas-viewer').forEach(viewer => {
+    const idx   = parseInt(viewer.dataset.panel);
+    const bgCvs = document.getElementById(`canvas-bg-${idx}`);
+    const drCvs = document.getElementById(`canvas-draw-${idx}`);
+    if (!bgCvs||!drCvs) return;
+    const sz = viewer.getBoundingClientRect().width || 320;
+    bgCvs.width=drCvs.width=sz; bgCvs.height=drCvs.height=sz;
+    panelStates[idx] = { bgCtx:bgCvs.getContext('2d'), drCtx:drCvs.getContext('2d'), zoom:1, panX:0, panY:0, rotate:0, flipH:1, flipV:1, brightness:100, contrast:100, invert:false, annotations:[], points:[], size:sz };
+    drawBg(idx);
+    attachCanvasEvents(idx, viewer);
+  });
+}
+
+function drawBg(idx) {
+  const s=panelStates[idx]; if(!s) return;
+  const ctx=s.bgCtx, sz=s.size;
+  ctx.clearRect(0,0,sz,sz);
+  ctx.save();
+  ctx.translate(sz/2+s.panX, sz/2+s.panY);
+  ctx.scale(s.zoom*s.flipH, s.zoom*s.flipV);
+  ctx.rotate(s.rotate*Math.PI/180);
+  ctx.translate(-sz/2,-sz/2);
+  ctx.fillStyle='#080c12'; ctx.fillRect(0,0,sz,sz);
+  // scanlines
+  ctx.strokeStyle='rgba(0,200,180,0.025)'; ctx.lineWidth=1;
+  for(let y=0;y<sz;y+=4){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(sz,y);ctx.stroke();}
+  // crosshair
+  ctx.strokeStyle='rgba(0,180,160,0.12)'; ctx.lineWidth=0.5;
+  ctx.beginPath();ctx.moveTo(sz/2,0);ctx.lineTo(sz/2,sz);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,sz/2);ctx.lineTo(sz,sz/2);ctx.stroke();
+  // organ circle
+  const r=sz*0.22;
+  ctx.beginPath(); ctx.arc(sz/2,sz/2,r,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,160,140,0.07)'; ctx.fill();
+  ctx.strokeStyle='rgba(0,200,180,0.20)'; ctx.lineWidth=1; ctx.stroke();
+  // labels
+  const struct=STRUCTURES[currentStructure];
+  ctx.fillStyle='rgba(0,200,180,0.45)'; ctx.font=`500 ${sz*0.042}px IBM Plex Mono,monospace`; ctx.textAlign='center';
+  ctx.fillText((struct?.name||'').toUpperCase(), sz/2, sz/2+r+sz*0.07);
+  ctx.fillStyle='rgba(0,200,180,0.35)'; ctx.font=`600 ${sz*0.038}px IBM Plex Mono,monospace`; ctx.textAlign='left';
+  ctx.fillText(currentModality, sz*0.04, sz*0.08);
+  ctx.restore();
+  s.bgCtx.canvas.style.filter=`brightness(${s.brightness}%) contrast(${s.contrast}%)${s.invert?' invert(1)':''}`;
+}
+
+function drawAnno(idx) {
+  const s=panelStates[idx]; if(!s) return;
+  const ctx=s.drCtx, sz=s.size;
+  ctx.clearRect(0,0,sz,sz);
+  ctx.font='500 11px IBM Plex Mono,monospace';
+  const T='rgba(0,200,180,0.9)', Y='#f0d060', P='#f06080', G='#60d090';
+  s.annotations.forEach(a=>{
+    ctx.setLineDash([]); ctx.lineWidth=1.5;
+    if(a.type==='measure'){
+      const[x1,y1,x2,y2]=a.data, d=Math.round(Math.sqrt((x2-x1)**2+(y2-y1)**2)*0.35);
+      ctx.strokeStyle=T; ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+      ctx.fillStyle=Y; ctx.fillText(`${d}mm*`,(x1+x2)/2+4,(y1+y2)/2-5);
+    } else if(a.type==='angle'){
+      const[x1,y1,x2,y2,x3,y3]=a.data;
+      let deg=Math.abs((Math.atan2(y3-y2,x3-x2)-Math.atan2(y1-y2,x1-x2))*180/Math.PI);
+      if(deg>180)deg=360-deg;
+      ctx.strokeStyle=P; ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);ctx.stroke();
+      ctx.fillStyle=P; ctx.fillText(`${deg.toFixed(1)}°`,x2+6,y2-6);
+    } else if(a.type==='roi-rect'){
+      const[x,y,w,h]=a.data;
+      ctx.strokeStyle=G; ctx.setLineDash([4,3]); ctx.strokeRect(x,y,w,h); ctx.setLineDash([]);
+      ctx.fillStyle=G; ctx.fillText(`${Math.round(Math.abs(w*h)*0.12)}mm²*`,x+3,y-4);
+    } else if(a.type==='roi-ellipse'){
+      const[cx,cy,rx,ry]=a.data;
+      ctx.strokeStyle=G; ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.ellipse(cx,cy,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle=G; ctx.fillText(`A:${Math.round(Math.abs(rx)*0.6)} B:${Math.round(Math.abs(ry)*0.6)}mm*`,cx+Math.abs(rx)+3,cy);
+    } else if(a.type==='hu-probe'||a.type==='suv-probe'){
+      const[x,y,,label]=a.data;
+      ctx.fillStyle=Y; ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+      ctx.fillText(label,x+8,y-5);
+    } else if(a.type==='annotate'){
+      const[x,y,text]=a.data;
+      ctx.fillStyle='rgba(0,0,0,0.6)';
+      ctx.fillRect(x-2,y-14,ctx.measureText(text).width+8,18);
+      ctx.fillStyle=T; ctx.fillText(text,x+2,y);
+    } else if(a.type==='label'){
+      // labels rendered in overlay div, not on canvas
+    } else if(a.type==='h-line'){
+      ctx.strokeStyle=Y; ctx.setLineDash([6,4]);
+      ctx.beginPath();ctx.moveTo(0,a.data[0]);ctx.lineTo(sz,a.data[0]);ctx.stroke();ctx.setLineDash([]);
+    } else if(a.type==='depth'){
+      for(let i=0;i<=10;i++){
+        const dy=sz*i/10;
+        ctx.strokeStyle=i%5===0?'rgba(0,200,180,0.7)':'rgba(0,200,180,0.3)';
+        ctx.lineWidth=i%5===0?1.5:0.8;
+        ctx.beginPath();ctx.moveTo(a.data[0],dy);ctx.lineTo(a.data[0]+(i%5===0?12:6),dy);ctx.stroke();
+        if(i%5===0){ctx.fillStyle=T;ctx.fillText(`${i}cm*`,a.data[0]+14,dy+4);}
+      } ctx.lineWidth=1.5;
+    } else if(a.type==='isodose'){
+      const[cx,cy]=a.data;
+      [{r:28,pct:'100%',c:'#ff4040'},{r:52,pct:'80%',c:'#ff8c00'},{r:72,pct:'50%',c:'#ffd700'},{r:92,pct:'20%',c:'#40c0ff'}].forEach(lv=>{
+        ctx.strokeStyle=lv.c;ctx.lineWidth=1.8;ctx.setLineDash([5,3]);
+        ctx.beginPath();ctx.arc(cx,cy,lv.r,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=lv.c;ctx.fillText(lv.pct,cx+lv.r+3,cy);
+      }); ctx.lineWidth=1.5;
+    } else if(a.type==='contour'){
+      const[pts,label,color]=a.data;
+      if(pts.length<2)return;
+      ctx.strokeStyle=color;ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);pts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.stroke();
+      ctx.fillStyle=color+'33';ctx.fill();
+      ctx.fillStyle=color;ctx.fillText(label,pts[0][0]+4,pts[0][1]-5);
+    } else if(a.type==='mtv'){
+      const[x,y,w,h]=a.data;
+      ctx.strokeStyle='#ff6060';ctx.lineWidth=2;ctx.setLineDash([3,3]);ctx.strokeRect(x,y,w,h);ctx.setLineDash([]);
+      ctx.fillStyle='#ff6060';ctx.fillText(`MTV≈${Math.round(Math.abs(w*h)*0.08)}cm³*`,x+3,y-4);
+    }
+  });
+  // update overlay
+  const ol=document.getElementById(`measure-overlay-${idx}`);
+  if(ol){
+    const measTags = s.annotations.filter(a=>['measure','roi-rect','roi-ellipse','hu-probe','suv-probe','mtv'].includes(a.type)).slice(-3).map(a=>{
+      if(a.type==='measure'){const d=Math.round(Math.sqrt((a.data[2]-a.data[0])**2+(a.data[3]-a.data[1])**2)*0.35);return`<span class="measure-tag">📏 ${d}mm*</span>`;}
+      if(a.type==='roi-rect')return`<span class="measure-tag">⬜ ${Math.round(Math.abs(a.data[2]*a.data[3])*0.12)}mm²*</span>`;
+      if(a.type==='roi-ellipse')return`<span class="measure-tag">⭕ A:${Math.round(Math.abs(a.data[2])*0.6)} B:${Math.round(Math.abs(a.data[3])*0.6)}mm*</span>`;
+      if(a.type==='hu-probe')return`<span class="measure-tag">🔢 ${a.data[3]}</span>`;
+      if(a.type==='suv-probe')return`<span class="measure-tag">☢ SUV:${a.data[3]}</span>`;
+      if(a.type==='mtv')return`<span class="measure-tag">🧬 MTV≈${Math.round(Math.abs(a.data[2]*a.data[3])*0.08)}cm³*</span>`;
+      return'';
+    });
+    const labelTags = s.annotations.filter(a=>a.type==='label').map(a=>
+      `<span class="measure-tag" style="color:#f0d060;border-color:rgba(240,208,96,0.4);">🏷 ${a.data[2]}</span>`
+    );
+    ol.innerHTML=[...measTags,...labelTags].join('');
+  }
+}
+
+function attachCanvasEvents(idx, viewer) {
+  const s=panelStates[idx]; let drawing=false, startX=0, startY=0, contourPts=[];
+  function pos(e){const r=viewer.getBoundingClientRect(),sc=s.size/r.width;return[(e.clientX-r.left)*sc,(e.clientY-r.top)*sc];}
+  viewer.addEventListener('wheel',e=>{e.preventDefault();s.zoom=Math.max(0.5,Math.min(8,s.zoom*(e.deltaY>0?0.9:1.1)));drawBg(idx);},{passive:false});
+  viewer.addEventListener('pointerdown',e=>{
+    viewer.setPointerCapture(e.pointerId);
+    const[x,y]=pos(e),tool=activeTool;
+    if(tool==='pan'){drawing=true;s._lx=e.clientX;s._ly=e.clientY;}
+    else if(['measure','roi-rect','roi-ellipse','field-size','ssd','ctr','roi-signal','mtv','follicle','roi-counts','tb-ratio','suv-roi'].includes(tool)){drawing=true;startX=x;startY=y;}
+    else if(tool==='angle'){s.points.push([x,y]);if(s.points.length===3){s.annotations.push({type:'angle',data:[...s.points[0],...s.points[1],...s.points[2]]});s.points=[];drawAnno(idx);}else{updateStat(idx,`Angle: point ${s.points.length}/3`);}}
+    else if(tool==='contour'){contourPts=[[x,y]];drawing=true;}
+    else if(tool==='hu-probe'){const hu=Math.round(Math.random()*300-100);s.annotations.push({type:'hu-probe',data:[x,y,null,`HU:${hu}*`]});drawAnno(idx);}
+    else if(tool==='suv-probe'){const sv=(Math.random()*10+0.5).toFixed(1);s.annotations.push({type:'suv-probe',data:[x,y,null,sv]});drawAnno(idx);}
+    else if(tool==='annotate'){const t=prompt('Annotation text:');if(t){s.annotations.push({type:'annotate',data:[x,y,t]});drawAnno(idx);}}
+    else if(tool==='h-line'){s.annotations.push({type:'h-line',data:[y]});drawAnno(idx);}
+    else if(tool==='depth'){s.annotations.push({type:'depth',data:[x]});drawAnno(idx);}
+    else if(tool==='isodose'){s.annotations.push({type:'isodose',data:[x,y]});drawAnno(idx);}
+  });
+  viewer.addEventListener('pointermove',e=>{
+    if(!drawing)return;
+    const[x,y]=pos(e),tool=activeTool;
+    if(tool==='pan'){s.panX+=e.clientX-s._lx;s.panY+=e.clientY-s._ly;s._lx=e.clientX;s._ly=e.clientY;drawBg(idx);}
+    else if(tool==='contour'){contourPts.push([x,y]);drawAnno(idx);const ctx=s.drCtx;ctx.strokeStyle=activeContourColor;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(contourPts[0][0],contourPts[0][1]);contourPts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.stroke();}
+    else{const ctx=s.drCtx,sz=s.size,w=x-startX,h=y-startY;ctx.clearRect(0,0,sz,sz);drawAnno(idx);ctx.strokeStyle='rgba(0,200,180,0.7)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);if(['roi-ellipse','suv-roi','follicle'].includes(tool)){ctx.beginPath();ctx.ellipse(startX+w/2,startY+h/2,Math.abs(w/2),Math.abs(h/2),0,0,Math.PI*2);ctx.stroke();}else{ctx.strokeRect(startX,startY,w,h);}ctx.setLineDash([]);}
+  });
+  viewer.addEventListener('pointerup',e=>{
+    if(!drawing)return; drawing=false;
+    const[x,y]=pos(e),tool=activeTool,w=x-startX,h=y-startY;
+    if(tool==='contour'){s.annotations.push({type:'contour',data:[contourPts,activeContourLabel,activeContourColor]});contourPts=[];drawAnno(idx);return;}
+    if(['measure','ssd'].includes(tool)&&(Math.abs(w)>5||Math.abs(h)>5)){s.annotations.push({type:'measure',data:[startX,startY,x,y]});}
+    else if(['roi-rect','field-size','roi-counts','tb-ratio'].includes(tool)&&Math.abs(w)>5&&Math.abs(h)>5){s.annotations.push({type:'roi-rect',data:[startX,startY,w,h]});}
+    else if(tool==='mtv'&&Math.abs(w)>5&&Math.abs(h)>5){s.annotations.push({type:'mtv',data:[startX,startY,w,h]});}
+    else if(['roi-ellipse','suv-roi','follicle'].includes(tool)&&Math.abs(w)>5&&Math.abs(h)>5){s.annotations.push({type:'roi-ellipse',data:[startX+w/2,startY+h/2,w/2,h/2]});}
+    else if(tool==='roi-signal'&&Math.abs(w)>5&&Math.abs(h)>5){const sig=Math.round(Math.random()*400+100);s.annotations.push({type:'roi-rect',data:[startX,startY,w,h]});s.annotations.push({type:'label',data:[startX,startY+h+16,`SI≈${sig}*`]});}
+    else if(tool==='ctr'&&Math.abs(w)>5){const ctr=(Math.abs(w)/s.size*1.8).toFixed(2);s.annotations.push({type:'measure',data:[startX,startY,x,y]});s.annotations.push({type:'label',data:[startX,startY-10,`CTR≈${ctr}*`]});}
+    drawAnno(idx); updateStat(idx);
+  });
+}
+
+function updateStat(idx,msg){const el=document.getElementById(`tool-status-${idx}`);if(el)el.textContent=msg||`${activeTool} | ×${panelStates[idx]?.zoom?.toFixed(1)}`;}
+
+function setActiveTool(tool){
+  activeTool=tool;
+  document.querySelectorAll('.tool-btn[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));
+  const cur={pan:'grab',measure:'crosshair',angle:'crosshair','roi-rect':'crosshair','roi-ellipse':'crosshair',polyline:'crosshair',annotate:'text','hu-probe':'cell','suv-probe':'cell','roi-signal':'crosshair',isodose:'copy',contour:'cell','h-line':'row-resize',depth:'col-resize',magnify:'zoom-in',ctr:'crosshair','field-size':'crosshair',ssd:'ns-resize',mtv:'crosshair','suv-roi':'crosshair',follicle:'crosshair','roi-counts':'crosshair','tb-ratio':'crosshair'}[tool]||'crosshair';
+  document.querySelectorAll('.canvas-viewer').forEach(v=>v.style.cursor=cur);
+  Object.keys(panelStates).forEach(i=>updateStat(parseInt(i)));
+}
+
+function applyTransformAll(tool){
+  Object.keys(panelStates).forEach(i=>{
+    const s=panelStates[parseInt(i)];if(!s)return;
+    if(tool==='rotate-cw')  s.rotate=(s.rotate+90)%360;
+    if(tool==='rotate-ccw') s.rotate=(s.rotate-90+360)%360;
+    if(tool==='flip-h')     s.flipH*=-1;
+    if(tool==='flip-v')     s.flipV*=-1;
+    if(tool==='invert')     s.invert=!s.invert;
+    if(tool==='reset'){Object.assign(s,{zoom:1,panX:0,panY:0,rotate:0,flipH:1,flipV:1,brightness:100,contrast:100,invert:false,annotations:[],points:[]});drawAnno(parseInt(i));}
+    if(tool==='save')savePNG(parseInt(i));
+    drawBg(parseInt(i));
+  });
+}
+
+function savePNG(idx){
+  const s=panelStates[idx];if(!s)return;
+  const m=document.createElement('canvas');m.width=m.height=s.size;
+  const ctx=m.getContext('2d');
+  ctx.drawImage(s.bgCtx.canvas,0,0);ctx.drawImage(s.drCtx.canvas,0,0);
+  ctx.fillStyle='rgba(0,200,180,0.6)';ctx.font='10px IBM Plex Mono,monospace';
+  ctx.fillText('OmniRad — Educational Only',5,s.size-6);
+  const a=document.createElement('a');a.download=`omnirad-${currentStructure}-${currentModality}-p${idx}.png`;a.href=m.toDataURL('image/png');a.click();
+}
+
+function bindToolbarEvents(){
+  const tb=document.getElementById('toolbar-body');if(!tb)return;
+  tb.addEventListener('click',e=>{
+    const btn=e.target.closest('.tool-btn');
+    if(btn&&btn.dataset.tool){
+      const t=btn.dataset.tool;
+      if(['rotate-cw','rotate-ccw','flip-h','flip-v','invert','reset','save'].includes(t))applyTransformAll(t);
+      else setActiveTool(t);
+    }
+    const pb=e.target.closest('.preset-btn');
+    if(pb){
+      if(pb.dataset.wlW){
+        const slW=document.getElementById('sl-window'),slL=document.getElementById('sl-level');
+        if(slW){slW.value=Math.min(parseInt(pb.dataset.wlW),4000);slW.dispatchEvent(new Event('input'));}
+        if(slL){slL.value=Math.max(-1000,Math.min(parseInt(pb.dataset.wlL),1000));slL.dispatchEvent(new Event('input'));}
+        tb.querySelectorAll('.preset-btn[data-wl-w]').forEach(b=>b.classList.toggle('active',b===pb));
+      } else if(pb.dataset.colormap){
+        tb.querySelectorAll('.preset-btn[data-colormap]').forEach(b=>b.classList.toggle('active',b===pb));
+        updateStat(0,`Colormap: ${pb.dataset.colormap}`);
+      } else if(pb.dataset.label){
+        const lbl=pb.dataset.label;
+        pb.closest('.toolbar-group')?.querySelectorAll('.preset-btn').forEach(b=>b.classList.toggle('active',b===pb));
+        if(CONTOUR_COLORS[lbl]){activeContourLabel=lbl;activeContourColor=CONTOUR_COLORS[lbl];setActiveTool('contour');}
+        else{Object.keys(panelStates).forEach(i=>{const s=panelStates[parseInt(i)];if(s){
+          // Remove existing label with same text to avoid duplicates
+          s.annotations=s.annotations.filter(a=>!(a.type==='label'&&a.data[2]===lbl));
+          // Toggle off if button was already active
+          if(pb.classList.contains('active')){drawAnno(parseInt(i));return;}
+          s.annotations.push({type:'label',data:[20,20+s.annotations.filter(a=>a.type==='label').length*18,lbl]});
+          drawAnno(parseInt(i));}});}
+      }
+    }
+  });
+  // Sliders
+  [['sl-window','sv-window','',(v)=>applyWL()],['sl-level','sv-level','',(v)=>applyWL()],
+   ['sl-bright','sv-bright','%',(v)=>applyBC(v,null)],['sl-contrast','sv-contrast','%',(v)=>applyBC(null,v)],
+   ['sl-gain','sv-gain','%',(v)=>applyBC(v,null)],
+   ['sl-petopacity','sv-petopacity','%',(v)=>updateStat(0,`PET opacity:${v}%`)],
+   ['sl-isodose','sv-isodose','%',(v)=>updateStat(0,`Isodose α:${v}%`)],
+   ['sl-xbright','sv-xbright','%',(v)=>applyBC(v,null)],['sl-xcontrast','sv-xcontrast','%',(v)=>applyBC(null,v)]
+  ].forEach(([sid,vid,sfx,fn])=>{
+    const sl=document.getElementById(sid),vl=document.getElementById(vid);
+    if(!sl||!vl)return;
+    sl.addEventListener('input',()=>{vl.textContent=sl.value+sfx;fn(parseInt(sl.value));});
+  });
+}
+function applyWL(){
+  const slW=document.getElementById('sl-window'),slL=document.getElementById('sl-level');
+  if(!slW||!slL)return;
+  const w=parseInt(slW.value)||400,l=parseInt(slL.value)||40;
+  Object.keys(panelStates).forEach(i=>{const s=panelStates[parseInt(i)];if(!s)return;s.brightness=Math.round(50+l/10);s.contrast=Math.round(100+(4000-w)/40);drawBg(parseInt(i));updateStat(parseInt(i),`W:${w} L:${l}`);});
+}
+function applyBC(bright,contrast){
+  Object.keys(panelStates).forEach(i=>{const s=panelStates[parseInt(i)];if(!s)return;if(bright!==null)s.brightness=bright;if(contrast!==null)s.contrast=contrast;drawBg(parseInt(i));});
+}
+
+function bindViewerEvents() {
+  // Modality buttons — skip disabled (unavailable modalities)
+  document.querySelectorAll('.selector-btn[data-mod]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      currentModality = btn.dataset.mod;
+      currentPlane    = getPlanes(STRUCTURES[currentStructure], currentModality)[0] || 'Axial';
+      document.querySelectorAll('.selector-btn[data-mod]').forEach(b => b.classList.toggle('active', b.dataset.mod === currentModality));
+      document.getElementById('image-grid').innerHTML = buildImagePanels(STRUCTURES[currentStructure], currentModality, currentPlane);
+      // Rebuild toolbar for new modality + reinit canvases
+      const tb = document.getElementById('toolbar-body');
+      if (tb) tb.innerHTML = buildToolbar(currentModality);
+      bindToolbarEvents();
+      setTimeout(() => { initCanvasPanels(); setActiveTool('pan'); }, 50);
+    });
+  });
+
+  // Init tools after DOM settles
+  const tb = document.getElementById('toolbar-body');
+  if (tb) tb.innerHTML = buildToolbar(currentModality);
+  setTimeout(() => {
+    bindToolbarEvents();
+    initCanvasPanels();
+    setActiveTool('pan');
+  }, 80);
+}
+
+// ─── SIDEBAR NAV ─────────────────────────────────────────────
+document.getElementById('structure-list').addEventListener('click', e => {
+  const item = e.target.closest('.structure-item');
+  if (!item) return;
+  const id = item.dataset.id;
+  if (id === currentStructure) return;
+
+  currentStructure = id;
+  currentModality  = 'CT';
+  currentPlane     = 'Axial';
+
+  document.querySelectorAll('.structure-item').forEach(el => {
+    const active = el.dataset.id === id;
+    el.classList.toggle('active', active);
+    el.setAttribute('aria-pressed', active);
+  });
+
+  render(id);
+});
+
+// Keyboard nav on sidebar items
+document.getElementById('structure-list').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    e.target.closest('.structure-item')?.click();
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────
+render('liver', false);
+</script>
+</body>
+</html>
