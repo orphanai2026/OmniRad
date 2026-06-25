@@ -263,6 +263,36 @@ input[type=range].tsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
   .s-hdr{flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* ═══ TTS MODULE ════════════════════════════════════════════ */
+/* Speak button inline next to terms */
+.tts-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--bdr);background:var(--bg-o);color:var(--tx3);font-size:.65rem;cursor:pointer;transition:all .15s;vertical-align:middle;margin-left:.35rem;flex-shrink:0;line-height:1}
+.tts-btn:hover{border-color:var(--teal2);color:var(--teal);background:var(--teal-s)}
+.tts-btn.speaking{border-color:var(--teal);color:var(--teal);background:var(--teal-g);animation:tts-pulse 1s ease-in-out infinite}
+.tts-btn.error{border-color:rgba(220,80,80,.5);color:#d06060}
+@keyframes tts-pulse{0%,100%{box-shadow:0 0 0 0 rgba(57,208,184,.4)}50%{box-shadow:0 0 0 5px rgba(57,208,184,.0)}}
+
+/* TTS Floating Panel */
+.tts-panel{position:fixed;bottom:1.25rem;right:1.25rem;z-index:calc(var(--z-sticky) + 50);background:var(--bg-s);border:1px solid var(--bdr);border-radius:12px;padding:.7rem .9rem;box-shadow:0 8px 32px rgba(0,0,0,.45);min-width:200px;transition:opacity .2s,transform .2s;backdrop-filter:blur(16px)}
+[data-theme="dim"] .tts-panel{box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.tts-panel.hidden{opacity:0;pointer-events:none;transform:translateY(8px)}
+.tts-panel-title{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:.55rem}
+.tts-row{display:flex;align-items:center;gap:.38rem;margin-bottom:.42rem}
+.tts-lbl{font-size:.65rem;color:var(--tx3);min-width:48px;font-family:'IBM Plex Mono',monospace}
+.tts-seg{display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden}
+.tts-seg button{padding:.2rem .48rem;font-size:.64rem;font-family:'IBM Plex Mono',monospace;border:none;background:var(--bg-o);color:var(--tx3);cursor:pointer;transition:all .1s;border-right:1px solid var(--bdr)}
+.tts-seg button:last-child{border-right:none}
+.tts-seg button:hover{background:var(--bg-r);color:var(--tx)}
+.tts-seg button.active{background:var(--teal-g);color:var(--teal);font-weight:600}
+.tts-now{font-size:.63rem;color:var(--tx3);font-family:'IBM Plex Mono',monospace;margin-top:.35rem;min-height:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.tts-now span{color:var(--teal)}
+.tts-close{position:absolute;top:.38rem;right:.5rem;background:none;border:none;color:var(--tx3);font-size:.75rem;cursor:pointer;padding:.1rem .25rem;border-radius:4px;line-height:1}
+.tts-close:hover{color:var(--tx)}
+
+/* TTS toggle button in topbar */
+.tts-toggle{display:flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;transition:all .15s;cursor:pointer}
+.tts-toggle:hover{border-color:var(--teal2);color:var(--teal)}
+.tts-toggle.active{border-color:var(--teal);color:var(--teal);background:var(--teal-s)}
 </style>
 </head>
 <body>
@@ -270,7 +300,10 @@ input[type=range].tsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
 <header class="topbar">
   <a href="index.html" class="logo"><span class="logo-dot"></span>OmniRad</a>
   <nav class="breadcrumb"><span>Atlas</span><span style="opacity:.4">›</span><span id="bc">Liver</span></nav>
-  <div><button class="theme-btn" id="theme-btn"><span id="t-icon">☾</span><span id="t-lbl">Dim</span></button></div>
+  <div style="display:flex;align-items:center;gap:.55rem">
+    <button class="tts-toggle" id="tts-toggle" title="Text-to-Speech">🔊 TTS</button>
+    <button class="theme-btn" id="theme-btn"><span id="t-icon">☾</span><span id="t-lbl">Dim</span></button>
+  </div>
 </header>
 
 <div class="page">
@@ -287,7 +320,29 @@ input[type=range].tsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
   <main class="main" id="main"></main>
 </div>
 
-<!-- FULLSCREEN OVERLAY -->
+<!-- TTS FLOATING PANEL -->
+<div class="tts-panel hidden" id="tts-panel">
+  <button class="tts-close" id="tts-close" title="Close TTS">✕</button>
+  <div class="tts-panel-title">🔊 Pronunciation</div>
+  <div class="tts-row">
+    <span class="tts-lbl">Language</span>
+    <div class="tts-seg" id="tts-lang-seg">
+      <button data-lang="en" class="active">EN</button>
+      <button data-lang="ar">AR</button>
+    </div>
+  </div>
+  <div class="tts-row">
+    <span class="tts-lbl">Speed</span>
+    <div class="tts-seg" id="tts-speed-seg">
+      <button data-rate="0.7">Slow</button>
+      <button data-rate="1.0" class="active">Normal</button>
+      <button data-rate="1.4">Fast</button>
+    </div>
+  </div>
+  <div class="tts-now" id="tts-now">Click 🔊 on any term</div>
+</div>
+
+
 <div class="fs-ov" id="fs-ov">
   <div class="fs-top">
     <div class="fs-left">
@@ -1577,6 +1632,186 @@ document.getElementById('sb-list').addEventListener('click',e=>{
 document.getElementById('sb-list').addEventListener('keydown',e=>{
   if(e.key==='Enter'||e.key===' '){e.preventDefault();e.target.closest('.sb-item')?.click();}
 });
+
+
+// ═══════════════════════════════════════════════════════════
+// TTS MODULE — Task #7
+// Web Speech API · EN/AR · Slow/Normal/Fast
+// ═══════════════════════════════════════════════════════════
+const TTS = {
+  enabled : false,
+  lang    : 'en',   // 'en' | 'ar'
+  rate    : 1.0,    // 0.7 | 1.0 | 1.4
+  speaking: false,
+  synth   : window.speechSynthesis || null,
+  current : null,   // active tts-btn element
+};
+
+// ── Lang map ──────────────────────────────────────────────
+const TTS_LANG = { en:'en-US', ar:'ar-SA' };
+
+// ── Speak ─────────────────────────────────────────────────
+function ttsSpeak(text, btn) {
+  if (!TTS.synth) { ttsError(btn, 'TTS not supported'); return; }
+
+  // Stop any current speech
+  TTS.synth.cancel();
+  if (TTS.current && TTS.current !== btn) {
+    TTS.current.classList.remove('speaking');
+    TTS.current.textContent = '🔊';
+  }
+
+  // If same button pressed again → toggle off
+  if (TTS.current === btn && TTS.speaking) {
+    TTS.speaking = false;
+    TTS.current  = null;
+    btn.classList.remove('speaking');
+    btn.textContent = '🔊';
+    ttsNow('');
+    return;
+  }
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang  = TTS_LANG[TTS.lang] || 'en-US';
+  utter.rate  = TTS.rate;
+  utter.pitch = 1;
+
+  // Try to pick best voice
+  const voices = TTS.synth.getVoices();
+  const match  = voices.find(v => v.lang.startsWith(TTS.lang==='ar'?'ar':'en'));
+  if (match) utter.voice = match;
+
+  utter.onstart = () => {
+    TTS.speaking = true;
+    TTS.current  = btn;
+    btn.classList.add('speaking');
+    btn.textContent = '⏹';
+    ttsNow(text);
+  };
+  utter.onend = utter.onerror = () => {
+    TTS.speaking = false;
+    btn.classList.remove('speaking');
+    btn.textContent = '🔊';
+    if (TTS.current === btn) TTS.current = null;
+    if (utter.error) ttsError(btn, utter.error);
+  };
+
+  TTS.synth.speak(utter);
+}
+
+function ttsError(btn, msg) {
+  if (btn) { btn.classList.add('error'); setTimeout(()=>btn.classList.remove('error'),1500); }
+  console.warn('TTS error:', msg);
+}
+
+function ttsNow(text) {
+  const el = document.getElementById('tts-now');
+  if (!el) return;
+  el.innerHTML = text ? `Speaking: <span>${text}</span>` : 'Click 🔊 on any term';
+}
+
+// ── Build speak button ────────────────────────────────────
+function ttsMkBtn(text, arText) {
+  const btn = document.createElement('button');
+  btn.className   = 'tts-btn';
+  btn.textContent = '🔊';
+  btn.title       = `Pronounce: ${text}`;
+  btn.setAttribute('aria-label', `Pronounce ${text}`);
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (!TTS.enabled) { ttsShowPanel(); }
+    const spk = TTS.lang === 'ar' && arText ? arText : text;
+    ttsSpeak(spk, btn);
+  });
+  return btn;
+}
+
+// ── Inject TTS buttons into current page ──────────────────
+function ttsInjectButtons() {
+  if (!TTS.enabled) return;
+
+  // Structure name (h1.s-name)
+  document.querySelectorAll('.s-name').forEach(el => {
+    if (el.querySelector('.tts-btn')) return;
+    const name = el.textContent.trim();
+    // Get Arabic name from next sibling .s-ar
+    const arEl = el.nextElementSibling;
+    const ar   = arEl && arEl.classList.contains('s-ar') ? arEl.textContent.trim() : '';
+    el.appendChild(ttsMkBtn(name, ar));
+  });
+
+  // Arabic name (.s-ar)
+  document.querySelectorAll('.s-ar').forEach(el => {
+    if (el.querySelector('.tts-btn')) return;
+    const ar = el.textContent.trim();
+    if (!ar) return;
+    el.appendChild(ttsMkBtn(ar, ar));
+  });
+
+  // Info card labels (Location, Function, Clinical Note) — just the label
+  document.querySelectorAll('.info-lbl').forEach(el => {
+    if (el.querySelector('.tts-btn')) return;
+    const lbl = el.textContent.trim();
+    el.appendChild(ttsMkBtn(lbl, ''));
+  });
+
+  // Sidebar structure names
+  document.querySelectorAll('.sb-name').forEach(el => {
+    if (el.querySelector('.tts-btn')) return;
+    const sib = el.nextElementSibling;
+    const ar  = sib && sib.classList.contains('sb-ar') ? sib.textContent.trim() : '';
+    el.appendChild(ttsMkBtn(el.textContent.replace('🔊','').trim(), ar));
+  });
+}
+
+// ── Show / hide panel ────────────────────────────────────
+function ttsShowPanel() {
+  document.getElementById('tts-panel').classList.remove('hidden');
+  TTS.enabled = true;
+  document.getElementById('tts-toggle').classList.add('active');
+  ttsInjectButtons();
+}
+function ttsHidePanel() {
+  document.getElementById('tts-panel').classList.add('hidden');
+  TTS.enabled = false;
+  document.getElementById('tts-toggle').classList.remove('active');
+  if (TTS.synth) TTS.synth.cancel();
+}
+
+// ── Panel controls ────────────────────────────────────────
+document.getElementById('tts-toggle').addEventListener('click', () => {
+  TTS.enabled ? ttsHidePanel() : ttsShowPanel();
+});
+document.getElementById('tts-close').addEventListener('click', ttsHidePanel);
+
+document.getElementById('tts-lang-seg').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-lang]'); if (!btn) return;
+  TTS.lang = btn.dataset.lang;
+  document.querySelectorAll('#tts-lang-seg button').forEach(b => b.classList.toggle('active', b===btn));
+  if (TTS.synth) TTS.synth.cancel();
+});
+
+document.getElementById('tts-speed-seg').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-rate]'); if (!btn) return;
+  TTS.rate = parseFloat(btn.dataset.rate);
+  document.querySelectorAll('#tts-speed-seg button').forEach(b => b.classList.toggle('active', b===btn));
+});
+
+// Re-inject buttons after each render (render replaces main innerHTML)
+const _origRender = render;
+// Patch render to re-inject TTS buttons after DOM update
+const _origGo = ()=>{};
+// We hook into the render cycle via MutationObserver on #main
+const _ttsObs = new MutationObserver(() => {
+  if (TTS.enabled) setTimeout(ttsInjectButtons, 200);
+});
+_ttsObs.observe(document.getElementById('main'), { childList: true, subtree: false });
+
+// Pre-load voices (some browsers need this)
+if (window.speechSynthesis) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
 
 // ─── INIT ──────────────────────────────────────────────────
 render('liver',false);
