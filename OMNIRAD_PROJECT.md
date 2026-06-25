@@ -3,7 +3,7 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v1.0 |
+| Version | v1.4 |
 | Date | 2026-06-25 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
@@ -375,6 +375,13 @@ System:
 ❌ FORBIDDEN: external CDN for libraries
 ```
 
+## Deployment Note (learned in Task #2)
+```
+- Self-contained HTML (CSS embedded) preferred for local dev
+- Avoids file:// path issues with Arabic/spaces in folder names
+- Separate assets/ folder used when deploying to server/GitHub Pages
+```
+
 ## Layers
 
 ### Frontend
@@ -414,25 +421,25 @@ System:
 
 ```
 OmniRad/
-├── index.html              ← Main page
+├── index.html              ← Main page (self-contained for local dev)
 ├── assets/
-│   ├── theme.css           ← Unified CSS Variables
+│   ├── theme.css           ← Unified CSS Variables (used in server deploy)
 │   ├── fonts/              ← IBM Plex
 │   ├── icons/              ← SVG inline
 │   └── logo.svg
 ├── modules/
-│   ├── atlas.js            ← Atlas
-│   ├── comparison.js       ← Multimodal comparison
-│   ├── colorization.js     ← Colorization
-│   ├── image-tools.js      ← Imaging tools
-│   ├── tts.js              ← Pronunciation
-│   ├── srs.js              ← Spaced Repetition
-│   ├── mnemonics.js        ← Library
-│   └── ai-chat.js          ← AI Assistant
+│   ├── atlas.js
+│   ├── comparison.js
+│   ├── colorization.js
+│   ├── image-tools.js
+│   ├── tts.js
+│   ├── srs.js
+│   ├── mnemonics.js
+│   └── ai-chat.js
 ├── data/
-│   ├── structures.json     ← Anatomical structures
-│   ├── mnemonics.json      ← Mnemonics
-│   └── relationships.json  ← Cross-references
+│   ├── structures.json
+│   ├── mnemonics.json
+│   └── relationships.json
 ├── images/
 │   └── [structure-id]/
 │       ├── ct-axial.webp
@@ -440,7 +447,8 @@ OmniRad/
 │       ├── mri-t1.webp
 │       └── ...
 └── pages/
-    ├── atlas.html
+    ├── atlas.html          ← Task #3 ✅ (+ Compare button → Task #4)
+    ├── comparison.html     ← Task #4 ✅
     ├── library.html
     └── settings.html
 ```
@@ -451,15 +459,13 @@ OmniRad/
 
 ## 📋 Approved Task Schedule (Conversations)
 
-> **Rule:** Each task in a separate conversation. Each task requires explicit approval before start AND after completion.
-
 | # | Task | Phase | Status |
 |---|------|-------|--------|
 | 0 | Write OMNIRAD_PROJECT.md (this file) | Plan | ✅ Done |
 | 1 | Design visual mockups (no code) | Phase 1 | ✅ Done — 2026-06-25 |
-| 2 | Build main page + base layout | Phase 1 | ⏳ |
-| 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ⏳ |
-| 4 | Build Multimodal Comparison Engine | Phase 1 | ⏳ |
+| 2 | Build main page + base layout | Phase 1 | ✅ Done — 2026-06-25 |
+| 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ✅ Done — 2026-06-25 |
+| 4 | Build Multimodal Comparison Engine | Phase 1 | ✅ Done — 2026-06-25 |
 | 5 | Build Image Tools Suite | Phase 1 | ⏳ |
 | 6 | Build Colorization Toggle (trial) | Phase 1 | ⏳ |
 | 7 | Build TTS Module | Phase 1 | ⏳ |
@@ -583,8 +589,6 @@ Scope:
 
 # ⑩ What We Will NOT Do (No-Goes)
 
-> **Explicit list to prevent Project Creep.** Any feature here — rejected even if it seems excellent.
-
 ```
 ❌ Build mobile app (web-only through Phase 1-3)
 ❌ Real-time DICOM from PACS
@@ -661,6 +665,31 @@ If any step missing → task still in progress.
 
 # ⑫ Version History
 
+- **v1.4 — 2026-06-25**
+  - Task #4 approved: Build Multimodal Comparison Engine
+  - Delivered: pages/comparison.html (self-contained, CSS embedded)
+  - Modalities: CT · MRI · US · X-Ray · Angio · NM · Mammo (7 total)
+  - Adaptive layout: 1→fullscreen · 2→columns · 3→3col · 4→2×2 · 5+→auto-grid
+  - Features: Quick Presets · Sync Mode · Plane Tabs · URL Parameters
+  - Atlas integration: Compare button via ?structure=&modalities= URL params
+  - Uploaded to GitHub: orphanai2026/OmniRad
+
+- **v1.3 — 2026-06-25**
+  - Task #3 approved: Build Smart Atlas (5 trial structures)
+  - Delivered: pages/atlas.html (self-contained, CSS embedded)
+  - Structures: Liver · Spleen · Right Kidney · Pancreas · Gallbladder
+  - Modalities: CT · MRI · US with plane selectors
+  - Fix: Teal contrast in Dim Mode (oklch 0.72→0.42 on light bg)
+  - Uploaded to GitHub: orphanai2026/OmniRad
+
+- **v1.2 — 2026-06-25**
+  - Task #2 approved: Build main page + base layout
+  - Delivered: index.html (self-contained, CSS embedded)
+  - Design: Dark Mode default, Dim Mode toggle (replaces Light Mode)
+  - Theme toggle persists via localStorage
+  - Issue #1 resolved: Light Mode → Dim Mode (warm blue-gray)
+  - Technical note: self-contained HTML preferred for local dev (avoids file:// path issues)
+
 - **v1.1 — 2026-06-25**
   - Task #1 approved: Visual Mockups (Home + Atlas + Comparison)
   - Delivered: mockup-home.html, mockup-atlas.html, mockup-comparison.html, theme.css
@@ -670,10 +699,9 @@ If any step missing → task still in progress.
 - **v1.0 — 2026-06-25**
   - First release of OMNIRAD_PROJECT.md
   - Brand-new project from scratch
-  - 12 core sections
+  - 12 core sections defined
   - 8 mandatory collaboration rules
   - 17 tasks across 3 phases
-  - "What we won't do" list for Project Creep prevention
 
 ---
 
@@ -688,21 +716,11 @@ Read governance files:
 - OMNIRAD_PROJECT.md
 - OMNIRAD_ISSUES.md
 
-Comply with the 8 collaboration rules:
-1. Model Assessment
-2. Files First
-3. File Wins
-4. Three Strikes
-5. Best Solution First
-6. Approval Gate
-7. Concise by Default
-8. No Project Creep
-
-Start with:
-[Model] [Files Read] [Task Status] [Action Required]
+Comply with the 8 collaboration rules.
+Start with: [Model] [Files Read] [Task Status] [Action Required]
 Then request my approval."
 ```
 
 ---
 
-**End of Document — OmniRad Master Plan v1.0**
+**End of Document — OmniRad Master Plan v1.4**
