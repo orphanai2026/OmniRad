@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Multimodal Comparison</title>
+<style>
+/* ─── DESIGN TOKENS ─────────────────────────────────────────────── */
+:root {
+  --teal:         oklch(0.72 0.14 195);
+  --teal-dim:     oklch(0.42 0.14 195);
+  --teal-glow:    oklch(0.72 0.14 195 / 0.18);
+  --teal-subtle:  oklch(0.72 0.14 195 / 0.08);
+
+  /* dark theme (default) */
+  --bg:           oklch(0.14 0.01 240);
+  --bg-surface:   oklch(0.18 0.01 240);
+  --bg-raised:    oklch(0.22 0.012 240);
+  --bg-overlay:   oklch(0.26 0.012 240);
+  --text-primary: oklch(0.94 0.005 240);
+  --text-muted:   oklch(0.62 0.008 240);
+  --border:       oklch(0.30 0.010 240);
+  --border-focus: oklch(0.72 0.14 195 / 0.60);
+  --shadow:       0 2px 12px oklch(0 0 0 / 0.40);
+
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 16px;
+  --transition: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dim"] {
+  --bg:           oklch(0.88 0.010 240);
+  --bg-surface:   oklch(0.83 0.012 240);
+  --bg-raised:    oklch(0.79 0.013 240);
+  --bg-overlay:   oklch(0.74 0.014 240);
+  --text-primary: oklch(0.20 0.010 240);
+  --text-muted:   oklch(0.40 0.010 240);
+  --border:       oklch(0.68 0.014 240);
+  --border-focus: oklch(0.42 0.14 195 / 0.60);
+  --shadow:       0 2px 12px oklch(0 0 0 / 0.12);
+  --teal:         oklch(0.42 0.14 195);
+  --teal-glow:    oklch(0.42 0.14 195 / 0.14);
+  --teal-subtle:  oklch(0.42 0.14 195 / 0.09);
+}
+
+/* ─── RESET ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ─── FONT LOAD ──────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ─── NAV ────────────────────────────────────────────────────────── */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 16px;
+}
+
+.nav-logo {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--teal);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.nav-logo span { color: var(--text-primary); }
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+.nav-links a {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  transition: color var(--transition), background var(--transition);
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--text-primary);
+  background: var(--bg-raised);
+}
+.nav-links a.active { color: var(--teal); }
+
+.nav-right { display: flex; align-items: center; gap: 10px; }
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.theme-toggle:hover { color: var(--text-primary); border-color: var(--teal); }
+
+/* ─── PAGE LAYOUT ────────────────────────────────────────────────── */
+.page { flex: 1; display: flex; flex-direction: column; }
+
+/* ─── CONTROL PANEL ──────────────────────────────────────────────── */
+.control-panel {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panel-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Structure selector */
+.structure-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+select.structure-select {
+  padding: 7px 32px 7px 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 0.875rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color var(--transition);
+  min-width: 180px;
+}
+select.structure-select:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+/* Modality checkboxes */
+.modality-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mod-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-raised);
+  transition: all var(--transition);
+  user-select: none;
+}
+.mod-chip:hover { border-color: var(--teal); color: var(--text-primary); }
+.mod-chip.active {
+  border-color: var(--teal);
+  background: var(--teal-subtle);
+  color: var(--teal);
+}
+.mod-chip input { display: none; }
+
+.mod-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.mod-chip.active .mod-dot { background: var(--teal); }
+
+/* Quick toggles */
+.quick-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.quick-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.quick-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+/* Sync toggle */
+.sync-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: all var(--transition);
+}
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--teal-subtle);
+  border-color: var(--teal);
+}
+.toggle-switch input:checked + .toggle-slider::after {
+  transform: translateX(16px);
+  background: var(--teal);
+}
+
+.sync-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* Active count badge */
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: oklch(0.14 0.01 240);
+  font-size: 0.72rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ─── COMPARISON GRID ────────────────────────────────────────────── */
+.comparison-area {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-x: auto;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 360px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.empty-icon {
+  width: 64px; height: 64px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  color: var(--border);
+}
+.empty-state h3 { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+.empty-state p  { font-size: 0.85rem; max-width: 280px; }
+
+/* Grid layouts */
+.grid-wrap {
+  display: grid;
+  gap: 16px;
+  min-height: 400px;
+  transition: gap var(--transition);
+}
+
+/* 1 → fullscreen */
+.grid-wrap[data-count="1"] {
+  grid-template-columns: 1fr;
+  max-width: 800px;
+  margin: 0 auto;
+}
+/* 2 → 2 columns */
+.grid-wrap[data-count="2"] { grid-template-columns: 1fr 1fr; }
+/* 3 → 3 columns */
+.grid-wrap[data-count="3"] { grid-template-columns: repeat(3, 1fr); }
+/* 4 → 2×2 */
+.grid-wrap[data-count="4"] { grid-template-columns: 1fr 1fr; }
+/* 5+ → horizontal scroll row */
+.grid-wrap[data-count="5"],
+.grid-wrap[data-count="6"],
+.grid-wrap[data-count="7"],
+.grid-wrap[data-count="8"] {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: 260px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+/* Viewer card */
+.viewer-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition);
+}
+.viewer-card:hover { border-color: oklch(0.40 0.014 240); }
+
+.viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-raised);
+}
+
+.viewer-modality {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mod-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.mod-badge.ct  { background: oklch(0.30 0.04 200 / 0.5); color: oklch(0.78 0.12 200); border: 1px solid oklch(0.45 0.09 200 / 0.4); }
+.mod-badge.mri { background: oklch(0.30 0.04 280 / 0.5); color: oklch(0.78 0.10 280); border: 1px solid oklch(0.45 0.09 280 / 0.4); }
+.mod-badge.us  { background: oklch(0.30 0.06 100 / 0.5); color: oklch(0.78 0.14 100); border: 1px solid oklch(0.45 0.11 100 / 0.4); }
+.mod-badge.xray{ background: oklch(0.30 0.02 240 / 0.5); color: oklch(0.78 0.06 240); border: 1px solid oklch(0.45 0.05 240 / 0.4); }
+.mod-badge.angio{background: oklch(0.30 0.06 25  / 0.5); color: oklch(0.78 0.16 25 ); border: 1px solid oklch(0.45 0.12 25  / 0.4); }
+.mod-badge.nm  { background: oklch(0.30 0.05 330 / 0.5); color: oklch(0.78 0.14 330); border: 1px solid oklch(0.45 0.11 330 / 0.4); }
+.mod-badge.mammo{background:oklch(0.30 0.04 50  / 0.5); color: oklch(0.78 0.13 50 ); border: 1px solid oklch(0.45 0.10 50  / 0.4); }
+
+.viewer-name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.viewer-plane-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.plane-tab {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all var(--transition);
+}
+.plane-tab:hover { color: var(--text-primary); background: var(--bg-overlay); }
+.plane-tab.active { color: var(--teal); background: var(--teal-subtle); }
+
+/* Image area */
+.viewer-image {
+  flex: 1;
+  position: relative;
+  background: oklch(0.10 0.005 240);
+  min-height: 240px;
+  cursor: crosshair;
+  overflow: hidden;
+}
+
+.viewer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition);
+}
+
+/* Placeholder when no real image */
+.img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 240px;
+  color: oklch(0.40 0.01 240);
+}
+
+.img-placeholder svg { opacity: 0.3; }
+.img-placeholder span {
+  font-size: 0.78rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: oklch(0.40 0.01 240);
+  letter-spacing: 0.05em;
+}
+
+/* Scan lines aesthetic overlay */
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    oklch(0 0 0 / 0.04) 2px,
+    oklch(0 0 0 / 0.04) 4px
+  );
+  pointer-events: none;
+}
+
+/* Viewer footer */
+.viewer-footer {
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.viewer-info {
+  font-size: 0.72rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-muted);
+}
+
+.viewer-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.icon-btn {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.icon-btn:hover { background: var(--bg-overlay); color: var(--teal); }
+
+/* ─── SYNC INDICATOR ─────────────────────────────────────────────── */
+.sync-active .viewer-card {
+  border-color: oklch(0.72 0.14 195 / 0.30);
+}
+.sync-active .viewer-card:hover {
+  border-color: var(--teal);
+}
+
+.sync-indicator {
+  display: none;
+  position: absolute;
+  top: 8px; right: 8px;
+  padding: 3px 8px;
+  background: var(--teal-glow);
+  border: 1px solid var(--teal);
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--teal);
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(4px);
+}
+.sync-active .sync-indicator { display: block; }
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 16px; }
+  .nav-links { display: none; }
+  .control-panel { padding: 12px 16px; }
+  .comparison-area { padding: 16px; }
+
+  .grid-wrap[data-count="2"],
+  .grid-wrap[data-count="3"],
+  .grid-wrap[data-count="4"] {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-row { gap: 8px; }
+  .quick-btns { display: none; }
+  .sync-toggle { margin-left: 0; }
+}
+
+/* ─── REDUCED MOTION ──────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+
+/* ─── FOCUS ─────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─── TOOLTIP ────────────────────────────────────────────────────── */
+[data-tip] { position: relative; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  z-index: 200;
+}
+[data-tip]:hover::after { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="../index.html" class="nav-logo">Omni<span>Rad</span></a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="atlas.html">Atlas</a></li>
+    <li><a href="comparison.html" class="active">Compare</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </svg>
+      <span id="themeLabel">Dim</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── PAGE ── -->
+<main class="page">
+
+  <!-- ── CONTROL PANEL ── -->
+  <section class="control-panel" aria-label="Comparison controls">
+
+    <!-- Row 1: Structure + Modalities -->
+    <div class="panel-row">
+
+      <!-- Structure -->
+      <div class="structure-select-wrap">
+        <span class="panel-label">Structure</span>
+        <select class="structure-select" id="structureSelect" aria-label="Select anatomical structure">
+          <option value="liver">Liver (الكبد)</option>
+          <option value="spleen">Spleen (الطحال)</option>
+          <option value="kidney">Right Kidney (الكلية اليمنى)</option>
+          <option value="pancreas">Pancreas (البنكرياس)</option>
+          <option value="gallbladder">Gallbladder (المرارة)</option>
+        </select>
+      </div>
+
+      <!-- Divider -->
+      <div style="width:1px; height:28px; background:var(--border); flex-shrink:0;"></div>
+
+      <!-- Modalities -->
+      <span class="panel-label">Modalities</span>
+      <div class="modality-group" id="modalityGroup" role="group" aria-label="Select modalities to compare">
+        <label class="mod-chip active" data-mod="ct">
+          <input type="checkbox" value="ct" checked>
+          <span class="mod-dot"></span> CT
+        </label>
+        <label class="mod-chip active" data-mod="mri">
+          <input type="checkbox" value="mri" checked>
+          <span class="mod-dot"></span> MRI
+        </label>
+        <label class="mod-chip active" data-mod="us">
+          <input type="checkbox" value="us" checked>
+          <span class="mod-dot"></span> US
+        </label>
+        <label class="mod-chip" data-mod="xray">
+          <input type="checkbox" value="xray">
+          <span class="mod-dot"></span> X-Ray
+        </label>
+        <label class="mod-chip" data-mod="angio">
+          <input type="checkbox" value="angio">
+          <span class="mod-dot"></span> Angio
+        </label>
+        <label class="mod-chip" data-mod="nm">
+          <input type="checkbox" value="nm">
+          <span class="mod-dot"></span> NM
+        </label>
+        <label class="mod-chip" data-mod="mammo">
+          <input type="checkbox" value="mammo">
+          <span class="mod-dot"></span> Mammo
+        </label>
+      </div>
+
+      <!-- Active count -->
+      <span class="count-badge" id="countBadge" aria-label="3 modalities selected">3</span>
+    </div>
+
+    <!-- Row 2: Quick toggles + Sync -->
+    <div class="panel-row">
+      <span class="panel-label">Quick</span>
+      <div class="quick-btns">
+        <button class="quick-btn" data-preset="ct,mri">CT + MRI</button>
+        <button class="quick-btn" data-preset="ct,us">CT + US</button>
+        <button class="quick-btn" data-preset="ct,mri,us">CT + MRI + US</button>
+        <button class="quick-btn" data-preset="ct,mri,us,xray,angio,nm,mammo">All</button>
+        <button class="quick-btn" data-preset="">Clear</button>
+      </div>
+
+      <div class="sync-toggle" style="margin-left:auto;">
+        <label class="toggle-switch" for="syncToggle" aria-label="Sync scroll mode">
+          <input type="checkbox" id="syncToggle">
+          <span class="toggle-slider"></span>
+        </label>
+        <label class="sync-label" for="syncToggle">Sync Mode</label>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── COMPARISON GRID ── -->
+  <div class="comparison-area" id="comparisonArea">
+
+    <!-- Empty state (hidden when modalities selected) -->
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/>
+          <rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>
+        </svg>
+      </div>
+      <h3>No modalities selected</h3>
+      <p>Select at least one modality above, or use a Quick preset.</p>
+    </div>
+
+    <!-- Grid (rendered by JS) -->
+    <div class="grid-wrap" id="gridWrap" data-count="3" role="region" aria-label="Comparison viewers"></div>
+
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   OMNIRAD — COMPARISON ENGINE
+   Task #4 · Vanilla JS · No frameworks
+   ═══════════════════════════════════════════════════════════ */
+
+// ── DATA ─────────────────────────────────────────────────────
+const STRUCTURES = {
+  liver:       { name: 'Liver', ar: 'الكبد',        system: 'Abdomen · Right Upper Quadrant' },
+  spleen:      { name: 'Spleen', ar: 'الطحال',      system: 'Abdomen · Left Upper Quadrant' },
+  kidney:      { name: 'Right Kidney', ar: 'الكلية اليمنى', system: 'Retroperitoneum' },
+  pancreas:    { name: 'Pancreas', ar: 'البنكرياس', system: 'Retroperitoneum · Epigastrium' },
+  gallbladder: { name: 'Gallbladder', ar: 'المرارة', system: 'Abdomen · Right Upper Quadrant' },
+};
+
+const MODALITIES = {
+  ct:    { label: 'CT',    full: 'Computed Tomography',  planes: ['Axial','Coronal','Sagittal'] },
+  mri:   { label: 'MRI',   full: 'Magnetic Resonance',   planes: ['Axial','Coronal','Sagittal'] },
+  us:    { label: 'US',    full: 'Ultrasound',            planes: ['Long axis','Short axis','Oblique'] },
+  xray:  { label: 'X-Ray', full: 'Plain Radiography',    planes: ['PA','Lateral','AP'] },
+  angio: { label: 'Angio', full: 'Angiography',          planes: ['AP','Lateral','3D'] },
+  nm:    { label: 'NM',    full: 'Nuclear Medicine',     planes: ['Anterior','Posterior','SPECT'] },
+  mammo: { label: 'Mammo', full: 'Mammography',          planes: ['CC','MLO','Lateral'] },
+};
+
+// ── STATE ─────────────────────────────────────────────────────
+const state = {
+  structure: 'liver',
+  active:    new Set(['ct','mri','us']),
+  sync:      false,
+  planes:    {},  // per modality plane selection
+};
+
+// ── DOM REFS ──────────────────────────────────────────────────
+const gridWrap      = document.getElementById('gridWrap');
+const emptyState    = document.getElementById('emptyState');
+const countBadge    = document.getElementById('countBadge');
+const structSel     = document.getElementById('structureSelect');
+const syncToggle    = document.getElementById('syncToggle');
+const themeToggle   = document.getElementById('themeToggle');
+const themeLabel    = document.getElementById('themeLabel');
+const compArea      = document.getElementById('comparisonArea');
+
+// ── THEME ─────────────────────────────────────────────────────
+function initTheme() {
+  const saved = localStorage.getItem('omnirad-theme') || 'dark';
+  applyTheme(saved);
+}
+
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  themeLabel.textContent = t === 'dark' ? 'Dim' : 'Dark';
+  localStorage.setItem('omnirad-theme', t);
+}
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'dim' : 'dark');
+});
+
+// ── URL PARAMS (launched from Atlas) ─────────────────────────
+function readURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  const s = params.get('structure');
+  const m = params.get('modalities');
+  if (s && STRUCTURES[s]) {
+    state.structure = s;
+    structSel.value = s;
+  }
+  if (m) {
+    const mods = m.split(',').filter(x => MODALITIES[x]);
+    if (mods.length) {
+      state.active = new Set(mods);
+      syncCheckboxes();
+    }
+  }
+}
+
+function syncCheckboxes() {
+  document.querySelectorAll('#modalityGroup .mod-chip').forEach(chip => {
+    const mod = chip.dataset.mod;
+    const cb  = chip.querySelector('input');
+    const on  = state.active.has(mod);
+    cb.checked = on;
+    chip.classList.toggle('active', on);
+  });
+}
+
+// ── PLACEHOLDER IMAGE ─────────────────────────────────────────
+function makePlaceholder(mod, plane, structKey) {
+  const info = MODALITIES[mod];
+  const struct = STRUCTURES[structKey];
+  return `
+    <div class="img-placeholder">
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="8" width="48" height="48" rx="6" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+        <circle cx="32" cy="30" r="12" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+        <path d="M20 46 Q32 36 44 46" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+        <circle cx="32" cy="30" r="4" fill="currentColor" opacity="0.2"/>
+      </svg>
+      <span>${struct.name} · ${info.label} · ${plane}</span>
+      <span style="font-size:0.65rem;opacity:0.5;">Image placeholder</span>
+    </div>
+  `;
+}
+
+// ── RENDER GRID ───────────────────────────────────────────────
+function renderGrid() {
+  const mods = [...state.active];
+  const count = mods.length;
+
+  if (count === 0) {
+    gridWrap.innerHTML = '';
+    gridWrap.style.display = 'none';
+    emptyState.style.display = 'flex';
+    countBadge.textContent = '0';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  gridWrap.style.display = 'grid';
+  gridWrap.setAttribute('data-count', Math.min(count, 8));
+  countBadge.textContent = count;
+
+  gridWrap.innerHTML = mods.map(mod => buildCard(mod)).join('');
+
+  // Activate saved planes
+  gridWrap.querySelectorAll('.plane-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const card = tab.closest('.viewer-card');
+      card.querySelectorAll('.plane-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+}
+
+function buildCard(mod) {
+  const info   = MODALITIES[mod];
+  const planes = info.planes;
+  const defaultPlane = planes[0];
+
+  const planeTabs = planes.map((p, i) =>
+    `<button class="plane-tab${i===0?' active':''}" aria-label="View ${p} plane">${p}</button>`
+  ).join('');
+
+  return `
+    <article class="viewer-card" data-mod="${mod}" role="img" aria-label="${info.full} viewer">
+      <header class="viewer-header">
+        <div class="viewer-modality">
+          <span class="mod-badge ${mod}">${info.label}</span>
+          <span class="viewer-name">${info.full}</span>
+        </div>
+        <div class="viewer-plane-tabs" role="tablist" aria-label="Image planes">
+          ${planeTabs}
+        </div>
+      </header>
+
+      <div class="viewer-image">
+        ${makePlaceholder(mod, defaultPlane, state.structure)}
+        <div class="scan-overlay"></div>
+        <span class="sync-indicator">SYNC</span>
+      </div>
+
+      <footer class="viewer-footer">
+        <span class="viewer-info">${STRUCTURES[state.structure].name} · ${defaultPlane}</span>
+        <div class="viewer-actions">
+          <button class="icon-btn" data-tip="Zoom in" aria-label="Zoom in">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
+            </svg>
+          </button>
+          <button class="icon-btn" data-tip="Fullscreen" aria-label="Fullscreen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+          </button>
+          <button class="icon-btn" data-tip="Save image" aria-label="Save image">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </button>
+        </div>
+      </footer>
+    </article>
+  `;
+}
+
+// ── MODALITY CHIPS ────────────────────────────────────────────
+document.getElementById('modalityGroup').addEventListener('change', e => {
+  if (e.target.type !== 'checkbox') return;
+  const chip = e.target.closest('.mod-chip');
+  const mod  = chip.dataset.mod;
+
+  if (e.target.checked) {
+    state.active.add(mod);
+    chip.classList.add('active');
+  } else {
+    state.active.delete(mod);
+    chip.classList.remove('active');
+  }
+
+  renderGrid();
+});
+
+// ── QUICK PRESETS ─────────────────────────────────────────────
+document.querySelectorAll('.quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const preset = btn.dataset.preset;
+    state.active = preset
+      ? new Set(preset.split(',').filter(x => MODALITIES[x]))
+      : new Set();
+    syncCheckboxes();
+    renderGrid();
+  });
+});
+
+// ── STRUCTURE SELECT ──────────────────────────────────────────
+structSel.addEventListener('change', () => {
+  state.structure = structSel.value;
+  renderGrid();
+});
+
+// ── SYNC MODE ─────────────────────────────────────────────────
+syncToggle.addEventListener('change', () => {
+  state.sync = syncToggle.checked;
+  gridWrap.classList.toggle('sync-active', state.sync);
+});
+
+// ── INIT ──────────────────────────────────────────────────────
+initTheme();
+readURLParams();
+renderGrid();
+</script>
+</body>
+</html>
