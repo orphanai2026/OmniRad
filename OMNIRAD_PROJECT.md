@@ -3,7 +3,7 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v1.5 |
+| Version | v1.6 |
 | Date | 2026-06-26 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
@@ -502,7 +502,7 @@ OmniRad/
 | 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ✅ Done — 2026-06-25 |
 | 4 | Build Multimodal Comparison Engine | Phase 1 | ✅ Done — 2026-06-25 |
 | 5 | Build Image Tools Suite | Phase 1 | ✅ Done — 2026-06-26 |
-| 6 | Build Colorization Toggle (trial) | Phase 1 | ⏳ |
+| 6 | Build Colorization Toggle (trial) | Phase 1 | 🔴 Deferred → Phase 2 |
 | 7 | Build TTS Module | Phase 1 | ⏳ |
 | 8 | MVP test with 5-7 students | Phase 1 | ⏳ |
 | 9 | Build SRS Module | Phase 2 | ⏳ |
@@ -634,6 +634,12 @@ Then: "Do you approve? yes/no/edit"
 ---
 
 # ⑫ Version History
+
+- **v1.6 — 2026-06-26**
+  - Task #6 deferred: Colorization Toggle requires TotalSegmentator segmentation masks
+  - Manual polygon/SVG approach attempted — technically infeasible without pre-processed masks
+  - Issue #8 logged · atlas.html restored to clean Task #5 state
+  - Proceeding to Task #7 — TTS Module
 
 - **v1.5 — 2026-06-26**
   - Task #5 approved: Build Image Tools Suite
