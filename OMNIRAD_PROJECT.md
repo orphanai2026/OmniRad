@@ -3,7 +3,7 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v1.6 |
+| Version | v1.8 |
 | Date | 2026-06-26 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
@@ -482,8 +482,10 @@ OmniRad/
 ├── images/
 │   └── [structure-id]/
 └── pages/
-    ├── atlas.html          ← Task #3 ✅ + Task #5 ✅
-    ├── comparison.html     ← Task #4 ✅
+    ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅
+    ├── comparison.html         ← Task #4 ✅
+    ├── survey.html             ← Task #8 ✅
+    ├── distribution-guide.html ← Task #8 ✅
     ├── library.html
     └── settings.html
 ```
@@ -503,8 +505,8 @@ OmniRad/
 | 4 | Build Multimodal Comparison Engine | Phase 1 | ✅ Done — 2026-06-25 |
 | 5 | Build Image Tools Suite | Phase 1 | ✅ Done — 2026-06-26 |
 | 6 | Build Colorization Toggle (trial) | Phase 1 | 🔴 Deferred → Phase 2 |
-| 7 | Build TTS Module | Phase 1 | ⏳ |
-| 8 | MVP test with 5-7 students | Phase 1 | ⏳ |
+| 7 | Build TTS Module | Phase 1 | ✅ Done — 2026-06-26 |
+| 8 | MVP test with 5-7 students | Phase 1 | 🟡 In Progress — 2026-06-26 |
 | 9 | Build SRS Module | Phase 2 | ⏳ |
 | 10 | Build Mnemonics Library | Phase 2 | ⏳ |
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ⏳ |
@@ -635,6 +637,22 @@ Then: "Do you approve? yes/no/edit"
 
 # ⑫ Version History
 
+- **v1.8 — 2026-06-26**
+  - Task #8 in progress: MVP Test with 5–7 Students
+  - Delivered: pages/survey.html · pages/distribution-guide.html
+  - survey.html: 20 questions · 4 sections · localStorage · JSON+CSV export · Dark theme
+  - distribution-guide.html: 7 steps · 5 timed tasks · KPI table · direct CTA to survey
+  - OMNIRAD_ISSUES.md: results template added (§ Task #8 Results)
+
+- **v1.7 — 2026-06-26**
+  - Task #7 approved: Build TTS Module
+  - Delivered: pages/atlas.html (integrated into Task #5 file)
+  - Web Speech API: EN (en-US) + AR (ar-SA) · No external dependencies
+  - 🔊 buttons injected next to: structure name (EN+AR), info card labels, sidebar names
+  - Floating panel (bottom-right): Language toggle (EN/AR) + Speed (Slow/Normal/Fast)
+  - Toggle button in topbar · MutationObserver re-injects on every render
+  - Speaking animation (tts-pulse) · Stop on second press · Error state handling
+
 - **v1.6 — 2026-06-26**
   - Task #6 deferred: Colorization Toggle requires TotalSegmentator segmentation masks
   - Manual polygon/SVG approach attempted — technically infeasible without pre-processed masks
@@ -687,4 +705,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v1.5**
+**End of Document — OmniRad Master Plan v1.8**

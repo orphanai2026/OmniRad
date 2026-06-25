@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-26 — Task #6 deferred*
+*Last updated: 2026-06-26 — Task #8 in progress*
 
 ---
 
@@ -52,6 +52,89 @@
 | 4 | Build Multimodal Comparison Engine | 2026-06-25 | Mohammed Saeed Alzahrani | pages/comparison.html · 7 modalities · Adaptive layout · Quick Presets · Sync Mode · URL params |
 | 5 | Build Image Tools Suite | 2026-06-26 | Mohammed Saeed Alzahrani | atlas.html · Canvas-based tools · Active Panel System · Plane Toggle · Split View · Fullscreen · 7 modalities |
 | 6 | Build Colorization Toggle | 2026-06-26 | — | DEFERRED — requires TotalSegmentator masks (Phase 2) |
+| 7 | Build TTS Module | 2026-06-26 | Mohammed Saeed Alzahrani | atlas.html · Web Speech API · EN+AR · Slow/Normal/Fast · Floating panel · MutationObserver re-inject |
+| 8 | MVP Test with 5–7 Students | 2026-06-26 | ⏳ Pending | survey.html · distribution-guide.html · results template below |
+
+---
+
+## 📊 Task #8 — MVP Test Results
+
+> **ملء هذا القسم بعد اكتمال الاختبار مع الطلاب**
+
+### نتائج الاستبيان الإجمالية
+
+| المعيار | الهدف | النتيجة الفعلية | الحالة |
+|---------|-------|----------------|--------|
+| عدد المشاركين الذين جربوا ≥ 60 دقيقة | 5–7 | __ / 7 | ⏳ |
+| نسبة "OmniRad أفضل من Radiopaedia" (Q9 ≥ 4) | 70%+ | __%  | ⏳ |
+| نسبة "أريد التجربة مجدداً" (Q10 = yes) | 50%+ | __%  | ⏳ |
+| أخطاء تقنية موقفة (Q7 = major) | 0 | __ حالة | ⏳ |
+| يعمل على الجوال بدون مشاكل | 100% | __%  | ⏳ |
+
+### نتائج كل مشارك
+
+| # | الجهاز | السنة | وقت التجربة | Q9 (أفضل من Radiopaedia) | Q10 (يريد مجدداً) | Q12 (تقييم كلي) | أخطاء؟ |
+|---|--------|-------|-------------|--------------------------|-------------------|-----------------|---------|
+| P1 | — | — | — | — | — | — | — |
+| P2 | — | — | — | — | — | — | — |
+| P3 | — | — | — | — | — | — | — |
+| P4 | — | — | — | — | — | — | — |
+| P5 | — | — | — | — | — | — | — |
+| P6 | — | — | — | — | — | — | — |
+| P7 | — | — | — | — | — | — | — |
+
+### أبرز الملاحظات المفتوحة (Q15–Q17)
+
+```
+أفضل شيء (Q15):
+- P1: 
+- P2: 
+- P3: 
+
+يحتاج تحسيناً (Q16):
+- P1: 
+- P2: 
+- P3: 
+
+مقترحات التطوير (Q17):
+- P1: 
+- P2: 
+- P3: 
+```
+
+### الأخطاء التقنية المُبلَّغ عنها (Q8)
+
+| المشارك | الجهاز | وصف الخطأ | الأولوية |
+|---------|--------|-----------|---------|
+| — | — | — | — |
+
+### الميزة الأكثر إعجاباً (Q13) — تجميع
+
+| الميزة | عدد الأصوات |
+|--------|------------|
+| أدوات تحليل الصور | — |
+| مقارنة الأوضاع | — |
+| أطلس التشريح | — |
+| النطق TTS | — |
+| تصميم الواجهة | — |
+
+### قرار المتابعة
+
+```
+[ ] ✅ المتابعة إلى Phase 2 — جميع معايير النجاح تحققت
+[ ] 🟡 متابعة مع تعديلات — تحقق معظم المعايير، مشاكل بسيطة
+[ ] 🔴 إعادة تصميم أولاً — معايير حرجة لم تتحقق
+
+القرار النهائي: ___________________________
+التاريخ: ___________________________
+الموقّع: Mohammed Saeed Alzahrani
+```
+
+### Issues مكتشفة من الاختبار (تُضاف هنا بعد التحليل)
+
+| # | المشكلة | المشارك | الأولوية | تُحال إلى |
+|---|---------|---------|---------|-----------|
+| 9 | ⏳ تُملأ بعد الاختبار | — | — | — |
 
 ---
 
