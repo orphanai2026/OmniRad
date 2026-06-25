@@ -3,547 +3,351 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="OmniRad — Multimodal Radiologic Anatomy Platform. Explore anatomical structures across CT, MRI, Ultrasound, X-Ray, and more.">
+<meta name="description" content="OmniRad — Multimodal Radiologic Anatomy Platform.">
 <title>OmniRad — Multimodal Radiologic Anatomy</title>
-<link rel="stylesheet" href="assets/theme.css">
 <style>
 
-/* ═══════════════════════════════════════
-   INDEX.HTML — Home Page Styles
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   OmniRad — Unified Theme System v1.1
+   Dark Mode (default) + Dim Mode toggle
+   Font: IBM Plex Sans + IBM Plex Mono
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ── Dark Mode (default) ── */
+:root,
+[data-theme="dark"] {
+  --bg-base:        oklch(0.10 0.012 240);
+  --bg-surface:     oklch(0.14 0.012 240);
+  --bg-elevated:    oklch(0.18 0.010 240);
+  --bg-overlay:     oklch(0.22 0.010 240);
+  --text-primary:   oklch(0.95 0.005 240);
+  --text-secondary: oklch(0.70 0.008 240);
+  --text-muted:     oklch(0.50 0.006 240);
+  --accent:         oklch(0.72 0.15 195);
+  --accent-dim:     oklch(0.60 0.12 195);
+  --accent-glow:    oklch(0.72 0.15 195 / 0.15);
+  --accent-subtle:  oklch(0.20 0.05 195);
+  --mod-ct:         oklch(0.75 0.12 200);
+  --mod-mri:        oklch(0.72 0.14 290);
+  --mod-us:         oklch(0.78 0.13 140);
+  --mod-xray:       oklch(0.80 0.08 60);
+  --mod-nm:         oklch(0.72 0.16 30);
+  --mod-angio:      oklch(0.74 0.15 320);
+  --mod-mammo:      oklch(0.76 0.12 250);
+  --mod-pet:        oklch(0.78 0.14 25);
+  --border:         oklch(0.28 0.010 240);
+  --border-subtle:  oklch(0.22 0.008 240);
+  --success:        oklch(0.72 0.14 145);
+  --warning:        oklch(0.78 0.14 80);
+  --error:          oklch(0.65 0.18 20);
+  --shadow-sm:      0 1px 3px oklch(0 0 0 / 0.4);
+  --shadow-md:      0 4px 16px oklch(0 0 0 / 0.5);
+  --shadow-lg:      0 8px 32px oklch(0 0 0 / 0.6);
+  --shadow-accent:  0 0 20px var(--accent-glow);
+  --nav-h:          56px;
+  --sidebar-w:      260px;
+  --radius-sm:      4px;
+  --radius-md:      8px;
+  --radius-lg:      12px;
+}
+
+/* ── Dim Mode (Issue #1 resolved) ── */
+[data-theme="dim"] {
+  --bg-base:        oklch(0.88 0.010 240);
+  --bg-surface:     oklch(0.91 0.008 240);
+  --bg-elevated:    oklch(0.94 0.006 240);
+  --bg-overlay:     oklch(0.86 0.012 240);
+  --text-primary:   oklch(0.18 0.015 240);
+  --text-secondary: oklch(0.38 0.012 240);
+  --text-muted:     oklch(0.55 0.008 240);
+  --accent:         oklch(0.48 0.18 195);
+  --accent-dim:     oklch(0.40 0.14 195);
+  --accent-glow:    oklch(0.48 0.18 195 / 0.15);
+  --accent-subtle:  oklch(0.84 0.04 195);
+  --border:         oklch(0.78 0.012 240);
+  --border-subtle:  oklch(0.82 0.008 240);
+  --shadow-sm:      0 1px 3px oklch(0 0 0 / 0.10);
+  --shadow-md:      0 4px 16px oklch(0 0 0 / 0.12);
+  --shadow-lg:      0 8px 32px oklch(0 0 0 / 0.15);
+  --shadow-accent:  0 0 20px var(--accent-glow);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Typography ── */
+h1 { font-size: clamp(2.1rem, 4.5vw, 3.2rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.08; text-wrap: balance; }
+h2 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; text-wrap: balance; }
+h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
+p  { max-width: 68ch; color: var(--text-secondary); }
+code, .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; }
+
+/* ── Nav ── */
+.omnirad-nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 24px; gap: 32px;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); flex-shrink: 0; }
+.nav-logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 0.8rem;
+  color: oklch(0.10 0.012 240);
+  letter-spacing: -0.02em; flex-shrink: 0;
+}
+.nav-logo-text { font-weight: 600; font-size: 1rem; letter-spacing: -0.02em; }
+.nav-logo-text span { color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: 4px; list-style: none; flex: 1; }
+.nav-links a {
+  text-decoration: none; color: var(--text-secondary);
+  font-size: 0.875rem; font-weight: 500;
+  padding: 6px 12px; border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+.nav-links a:hover { color: var(--text-primary); background: var(--bg-overlay); }
+.nav-links a.active { color: var(--accent); background: var(--accent-subtle); }
+.nav-end { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.theme-toggle {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-overlay);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer; display: grid; place-items: center;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  font-size: 15px; flex-shrink: 0;
+}
+.theme-toggle:hover { color: var(--accent); border-color: var(--accent-dim); }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.875rem; font-weight: 500;
+  cursor: pointer; border: 1px solid transparent;
+  text-decoration: none; transition: all 0.15s ease;
+  line-height: 1; white-space: nowrap;
+}
+.btn-primary { background: var(--accent); color: oklch(0.10 0.012 240); border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); box-shadow: var(--shadow-accent); }
+.btn-outline { background: transparent; color: var(--accent); border-color: var(--accent-dim); }
+.btn-outline:hover { background: var(--accent-subtle); }
+.btn-lg { padding: 12px 28px; font-size: 1rem; }
+
+/* ── Edu badge ── */
+.edu-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; color: var(--text-muted);
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 4px 10px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── Page wrapper ── */
+.page-body { padding-top: var(--nav-h); min-height: 100vh; }
 
 /* ── Hero ── */
 .hero {
   min-height: calc(100vh - var(--nav-h));
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 64px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; gap: 64px;
   padding: 72px 64px 80px;
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: 1280px; margin: 0 auto;
 }
-
-.hero-content {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
+.hero-content { display: flex; flex-direction: column; gap: 28px; }
 .hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--accent);
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--accent);
   font-family: 'IBM Plex Mono', monospace;
 }
-
-.hero-eyebrow::before {
-  content: '';
-  display: block;
-  width: 20px;
-  height: 1px;
-  background: var(--accent);
-  flex-shrink: 0;
-}
-
-.hero h1 {
-  font-size: clamp(2.1rem, 4.5vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.08;
-  text-wrap: balance;
-}
-
+.hero-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: var(--accent); flex-shrink: 0; }
 .hero h1 .accent { color: var(--accent); }
+.hero-desc { font-size: 1rem; color: var(--text-secondary); line-height: 1.75; max-width: 46ch; }
+.hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hero-stats { display: flex; gap: 28px; padding-top: 20px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; }
+.stat-item { display: flex; flex-direction: column; gap: 2px; }
+.stat-num { font-size: 1.35rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.03em; font-family: 'IBM Plex Mono', monospace; }
+.stat-lbl { font-size: 0.72rem; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
 
-.hero-desc {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  line-height: 1.75;
-  max-width: 46ch;
-}
-
-.hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.hero-stats {
-  display: flex;
-  gap: 28px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-subtle);
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-num {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.03em;
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-.stat-lbl {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-/* ── Hero Visual: Modality Grid ── */
-.hero-visual {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
+/* ── Hero Visual ── */
+.hero-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .mod-card {
   aspect-ratio: 1;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
+  background: var(--bg-elevated); border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  position: relative;
-  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: relative; overflow: hidden;
 }
-
 .mod-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: var(--mod-color, var(--accent));
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
 }
-
-.mod-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--mod-color, var(--accent));
-  box-shadow: var(--shadow-md);
-}
-
+.mod-card:hover { transform: translateY(-2px); border-color: var(--mod-color, var(--accent)); box-shadow: var(--shadow-md); }
 .mod-card:hover::before { opacity: 0.06; }
-
-/* Featured card: spans 2 cols */
 .mod-card.featured {
-  grid-column: span 2;
-  aspect-ratio: 2 / 1;
-  background: var(--accent-subtle);
-  border-color: var(--accent-dim);
+  grid-column: span 2; aspect-ratio: 2 / 1;
+  background: var(--accent-subtle); border-color: var(--accent-dim);
 }
-
 .mod-card.featured::before { background: var(--accent); opacity: 0.04; }
-
-.mod-icon-wrap {
-  width: 38px; height: 38px;
-  border-radius: var(--radius-sm);
-  background: var(--mod-color, var(--accent));
-  opacity: 0.15;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.mod-icon {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 17px;
-  opacity: 1;
-  color: var(--mod-color, var(--accent));
-}
-
-.mod-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-family: 'IBM Plex Mono', monospace;
-  color: var(--text-secondary);
-  z-index: 1;
-}
-
-/* Featured card internals */
-.featured-body {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  z-index: 1;
-  padding: 0 8px;
-}
-
-.compare-slots {
-  display: flex;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
+.mod-icon-wrap { width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--mod-color, var(--accent)); opacity: 0.15; position: relative; flex-shrink: 0; }
+.mod-icon { position: absolute; inset: 0; display: grid; place-items: center; font-size: 17px; opacity: 1; color: var(--mod-color, var(--accent)); }
+.mod-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: var(--text-secondary); z-index: 1; }
+.featured-body { display: flex; align-items: center; gap: 20px; z-index: 1; padding: 0 8px; }
+.compare-slots { display: flex; gap: 6px; flex-shrink: 0; }
 .c-slot {
-  width: 42px; height: 42px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  display: grid;
-  place-items: center;
-  font-size: 0.62rem;
-  font-weight: 600;
-  font-family: 'IBM Plex Mono', monospace;
-  color: var(--text-muted);
-  transition: all 0.15s;
+  width: 42px; height: 42px; border-radius: var(--radius-sm);
+  background: var(--bg-surface); border: 1px solid var(--border);
+  display: grid; place-items: center;
+  font-size: 0.62rem; font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace; color: var(--text-muted);
 }
-
-.c-slot.on {
-  border-color: var(--accent-dim);
-  color: var(--accent);
-  background: var(--accent-subtle);
-}
-
+.c-slot.on { border-color: var(--accent-dim); color: var(--accent); background: var(--accent-subtle); }
 .featured-text { display: flex; flex-direction: column; gap: 4px; }
 .featured-title { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
 .featured-sub   { font-size: 0.75rem; color: var(--text-secondary); }
 
-/* ── Features Section ── */
-.features-section {
-  background: var(--bg-surface);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 80px 64px;
-}
-
-.section-wrap {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-.section-header {
-  margin-bottom: 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.section-kicker {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
+/* ── Features ── */
+.features-section { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 64px; }
+.section-wrap { max-width: 1280px; margin: 0 auto; }
+.section-header { margin-bottom: 48px; display: flex; flex-direction: column; gap: 10px; }
+.section-kicker { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-family: 'IBM Plex Mono', monospace; }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
 .feature-card {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+.feature-card:hover { border-color: var(--accent-dim); box-shadow: var(--shadow-sm); }
+.feature-icon { width: 40px; height: 40px; background: var(--accent-subtle); border-radius: var(--radius-sm); display: grid; place-items: center; font-size: 19px; flex-shrink: 0; }
+.feature-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+.feature-desc  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; max-width: none; }
+.feature-badge { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 0.68rem; font-weight: 600; color: var(--accent); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; }
 
-.feature-card:hover {
-  border-color: var(--accent-dim);
-  box-shadow: var(--shadow-sm);
-}
-
-.feature-icon {
-  width: 40px; height: 40px;
-  background: var(--accent-subtle);
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  font-size: 19px;
-  flex-shrink: 0;
-}
-
-.feature-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.feature-desc {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.65;
-  max-width: none;
-}
-
-.feature-badge {
-  margin-top: auto;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-subtle);
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--accent);
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* ── Modalities Section ── */
-.modalities-section {
-  padding: 72px 64px;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-.mod-strip {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 32px;
-}
-
+/* ── Modalities ── */
+.modalities-section { padding: 72px 64px; max-width: 1280px; margin: 0 auto; }
+.mod-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
 .mod-pill {
-  display: flex;
-  align-items: center;
-  gap: 9px;
+  display: flex; align-items: center; gap: 9px;
   padding: 10px 16px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
+  background: var(--bg-elevated); border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
   text-decoration: none;
 }
+.mod-pill:hover { border-color: var(--mod-color, var(--accent)); box-shadow: var(--shadow-sm); }
+.mod-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mod-color, var(--accent)); flex-shrink: 0; }
+.mod-name { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
+.mod-abbr { font-size: 0.68rem; font-family: 'IBM Plex Mono', monospace; color: var(--text-muted); letter-spacing: 0.04em; }
 
-.mod-pill:hover {
-  border-color: var(--mod-color, var(--accent));
-  box-shadow: var(--shadow-sm);
-}
-
-.mod-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--mod-color, var(--accent));
-  flex-shrink: 0;
-}
-
-.mod-name {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.mod-abbr {
-  font-size: 0.68rem;
-  font-family: 'IBM Plex Mono', monospace;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
-
-/* ── CTA Section ── */
-.cta-section {
-  background: var(--accent-subtle);
-  border-top: 1px solid var(--accent-dim);
-  border-bottom: 1px solid var(--accent-dim);
-  padding: 80px 64px;
-  text-align: center;
-}
-
-.cta-inner {
-  max-width: 520px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.cta-inner p {
-  text-align: center;
-  max-width: none;
-}
+/* ── CTA ── */
+.cta-section { background: var(--accent-subtle); border-top: 1px solid var(--accent-dim); border-bottom: 1px solid var(--accent-dim); padding: 80px 64px; text-align: center; }
+.cta-inner { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.cta-inner p { text-align: center; max-width: none; }
 
 /* ── Footer ── */
-footer {
-  padding: 28px 64px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1280px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-  gap: 12px;
-}
+footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; max-width: 1280px; margin: 0 auto; flex-wrap: wrap; gap: 12px; }
+.footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.footer-logo-mark { width: 24px; height: 24px; background: var(--accent); border-radius: var(--radius-sm); display: grid; place-items: center; font-size: 0.62rem; font-weight: 700; color: oklch(0.10 0.012 240); flex-shrink: 0; }
+.footer-name { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); }
+.footer-meta { font-size: 0.75rem; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
 
-.footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-
-.footer-logo-mark {
-  width: 24px; height: 24px;
-  background: var(--accent);
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: oklch(0.10 0.012 240);
-  letter-spacing: -0.02em;
-  flex-shrink: 0;
-}
-
-.footer-name {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.footer-meta {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-.edu-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 4px 10px;
-  font-family: 'IBM Plex Mono', monospace;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* ── Responsive ── */
 @media (max-width: 960px) {
-  .hero {
-    grid-template-columns: 1fr;
-    padding: 48px 24px 64px;
-    gap: 48px;
-    min-height: auto;
-  }
-  .hero-visual { grid-template-columns: repeat(3, 1fr); }
-  .features-section { padding: 56px 24px; }
-  .modalities-section { padding: 56px 24px; }
-  .cta-section { padding: 56px 24px; }
+  .hero { grid-template-columns: 1fr; padding: 48px 24px 64px; gap: 48px; min-height: auto; }
+  .features-section, .modalities-section, .cta-section { padding: 56px 24px; }
   footer { padding: 24px; flex-direction: column; align-items: flex-start; }
 }
-
+@media (max-width: 700px) { .nav-links { display: none; } }
 @media (max-width: 480px) {
   .hero-visual { grid-template-columns: repeat(2, 1fr); }
-  .hero-stats { gap: 20px; }
   .compare-slots { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 
 </style>
 </head>
 <body>
 
-<!-- ════════════════ NAV ════════════════ -->
-<nav class="omnirad-nav" role="navigation" aria-label="Main navigation">
-  <a href="index.html" class="nav-logo" aria-label="OmniRad home">
-    <div class="nav-logo-mark" aria-hidden="true">OR</div>
+<nav class="omnirad-nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">OR</div>
     <span class="nav-logo-text">Omni<span>Rad</span></span>
   </a>
-
-  <ul class="nav-links" role="list">
-    <li><a href="index.html" class="active" aria-current="page">Home</a></li>
-    <li><a href="pages/atlas.html">Atlas</a></li>
-    <li><a href="pages/compare.html">Compare</a></li>
-    <li><a href="pages/library.html">Mnemonics</a></li>
-    <li><a href="pages/progress.html">My Progress</a></li>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="#">Atlas</a></li>
+    <li><a href="#">Compare</a></li>
+    <li><a href="#">Mnemonics</a></li>
+    <li><a href="#">My Progress</a></li>
   </ul>
-
   <div class="nav-end">
-    <span class="edu-badge" role="note">⚕ Educational use only</span>
-    <button
-      class="theme-toggle"
-      id="themeBtn"
-      aria-label="Switch to dim mode"
-      title="Toggle theme"
-    >☀</button>
+    <span class="edu-badge">⚕ Educational use only</span>
+    <button class="theme-toggle" id="themeBtn" aria-label="Switch to dim mode" title="Toggle theme">☀</button>
   </div>
 </nav>
 
-<!-- ════════════════ MAIN ════════════════ -->
 <main class="page-body">
 
-  <!-- ── Hero ── -->
-  <section class="hero" aria-label="Introduction">
+  <!-- Hero -->
+  <section class="hero">
     <div class="hero-content">
-      <span class="hero-eyebrow" aria-hidden="true">Radiologic Anatomy Platform</span>
-
+      <span class="hero-eyebrow">Radiologic Anatomy Platform</span>
       <h1>
         Every structure.<br>
         <span class="accent">Every modality.</span><br>
         One place.
       </h1>
-
       <p class="hero-desc">
         Explore anatomical structures across CT, MRI, Ultrasound, X-Ray, and four more imaging modalities — with professional tools, colorization training, and spaced repetition built in.
       </p>
-
       <div class="hero-actions">
-        <a href="pages/atlas.html" class="btn btn-primary btn-lg">Open Atlas →</a>
-        <a href="pages/compare.html" class="btn btn-outline btn-lg">Try Comparison</a>
+        <a href="#" class="btn btn-primary btn-lg">Open Atlas →</a>
+        <a href="#" class="btn btn-outline btn-lg">Try Comparison</a>
       </div>
-
-      <div class="hero-stats" aria-label="Platform statistics">
-        <div class="stat-item">
-          <span class="stat-num">8</span>
-          <span class="stat-lbl">Modalities</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">AR/EN</span>
-          <span class="stat-lbl">Bilingual</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">SM-2</span>
-          <span class="stat-lbl">SRS Algorithm</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">Phase 1</span>
-          <span class="stat-lbl">MVP Active</span>
-        </div>
+      <div class="hero-stats">
+        <div class="stat-item"><span class="stat-num">8</span><span class="stat-lbl">Modalities</span></div>
+        <div class="stat-item"><span class="stat-num">AR/EN</span><span class="stat-lbl">Bilingual</span></div>
+        <div class="stat-item"><span class="stat-num">SM-2</span><span class="stat-lbl">SRS Algorithm</span></div>
+        <div class="stat-item"><span class="stat-num">Phase 1</span><span class="stat-lbl">MVP Active</span></div>
       </div>
     </div>
 
-    <!-- Modality visual grid -->
-    <div class="hero-visual" aria-label="Supported imaging modalities" role="img">
-
-      <!-- Featured: multimodal comparison -->
-      <div class="mod-card featured" style="--mod-color: var(--accent)" tabindex="0" role="button" aria-label="Multimodal comparison feature">
+    <div class="hero-visual">
+      <div class="mod-card featured" style="--mod-color: var(--accent)">
         <div class="featured-body">
-          <div class="compare-slots" aria-hidden="true">
+          <div class="compare-slots">
             <div class="c-slot on">CT</div>
             <div class="c-slot on">MRI</div>
             <div class="c-slot">US</div>
@@ -555,212 +359,115 @@ footer {
           </div>
         </div>
       </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-ct)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">⬛</span></div>
-        <span class="mod-label">CT</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-mri)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">◈</span></div>
-        <span class="mod-label">MRI</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-us)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">〰</span></div>
-        <span class="mod-label">US</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-xray)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">✦</span></div>
-        <span class="mod-label">X-Ray</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-nm)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">⚛</span></div>
-        <span class="mod-label">NM</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-angio)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">⟡</span></div>
-        <span class="mod-label">Angio</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-mammo)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">◎</span></div>
-        <span class="mod-label">Mammo</span>
-      </div>
-
-      <div class="mod-card" style="--mod-color: var(--mod-pet)">
-        <div class="mod-icon-wrap"><span class="mod-icon" aria-hidden="true">◉</span></div>
-        <span class="mod-label">PET</span>
-      </div>
-
+      <div class="mod-card" style="--mod-color: var(--mod-ct)"><div class="mod-icon-wrap"><span class="mod-icon">⬛</span></div><span class="mod-label">CT</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-mri)"><div class="mod-icon-wrap"><span class="mod-icon">◈</span></div><span class="mod-label">MRI</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-us)"><div class="mod-icon-wrap"><span class="mod-icon">〰</span></div><span class="mod-label">US</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-xray)"><div class="mod-icon-wrap"><span class="mod-icon">✦</span></div><span class="mod-label">X-Ray</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-nm)"><div class="mod-icon-wrap"><span class="mod-icon">⚛</span></div><span class="mod-label">NM</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-angio)"><div class="mod-icon-wrap"><span class="mod-icon">⟡</span></div><span class="mod-label">Angio</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-mammo)"><div class="mod-icon-wrap"><span class="mod-icon">◎</span></div><span class="mod-label">Mammo</span></div>
+      <div class="mod-card" style="--mod-color: var(--mod-pet)"><div class="mod-icon-wrap"><span class="mod-icon">◉</span></div><span class="mod-label">PET</span></div>
     </div>
   </section>
 
-  <!-- ── Features ── -->
-  <section class="features-section" aria-label="Core features">
+  <!-- Features -->
+  <section class="features-section">
     <div class="section-wrap">
       <div class="section-header">
         <span class="section-kicker">Core Features</span>
         <h2>Built for radiology students</h2>
       </div>
-
       <div class="features-grid">
-
         <div class="feature-card">
-          <div class="feature-icon" aria-hidden="true">⚖</div>
+          <div class="feature-icon">⚖</div>
           <div class="feature-title">Smart Multimodal Comparison</div>
-          <p class="feature-desc">
-            Select any combination of modalities and view them in a synchronized, adaptive layout. Scroll one — all follow.
-          </p>
+          <p class="feature-desc">Select any combination of modalities and view them in a synchronized, adaptive layout. Scroll one — all follow.</p>
           <span class="feature-badge">⭐ Core UVP</span>
         </div>
-
         <div class="feature-card">
-          <div class="feature-icon" aria-hidden="true">🎨</div>
+          <div class="feature-icon">🎨</div>
           <div class="feature-title">Colorization Toggle</div>
-          <p class="feature-desc">
-            Switch between real grayscale and organ-colorized views. One click trains your eye to identify structures across modalities.
-          </p>
+          <p class="feature-desc">Switch between real grayscale and organ-colorized views. One click trains your eye to identify structures across modalities.</p>
           <span class="feature-badge">⭐ Core UVP</span>
         </div>
-
         <div class="feature-card">
-          <div class="feature-icon" aria-hidden="true">🔊</div>
+          <div class="feature-icon">🔊</div>
           <div class="feature-title">TTS Pronunciation</div>
-          <p class="feature-desc">
-            Hear every Latin anatomical term pronounced correctly in English and Arabic. Adjustable speed.
-          </p>
+          <p class="feature-desc">Hear every Latin anatomical term pronounced correctly in English and Arabic. Adjustable speed.</p>
           <span class="feature-badge">Phase 1</span>
         </div>
-
         <div class="feature-card">
-          <div class="feature-icon" aria-hidden="true">🧠</div>
+          <div class="feature-icon">🧠</div>
           <div class="feature-title">Spaced Repetition (SRS)</div>
-          <p class="feature-desc">
-            SM-2 algorithm tracks mastery per structure. Surfaces your weakest areas automatically, not the ones you already know.
-          </p>
+          <p class="feature-desc">SM-2 algorithm tracks mastery per structure. Surfaces your weakest areas automatically, not the ones you already know.</p>
           <span class="feature-badge">Phase 2</span>
         </div>
-
         <div class="feature-card">
-          <div class="feature-icon" aria-hidden="true">📚</div>
+          <div class="feature-icon">📚</div>
           <div class="feature-title">Mnemonics Library</div>
-          <p class="feature-desc">
-            Organized AR/EN mnemonics for every structure. Visual stories, not flashcards. Community contributions, supervised review.
-          </p>
+          <p class="feature-desc">Organized AR/EN mnemonics for every structure. Visual stories, not flashcards. Community contributions, supervised review.</p>
           <span class="feature-badge">Phase 2</span>
         </div>
-
         <div class="feature-card">
-          <div class="feature-icon" aria-hidden="true">🤖</div>
+          <div class="feature-icon">🤖</div>
           <div class="feature-title">AI Assistant (AR/EN)</div>
-          <p class="feature-desc">
-            Scoped chatbot that answers radiologic anatomy questions only. Bilingual. Powered by RAG on OmniRad content.
-          </p>
+          <p class="feature-desc">Scoped chatbot that answers radiologic anatomy questions only. Bilingual. Powered by RAG on OmniRad content.</p>
           <span class="feature-badge">Phase 2</span>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ── Modalities ── -->
-  <section class="modalities-section" aria-label="Supported modalities">
+  <!-- Modalities -->
+  <section class="modalities-section">
     <div class="section-header">
       <span class="section-kicker">Supported Modalities</span>
       <h2>8 imaging modalities in Phase 1–2</h2>
     </div>
-
-    <div class="mod-strip" role="list">
-      <a class="mod-pill" style="--mod-color: var(--mod-ct)" href="pages/atlas.html?mod=ct" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Computed Tomography</span>
-        <span class="mod-abbr">CT</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-mri)" href="pages/atlas.html?mod=mri" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Magnetic Resonance</span>
-        <span class="mod-abbr">MRI</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-us)" href="pages/atlas.html?mod=us" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Ultrasound</span>
-        <span class="mod-abbr">US</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-xray)" href="pages/atlas.html?mod=xray" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Plain Radiography</span>
-        <span class="mod-abbr">X-Ray</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-nm)" href="pages/atlas.html?mod=nm" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Nuclear Medicine</span>
-        <span class="mod-abbr">NM / SPECT</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-angio)" href="pages/atlas.html?mod=angio" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Angiography</span>
-        <span class="mod-abbr">Angio</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-mammo)" href="pages/atlas.html?mod=mammo" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">Mammography</span>
-        <span class="mod-abbr">Mammo</span>
-      </a>
-      <a class="mod-pill" style="--mod-color: var(--mod-pet)" href="pages/atlas.html?mod=pet" role="listitem">
-        <span class="mod-dot" aria-hidden="true"></span>
-        <span class="mod-name">PET / PET-CT</span>
-        <span class="mod-abbr">Phase 2</span>
-      </a>
+    <div class="mod-strip">
+      <a class="mod-pill" style="--mod-color: var(--mod-ct)" href="#"><span class="mod-dot"></span><span class="mod-name">Computed Tomography</span><span class="mod-abbr">CT</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-mri)" href="#"><span class="mod-dot"></span><span class="mod-name">Magnetic Resonance</span><span class="mod-abbr">MRI</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-us)" href="#"><span class="mod-dot"></span><span class="mod-name">Ultrasound</span><span class="mod-abbr">US</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-xray)" href="#"><span class="mod-dot"></span><span class="mod-name">Plain Radiography</span><span class="mod-abbr">X-Ray</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-nm)" href="#"><span class="mod-dot"></span><span class="mod-name">Nuclear Medicine</span><span class="mod-abbr">NM / SPECT</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-angio)" href="#"><span class="mod-dot"></span><span class="mod-name">Angiography</span><span class="mod-abbr">Angio</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-mammo)" href="#"><span class="mod-dot"></span><span class="mod-name">Mammography</span><span class="mod-abbr">Mammo</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-pet)" href="#"><span class="mod-dot"></span><span class="mod-name">PET / PET-CT</span><span class="mod-abbr">Phase 2</span></a>
     </div>
   </section>
 
-  <!-- ── CTA ── -->
-  <section class="cta-section" aria-label="Call to action">
+  <!-- CTA -->
+  <section class="cta-section">
     <div class="cta-inner">
       <h2>Start with the Atlas</h2>
       <p>Phase 1 covers the upper abdomen: 5–10 structures across CT, MRI, and Ultrasound.</p>
-      <a href="pages/atlas.html" class="btn btn-primary btn-lg">Open Atlas →</a>
+      <a href="#" class="btn btn-primary btn-lg">Open Atlas →</a>
     </div>
   </section>
 
 </main>
 
-<!-- ════════════════ FOOTER ════════════════ -->
-<footer role="contentinfo">
-  <a href="index.html" class="footer-logo" aria-label="OmniRad home">
-    <div class="footer-logo-mark" aria-hidden="true">OR</div>
+<footer>
+  <a href="index.html" class="footer-logo">
+    <div class="footer-logo-mark">OR</div>
     <span class="footer-name">OmniRad — v0.1</span>
   </a>
   <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
 </footer>
 
-<!-- ════════════════ THEME TOGGLE JS ════════════════ -->
 <script>
-  // Dark ↔ Dim toggle — Vanilla JS, no frameworks
-  // Themes: 'dark' (default) | 'dim' (warm blue-gray, replaces light)
   const btn  = document.getElementById('themeBtn');
   const html = document.documentElement;
-
-  const ICONS = { dark: '☀', dim: '☾' };
-  const LABELS = {
-    dark: 'Switch to dim mode',
-    dim:  'Switch to dark mode',
-  };
-
-  // Restore saved theme
+  const ICONS  = { dark: '☀', dim: '☾' };
+  const LABELS = { dark: 'Switch to dim mode', dim: 'Switch to dark mode' };
   const saved = localStorage.getItem('omnirad-theme') || 'dark';
   html.dataset.theme = saved;
-  btn.textContent    = ICONS[saved];
+  btn.textContent = ICONS[saved];
   btn.setAttribute('aria-label', LABELS[saved]);
-
   btn.addEventListener('click', () => {
     const next = html.dataset.theme === 'dark' ? 'dim' : 'dark';
     html.dataset.theme = next;
-    btn.textContent    = ICONS[next];
+    btn.textContent = ICONS[next];
     btn.setAttribute('aria-label', LABELS[next]);
     localStorage.setItem('omnirad-theme', next);
   });
