@@ -1,47 +1,47 @@
-# 🐛 OMNIRAD_ISSUES — سجل المشاكل والمهام المؤجَّلة
+# 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*آخر تحديث: 2026-06-25 — إنشاء الملف*
+*Last updated: 2026-06-25 — File created*
 
 ---
 
-## قواعد السجل
+## Log Rules
 
-| القاعدة | التفاصيل |
-|---------|---------|
-| **من يكتب** | Claude يوثّق · المستخدم يعتمد الأولوية |
-| **متى يُكتب** | فور اكتشاف المشكلة أو الفكرة الجانبية |
-| **متى يُحلّ** | في محادثة مخصّصة، ليس في محادثة المهمّة الحالية |
-| **القاعدة الذهبية** | محادثة واحدة = مهمّة واحدة |
-
----
-
-## حالات المشاكل
-
-| الرمز | المعنى |
-|-------|--------|
-| 🔴 عاجل | يمنع التشغيل |
-| 🟡 متوسط | يؤثر على التجربة |
-| 🟢 منخفض | تحسين غير ضروري |
-| 💡 فكرة | اقتراح للمستقبل |
-| ✅ محلولة | تم الحل والاعتماد |
+| Rule | Details |
+|------|---------|
+| **Who writes** | Claude documents · User approves priority |
+| **When written** | Upon discovery of issue or side idea |
+| **When resolved** | In a dedicated conversation, NOT in current task |
+| **Golden rule** | ONE CONVERSATION = ONE TASK |
 
 ---
 
-## السجل
+## Issue States
 
-*(لا مشاكل أو أفكار مسجَّلة حتى الآن — يُضاف هنا عند الاكتشاف)*
+| Symbol | Meaning |
+|--------|---------|
+| 🔴 Urgent | Blocks operation |
+| 🟡 Medium | Affects experience |
+| 🟢 Low | Non-essential improvement |
+| 💡 Idea | Future suggestion |
+| ✅ Resolved | Fixed and approved |
 
-| # | الوصف | اكتُشفت في | تخص مهمّة | الأولوية | الحالة | تاريخ الحل |
-|---|-------|-----------|----------|----------|--------|-----------|
+---
+
+## Issues Log
+
+*(No issues or ideas logged yet — added here upon discovery)*
+
+| # | Description | Discovered In | Belongs to Task | Priority | Status | Resolution Date |
+|---|-------------|---------------|-----------------|----------|--------|----------------|
 | — | — | — | — | — | — | — |
 
 ---
 
-## إنجازات المهام
+## Task Completion Records
 
-*(يُضاف هنا سطر لكل مهمّة مكتملة ومعتمَدة)*
+*(One line added per completed and approved task)*
 
 ---
 
-**نهاية الملف**
+**End of File**

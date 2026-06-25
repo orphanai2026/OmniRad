@@ -1,350 +1,345 @@
 # 🔬 OmniRad — Project Master Plan
 **Multimodal Radiologic Anatomy Platform**
 
-| الحقل | القيمة |
-|------|--------|
-| الإصدار | v1.0 |
-| التاريخ | 2026-06-25 |
-| الحالة | Planning Phase |
-| المالك | Mohammed Saeed Alzahrani |
-| النوع | Independent academic initiative |
+| Field | Value |
+|-------|-------|
+| Version | v1.0 |
+| Date | 2026-06-25 |
+| Status | Planning Phase |
+| Owner | Mohammed Saeed Alzahrani |
+| Type | Independent academic initiative |
 
 ---
 
-## ⚠️ ملاحظة جوهرية
+## ⚠️ Critical Note
 
-> **هذا مشروع جديد تماماً.** لا علاقة له بأي مشروع سابق. لا يستفيد من معمارية سابقة. لا يُعاد استخدام أي ملف أو قرار من أي منصّة أخرى. يُبنى من الصفر.
+> **This is a brand-new project.** No relation to any previous platform. No legacy architecture reused. No previous files or decisions carried over. Built from scratch.
 
 ---
 
-# ① Working Protocol — قواعد التعاون مع Claude
+# ① Working Protocol — Collaboration Rules with Claude
 
-> هذه ليست توصيات. هذه **التزامات إلزامية** يجب أن تظهر في كل ردّ من Claude في كل محادثة OmniRad.
+> These are not recommendations. They are **mandatory commitments** that must appear in every Claude response in every OmniRad conversation.
 
-## القواعد الست الإلزامية
+## The 8 Mandatory Rules
 
-### القاعدة #1 — تقدير النموذج
+### Rule #1 — Model Assessment
 ```
-في بداية كل ردّ، يجب أن يظهر:
+Start of every response must show:
 [Model: Haiku/Sonnet/Opus]
-[Files Read: <الملفات المقروءة>]
-[Task Status: <حالة المهمة>]
-[Action Required: <إجراء واحد محدّد>]
+[Files Read: <files read>]
+[Task Status: <task state>]
+[Action Required: <one specific action>]
 ```
 
-### القاعدة #2 — قراءة الملفات أوّلاً
+### Rule #2 — Files First
 ```
-قبل أي عمل:
-١. قراءة OMNIRAD_PROJECT.md كاملاً
-٢. قراءة OMNIRAD_ISSUES.md كاملاً
-٣. فحص حالة المهمة في جدول المحادثات
-٤. إعلان الحالة للمستخدم
-٥. انتظار التأكيد قبل البدء
-```
-
-### القاعدة #3 — الملف يفوز
-```
-عند تعارض بين:
-  - ذاكرة Claude
-  - ملفات المشروع
-
-→ الملف يفوز دائماً ومطلقاً
-→ لا استثناءات
+Before any work:
+1. Read OMNIRAD_PROJECT.md fully
+2. Read OMNIRAD_ISSUES.md fully
+3. Check task state in conversation table
+4. Announce status to user
+5. Wait for confirmation before starting
 ```
 
-### القاعدة #4 — Three Strikes Rule
+### Rule #3 — File Wins
 ```
-بعد ٣ محاولات فاشلة لنفس المشكلة:
-  - إيقاف المحاولة فوراً
-  - الاعتراف بالعجز صراحة
-  - تقديم بدائل (محادثة جديدة / تقسيم / مصدر آخر)
-  
-لا تكرار محاولات لاستهلاك التوكن.
+When Claude's memory conflicts with project files:
+→ File wins. Always. No exceptions.
 ```
 
-### القاعدة #5 — Best Solution First
+### Rule #4 — Three Strikes Rule
 ```
-عند مواجهة مشكلة تقنية:
-  - تقديم الحلّ الأفضل مباشرة
-  - لا تدرّج من "حلّ آمن" إلى "الحلّ الفعلي"
-  - البدائل تُذكر بعد الحلّ الأفضل
-  
-لو وجود غموض → سؤال توضيحي واحد ثم الحلّ الكامل
+After 3 failed attempts at same problem:
+- Stop immediately
+- Admit limitation honestly
+- Suggest alternatives (new chat / split task / different source)
+
+Never burn tokens on repeated futile attempts.
 ```
 
-### القاعدة #6 — Approval Gate
+### Rule #5 — Best Solution First
 ```
-قبل أيّ من هذه الإجراءات:
-  ✋ كتابة كود
-  ✋ تعديل ملف موجود
-  ✋ إنشاء ملف جديد
-  ✋ تشغيل bash command
-  ✋ بحث في الإنترنت
-  ✋ اقتراح ميزة لم تُطلب
+When facing a technical problem:
+- Present the BEST solution directly
+- NO gradual escalation from "safe" to "actual"
+- Alternatives mentioned below as secondary
 
-يجب:
-  - التوقّف
-  - طلب موافقة صريحة
-  - الانتظار حتى الرد بـ"نعم/اعتمد/ابدأ"
-  
-الاستثناء الوحيد: طلب صريح من المستخدم بـ"نفّذ مباشرة"
+If uncertain → ONE clarifying question, then full solution.
 ```
 
-## قواعد مكملة (مشتقّة من تجربة سابقة)
+### Rule #6 — Approval Gate
+```
+BEFORE any of these actions:
+✋ Writing code
+✋ Editing existing file
+✋ Creating new file
+✋ Running bash command
+✋ Web searching
+✋ Suggesting unrequested feature
 
-### القاعدة #7 — الردود الموجزة افتراضياً
-```
-الردّ الافتراضي: ١٠ أسطر أو أقل
-الردّ المطوّل: فقط عند طلب صريح
-لا "ملاحظات شخصية" بدون سؤال
-لا أسئلة أكثر من واحد في الرد
+Must:
+- Stop
+- Request explicit approval
+- Wait for "yes/approved/go"
+
+Only exception: Explicit user instruction "execute directly"
 ```
 
-### القاعدة #8 — Project Creep Prevention
+### Rule #7 — Concise by Default
 ```
-لو ظهرت فكرة خارج نطاق المهمة الحالية:
-  - تُسجَّل في OMNIRAD_ISSUES.md كمهمّة مستقبلية
-  - لا تُناقش في المحادثة الحالية
-  - لا تُنفَّذ مع المهمة القائمة
-  
-"محادثة واحدة = مهمّة واحدة" — مبدأ مقدّس.
+Default response: ≤10 lines
+Long responses: only when explicitly requested
+NO unsolicited "personal observations"
+NO more than ONE question per response
+```
+
+### Rule #8 — No Project Creep
+```
+If ideas emerge outside current task scope:
+- Log them in OMNIRAD_ISSUES.md as future tasks
+- Do NOT discuss in current conversation
+- Do NOT execute with current task
+
+"ONE CONVERSATION = ONE TASK" — Sacred principle.
 ```
 
 ---
 
-# ② الرؤية والمهمة
+# ② Vision & Mission
 
-## الرؤية (Vision)
-
-```
-أن تصبح OmniRad المرجع الأوّل عالمياً لتعلّم 
-التشريح الإشعاعي متعدّد المودالتات.
-```
-
-## المهمة (Mission)
+## Vision
 
 ```
-بناء منصّة تعليمية تفاعلية تتيح لطلاب علوم الأشعة 
-وممارسيها استكشاف نفس البنية التشريحية في أي مزيج 
-من المودالتات (CT, MRI, US, NM, Angio, X-Ray, Mammo, PET) 
-مع أدوات إشعاعية احترافية ومنهجية تعلّم مبنيّة على أدلّة.
+To become the world's leading reference for learning 
+multimodal radiologic anatomy.
 ```
 
-## المبادئ الجوهرية
+## Mission
 
 ```
-١. الإنجليزية أساس (لغة التخصّص الطبي)
-٢. العربية طبقة دعم اختيارية
-٣. الجودة العلمية فوق كل اعتبار
-٤. التحقّق الميداني قبل البناء
-٥. المرحلية والإطلاق التدريجي
-٦. الشفافية في القيود ("للتعليم فقط")
+Build an interactive educational platform that enables 
+radiologic sciences students and practitioners to explore 
+the same anatomical structure across any combination of 
+modalities (CT, MRI, US, NM, Angio, X-Ray, Mammo, PET) 
+with professional imaging tools and evidence-based 
+learning methodology.
 ```
 
----
-
-# ③ التموضع التنافسي
-
-## الفجوة في السوق (مؤكَّدة بالبحث + ١٢٠ مستفيد)
-
-| الفجوة | الدليل |
-|--------|--------|
-| لا منصّة متعدّدة المودالتات | IMAIOS تركّز على CT/MRI، Radiopaedia على الحالات |
-| لا أداة لتدريب التمييز البصري | غائب عالمياً (Colorization toggle) |
-| لا Spaced Repetition للأطلس | Anki عامّ، ليس للأشعة |
-| لا مكتبة Mnemonics منظَّمة | كل طالب يخترع وحده |
-| ضعف العربية في المجال | منصّات كبرى إنجليزية فقط |
-| AI Assistant عربي للأشعة | غير موجود |
-
-## الميزات الفريدة عالمياً (UVPs)
+## Core Principles
 
 ```
-١. Smart Multimodal Comparison
-   اختيار حر لـ٢-٨ مودالتات للمقارنة الديناميكية
-   
-٢. Colorization Toggle
-   تبديل بين الصورة الحقيقية والملوّنة لتدريب العين
-   
-٣. AI Assistant (AR/EN) محدود النطاق
-   شات بوت متخصّص في التشريح الإشعاعي فقط
-   
-٤. Integrated SRS
-   تتبّع الحفظ طويل المدى لكل بنية
-   
-٥. Mnemonics Library (AR/EN)
-   مكتبة منظَّمة + مساهمة المستخدمين
-   
-٦. TTS Pronunciation
-   نطق صحيح للمصطلحات اللاتينية
-   
-٧. Mobile-First Design
-   للاستخدام السريري الفوري
+1. English is foundational (medical specialty language)
+2. Arabic is optional support layer
+3. Scientific accuracy above all
+4. Field validation before building
+5. Phased, incremental release
+6. Transparency about limitations ("educational use only")
 ```
 
 ---
 
-# ④ الجمهور المستهدف
+# ③ Market Positioning
 
-## المستخدم الأساسي (Primary)
+## Market Gap (Confirmed by Research + 120 Field Respondents)
+
+| Gap | Evidence |
+|-----|----------|
+| No multimodal platform | IMAIOS focuses CT/MRI, Radiopaedia on cases |
+| No visual discrimination training | Globally absent (Colorization toggle) |
+| No Spaced Repetition for atlas | Anki is generic, not for radiology |
+| No organized mnemonics library | Every student reinvents independently |
+| Arabic weakness in field | Major platforms English-only |
+| AI Assistant for radiology in Arabic | Non-existent |
+
+## Unique Value Propositions (UVPs)
+
 ```
-طلاب علوم الأشعة (BSc Radiologic Sciences)
-- يدرسون نظرياً ويستعدّون للسريرية
-- يعانون من فجوة "الكتاب → الواقع"
-- متاحون عبر الجامعات السعودية والخليج
+1. Smart Multimodal Comparison
+   Free selection of 2-8 modalities for dynamic comparison
+   
+2. Colorization Toggle
+   Switch between real and colorized images for eye training
+   
+3. AI Assistant (AR/EN) — Scoped
+   Specialized chatbot for radiologic anatomy only
+   
+4. Integrated SRS
+   Long-term retention tracking per structure
+   
+5. Mnemonics Library (AR/EN)
+   Organized library + user contributions
+   
+6. TTS Pronunciation
+   Correct pronunciation of Latin terms
+   
+7. Mobile-First Design
+   For immediate clinical use
 ```
 
-## المستخدم الثانوي (Secondary)
+---
+
+# ④ Target Audience
+
+## Primary User
 ```
-أطباء امتياز ومتدرّبو الأشعة (Radiology residents R1-R2)
-- يحتاجون مرجعاً سريعاً في السريرية
-- يعرفون اللغة الإنجليزية
-- لديهم قدرة شرائية محدودة (طلاب)
+Radiologic Sciences Students (BSc programs)
+- Studying theoretically, preparing for clinical
+- Suffering from "textbook → reality" gap
+- Accessible via Saudi and Gulf universities
 ```
 
-## المستخدم الثالث (Tertiary)
+## Secondary User
 ```
-الممارسون التقنيون (Technicians)
+Radiology Residents (R1-R2) & Interns
+- Need quick clinical reference
+- English-proficient
+- Limited purchasing power (students)
+```
+
+## Tertiary User
+```
+Practicing Technologists
 - Sonographers, CT/MRI technologists
-- يحتاجون مرجعاً للتشريح الطبيعي
-- يفضّلون الواجهات البسيطة
+- Need normal anatomy reference
+- Prefer simple interfaces
 ```
 
-## النطاق الجغرافي
+## Geographic Scope
 
 ```
-المرحلة ١: السعودية + الخليج (عربي + إنجليزي)
-المرحلة ٢: الدول العربية كاملة
-المرحلة ٣: عالمياً (إنجليزي + لغات إضافية)
+Phase 1: Saudi Arabia + Gulf (Arabic + English)
+Phase 2: All Arab countries
+Phase 3: Global (English + additional languages)
 ```
 
 ---
 
-# ⑤ الميزات الجوهرية
+# ⑤ Core Features
 
-## ميزات الأساس (Core Features)
+## Foundation Features
 
-### ⑤.1 Smart Atlas (الأطلس الأساسي)
+### ⑤.1 Smart Atlas
 ```
-صفحة لكل بنية تشريحية:
-- معلومات أساسية (الاسم، الموقع، الوظيفة)
-- صور في كل المودالتات المتاحة
-- منظورات متعددة (Axial/Sagittal/Coronal)
-- Tags وارتباطات مع بنى أخرى
+Page per anatomical structure:
+- Core info (name, location, function)
+- Images in all available modalities
+- Multiple planes (Axial/Sagittal/Coronal)
+- Tags and cross-references
 ```
 
 ### ⑤.2 Smart Multimodal Comparison Engine ⭐
 ```
-الميزة الأقوى — اختيار حر للمقارنة:
+Strongest feature — free comparison selection:
 
 [☑ CT] [☐ MRI] [☑ US] [☐ X-Ray] 
 [☐ Angio] [☐ NM] [☐ Mammo] [☐ PET]
 
-تخطيط متكيّف:
-  - ١ مودالتة → ملء الشاشة
-  - ٢ مودالتات → عمودان
-  - ٣-٤ → شبكة
-  - ٥+ → سحب جانبي
+Adaptive layout:
+  - 1 modality → fullscreen
+  - 2 modalities → 2 columns
+  - 3-4 → grid
+  - 5+ → side-scroll
 
-+ Sync Mode: تحرك الـSlice في واحدة، البقية تتبع
-+ Quick Toggles: مجموعات جاهزة (Diagnostic Trio, etc.)
-+ Saved Combinations: حفظ تشكيلات مفضّلة
++ Sync Mode: scroll in one, others follow
++ Quick Toggles: preset combinations
++ Saved Combinations: favorite presets
 ```
 
 ### ⑤.3 Colorization Toggle ⭐
 ```
-كل صورة CT/MRI لها نسختان:
-  [Original]    → الرمادي الحقيقي
-  [Educational] → ملوّن (كل عضو لون)
+Every CT/MRI image has two versions:
+  [Original]    → real grayscale
+  [Educational] → colorized (each organ a color)
   
-تبديل بزرّ واحد لتدريب العين على التمييز
+One-click toggle for eye training
 
-التقنية:
-  - TotalSegmentator (مفتوح المصدر)
-  - معالجة مسبقة (لا real-time)
-  - تخزين النسختين
+Tech:
+  - TotalSegmentator (open source)
+  - Pre-processed (not real-time)
+  - Both versions stored
 ```
 
-### ⑤.4 Image Tools Suite (أدوات إشعاعية)
+### ⑤.4 Image Tools Suite
 ```
 🔍 Zoom & Pan
 📏 Measurement (mm)
 🎚️ Window/Level (Bone/Lung/Soft tissue presets)
-✂️ Segmentation Highlight (نقر → إضاءة عضو)
+✂️ Segmentation Highlight (click → highlight organ)
 📐 Angle Measurement
 🔄 Compare Slices
 📸 Save Marked Image
 
-أساس تقني: OHIF Viewer components (مفتوح المصدر)
+Foundation: OHIF Viewer components (open source)
 ```
 
 ### ⑤.5 AI Assistant (AR/EN) ⭐
 ```
-شات بوت متخصّص محدود النطاق:
-✅ يجاوب فقط عن التشريح الإشعاعي
-✅ ثنائي اللغة (المستخدم يختار)
-✅ يعرف محتوى OmniRad فقط (RAG)
-✅ يرفض الأسئلة خارج النطاق
+Specialized scoped chatbot:
+✅ Answers ONLY radiologic anatomy questions
+✅ Bilingual (user selects)
+✅ Knows ONLY OmniRad content (RAG)
+✅ Refuses out-of-scope questions
 
-تقنياً:
-  - Claude API أو OpenAI API
-  - System prompt صارم
-  - Rate limiting (٢٠ سؤال/يوم لكل طالب)
-  - Caching للأسئلة الشائعة
+Tech:
+  - Claude API or OpenAI API
+  - Strict system prompt
+  - Rate limiting (20 questions/day per student)
+  - Cache common questions
 ```
 
 ### ⑤.6 Mnemonics Library ⭐
 ```
-مكتبة منظَّمة:
-  - English mnemonics (المتعارف عليها)
-  - Arabic mnemonics (مبتكرة محلياً)
-  - بصرية: صورة + قصة + تلوين
-  - مساهمة المستخدمين + مراجعة مشرف
+Organized library:
+  - English mnemonics (established)
+  - Arabic mnemonics (locally invented)
+  - Visual: image + story + coloring
+  - User contributions + supervisor review
 
-مثال:
-  Carpal Bones (8 عظمات)
+Example:
+  Carpal Bones (8 bones)
   EN: "Some Lovers Try Positions That They Can't Handle"
-  AR: "ساعد لطفي توفي ثم تبكي قاسم حنين"
 ```
 
 ### ⑤.7 TTS Pronunciation ⭐
 ```
-كل مصطلح لاتيني عليه زرّ:
+Every Latin term has button:
   🔊 Hippocampus
-  → نطق صوتي صحيح
+  → correct voice pronunciation
   
-+ بطء/سرعة قابلة للضبط
-+ نطق عربي أيضاً (للترجمات)
++ Adjustable speed
++ Arabic pronunciation also (for translations)
 
-تقنياً:
-  - Web Speech API (مجاني، فوري)
-  - ElevenLabs API لاحقاً (احترافي)
+Tech:
+  - Web Speech API (free, instant)
+  - ElevenLabs API later (professional)
 ```
 
 ### ⑤.8 Integrated SRS ⭐
 ```
-خوارزمية SM-2 (Anki):
-بعد كل بنية، الطالب يقيّم نفسه:
-  [نسيت] [صعبة] [جيدة] [سهلة]
+SM-2 algorithm (Anki):
+After each structure, self-assess:
+  [Forgot] [Hard] [Good] [Easy]
 
-النظام:
-  - يحدّد متى يعرض البنية مرة أخرى
-  - يحسب "Mastery Level"
-  - تقارير: قوّة/ضعف، المنطقة الأضعف
+System:
+  - Determines next review time
+  - Calculates "Mastery Level"
+  - Reports: strengths/weaknesses, weakest region
 ```
 
-## ميزات إضافية (Phase 2+)
+## Additional Features (Phase 2+)
 
 ```
-⑤.9  Daily Anatomy Challenge — تحدّي يومي
-⑤.10 Case-Based Learning — حالات سريرية
-⑤.11 Print-Ready PDFs — للطباعة
-⑤.12 Community Discussion — تعليقات بإشراف
-⑤.13 AR Mode — واقع معزّز (مستقبلي)
-⑤.14 Voice Anatomy Tour — جولات صوتية
-⑤.15 Memory Palace — حفظ سردي
+⑤.9  Daily Anatomy Challenge
+⑤.10 Case-Based Learning
+⑤.11 Print-Ready PDFs
+⑤.12 Community Discussion (moderated)
+⑤.13 AR Mode (future)
+⑤.14 Voice Anatomy Tour
+⑤.15 Memory Palace
 ```
 
-## المودالتات المدعومة (٨ مودالتات)
+## Supported Modalities (8)
 
 ```
 1. Anatomy (Normal/3D)
@@ -355,89 +350,89 @@
 6. NM (Nuclear Medicine + SPECT)
 7. Angio (Angiography: CT, MR, DSA)
 8. Mammo (Mammography)
-+ PET / PET-CT (mixed Phase 2)
++ PET / PET-CT (mixed, Phase 2)
 + Fluoroscopy (Phase 2)
 ```
 
 ---
 
-# ⑥ المعمارية التقنية
+# ⑥ Technical Architecture
 
-## مبادئ المعمارية
+## Architecture Principles
 
 ```
-✅ Vanilla JavaScript ES2020+ (لا frameworks)
-✅ HTML5 سيمانتي
-✅ CSS Variables (theme موحَّد)
+✅ Vanilla JavaScript ES2020+ (no frameworks)
+✅ HTML5 semantic
+✅ CSS Variables (unified theme)
 ✅ Mobile-first responsive
-✅ Browser-only deployment (لا CLI)
+✅ Browser-only deployment (no CLI)
 ✅ Self-contained HTML files (file:// works)
-✅ Web Standards فقط (لا polyfills)
+✅ Web Standards only (no polyfills)
 
-❌ ممنوع: React, Vue, Angular, jQuery
-❌ ممنوع: Tailwind, Bootstrap, Material UI
-❌ ممنوع: build tools (webpack, vite, etc.)
-❌ ممنوع: CDN خارجي للمكتبات
+❌ FORBIDDEN: React, Vue, Angular, jQuery
+❌ FORBIDDEN: Tailwind, Bootstrap, Material UI
+❌ FORBIDDEN: build tools (webpack, vite, etc.)
+❌ FORBIDDEN: external CDN for libraries
 ```
 
-## الطبقات
+## Layers
 
 ### Frontend
 ```
 - Vanilla JS modules
-- Web Components للعناصر القابلة لإعادة الاستخدام
-- IndexedDB للتخزين المحلي
-- Service Worker للأوفلاين
-- Web Speech API للنطق
+- Web Components for reusable elements
+- IndexedDB for local storage
+- Service Worker for offline
+- Web Speech API for pronunciation
 ```
 
-### Backend (مستقبلي)
+### Backend (Future)
 ```
-- Cloudflare Workers (لو احتجنا)
-- D1 Database (للحسابات)
-- R2 Storage (للصور الإشعاعية)
-- لا backend في Phase 1 — كل شيء client-side
+- Cloudflare Workers (if needed)
+- D1 Database (for accounts)
+- R2 Storage (for radiologic images)
+- No backend in Phase 1 — fully client-side
 ```
 
-### مكتبات مفتوحة المصدر معتمدة
+### Approved Open-Source Libraries
 ```
-- TensorFlow.js (لـsegmentation في المتصفّح)
-- Daikon (DICOM reader في JS)
+- TensorFlow.js (browser segmentation)
+- Daikon (DICOM reader in JS)
 - OHIF Viewer components (Image tools)
-- TotalSegmentator (للـcolorization المسبق)
+- TotalSegmentator (pre-colorization)
 ```
 
 ### AI Integration
 ```
-- Claude API (للمساعد الذكي)
+- Claude API (for AI assistant)
 - Rate-limited
-- RAG على محتوى OmniRad فقط
-- System prompts صارمة
+- RAG on OmniRad content only
+- Strict system prompts
 ```
 
-## بنية الملفات
+## File Structure
 
 ```
 OmniRad/
-├── index.html              ← الصفحة الرئيسية
+├── index.html              ← Main page
 ├── assets/
-│   ├── theme.css           ← CSS Variables الموحَّدة
+│   ├── theme.css           ← Unified CSS Variables
 │   ├── fonts/              ← IBM Plex
 │   ├── icons/              ← SVG inline
 │   └── logo.svg
 ├── modules/
-│   ├── atlas.js            ← الأطلس
-│   ├── comparison.js       ← المقارنة المتعدّدة
-│   ├── colorization.js     ← التلوين
-│   ├── image-tools.js      ← الأدوات الإشعاعية
-│   ├── tts.js              ← النطق
+│   ├── atlas.js            ← Atlas
+│   ├── comparison.js       ← Multimodal comparison
+│   ├── colorization.js     ← Colorization
+│   ├── image-tools.js      ← Imaging tools
+│   ├── tts.js              ← Pronunciation
 │   ├── srs.js              ← Spaced Repetition
-│   ├── mnemonics.js        ← المكتبة
-│   └── ai-chat.js          ← المساعد الذكي
+│   ├── mnemonics.js        ← Library
+│   └── ai-chat.js          ← AI Assistant
 ├── data/
-│   ├── structures.json     ← بنى تشريحية
+│   ├── structures.json     ← Anatomical structures
 │   ├── mnemonics.json      ← Mnemonics
-│   └── relationships.json  ← الروابط
+│   └── relationships.json  ← Cross-references
 ├── images/
 │   └── [structure-id]/
 │       ├── ct-axial.webp
@@ -452,256 +447,256 @@ OmniRad/
 
 ---
 
-# ⑦ خطّة المراحل
+# ⑦ Phase Roadmap
 
-## 📋 جدول المحادثات (المهام) المعتمد
+## 📋 Approved Task Schedule (Conversations)
 
-> **قاعدة:** كل مهمّة في محادثة منفصلة. كل مهمّة تحتاج موافقة صريحة قبل البدء واعتماد بعد الانتهاء.
+> **Rule:** Each task in a separate conversation. Each task requires explicit approval before start AND after completion.
 
-| # | المهمّة | المرحلة | الحالة |
-|---|---------|---------|--------|
-| 0 | كتابة OMNIRAD_PROJECT.md (هذا الملف) | Plan | 🔜 الحالية |
-| 1 | تصميم Mockups بصرية (لا كود) | Phase 1 | ⏳ |
-| 2 | بناء الصفحة الرئيسية + التخطيط الأساسي | Phase 1 | ⏳ |
-| 3 | بناء Smart Atlas (٥ بنى تجريبية) | Phase 1 | ⏳ |
-| 4 | بناء Multimodal Comparison Engine | Phase 1 | ⏳ |
-| 5 | بناء Image Tools Suite | Phase 1 | ⏳ |
-| 6 | بناء Colorization Toggle (تجريبي) | Phase 1 | ⏳ |
-| 7 | بناء TTS Module | Phase 1 | ⏳ |
-| 8 | اختبار MVP مع ٥-٧ طلاب | Phase 1 | ⏳ |
-| 9 | بناء SRS Module | Phase 2 | ⏳ |
-| 10 | بناء Mnemonics Library | Phase 2 | ⏳ |
-| 11 | بناء AI Assistant (AR/EN) | Phase 2 | ⏳ |
-| 12 | توسيع المحتوى (Abdomen كامل) | Phase 2 | ⏳ |
-| 13 | اختبار موسّع مع ٢٠-٣٠ طالب | Phase 2 | ⏳ |
-| 14 | بناء حسابات المستخدمين (Backend) | Phase 3 | ⏳ |
-| 15 | توسيع لمناطق جسم إضافية | Phase 3 | ⏳ |
-| 16 | بناء Daily Challenge + Community | Phase 3 | ⏳ |
-| 17 | إطلاق رسمي + تسويق | Phase 3 | ⏳ |
+| # | Task | Phase | Status |
+|---|------|-------|--------|
+| 0 | Write OMNIRAD_PROJECT.md (this file) | Plan | 🔜 Current |
+| 1 | Design visual mockups (no code) | Phase 1 | ⏳ |
+| 2 | Build main page + base layout | Phase 1 | ⏳ |
+| 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ⏳ |
+| 4 | Build Multimodal Comparison Engine | Phase 1 | ⏳ |
+| 5 | Build Image Tools Suite | Phase 1 | ⏳ |
+| 6 | Build Colorization Toggle (trial) | Phase 1 | ⏳ |
+| 7 | Build TTS Module | Phase 1 | ⏳ |
+| 8 | MVP test with 5-7 students | Phase 1 | ⏳ |
+| 9 | Build SRS Module | Phase 2 | ⏳ |
+| 10 | Build Mnemonics Library | Phase 2 | ⏳ |
+| 11 | Build AI Assistant (AR/EN) | Phase 2 | ⏳ |
+| 12 | Expand content (full Abdomen) | Phase 2 | ⏳ |
+| 13 | Extended test with 20-30 students | Phase 2 | ⏳ |
+| 14 | Build user accounts (Backend) | Phase 3 | ⏳ |
+| 15 | Expand to additional body regions | Phase 3 | ⏳ |
+| 16 | Build Daily Challenge + Community | Phase 3 | ⏳ |
+| 17 | Official launch + marketing | Phase 3 | ⏳ |
 
-## Phase 1 — MVP (٤-٦ أسابيع)
-
-```
-الهدف: إثبات الفكرة بمنطقة واحدة فقط
-
-النطاق:
-- منطقة واحدة (مثلاً: البطن العلوي)
-- ٥-١٠ بنى تشريحية فقط
-- ٣ مودالتات أساسية (CT, MRI, US)
-- الميزات الجوهرية بدون AI/SRS
-- بدون حسابات (localStorage)
-
-النتيجة:
-نموذج تجريبي قابل للمشاركة لـ٥-٧ طلاب
-```
-
-## Phase 2 — التوسّع (٨-١٢ أسبوع)
+## Phase 1 — MVP (4-6 weeks)
 
 ```
-الهدف: منصّة كاملة لمنطقة واحدة
+Goal: Prove the concept with one region only
 
-النطاق:
-- نفس المنطقة موسّعة (٢٠-٣٠ بنية)
-- ٦ مودالتات (+ X-Ray, NM, Angio)
-- AI Assistant مفعّل
-- SRS مفعّل
+Scope:
+- One region (e.g., Upper Abdomen)
+- 5-10 anatomical structures only
+- 3 core modalities (CT, MRI, US)
+- Core features without AI/SRS
+- No accounts (localStorage)
+
+Output:
+Shareable prototype for 5-7 students
+```
+
+## Phase 2 — Expansion (8-12 weeks)
+
+```
+Goal: Complete platform for one region
+
+Scope:
+- Same region expanded (20-30 structures)
+- 6 modalities (+ X-Ray, NM, Angio)
+- AI Assistant activated
+- SRS activated
 - Mnemonics Library
-- اختبار مع ٢٠-٣٠ طالب
+- Testing with 20-30 students
 ```
 
-## Phase 3 — النضوج (١٢-٢٠ أسبوع)
+## Phase 3 — Maturity (12-20 weeks)
 
 ```
-الهدف: منصّة شاملة قابلة للاستخدام الواقعي
+Goal: Comprehensive platform for real-world use
 
-النطاق:
-- مناطق متعدّدة (Thorax, Head, MSK)
-- كل المودالتات
-- حسابات مستخدمين + مزامنة
+Scope:
+- Multiple regions (Thorax, Head, MSK)
+- All modalities
+- User accounts + sync
 - Community features
-- إطلاق رسمي
+- Official launch
 ```
 
 ---
 
-# ⑧ معايير النجاح (KPIs)
+# ⑧ Success Criteria (KPIs)
 
-## نهاية Phase 1 (MVP)
-
-```
-✅ ٥-٧ طلاب يجرّبون لمدة ساعة على الأقل
-✅ ٧٠٪+ يقولون "أفضل من Radiopaedia لهذا الغرض"
-✅ ٥٠٪+ يطلبون تجربتها مرة ثانية
-✅ صفر runtime errors
-✅ يعمل على الجوال
-```
-
-## نهاية Phase 2
+## End of Phase 1 (MVP)
 
 ```
-✅ ٢٠+ طالب يستخدمون أسبوعياً
-✅ متوسّط ١٥ دقيقة/جلسة
-✅ AI Assistant يجاوب ٨٠٪ من الأسئلة بدقّة
-✅ معدّل احتفاظ (retention) ٤٠٪+ بعد أسبوعين
+✅ 5-7 students try for at least 1 hour
+✅ 70%+ say "better than Radiopaedia for this purpose"
+✅ 50%+ request to try again
+✅ Zero runtime errors
+✅ Works on mobile
 ```
 
-## نهاية Phase 3
+## End of Phase 2
 
 ```
-✅ ١٠٠+ مستخدم مسجَّل
-✅ ٥٠+ مستخدم نشط أسبوعياً
-✅ اعتراف من أساتذة جامعيين
-✅ طلبات تعاون من جامعات أخرى
+✅ 20+ students using weekly
+✅ Average 15 min/session
+✅ AI Assistant answers 80% of questions accurately
+✅ 40%+ retention after two weeks
+```
+
+## End of Phase 3
+
+```
+✅ 100+ registered users
+✅ 50+ weekly active users
+✅ Recognition from university faculty
+✅ Collaboration requests from other universities
 ```
 
 ---
 
-# ⑨ المخاطر والتخفيفات
+# ⑨ Risks & Mitigations
 
-## مخاطر تقنية
+## Technical Risks
 
-| المخاطرة | الاحتمال | التخفيف |
-|---------|----------|---------|
-| TotalSegmentator لا يعمل بدقّة | متوسط | اختبار مبكّر + مراجعة يدوية |
-| AI Assistant يعطي معلومات خاطئة | عالٍ | RAG صارم + disclaimer + rate limiting |
-| تكلفة AI API تتضخّم | متوسط | rate limit + caching + freemium |
-| Browser limitations مع DICOM | منخفض | استخدام WebP/JPG بعد المعالجة |
+| Risk | Probability | Mitigation |
+|------|-------------|-----------|
+| TotalSegmentator inaccuracy | Medium | Early testing + manual review |
+| AI gives wrong medical info | High | Strict RAG + disclaimer + rate limit |
+| AI API cost escalation | Medium | Rate limit + caching + freemium |
+| Browser DICOM limitations | Low | Use WebP/JPG after processing |
 
-## مخاطر محتوى
+## Content Risks
 
-| المخاطرة | الاحتمال | التخفيف |
-|---------|----------|---------|
-| دقّة طبية ناقصة | عالٍ | مراجعة من طبيب أشعة + disclaimer |
-| حقوق نشر الصور | متوسط | استخدام CC-licensed فقط |
-| Mnemonics غير دقيقة | متوسط | مراجعة قبل النشر |
+| Risk | Probability | Mitigation |
+|------|-------------|-----------|
+| Medical inaccuracy | High | Radiologist review + disclaimer |
+| Image copyright | Medium | Only CC-licensed sources |
+| Wrong mnemonics | Medium | Pre-publication review |
 
-## مخاطر شخصية
+## Personal Risks
 
-| المخاطرة | الاحتمال | التخفيف |
-|---------|----------|---------|
-| تشتّت الفكرة عن الهدف | عالٍ جداً | OMNIRAD_ISSUES.md + قاعدة #8 |
-| إحباط من بطء التقدّم | عالٍ | معايير نجاح صغيرة + مرحلية |
-| التزامات دراسية تتعارض | عالٍ | جدول مرن + لا ضغط زمني |
-| فقدان الحماس | متوسط | تقييم كل ٤ أسابيع (Pivot/Persevere) |
+| Risk | Probability | Mitigation |
+|------|-------------|-----------|
+| Focus drift from goal | Very High | OMNIRAD_ISSUES.md + Rule #8 |
+| Frustration from slow progress | High | Small milestones + phasing |
+| Academic load conflict | High | Flexible schedule + no deadline pressure |
+| Motivation loss | Medium | 4-week evaluations (Pivot/Persevere) |
 
 ---
 
-# ⑩ ما لن نفعله (No-Goes)
+# ⑩ What We Will NOT Do (No-Goes)
 
-> **قائمة محدّدة لمنع Project Creep.** أي ميزة هنا — مرفوضة حتى لو بدت ممتازة.
+> **Explicit list to prevent Project Creep.** Any feature here — rejected even if it seems excellent.
 
 ```
-❌ بناء mobile app (نبقى web فقط في Phase 1-3)
-❌ Real-time DICOM processing من PACS
-❌ AI image generation (الصور موجودة، لا نولّد)
-❌ Diagnostic tools (للتعليم فقط، لا تشخيص)
+❌ Build mobile app (web-only through Phase 1-3)
+❌ Real-time DICOM from PACS
+❌ AI image generation (images exist, we don't generate)
+❌ Diagnostic tools (education only, no diagnosis)
 ❌ Multi-user real-time collaboration (Phase 4+)
 ❌ Video tutorials (Phase 4+)
-❌ Live streaming من الأشعة
-❌ منتدى مفتوح بلا إشراف
-❌ نشر صور المرضى (حتى الـCC-licensed)
-❌ ميزات اجتماعية (chat, follow, like) قبل Phase 3
-❌ Multiple themes (theme واحد فقط، احترافي)
-❌ Gamification مفرطة (نقاط، شارات معقّدة) قبل Phase 2
-❌ Translation لـ٥ لغات (عربي/إنجليزي فقط في البداية)
-❌ Backend معقّد (Phase 1 client-side فقط)
-❌ AI training models بأنفسنا (نستخدم APIs)
+❌ Live streaming from imaging
+❌ Open forum without moderation
+❌ Publish patient images (even CC-licensed)
+❌ Social features (chat, follow, like) before Phase 3
+❌ Multiple themes (one professional theme only)
+❌ Excessive gamification before Phase 2
+❌ Translation to 5 languages (Arabic/English only initially)
+❌ Complex backend (Phase 1 client-side only)
+❌ Train AI models ourselves (use APIs)
 ```
 
 ---
 
-# ⑪ قواعد المحادثات والاعتماد
+# ⑪ Conversation & Approval Rules
 
-## بنية كل محادثة مهمّة
-
-```
-1. البدء:
-   - قراءة OMNIRAD_PROJECT.md و OMNIRAD_ISSUES.md
-   - إعلان حالة المهمة
-   - تقدير النموذج المناسب
-   - طلب تأكيد البدء
-
-2. أثناء العمل:
-   - Approval Gate قبل كل إجراء
-   - الالتزام بنطاق المهمة فقط
-   - تسجيل الأفكار الجانبية في OMNIRAD_ISSUES.md
-   - ردود موجزة افتراضياً
-
-3. الانتهاء:
-   - تقديم نتيجة المهمة
-   - تطبيق بروتوكول التسليم
-   - طلب الاعتماد الصريح "اعتمد ✅"
-   - بعد الاعتماد: تحديث ملفات الحوكمة
-   - تقديم رسالة المهمة التالية
-```
-
-## بروتوكول التسليم (Delivery Protocol)
+## Structure of Each Task Conversation
 
 ```
-في نهاية كل مهمّة قبل طلب الاعتماد:
+1. Start:
+   - Read OMNIRAD_PROJECT.md and OMNIRAD_ISSUES.md
+   - Announce task status
+   - Estimate model needed
+   - Request start confirmation
 
-① 🗂️  جدول ملفات المهمّة (ما يُسلَّم)
-② 📋  تعليمات التنفيذ (خطوة بخطوة)
-③ ✅  قائمة تحقّق الجودة
-④ 👀  ما يحتاج تأكيد المستخدم بصرياً
-⑤ 🎯  ما المهمّة التالية بعد الاعتماد
+2. During work:
+   - Approval Gate before every action
+   - Stay within task scope
+   - Log side ideas in OMNIRAD_ISSUES.md
+   - Concise responses by default
 
-ثم: "هل تعتمد؟ نعم/لا/تعديل"
+3. Completion:
+   - Present task result
+   - Apply delivery protocol
+   - Request explicit approval "approved ✅"
+   - After approval: update governance files
+   - Provide next task message
 ```
 
-## قاعدة الاعتماد
+## Delivery Protocol
 
 ```
-المهمّة لا تُعتبر منتهية إلا بـ:
-  ١. اعتماد صريح "اعتمد ✅"
-  ٢. تحديث OMNIRAD_PROJECT.md
-  ٣. تحديث OMNIRAD_ISSUES.md
-  ٤. تحميل الملفّين المحدَّثين للمستخدم
-  ٥. رفعهما على GitHub (إن كان مفعّلاً)
+At end of each task before requesting approval:
 
-لو لم يكتمل أحدها → المهمّة قيد العمل.
+① 🗂️  File table (what's delivered)
+② 📋  Execution instructions (step by step)
+③ ✅  Quality checklist
+④ 👀  What user needs to verify visually
+⑤ 🎯  What's the next task after approval
+
+Then: "Do you approve? yes/no/edit"
+```
+
+## Approval Rule
+
+```
+Task is NOT considered complete until:
+1. Explicit approval "approved ✅"
+2. OMNIRAD_PROJECT.md updated
+3. OMNIRAD_ISSUES.md updated
+4. Both updated files delivered to user
+5. Uploaded to GitHub (if applicable)
+
+If any step missing → task still in progress.
 ```
 
 ---
 
-# ⑫ سجل الإصدارات
+# ⑫ Version History
 
 - **v1.0 — 2026-06-25**
-  - الإصدار الأوّل من OMNIRAD_PROJECT.md
-  - مشروع جديد من الصفر
-  - ١٢ قسماً محوريّاً
-  - ٦+٢ قواعد عمل إلزامية
-  - ١٧ مهمّة مرتّبة على ٣ مراحل
-  - قائمة "ما لن نفعله" لمنع Project Creep
+  - First release of OMNIRAD_PROJECT.md
+  - Brand-new project from scratch
+  - 12 core sections
+  - 8 mandatory collaboration rules
+  - 17 tasks across 3 phases
+  - "What we won't do" list for Project Creep prevention
 
 ---
 
-## 📎 ملحق — قواعد التعاون السريعة
+## 📎 Appendix — Quick Start Template
 
 ```
-عند بدء أي محادثة جديدة، انسخ هذا:
+When starting any new conversation, paste this:
 
-"بدء مهمّة OmniRad — [اسم المهمّة]
+"Starting OmniRad task — [task name]
 
-اقرأ ملفات الحوكمة:
+Read governance files:
 - OMNIRAD_PROJECT.md
 - OMNIRAD_ISSUES.md
 
-التزم بـ٨ قواعد التعاون:
-1. تقدير النموذج
-2. قراءة الملفات
-3. الملف يفوز
+Comply with the 8 collaboration rules:
+1. Model Assessment
+2. Files First
+3. File Wins
 4. Three Strikes
-5. Best First
+5. Best Solution First
 6. Approval Gate
-7. ردود موجزة
+7. Concise by Default
 8. No Project Creep
 
-ابدأ بـ:
+Start with:
 [Model] [Files Read] [Task Status] [Action Required]
-ثم اطلب موافقتي."
+Then request my approval."
 ```
 
 ---
 
-**نهاية الوثيقة — OmniRad Master Plan v1.0**
+**End of Document — OmniRad Master Plan v1.0**
