@@ -1,0 +1,212 @@
+{
+  "liver": {
+    "term": "Liver",
+    "ipa": "/ˈlɪvər/",
+    "origin": "Old English: lifer",
+    "roots": [
+      { "root": "lifer", "lang": "Old English", "meaning": "liver" }
+    ],
+    "definition": "The largest solid abdominal organ; a bilobed gland performing >500 metabolic functions.",
+    "clinical_note": "Derived from Old English; the Latin term 'hepar' (ἧπαρ, Greek) is used in compound terms: hepatic, hepatitis, hepatomegaly.",
+    "related_terms": ["hepatic","hepatomegaly","hepatitis","hepatocyte"]
+  },
+  "hepatic": {
+    "term": "Hepatic",
+    "ipa": "/hɪˈpætɪk/",
+    "origin": "Latin: hepaticus; Greek: hēpatikos",
+    "roots": [
+      { "root": "hepar (ἧπαρ)", "lang": "Greek", "meaning": "liver" },
+      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
+    ],
+    "definition": "Relating to the liver.",
+    "clinical_note": "Used in: hepatic artery, hepatic vein, hepatic portal system, hepatic encephalopathy.",
+    "related_terms": ["liver","hepatomegaly","hepatitis"]
+  },
+  "spleen": {
+    "term": "Spleen",
+    "ipa": "/spliːn/",
+    "origin": "Latin: splen; Greek: splēn (σπλήν)",
+    "roots": [
+      { "root": "splēn (σπλήν)", "lang": "Greek", "meaning": "spleen" }
+    ],
+    "definition": "A lymphoid and haematopoietic organ in the left upper quadrant, responsible for blood filtration and immune surveillance.",
+    "clinical_note": "Splenomegaly = enlarged spleen. Splenic hilum = gateway for splenic vessels. Greeks believed the spleen was the seat of melancholy.",
+    "related_terms": ["splenic","splenomegaly","splenectomy"]
+  },
+  "splenic": {
+    "term": "Splenic",
+    "ipa": "/ˈsplɛnɪk/",
+    "origin": "Latin: splenicus; Greek: splēnikos",
+    "roots": [
+      { "root": "splēn (σπλήν)", "lang": "Greek", "meaning": "spleen" },
+      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
+    ],
+    "definition": "Relating to the spleen.",
+    "clinical_note": "Used in: splenic artery, splenic vein, splenic flexure, splenic infarct.",
+    "related_terms": ["spleen","splenomegaly"]
+  },
+  "pancreas": {
+    "term": "Pancreas",
+    "ipa": "/ˈpæŋkriəs/",
+    "origin": "Greek: pankreas (πάγκρεας)",
+    "roots": [
+      { "root": "pan (πᾶν)", "lang": "Greek", "meaning": "all / entire" },
+      { "root": "kreas (κρέας)", "lang": "Greek", "meaning": "flesh / meat" }
+    ],
+    "definition": "A retroperitoneal gland with exocrine (digestive enzymes) and endocrine (insulin, glucagon) functions.",
+    "clinical_note": "Literally 'all flesh' — named for its fleshy appearance. The pancreatic head rests in the duodenal C-loop; the tail reaches the splenic hilum.",
+    "related_terms": ["pancreatic","pancreatitis","pancreatectomy"]
+  },
+  "pancreatic": {
+    "term": "Pancreatic",
+    "ipa": "/ˌpæŋkriˈætɪk/",
+    "origin": "Greek: pankreatikos",
+    "roots": [
+      { "root": "pankreas (πάγκρεας)", "lang": "Greek", "meaning": "pancreas (all flesh)" },
+      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
+    ],
+    "definition": "Relating to the pancreas.",
+    "clinical_note": "Pancreatic duct (Wirsung duct), pancreatic head, pancreatic tail. 'Pancreatic' modifies nearly all structures associated with the gland.",
+    "related_terms": ["pancreas","pancreatitis"]
+  },
+  "kidney": {
+    "term": "Kidney",
+    "ipa": "/ˈkɪdni/",
+    "origin": "Middle English: kidnei; Old English: cwið (womb) + ey (egg) — 'egg-shaped organ'",
+    "roots": [
+      { "root": "cwið", "lang": "Old English", "meaning": "womb / abdomen" },
+      { "root": "ey", "lang": "Old English", "meaning": "egg" }
+    ],
+    "definition": "Paired retroperitoneal organs that filter blood and produce urine; regulate electrolytes, acid-base balance, and blood pressure.",
+    "clinical_note": "Latin 'ren' (renis) used in compound terms: renal, renin. Greek 'nephros' (νεφρός) gives: nephron, nephritis, nephrectomy.",
+    "related_terms": ["renal","nephric","nephrotic","glomerulus"]
+  },
+  "renal": {
+    "term": "Renal",
+    "ipa": "/ˈriːnəl/",
+    "origin": "Latin: renalis",
+    "roots": [
+      { "root": "ren (renis)", "lang": "Latin", "meaning": "kidney" },
+      { "root": "-alis", "lang": "Latin", "meaning": "pertaining to" }
+    ],
+    "definition": "Relating to the kidney.",
+    "clinical_note": "Renal artery, renal vein, renal pelvis, renal cell carcinoma (RCC), renal cortex, renal medulla.",
+    "related_terms": ["kidney","nephric","renin"]
+  },
+  "gallbladder": {
+    "term": "Gallbladder",
+    "ipa": "/ˈɡɔːlˌblædər/",
+    "origin": "Old English: gealla (bile) + blæddre (bladder)",
+    "roots": [
+      { "root": "gealla", "lang": "Old English", "meaning": "bile / gall" },
+      { "root": "blæddre", "lang": "Old English", "meaning": "bladder / sac" }
+    ],
+    "definition": "A pear-shaped hollow organ on the undersurface of the liver that stores and concentrates bile.",
+    "clinical_note": "Greek 'cholē' (χολή) = bile → cholecystitis, cholecystectomy, cholelithiasis. Latin 'vesica fellea' also used.",
+    "related_terms": ["cholecystic","cholelithiasis","cholecystitis","biliary"]
+  },
+  "cholecystic": {
+    "term": "Cholecystic",
+    "ipa": "/ˌkɒlɪˈsɪstɪk/",
+    "origin": "Greek: cholē + kystis",
+    "roots": [
+      { "root": "cholē (χολή)", "lang": "Greek", "meaning": "bile" },
+      { "root": "kystis (κύστις)", "lang": "Greek", "meaning": "bladder / sac" },
+      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
+    ],
+    "definition": "Relating to the gallbladder.",
+    "clinical_note": "Cholecystitis (inflammation), cholecystectomy (surgical removal), cholecystography. The cystic duct drains the gallbladder into the common bile duct.",
+    "related_terms": ["gallbladder","cholecystitis","cholecystectomy"]
+  },
+  "peritoneum": {
+    "term": "Peritoneum",
+    "ipa": "/ˌpɛrɪtəˈniːəm/",
+    "origin": "Greek: peritonaion (περιτόναιον)",
+    "roots": [
+      { "root": "peri- (περί)", "lang": "Greek", "meaning": "around / surrounding" },
+      { "root": "teinein (τείνειν)", "lang": "Greek", "meaning": "to stretch" }
+    ],
+    "definition": "The serous membrane lining the abdominal cavity and covering most abdominal organs.",
+    "clinical_note": "Parietal peritoneum: lines cavity walls. Visceral peritoneum: covers organs. Retroperitoneal organs (kidneys, pancreas, aorta) lie behind the parietal layer.",
+    "related_terms": ["peritoneal","retroperitoneal","mesentery"]
+  },
+  "retroperitoneal": {
+    "term": "Retroperitoneal",
+    "ipa": "/ˌrɛtrəʊˌpɛrɪtəˈniːəl/",
+    "origin": "Latin: retro + Greek: peritonaion",
+    "roots": [
+      { "root": "retro-", "lang": "Latin", "meaning": "behind / posterior" },
+      { "root": "peritonaion (περιτόναιον)", "lang": "Greek", "meaning": "peritoneum (stretched around)" }
+    ],
+    "definition": "Located behind the peritoneum; not covered by peritoneum anteriorly.",
+    "clinical_note": "Primary retroperitoneal structures: kidneys, adrenal glands, aorta, IVC, pancreas (except tail). Secondary retroperitoneal: duodenum (2nd–4th parts), ascending and descending colon.",
+    "related_terms": ["peritoneum","retroperitoneum"]
+  },
+  "couinaud": {
+    "term": "Couinaud Segments",
+    "ipa": "/kuːˈiːnoʊ/",
+    "origin": "Eponym: Claude Couinaud, French surgeon (1922–2008)",
+    "roots": [
+      { "root": "Couinaud C.", "lang": "Eponym", "meaning": "French hepatic surgeon" }
+    ],
+    "definition": "A functional anatomical classification of the liver into 8 independent segments based on hepatic venous and portal venous anatomy.",
+    "clinical_note": "Each segment has its own portal pedicle (portal vein + hepatic artery + bile duct) and is drained by a hepatic vein. Fundamental to liver resection planning on CT/MRI.",
+    "related_terms": ["liver","hepatic vein","portal vein","hepatectomy"]
+  },
+  "parenchyma": {
+    "term": "Parenchyma",
+    "ipa": "/pəˈrɛŋkɪmə/",
+    "origin": "Greek: parenkhyma (παρέγχυμα)",
+    "roots": [
+      { "root": "para- (παρά)", "lang": "Greek", "meaning": "beside / alongside" },
+      { "root": "enkhein (ἐγχεῖν)", "lang": "Greek", "meaning": "to pour in" }
+    ],
+    "definition": "The functional cells of an organ, as distinct from its supporting stroma and connective tissue.",
+    "clinical_note": "Hepatic parenchyma = hepatocytes. Renal parenchyma = cortex + medulla (nephrons). On imaging: 'parenchymal enhancement' refers to the functional tissue taking up contrast.",
+    "related_terms": ["stroma","cortex","medulla"]
+  },
+  "hilum": {
+    "term": "Hilum",
+    "ipa": "/ˈhaɪləm/",
+    "origin": "Latin: hilum",
+    "roots": [
+      { "root": "hilum", "lang": "Latin", "meaning": "a small thing; the scar on a bean seed (entry point)" }
+    ],
+    "definition": "The depression or pit on an organ through which vessels, nerves, and ducts enter and exit.",
+    "clinical_note": "Renal hilum → renal artery, renal vein, ureter. Splenic hilum → splenic artery/vein. Hepatic hilum (porta hepatis) → portal vein, hepatic artery, common hepatic duct. Key landmark on CT.",
+    "related_terms": ["porta hepatis","renal pelvis","splenic vessels"]
+  },
+  "portal": {
+    "term": "Portal (vein)",
+    "ipa": "/ˈpɔːrtəl/",
+    "origin": "Latin: porta",
+    "roots": [
+      { "root": "porta", "lang": "Latin", "meaning": "gate / doorway" }
+    ],
+    "definition": "Relating to the portal vein or portal circulation. The portal vein carries nutrient-rich blood from the GI tract and spleen to the liver.",
+    "clinical_note": "Portal hypertension → varices, splenomegaly, ascites. On CT: portal phase (60–80 s) — liver enhances maximally. On US: hepatopetal flow (toward liver) is normal; hepatofugal = portal hypertension.",
+    "related_terms": ["hepatic","portal hypertension","hepatic vein"]
+  },
+  "cortex": {
+    "term": "Cortex",
+    "ipa": "/ˈkɔːrtɛks/",
+    "origin": "Latin: cortex (corticis)",
+    "roots": [
+      { "root": "cortex", "lang": "Latin", "meaning": "bark / outer layer / rind" }
+    ],
+    "definition": "The outer layer of an organ, typically distinct in function from the deeper medulla.",
+    "clinical_note": "Renal cortex: contains glomeruli and proximal/distal tubules. Enhances earlier than medulla in corticomedullary phase CT. Normal cortical thickness ≥ 10 mm.",
+    "related_terms": ["medulla","parenchyma","glomerulus"]
+  },
+  "medulla": {
+    "term": "Medulla",
+    "ipa": "/mɪˈdʌlə/",
+    "origin": "Latin: medulla",
+    "roots": [
+      { "root": "medulla", "lang": "Latin", "meaning": "marrow / inner part / pith" }
+    ],
+    "definition": "The inner region of an organ, as distinct from the outer cortex.",
+    "clinical_note": "Renal medulla: contains the loops of Henle, collecting ducts, and renal pyramids. On MRI T2: medullary pyramids are hyperintense. Adrenal medulla: chromaffin cells → epinephrine.",
+    "related_terms": ["cortex","renal pyramids","adrenal"]
+  }
+}
