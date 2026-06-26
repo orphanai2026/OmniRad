@@ -14,7 +14,6 @@
   --bg-hover:oklch(0.25 0.014 240);
   --bg-active:oklch(0.28 0.016 240);
   --teal:oklch(0.72 0.14 188);
-  --teal-dim:oklch(0.55 0.12 188);
   --teal-bg:oklch(0.20 0.04 188);
   --text-primary:oklch(0.93 0.01 240);
   --text-sec:oklch(0.68 0.01 240);
@@ -30,8 +29,7 @@
   --cat-urinary:oklch(0.72 0.14 240);
   --cat-vascular:oklch(0.70 0.14 355);
   --cat-gi:oklch(0.75 0.14 130);
-  --radius:8px;
-  --radius-lg:12px;
+  --radius:8px; --radius-lg:12px;
   --font:'IBM Plex Sans',system-ui,sans-serif;
   --mono:'IBM Plex Mono',monospace;
 }
@@ -41,7 +39,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 /* TOPBAR */
 #topbar{display:flex;align-items:center;gap:12px;padding:0 16px;height:52px;background:var(--bg-surface);border-bottom:1px solid var(--border);position:fixed;top:0;left:0;right:0;z-index:100;}
 .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
-.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;letter-spacing:-0.5px;}
+.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;}
 .logo-text{font-size:16px;font-weight:600;color:var(--text-primary);}
 .topbar-div{width:1px;height:24px;background:var(--border);}
 .nav-pills{display:flex;gap:4px;}
@@ -49,7 +47,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 .nav-pill:hover{background:var(--bg-panel);color:var(--text-primary);}
 .nav-pill.active{background:var(--teal-bg);color:var(--teal);}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
-#btn-tts-toggle{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;}
+#btn-tts-toggle{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;font-family:var(--font);cursor:pointer;}
 #btn-tts-toggle.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
 #hamburger{display:none;padding:6px;background:transparent;border:none;cursor:pointer;flex-direction:column;gap:4px;}
 #hamburger span{display:block;width:22px;height:2px;background:var(--text-sec);border-radius:2px;}
@@ -58,62 +56,62 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 #layout{display:flex;margin-top:52px;height:calc(100vh - 52px);overflow:hidden;}
 
 /* SIDEBAR */
-#sidebar{width:240px;flex-shrink:0;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s ease;}
-.sidebar-search{padding:12px;border-bottom:1px solid var(--border);}
-#search-input{width:100%;padding:7px 10px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;}
+#sidebar{width:230px;flex-shrink:0;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s;}
+.sidebar-search{padding:10px;border-bottom:1px solid var(--border);}
+#search-input{width:100%;padding:7px 10px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-size:13px;font-family:var(--font);outline:none;}
 #search-input:focus{border-color:var(--teal);}
 #search-input::placeholder{color:var(--text-muted);}
 .sidebar-list{flex:1;overflow-y:auto;padding:8px 0;}
-.sidebar-list::-webkit-scrollbar{width:4px;}
+.sidebar-list::-webkit-scrollbar{width:3px;}
 .sidebar-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-.cat-group{margin-bottom:4px;}
-.cat-header{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);cursor:pointer;user-select:none;}
+.cat-group{margin-bottom:2px;}
+.cat-header{display:flex;align-items:center;gap:7px;padding:6px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);cursor:pointer;user-select:none;}
 .cat-header:hover{color:var(--text-sec);}
 .cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .cat-upper-abdomen .cat-dot{background:var(--cat-upper);}
 .cat-urinary .cat-dot{background:var(--cat-urinary);}
 .cat-vascular .cat-dot{background:var(--cat-vascular);}
 .cat-gi-tract .cat-dot{background:var(--cat-gi);}
-.cat-chevron{margin-left:auto;font-size:10px;transition:transform .2s;}
+.cat-chevron{margin-left:auto;font-size:9px;transition:transform .2s;}
 .cat-group.collapsed .cat-chevron{transform:rotate(-90deg);}
 .cat-group.collapsed .cat-items{display:none;}
-.structure-item{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 24px;cursor:pointer;transition:background .1s;}
+.structure-item{display:flex;align-items:center;padding:6px 10px 6px 22px;cursor:pointer;transition:background .1s;}
 .structure-item:hover{background:var(--bg-hover);}
 .structure-item.active{background:var(--teal-bg);border-right:2px solid var(--teal);}
 .str-en{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.3;}
-.str-ar{font-size:11px;color:var(--text-muted);direction:rtl;}
+.str-ar{font-size:10px;color:var(--text-muted);direction:rtl;}
 .structure-item.active .str-en{color:var(--teal);}
 
 /* MAIN */
 #main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-#main::-webkit-scrollbar{width:6px;}
+#main::-webkit-scrollbar{width:5px;}
 #main::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
 /* WELCOME */
 #welcome-screen{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;}
-.welcome-inner{text-align:center;max-width:440px;}
-.welcome-icon{width:64px;height:64px;background:var(--teal-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
-.welcome-inner h2{font-size:20px;font-weight:600;margin-bottom:8px;}
+.welcome-inner{text-align:center;max-width:420px;}
+.welcome-icon{width:60px;height:60px;background:var(--teal-bg);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 18px;}
+.welcome-inner h2{font-size:19px;font-weight:600;margin-bottom:8px;}
 .welcome-inner p{font-size:14px;color:var(--text-sec);line-height:1.6;}
-.welcome-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
+.welcome-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;}
 .w-stat{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;}
 .w-stat-num{font-size:22px;font-weight:700;color:var(--teal);font-family:var(--mono);}
 .w-stat-label{font-size:11px;color:var(--text-muted);margin-top:2px;}
 
 /* STRUCTURE VIEW */
 #structure-view{display:none;flex-direction:column;}
-.struct-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
-.struct-breadcrumb{font-size:11px;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.struct-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.struct-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.struct-breadcrumb{font-size:11px;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.struct-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
 .struct-title-block{flex:1;}
-.struct-name-en{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:4px;}
-.struct-name-ar{font-size:18px;color:var(--text-sec);direction:rtl;font-weight:400;margin-bottom:4px;}
-.struct-name-latin{font-size:14px;font-style:italic;color:var(--teal);font-family:var(--mono);opacity:.8;}
-.struct-actions{display:flex;gap:8px;flex-shrink:0;}
-.action-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
-.action-btn:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--border-light);}
+.struct-name-en{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:3px;}
+.struct-name-ar{font-size:16px;color:var(--text-sec);direction:rtl;margin-bottom:3px;}
+.struct-name-latin{font-size:13px;font-style:italic;color:var(--teal);font-family:var(--mono);opacity:.8;}
+.struct-actions{display:flex;gap:7px;flex-shrink:0;align-items:flex-start;margin-top:2px;}
+.action-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;}
+.action-btn:hover{background:var(--bg-hover);color:var(--text-primary);}
 .action-btn.teal{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
-.cat-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:8px;}
+.cat-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:6px;}
 .cat-badge.upper-abdomen{background:oklch(0.72 0.14 188/.15);color:var(--cat-upper);}
 .cat-badge.urinary{background:oklch(0.72 0.14 240/.15);color:var(--cat-urinary);}
 .cat-badge.vascular{background:oklch(0.70 0.14 355/.15);color:var(--cat-vascular);}
@@ -121,72 +119,111 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 
 /* TABS */
 .tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg-surface);overflow-x:auto;}
-.tab-btn{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-muted);border:none;background:transparent;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--font);}
+.tab-btn{padding:9px 16px;font-size:13px;font-weight:500;color:var(--text-muted);border:none;background:transparent;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--font);}
 .tab-btn:hover{color:var(--text-primary);}
 .tab-btn.active{color:var(--teal);border-bottom-color:var(--teal);}
-.tab-panel{display:none;padding:20px 24px;}
+.tab-panel{display:none;padding:18px 20px;}
 .tab-panel.active{display:block;}
 
 /* INFO TAB */
-.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px;}
-.info-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
-.info-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px;}
-.info-description{font-size:14px;line-height:1.7;color:var(--text-sec);}
-.key-facts-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
-.key-facts-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.5;}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:14px;}
+.info-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;}
+.info-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:9px;}
+.info-description{font-size:13px;line-height:1.7;color:var(--text-sec);}
+.key-facts-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.key-facts-list li{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.5;}
 .key-facts-list li::before{content:'▸';color:var(--teal);flex-shrink:0;margin-top:1px;}
-.related-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.related-chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg-panel);font-size:12px;color:var(--text-sec);cursor:pointer;transition:all .15s;}
+.related-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+.related-chip{padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:var(--bg-panel);font-size:12px;color:var(--text-sec);cursor:pointer;transition:all .15s;}
 .related-chip:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-bg);}
 
-/* IMAGES TAB */
-.modality-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.mod-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all .15s;}
+/* ═══════════════════════════════════
+   IMAGES TAB — with full tools
+═══════════════════════════════════ */
+.images-tab-layout{display:flex;gap:0;height:520px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.images-left{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.images-toolbar-top{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg-surface);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.modality-selector{display:flex;gap:5px;flex-wrap:wrap;}
+.mod-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;font-weight:700;font-family:var(--mono);cursor:pointer;transition:all .12s;}
 .mod-btn:hover{border-color:var(--border-light);color:var(--text-sec);}
 .mod-active-CT{border-color:var(--ct)!important;background:oklch(0.72 0.14 188/.15)!important;color:var(--ct)!important;}
 .mod-active-MRI{border-color:var(--mri)!important;background:oklch(0.72 0.14 285/.15)!important;color:var(--mri)!important;}
 .mod-active-US{border-color:var(--us)!important;background:oklch(0.75 0.14 155/.15)!important;color:var(--us)!important;}
 .mod-active-XR,.mod-active-X-Ray{border-color:var(--xray)!important;background:oklch(0.75 0.10 50/.15)!important;color:var(--xray)!important;}
 .mod-active-Angio{border-color:var(--angio)!important;background:oklch(0.70 0.14 355/.15)!important;color:var(--angio)!important;}
-.plane-toggle{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.plane-btn{padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all .1s;}
+.toolbar-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.plane-toggle{display:flex;gap:4px;}
+.plane-btn{padding:3px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:10px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all .1s;}
 .plane-btn.active{background:var(--bg-active);border-color:var(--border-light);color:var(--text-primary);}
-.image-workspace{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:300px;}
-.image-workspace.single{grid-template-columns:1fr;}
-.image-workspace.triple{grid-template-columns:repeat(3,1fr);}
-.canvas-panel{background:#000;border-radius:var(--radius);border:2px solid var(--border);overflow:hidden;position:relative;min-height:260px;cursor:crosshair;transition:border-color .15s;}
-.canvas-panel.panel-active{border-color:var(--teal);}
-.canvas-panel canvas{display:block;width:100%;height:100%;}
-.panel-label{position:absolute;top:8px;left:8px;background:oklch(0 0 0/.7);backdrop-filter:blur(4px);padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:var(--mono);color:#fff;pointer-events:none;}
-.panel-active-badge{position:absolute;top:8px;right:8px;background:var(--teal);color:#000;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);display:none;}
-.canvas-panel.panel-active .panel-active-badge{display:block;}
+
+/* Canvas workspace */
+.canvas-workspace{flex:1;display:grid;gap:4px;padding:4px;background:oklch(0.09 0.008 240);overflow:hidden;}
+.canvas-workspace.mode-1{grid-template-columns:1fr;}
+.canvas-workspace.mode-2{grid-template-columns:1fr 1fr;}
+.canvas-workspace.mode-3{grid-template-columns:1fr 1fr 1fr;}
+
+.canvas-panel{position:relative;background:#000;border-radius:5px;border:2px solid var(--border);overflow:hidden;cursor:crosshair;transition:border-color .15s;}
+.canvas-panel.active-panel{border-color:var(--teal);}
+.canvas-panel canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
+.panel-label{position:absolute;top:7px;left:7px;background:oklch(0 0 0/.75);backdrop-filter:blur(4px);padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);color:#fff;pointer-events:none;z-index:2;}
+.active-badge{position:absolute;top:7px;right:7px;background:var(--teal);color:#000;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;font-family:var(--mono);display:none;z-index:2;}
+.canvas-panel.active-panel .active-badge{display:block;}
+.hu-overlay{position:absolute;bottom:7px;left:7px;background:oklch(0 0 0/.7);padding:2px 7px;border-radius:4px;font-size:10px;font-family:var(--mono);color:#0f0;display:none;z-index:2;}
+
+/* TOOLS PANEL */
+.tools-panel{width:150px;flex-shrink:0;background:var(--bg-surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+.tools-panel::-webkit-scrollbar{width:3px;}
+.tools-panel::-webkit-scrollbar-thumb{background:var(--border);}
+.tools-section{padding:8px 8px 4px;}
+.tools-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:5px;}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.tool-btn{padding:5px 3px;border-radius:5px;border:1px solid transparent;background:var(--bg-panel);color:var(--text-muted);font-size:9px;cursor:pointer;text-align:center;transition:all .1s;font-family:var(--font);display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2;}
+.tool-btn:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--border);}
+.tool-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+.tool-btn .ti{font-size:13px;}
+.tools-divider{height:1px;background:var(--border);margin:4px 8px;}
+
+/* Modality-specific tool sections */
+.tools-ct{display:none;}
+.tools-mri{display:none;}
+.tools-us{display:none;}
+.tools-nm{display:none;}
+
+/* View mode buttons */
+.view-mode-row{display:flex;gap:3px;padding:5px 8px 0;}
+.view-mode-btn{flex:1;padding:4px 2px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:9px;font-family:var(--font);cursor:pointer;transition:all .1s;text-align:center;}
+.view-mode-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+
+/* Annotation overlay */
+.annotation-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:3;}
 
 /* IMAGING TAB */
-.imaging-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;}
-.imaging-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
-.modality-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:var(--mono);margin-bottom:8px;}
+.imaging-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+.imaging-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px;}
+.modality-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);margin-bottom:7px;}
 .modality-tag.CT{background:oklch(0.72 0.14 188/.2);color:var(--ct);}
 .modality-tag.MRI{background:oklch(0.72 0.14 285/.2);color:var(--mri);}
 .modality-tag.US{background:oklch(0.75 0.14 155/.2);color:var(--us);}
 .modality-tag.XR{background:oklch(0.75 0.10 50/.2);color:var(--xray);}
-.imaging-card p{font-size:13px;line-height:1.6;color:var(--text-sec);}
+.modality-tag.Angio{background:oklch(0.70 0.14 355/.2);color:var(--angio);}
+.imaging-card p{font-size:12px;line-height:1.6;color:var(--text-sec);}
 
 /* MNEMONICS TAB */
-.mnemonic-card{background:var(--bg-panel);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
-.mnemonic-title{font-size:13px;font-weight:600;margin-bottom:8px;}
-.mnemonic-en{font-size:13px;line-height:1.6;color:var(--text-sec);}
-.mnemonic-ar{font-size:12px;line-height:1.6;color:var(--text-muted);direction:rtl;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
-.mnemonic-ref{font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic;}
+.mnemonic-card{background:var(--bg-panel);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--radius);padding:13px;margin-bottom:10px;}
+.mnemonic-title{font-size:12px;font-weight:600;margin-bottom:7px;}
+.mnemonic-en{font-size:12px;line-height:1.6;color:var(--text-sec);}
+.mnemonic-ar{font-size:11px;line-height:1.6;color:var(--text-muted);direction:rtl;margin-top:5px;padding-top:5px;border-top:1px solid var(--border);}
+.mnemonic-ref{font-size:10px;color:var(--text-muted);margin-top:6px;font-style:italic;}
 
 /* SRS */
-.srs-box{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
-.srs-prompt{font-size:12px;color:var(--text-muted);margin-bottom:10px;}
-.srs-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.srs-btn{padding:8px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-panel);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font);}
+.srs-box{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;}
+.srs-prompt{font-size:12px;color:var(--text-muted);margin-bottom:9px;}
+.srs-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.srs-btn{padding:7px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-panel);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font);}
 .srs-btn:hover{transform:translateY(-1px);}
-.srs-emoji{font-size:18px;display:block;margin-bottom:3px;}
-.srs-label-en{font-size:11px;font-weight:600;display:block;}
-.srs-label-ar{font-size:10px;color:var(--text-muted);display:block;direction:rtl;}
+.srs-emoji{font-size:17px;display:block;margin-bottom:2px;}
+.srs-label-en{font-size:10px;font-weight:600;display:block;}
+.srs-label-ar{font-size:9px;color:var(--text-muted);display:block;direction:rtl;}
 .srs-btn[data-rating="1"]{border-color:oklch(0.55 0.12 25);}
 .srs-btn[data-rating="1"]:hover{background:oklch(0.55 0.12 25/.15);}
 .srs-btn[data-rating="2"]{border-color:oklch(0.65 0.12 50);}
@@ -195,37 +232,36 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 .srs-btn[data-rating="3"]:hover{background:oklch(0.65 0.12 155/.15);}
 .srs-btn[data-rating="4"]{border-color:var(--teal);}
 .srs-btn[data-rating="4"]:hover{background:var(--teal-bg);}
-#srs-feedback{margin-top:12px;font-size:13px;color:var(--text-sec);text-align:center;min-height:20px;}
+#srs-feedback{margin-top:10px;font-size:12px;color:var(--text-sec);text-align:center;min-height:18px;}
 
-/* TTS panel */
-#tts-panel{position:fixed;bottom:20px;right:20px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:10px 14px;display:none;gap:8px;align-items:center;box-shadow:0 2px 12px oklch(0 0 0/.5);z-index:200;}
+/* TTS PANEL */
+#tts-panel{position:fixed;bottom:18px;right:18px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 13px;display:none;gap:7px;align-items:center;box-shadow:0 4px 16px oklch(0 0 0/.5);z-index:200;}
 #tts-panel.visible{display:flex;}
-.tts-btn{padding:4px 10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .1s;font-family:var(--font);}
+.tts-btn{padding:3px 9px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;font-family:var(--font);}
 .tts-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
-
-/* DISCLAIMER */
-.disclaimer{font-size:11px;color:var(--text-muted);padding:12px 24px;border-top:1px solid var(--border);text-align:center;}
 
 /* OVERLAY */
 #sidebar-overlay{display:none;position:fixed;inset:0;background:oklch(0 0 0/.5);z-index:80;}
 #sidebar-overlay.visible{display:block;}
 
-/* RESPONSIVE */
+.disclaimer{font-size:10px;color:var(--text-muted);padding:10px 20px;border-top:1px solid var(--border);text-align:center;}
+
 @media(max-width:768px){
-  #sidebar{position:fixed;top:52px;left:0;bottom:0;transform:translateX(-100%);z-index:90;width:260px;}
+  #sidebar{position:fixed;top:52px;left:0;bottom:0;transform:translateX(-100%);z-index:90;width:250px;}
   #sidebar.open{transform:translateX(0);}
   #hamburger{display:flex;}
   .nav-pills{display:none;}
-  .image-workspace,.image-workspace.triple{grid-template-columns:1fr;}
-  .struct-header{padding:12px 16px;}
-  .tab-panel{padding:12px 16px;}
-  .info-grid,.imaging-grid{grid-template-columns:1fr;}
+  .struct-title-row{flex-direction:column;gap:8px;}
+  .images-tab-layout{flex-direction:column;height:auto;}
+  .tools-panel{width:100%;border-left:none;border-top:1px solid var(--border);flex-direction:row;flex-wrap:wrap;}
+  .canvas-workspace.mode-2,.canvas-workspace.mode-3{grid-template-columns:1fr;}
   .srs-buttons{grid-template-columns:repeat(2,1fr);}
-  .struct-title-row{flex-direction:column;gap:10px;}
 }
 
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.fade-in{animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeIn .2s ease;}
+@keyframes tts-pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.tts-speaking{animation:tts-pulse .8s infinite;}
 </style>
 </head>
 <body>
@@ -267,7 +303,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
       <div class="welcome-inner">
         <div class="welcome-icon">🫀</div>
         <h2>Smart Atlas — Full Abdomen</h2>
-        <p>Select an anatomical structure from the sidebar to explore imaging across CT, MRI, Ultrasound, X-Ray, and more — with mnemonics, SRS review, and bilingual TTS.</p>
+        <p>Select an anatomical structure from the sidebar to explore imaging across CT, MRI, Ultrasound, X-Ray, and more — with professional image tools, mnemonics, SRS review, and bilingual TTS.</p>
         <div class="welcome-stats">
           <div class="w-stat"><div class="w-stat-num">12</div><div class="w-stat-label">Structures</div></div>
           <div class="w-stat"><div class="w-stat-num">5+</div><div class="w-stat-label">Modalities</div></div>
@@ -305,13 +341,13 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
         <button class="tab-btn" data-tab="review">🔁 Review</button>
       </div>
 
-      <!-- Overview -->
+      <!-- OVERVIEW -->
       <div class="tab-panel active" data-panel="info">
         <div class="info-grid">
           <div class="info-card">
             <div class="info-card-title">📖 Description</div>
             <div class="info-description" id="s-desc-en"></div>
-            <div class="info-description" id="s-desc-ar" style="margin-top:10px;direction:rtl;font-size:13px;color:var(--text-muted);"></div>
+            <div class="info-description" id="s-desc-ar" style="margin-top:9px;direction:rtl;font-size:12px;color:var(--text-muted);"></div>
           </div>
           <div class="info-card">
             <div class="info-card-title">⚡ Key Facts</div>
@@ -324,26 +360,141 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
         </div>
       </div>
 
-      <!-- Images -->
-      <div class="tab-panel" data-panel="images">
-        <div class="modality-selector" id="mod-selector"></div>
-        <div class="plane-toggle" id="plane-toggle"></div>
-        <div class="image-workspace" id="image-workspace"></div>
-        <p style="font-size:11px;color:var(--text-muted);margin-top:10px;">⚠️ Images: Wikimedia Commons CC0 (Mikael Häggström M.D.) · Values illustrative, not diagnostic.</p>
+      <!-- IMAGES — Full tools -->
+      <div class="tab-panel" data-panel="images" style="padding:12px 14px;">
+        <div class="images-tab-layout" id="images-tab-layout">
+
+          <!-- LEFT: toolbar + canvas -->
+          <div class="images-left">
+            <!-- Top toolbar: modalities + planes -->
+            <div class="images-toolbar-top">
+              <div class="modality-selector" id="mod-selector"></div>
+              <div class="toolbar-divider"></div>
+              <div class="plane-toggle" id="plane-toggle"></div>
+              <div class="toolbar-divider"></div>
+              <!-- View mode -->
+              <div style="display:flex;gap:4px;margin-left:auto;">
+                <button class="view-mode-btn active" data-vmode="normal" title="Normal view" onclick="setViewMode('normal')">⊞</button>
+                <button class="view-mode-btn" data-vmode="split" title="Split 2 modalities" onclick="setViewMode('split')">⊟</button>
+              </div>
+            </div>
+            <!-- Canvas area -->
+            <div class="canvas-workspace mode-1" id="canvas-workspace"></div>
+          </div>
+
+          <!-- RIGHT: Tools panel -->
+          <div class="tools-panel" id="tools-panel">
+            <div class="view-mode-row">
+              <button class="view-mode-btn active" data-vmode="normal" onclick="setViewMode('normal')" title="Single">1</button>
+              <button class="view-mode-btn" data-vmode="split" onclick="setViewMode('split')" title="Split">2</button>
+            </div>
+
+            <!-- BASE TOOLS -->
+            <div class="tools-section">
+              <div class="tools-section-title">Base Tools</div>
+              <div class="tool-grid">
+                <button class="tool-btn active" data-tool="pan" onclick="setTool('pan')" title="Pan & Zoom"><span class="ti">✋</span><span>Pan</span></button>
+                <button class="tool-btn" data-tool="zoom" onclick="setTool('zoom')" title="Zoom"><span class="ti">🔍</span><span>Zoom</span></button>
+                <button class="tool-btn" data-tool="measure" onclick="setTool('measure')" title="Measure distance"><span class="ti">📏</span><span>Measure</span></button>
+                <button class="tool-btn" data-tool="angle" onclick="setTool('angle')" title="Angle tool"><span class="ti">📐</span><span>Angle</span></button>
+                <button class="tool-btn" data-tool="roi-rect" onclick="setTool('roi-rect')" title="ROI Rectangle"><span class="ti">⬜</span><span>ROI □</span></button>
+                <button class="tool-btn" data-tool="roi-ellipse" onclick="setTool('roi-ellipse')" title="ROI Ellipse"><span class="ti">⭕</span><span>ROI ○</span></button>
+                <button class="tool-btn" data-tool="annotate" onclick="setTool('annotate')" title="Annotate"><span class="ti">🏷</span><span>Label</span></button>
+                <button class="tool-btn" data-tool="invert" onclick="applyInvert()" title="Invert"><span class="ti">◑</span><span>Invert</span></button>
+              </div>
+            </div>
+
+            <div class="tools-divider"></div>
+
+            <!-- TRANSFORM TOOLS -->
+            <div class="tools-section">
+              <div class="tools-section-title">Transform</div>
+              <div class="tool-grid">
+                <button class="tool-btn" onclick="applyRotate(90)" title="Rotate CW"><span class="ti">↻</span><span>Rot CW</span></button>
+                <button class="tool-btn" onclick="applyRotate(-90)" title="Rotate CCW"><span class="ti">↺</span><span>Rot CCW</span></button>
+                <button class="tool-btn" onclick="applyFlip('h')" title="Flip Horizontal"><span class="ti">↔</span><span>Flip H</span></button>
+                <button class="tool-btn" onclick="applyFlip('v')" title="Flip Vertical"><span class="ti">↕</span><span>Flip V</span></button>
+                <button class="tool-btn" onclick="resetPanel()" title="Reset panel"><span class="ti">✕</span><span>Reset</span></button>
+                <button class="tool-btn" onclick="savePanel()" title="Save PNG"><span class="ti">📸</span><span>Save</span></button>
+              </div>
+            </div>
+
+            <div class="tools-divider"></div>
+
+            <!-- CT TOOLS -->
+            <div class="tools-section tools-ct" id="tools-ct">
+              <div class="tools-section-title">CT Tools</div>
+              <div class="tool-grid">
+                <button class="tool-btn" data-tool="hu" onclick="setTool('hu')" title="HU Probe"><span class="ti">🔢</span><span>HU Probe</span></button>
+                <button class="tool-btn" data-tool="cobb" onclick="setTool('cobb')" title="Cobb Angle"><span class="ti">🦴</span><span>Cobb</span></button>
+              </div>
+              <div style="padding:6px 2px 2px;">
+                <div class="tools-section-title" style="margin-bottom:4px;">Window / Level</div>
+                <select id="wl-preset" onchange="applyWindowPreset(this.value)" style="width:100%;padding:4px 6px;background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);font-size:10px;font-family:var(--mono);">
+                  <option value="">Select preset…</option>
+                  <option value="abdomen">Abdomen (W400/L40)</option>
+                  <option value="liver">Liver (W160/L60)</option>
+                  <option value="lung">Lung (W1500/L-600)</option>
+                  <option value="bone">Bone (W2000/L300)</option>
+                  <option value="brain">Brain (W80/L40)</option>
+                  <option value="soft">Soft Tissue (W350/L50)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- MRI TOOLS -->
+            <div class="tools-section tools-mri" id="tools-mri">
+              <div class="tools-section-title">MRI Tools</div>
+              <div class="tool-grid">
+                <button class="tool-btn" data-tool="si-roi" onclick="setTool('si-roi')" title="Signal Intensity ROI"><span class="ti">📊</span><span>SI ROI</span></button>
+                <button class="tool-btn" data-tool="tic" onclick="setTool('tic')" title="TIC Curve"><span class="ti">📈</span><span>TIC</span></button>
+              </div>
+              <div style="padding:6px 2px 2px;">
+                <div class="tools-section-title" style="margin-bottom:4px;">Sequence</div>
+                <select id="mri-seq" style="width:100%;padding:4px 6px;background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);font-size:10px;font-family:var(--mono);">
+                  <option>T1</option><option>T2</option><option>FLAIR</option>
+                  <option>DWI</option><option>ADC</option><option>T1+C</option><option>STIR</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- US TOOLS -->
+            <div class="tools-section tools-us" id="tools-us">
+              <div class="tools-section-title">US Tools</div>
+              <div class="tool-grid">
+                <button class="tool-btn" data-tool="depth" onclick="setTool('depth')" title="Depth scale"><span class="ti">📏</span><span>Depth</span></button>
+                <button class="tool-btn" data-tool="vol" onclick="setTool('vol')" title="Volume calc"><span class="ti">⭕</span><span>Volume</span></button>
+              </div>
+              <div style="padding:6px 2px 2px;">
+                <div class="tools-section-title" style="margin-bottom:4px;">Mode</div>
+                <select id="us-mode" style="width:100%;padding:4px 6px;background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);font-size:10px;font-family:var(--mono);">
+                  <option>B-Mode</option><option>Color Doppler</option>
+                  <option>Power Doppler</option><option>Spectral</option>
+                </select>
+                <div style="margin-top:5px;">
+                  <label style="font-size:9px;color:var(--text-muted);">Gain</label>
+                  <input type="range" min="0" max="100" value="60" style="width:100%;accent-color:var(--us);" id="us-gain">
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end tools-panel -->
+        </div><!-- end images-tab-layout -->
+        <p style="font-size:10px;color:var(--text-muted);margin-top:8px;">⚠️ Images: Wikimedia Commons CC0 · Values illustrative — not for clinical use</p>
       </div>
 
-      <!-- Imaging Guide -->
+      <!-- IMAGING GUIDE -->
       <div class="tab-panel" data-panel="imaging">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:14px;color:var(--text-sec);">Modality-Specific Findings</h3>
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-sec);">Modality-Specific Imaging Findings</h3>
         <div class="imaging-grid" id="s-imaging"></div>
       </div>
 
-      <!-- Mnemonics -->
+      <!-- MNEMONICS -->
       <div class="tab-panel" data-panel="mnemonics">
         <div id="s-mnemonics"></div>
       </div>
 
-      <!-- Review -->
+      <!-- REVIEW -->
       <div class="tab-panel" data-panel="review">
         <div class="srs-box">
           <div class="srs-prompt">How well did you recall this structure?</div>
@@ -355,258 +506,189 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
           </div>
           <div id="srs-feedback"></div>
         </div>
-        <div id="srs-mastery" style="margin-top:16px;"></div>
+        <div id="srs-mastery" style="margin-top:14px;"></div>
       </div>
 
-      <div class="disclaimer">OmniRad — Educational Use Only · Images: Wikimedia Commons CC0 · Values are illustrative</div>
-    </div>
+      <div class="disclaimer">OmniRad — Educational Use Only · Images: Wikimedia Commons CC0 (Mikael Häggström M.D.) · Values are illustrative</div>
+    </div><!-- end structure-view -->
   </main>
 </div>
 
 <div id="tts-panel">
-  <span style="font-size:12px;color:var(--text-muted);">TTS</span>
+  <span style="font-size:11px;color:var(--text-muted);">TTS</span>
   <button class="tts-btn active" data-lang="en">EN</button>
   <button class="tts-btn" data-lang="ar">AR</button>
-  <div style="width:1px;height:16px;background:var(--border);"></div>
+  <div style="width:1px;height:14px;background:var(--border);"></div>
   <button class="tts-btn" data-speed="0.7">0.7×</button>
   <button class="tts-btn active" data-speed="1.0">1.0×</button>
   <button class="tts-btn" data-speed="1.3">1.3×</button>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// EMBEDDED DATA
-// ═══════════════════════════════════════════════════
-const CATS = [
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const CATS=[
   {id:'upper-abdomen',en:'Upper Abdomen',ar:'البطن العلوي'},
   {id:'urinary',en:'Urinary System',ar:'الجهاز البولي'},
   {id:'vascular',en:'Vascular',ar:'الأوعية الدموية'},
   {id:'gi-tract',en:'GI Tract',ar:'الجهاز الهضمي'}
 ];
 
-const IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
+const IMG='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
 
-const STRUCTS = [
-  {
-    id:'liver',cat:'upper-abdomen',
-    en:'Liver',ar:'الكبد',latin:'Hepar',
-    descEn:'The largest solid organ in the body, in the right upper quadrant beneath the diaphragm. Performs over 500 functions including metabolism, detoxification, and bile production.',
-    descAr:'أكبر الأعضاء الصلبة، في الربع العلوي الأيمن. يؤدي أكثر من 500 وظيفة تشمل الأيض وإزالة السموم وإنتاج الصفراء.',
-    facts:['Weight: 1.2–1.5 kg in adults','Divided into 8 Couinaud segments','Dual blood supply: portal vein (75%) + hepatic artery (25%)','Located in RUQ and epigastrium','Covered by Glisson\'s capsule'],
-    imaging:{CT:'Homogeneous parenchyma 50–70 HU on plain CT. Portal venous phase (70 s) optimal. 8 Couinaud segments identifiable by hepatic veins.',MRI:'T1: moderately hyperintense. T2: slightly hypointense vs spleen. Gadolinium shows arterial, portal, and delayed phases.',US:'Homogeneous echogenicity, slightly hyperechoic vs renal cortex. Normal ≤15 cm in midclavicular line.',XR:'Hepatomegaly displaces stomach gas medially. Right hemidiaphragm elevated.'},
-    mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
-    mnemonics:[
-      {title:'Couinaud Segments',en:'"LEFT has LOWER numbers" — Segments 1 (caudate) alone; 2–4 left lobe; 5–8 right lobe.',ar:'"اليسار أرقام أصغر" — القطاع ١ منفرداً؛ ٢–٤ الفص الأيسر؛ ٥–٨ الفص الأيمن.',ref:'Couinaud 1957'},
-      {title:"Riedel's Lobe",en:'"Riedel Reaches Right" — tongue-like downward extension of right lobe, common in women, not pathological.',ar:'"ريدل يمتد يميناً" — امتداد لساني للفص الأيمن، شائع عند النساء، وليس مرضياً.',ref:"Gray's Anatomy 41st ed."}
-    ],
-    related:['gallbladder','portal-vein','ivc'],
-    ttsEn:'Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.',
-    ttsAr:'الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن.'
-  },
-  {
-    id:'gallbladder',cat:'upper-abdomen',
-    en:'Gallbladder',ar:'المرارة',latin:'Vesica biliaris',
-    descEn:'A pear-shaped sac on the inferior surface of the liver at the gallbladder fossa. Stores and concentrates bile, releasing it into the duodenum via the cystic and common bile ducts.',
-    descAr:'كيس على شكل كمثرى على السطح السفلي للكبد. يخزّن الصفراء ويُركّزها ثم يُطلقها إلى الاثني عشر عبر القناة الكيسية والصفراوية المشتركة.',
-    facts:['Capacity: 30–50 mL','Normal wall thickness ≤3 mm','Located at gallbladder fossa (IV/V junction)','Cystic duct → common bile duct','Best modality for gallstones: Ultrasound'],
-    imaging:{CT:'Thin-walled fluid-filled structure. Bile: 0–20 HU. Calcified stones: bright; cholesterol stones may be invisible.',MRI:'T2 very high signal (MRCP ideal). Wall barely visible when normal.',US:'Anechoic pear-shaped structure + posterior acoustic enhancement. Wall ≤3 mm. Stones: echogenic foci + posterior shadowing.',XR:'Invisible unless calcified stones or porcelain gallbladder.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-    mnemonics:[
-      {title:"Gallstone Risk — 5 F's",en:'"Fat, Female, Fertile, Forty, Fair" — classic risk factors for cholesterol gallstones. Add a 6th F: Family history.',ar:'"سمينة، أنثى، خصبة، أربعينية، فاتحة البشرة" — عوامل خطر حصى الكولسترول الكلاسيكية.',ref:"Moore's Clinically Oriented Anatomy 8th ed."}
-    ],
-    related:['liver','pancreas','portal-vein'],
-    ttsEn:'Gallbladder. Latin: Vesica biliaris. Bile storage. Gallbladder fossa.',
-    ttsAr:'المرارة. باللاتينية: فيسيكا بيلياريس. تخزين الصفراء. حفرة المرارة.'
-  },
-  {
-    id:'pancreas',cat:'upper-abdomen',
-    en:'Pancreas',ar:'البنكرياس',latin:'Pancreas',
-    descEn:'Mixed exocrine/endocrine gland in the retroperitoneum behind the stomach. Head in the duodenal C-curve; tail extends to the splenic hilum. Essential for digestion and glucose homeostasis.',
-    descAr:'غدة مختلطة خلف الصفاق خلف المعدة. الرأس في منحنى الاثني عشر والذيل إلى نقير الطحال. ضرورية للهضم والتحكم في السكر.',
-    facts:['Parts: Head, Neck, Body, Tail + Uncinate process','Retroperitoneal (except tail — intraperitoneal)','Main duct (Wirsung) diameter ≤3 mm','Exocrine: acinar cells → digestive enzymes','Endocrine: Islets of Langerhans → insulin, glucagon'],
-    imaging:{CT:'Pancreatic phase (35–40 s) optimal. Attenuation ~40 HU. Duct ≤3 mm. Fat lobulations common in elderly.',MRI:'T1: high signal (proteinaceous secretions). MRCP shows duct. DWI useful for masses.',US:'Echogenicity ≥ liver. Head anterior to IVC; tail posterior to stomach. Duct ≤3 mm.',XR:'Calcifications of chronic pancreatitis visible on plain film. Organ itself not directly seen.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG},US:{planes:['Transverse','Oblique'],img:IMG}},
-    mnemonics:[
-      {title:'Pancreas Parts — HNBT',en:'"Hang Neatly Before Tail" — Head (duodenal curve), Neck (over portal vein), Body (crosses spine), Tail (to splenic hilum).',ar:'"الرأس ثم العنق والجسم ثم الذيل" — رأس في منحنى الاثني عشر، عنق فوق الوريد البابي، جسم يعبر العمود، ذيل إلى الطحال.',ref:"Netter's Atlas 7th ed."},
-      {title:'Exocrine Enzymes — PALE',en:'"PALE" — Protease, Amylase, Lipase, Elastase. All secreted as inactive zymogens.',ar:'"PALE" — بروتياز، أميلاز، ليباز، إيلاستاز. كلها سلائف زيموجينية غير نشطة.',ref:"Moore's 8th ed."}
-    ],
-    related:['gallbladder','spleen','stomach','portal-vein'],
-    ttsEn:'Pancreas. Greek: all flesh. Retroperitoneal. Head, neck, body, tail.',
-    ttsAr:'البنكرياس. يوناني: كل اللحم. خلف صفاقي. رأس، عنق، جسم، ذيل.'
-  },
-  {
-    id:'spleen',cat:'upper-abdomen',
-    en:'Spleen',ar:'الطحال',latin:'Lien / Splen',
-    descEn:'The largest lymphoid organ, in the left upper quadrant under ribs 9–11. Filters blood, recycles iron from aged RBCs, and serves as an immunological reservoir for lymphocytes and monocytes.',
-    descAr:'أكبر عضو لمفاوي، في الربع العلوي الأيسر تحت الأضلاع ٩–١١. يرشّح الدم ويُعيد تدوير الحديد ويعمل كخزّان مناعي.',
-    facts:['Normal size: ≤12 cm long-axis','LUQ, posterior to stomach','Hilum on medial surface','Fragile capsule — rupture risk in trauma','Red pulp: filtration | White pulp: immune function'],
-    imaging:{CT:'Homogeneous ~50 HU. Arterial phase: "zebra stripes" (heterogeneous — normal!). Portal phase: homogeneous. Size ≤12 cm.',MRI:'T1: hypointense vs liver. T2: hyperintense vs liver. Heterogeneous arterial phase (normal).',US:'Homogeneous, crescent-shaped. ≤12 cm long-axis. Splenomegaly >12 cm.',XR:'Splenomegaly displaces stomach medially and elevates left hemidiaphragm.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-    mnemonics:[
-      {title:'Spleen Size — 1×3×5×7×9×11',en:'"1×3×5×7×9×11" — Spleen: 1 inch thick, 3 inches wide, 5 inches long. Weighs 7 oz. Under ribs 9, 10, 11.',ar:'"١×٣×٥×٧×٩×١١" — سُمك ١ إنش، عرض ٣، طول ٥. وزنه ٧ أوقية. تحت الأضلاع ٩، ١٠، ١١.',ref:"Gray's Anatomy 41st ed."},
-      {title:'Spleen Functions — FIST',en:'"FIST" — Filtration, Immune response, Storage (platelets/monocytes), haemaTopoiesis (fetal life).',ar:'"FIST" — ترشيح، استجابة مناعية، تخزين (صفائح/وحيدات)، تكوين دم (في الجنين).',ref:"Moore's 8th ed."}
-    ],
-    related:['pancreas','stomach','portal-vein'],
-    ttsEn:'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.',
-    ttsAr:'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'
-  },
-  {
-    id:'kidneys',cat:'urinary',
-    en:'Kidneys',ar:'الكليتان',latin:'Renes',
-    descEn:'Paired retroperitoneal organs at T12–L3 flanking the vertebral column. Filter ~180 L/day, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.',
-    descAr:'عضوان مزدوجان خلف صفاقيان عند T12–L3. يرشّحان ١٨٠ لتراً يومياً وينظّمان الشوارد وتوازن الحموضة وضغط الدم.',
-    facts:['Size: 9–12 cm long, 5–6 cm wide','Right kidney slightly lower (displaced by liver)','Cortex + medulla + renal sinus','Blood supply: renal arteries from aorta at L1','Right renal vein short; left renal vein crosses aorta'],
-    imaging:{CT:'Cortex ~30 HU unenhanced. Nephrographic phase (90–100 s): homogeneous enhancement, cortex > medulla. Renal sinus: fat density.',MRI:'T1: cortex slightly hyperintense vs medulla. Corticomedullary differentiation best post-contrast.',US:'Hyperechoic renal sinus centrally. Cortex echogenicity ≤ liver/spleen. Medullary pyramids: hypoechoic triangular structures.',XR:'KUB: renal outlines visible if surrounded by perinephric fat. Right at L1–L3; left at T12–L2.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},'X-Ray':{planes:['AP (KUB)'],img:IMG}},
-    mnemonics:[
-      {title:'Kidney Functions — RAVE',en:'"RAVE" — Renin (BP), Activated vitamin D (calcitriol), Volume regulation, Erythropoietin (RBC production).',ar:'"RAVE" — رينين (ضغط دم)، فيتامين D منشّط، تنظيم حجم، إريثروبويتين (إنتاج كريات حمراء).',ref:"Moore's 8th ed."},
-      {title:'Cortex Echogenicity Rule',en:'"Cortex ≤ liver/spleen on US." If cortex > spleen echogenicity → abnormal (CKD, nephritis).',ar:'"صدى القشرة ≤ الكبد/الطحال في السونار." إذا تجاوز الطحال ← غير طبيعي.',ref:'Radiographics Renal US Guidelines'}
-    ],
-    related:['adrenal-glands','aorta','ivc'],
-    ttsEn:'Kidneys. Latin: Renes. Retroperitoneal. T12 to L3. Filter 180 liters per day.',
-    ttsAr:'الكليتان. باللاتينية: رينيس. خلف صفاقيتان. من T12 إلى L3. ترشحان ١٨٠ لتراً يومياً.'
-  },
-  {
-    id:'adrenal-glands',cat:'urinary',
-    en:'Adrenal Glands',ar:'الغدد الكظرية',latin:'Glandulae suprarenales',
-    descEn:'Small triangular glands atop each kidney. Outer cortex (3 zones) secretes aldosterone, cortisol, and androgens. Inner medulla secretes epinephrine and norepinephrine.',
-    descAr:'غدد صغيرة مثلثة فوق كل كلية. القشرة الخارجية (٣ مناطق) تُفرز ألدوستيرون وكورتيزول وأندروجينات. اللب الداخلي يُفرز الأدرينالين.',
-    facts:['Right: pyramidal, medial to right kidney upper pole','Left: semilunar, anterior to left kidney upper pole','Normal limb thickness ≤10 mm','Cortex zones: glomerulosa, fasciculata, reticularis','Adenoma: <10 HU on unenhanced CT (lipid-rich)'],
-    imaging:{CT:'Inverted V or Y shape. Limb ≤10 mm. Adenomas: <10 HU. Absolute washout >50% at 15 min.',MRI:'Chemical shift (in-phase/opposed-phase): adenomas lose signal on opposed-phase. Pheochromocytoma: bright T2.',US:'Difficult in adults. Best in neonates: hypoechoic cortex + hyperechoic medulla.',XR:'Not visible unless large calcified mass (e.g., old tuberculosis).'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-    mnemonics:[
-      {title:'Cortex Zones — GFR',en:'"GFR" (outer→inner) — Glomerulosa (Aldosterone), Fasciculata (Cortisol), Reticularis (androgens). "The deeper you go, the more sex!"',ar:'"GFR" (خارج ← داخل) — كبيبية (ألدوستيرون)، محزوزة (كورتيزول)، شبكية (أندروجينات). "كلما تعمّقت زادت هرمونات الجنس!"',ref:"Gray's Anatomy 41st ed."},
-      {title:'Salt, Sugar, Sex, Shock',en:'"Salt, Sugar, Sex, Shock" — Aldosterone (salt), Cortisol (sugar), Androgens (sex), Epinephrine (shock response).',ar:'"ملح، سكر، جنس، صدمة" — ألدوستيرون، كورتيزول، أندروجينات، أدرينالين.',ref:"Moore's 8th ed."}
-    ],
-    related:['kidneys','aorta'],
-    ttsEn:'Adrenal glands. Latin: Glandulae suprarenales. Cortex and medulla. Stress hormones.',
-    ttsAr:'الغدد الكظرية. باللاتينية: غلاندولاي سوبرارينالس. القشرة واللب. هرمونات الإجهاد.'
-  },
-  {
-    id:'aorta',cat:'vascular',
-    en:'Abdominal Aorta',ar:'الأبهر البطني',latin:'Aorta abdominalis',
-    descEn:'The continuation of the descending aorta below the diaphragm at T12. Descends anterior to the vertebral column, bifurcating at L4 into the common iliac arteries.',
-    descAr:'امتداد الأبهر النازل أسفل الحجاب الحاجز عند T12. ينزل أمام العمود الفقري ليتفرع عند L4 إلى الشريانين الحرقفيين المشتركين.',
-    facts:['Enters abdomen at T12 through aortic hiatus','Bifurcates at L4 → right and left common iliac arteries','Normal diameter ≤3 cm (AAA if >3 cm)','Major branches: celiac (T12), SMA (L1), renal (L1), IMA (L3)','Lies to the LEFT of IVC'],
-    imaging:{CT:'Round, left of midline. Measure outer-to-outer. Normal ≤3 cm. Atherosclerotic calcifications common in elderly. CTA arterial phase for branches.',MRI:'Flow void on spin echo. Bright on GRE/TOF-MRA. Gold standard for non-radiation vascular imaging.',US:'Pulsatile anechoic tube. Normal <3 cm. AAA screening: males ≥65 with smoking history.',XR:'Calcified wall on lateral X-ray. Aneurysm = widened soft tissue opacity.'},
-    mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},Angio:{planes:['Frontal','Lateral'],img:IMG}},
-    mnemonics:[
-      {title:'Aorta Branches — Mnemonic',en:'"Curious Surgeons Rarely Inject Gut Lumens" — Celiac (T12), SMA (L1), Renals (L1), IMA (L3), Gonadal (L2), Lumbars.',ar:'"الجراحون الفضوليون نادراً ما يحقنون تجاويف الأمعاء" — جذع بطني (T12)، SMA (L1)، كلوية (L1)، IMA (L3)، تناسلية، قطنية.',ref:"Netter's Atlas 7th ed."},
-      {title:'AAA Screening',en:'"One-time scan: Male ≥65 who ever Smoked" — Abdominal aortic aneurysm = aorta >3 cm.',ar:'"فحص واحد: ذكر ≥٦٥ سنة، مدخّن" — تمدد وعائي أبهري = أبهر > ٣ سم.',ref:'USPSTF AAA Screening Guidelines'}
-    ],
-    related:['ivc','portal-vein','kidneys'],
-    ttsEn:'Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.',
-    ttsAr:'الأبهر البطني. باللاتينية: أورطا أبدوميناليس. من T12 إلى L4. الطبيعي أقل من ٣ سم.'
-  },
-  {
-    id:'ivc',cat:'vascular',
-    en:'Inferior Vena Cava',ar:'الوريد الأجوف السفلي',latin:'Vena cava inferior',
-    descEn:'The largest vein in the body, formed by union of the common iliac veins at L5. Ascends to the right of the aorta, passing through the diaphragm at T8 to drain into the right atrium.',
-    descAr:'أكبر وريد في الجسم، يتشكّل من اتحاد الوريدين الحرقفيين عند L5. يصعد يمين الأبهر ويمر عبر الحجاب الحاجز عند T8 ليصبّ في الأذين الأيمن.',
-    facts:['Forms at L5 by union of common iliac veins','Lies to the RIGHT of the aorta','Passes diaphragm at T8 (caval opening)','Tributaries: renal, hepatic, lumbar, gonadal veins','No valves in abdominal IVC'],
-    imaging:{CT:'Right of aorta. Variable caliber with respiration. Hepatic veins enter just below diaphragm. Thrombosis: filling defect.',MRI:'Variable signal. Bright on TOF-MRA. Acute thrombus: T1 bright.',US:'Easily compressible. Collapses on inspiration. Right of aorta. Hepatic veins visible entering IVC.',XR:'Not visible unless calcified or massively dilated.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
-    mnemonics:[
-      {title:'IVC Tributaries — Mnemonic',en:'"I Like Riding Horses Going South" — Iliac, Lumbar, Renal, Hepatic, Gonadal, Suprarenal veins drain into IVC.',ar:'"أحب ركوب الخيل جهة الجنوب" — حرقفية، قطنية، كلوية، كبدية، تناسلية، كظرية تصبّ في الوريد الأجوف السفلي.',ref:"Gray's Anatomy 41st ed."}
-    ],
-    related:['aorta','liver','kidneys'],
-    ttsEn:'Inferior vena cava. Latin: Vena cava inferior. Largest vein. Right of aorta.',
-    ttsAr:'الوريد الأجوف السفلي. باللاتينية: فينا كافا إنفيريور. أكبر وريد. يمين الأبهر.'
-  },
-  {
-    id:'portal-vein',cat:'vascular',
-    en:'Portal Vein',ar:'الوريد البابي',latin:'Vena portae hepatis',
-    descEn:'Formed by SMV + splenic vein behind the pancreatic neck at L2. Carries nutrient-rich blood from the GI tract and spleen to the liver, providing 75% of hepatic blood supply.',
-    descAr:'يتشكّل من الوريد المساريقي العلوي والوريد الطحالي خلف عنق البنكرياس عند L2. يحمل دماً غنياً من الجهاز الهضمي والطحال إلى الكبد (٧٥٪ من إمداده الدموي).',
-    facts:['Formed at L2: SMV + splenic vein','Normal diameter ≤13 mm at porta hepatis','Provides 75% of hepatic blood supply','Normal flow: hepatopetal (towards liver)','Portal HTN: gradient >10 mmHg'],
-    imaging:{CT:'Portal venous phase (70 s) optimal. Round at hepatic hilum. Thrombosis: filling defect in lumen.',MRI:'Flow void or bright on GRE. Acute thrombus: T1 bright. Gadolinium confirms patency.',US:'Doppler: hepatopetal flow (towards liver). Monophasic waveform. Diameter ≤13 mm at hilum.',XR:'Not visible on plain X-ray.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Oblique','Longitudinal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-    mnemonics:[
-      {title:'Portal Vein Formation',en:'"SMV Marries Splenic behind Pancreatic Neck at L2."',ar:'"المساريقي يتزوج الطحالي خلف عنق البنكرياس عند L2."',ref:"Moore's 8th ed."},
-      {title:'Portal HTN Signs — SPADE',en:'"SPADE" — Splenomegaly, Portal vein >13 mm, Ascites, portoDuodenal collaterals, Esophageal varices.',ar:'"SPADE" — ضخامة طحال، وريد بابي >١٣ مم، استسقاء، وصلات عروقية، دوالي مريء.',ref:'Radiographics Portal HTN'}
-    ],
-    related:['liver','spleen','pancreas','ivc'],
-    ttsEn:'Portal vein. Latin: Vena portae hepatis. Formed at L2. Normal under 13 millimeters.',
-    ttsAr:'الوريد البابي. باللاتينية: فينا بورتاي هيباتيس. يتشكّل عند L2. الطبيعي أقل من ١٣ ملم.'
-  },
-  {
-    id:'stomach',cat:'gi-tract',
-    en:'Stomach',ar:'المعدة',latin:'Gaster / Ventriculus',
-    descEn:'A J-shaped muscular organ in the left upper quadrant. Receives food from the esophagus via the gastroesophageal junction; delivers chyme to the duodenum via the pylorus. Secretes HCl, pepsin, and intrinsic factor.',
-    descAr:'عضو عضلي على شكل J في الربع العلوي الأيسر. يستقبل الطعام من المريء ويُرسل الكيموس إلى الاثني عشر عبر البواب. يُفرز HCl والبيبسين والعامل الداخلي.',
-    facts:['Regions: fundus, body (corpus), antrum, pylorus','Capacity: ~1 L (expandable to 4 L)','Normal wall ≤5 mm when distended','Greater curvature: left | Lesser curvature: right','Blood supply: branches of celiac axis'],
-    imaging:{CT:'Wall ≤5 mm distended. Rugae visible. Oral contrast optimal. Air-fluid level common.',MRI:'T2 shows fluid well. T1 post-contrast for wall assessment. Rarely used routinely.',US:'"Target sign" on transverse view. Limited by gas. Pyloric stenosis: muscle >4 mm in infants.',XR:'Gastric air bubble in LUQ on erect film. Free air under diaphragm = perforation!'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Erect PA','Barium Study'],img:IMG},US:{planes:['Longitudinal'],img:IMG}},
-    mnemonics:[
-      {title:'Stomach Parts — FBAP',en:'"Fun Boys Always Perform" — Fundus, Body, Antrum, Pylorus.',ar:'"القاع والجسم والقناة والبواب" — قاع، جسم، قناة معدية، بواب.',ref:"Netter's Atlas 7th ed."},
-      {title:'Gastric Cells',en:'"Chief Makes Pepsin, Parietal Has Acid" — Chief: pepsinogen. Parietal: HCl + intrinsic factor. G-cells: gastrin.',ar:'"الرئيسية تصنع البيبسين، الجدارية لديها الحامض" — خلايا رئيسية: بيبسينوجين. جدارية: HCl + عامل داخلي.',ref:"Moore's 8th ed."}
-    ],
-    related:['pancreas','spleen','portal-vein'],
-    ttsEn:'Stomach. Latin: Gaster. Fundus, body, antrum, pylorus. Left upper quadrant.',
-    ttsAr:'المعدة. باللاتينية: غاستر. القاع، الجسم، القناة المعدية، البواب. الربع العلوي الأيسر.'
-  },
-  {
-    id:'small-intestine',cat:'gi-tract',
-    en:'Small Intestine',ar:'الأمعاء الدقيقة',latin:'Intestinum tenue',
-    descEn:'A coiled tube ~6–7 m: duodenum (25 cm), jejunum (~2.5 m), ileum (~3.5 m). Site of chemical digestion and nutrient absorption. Characterised by plicae circulares and villi.',
-    descAr:'أنبوب ملتوٍ ~٦–٧ أمتار: اثني عشر، صائم، لفائفي. موقع الهضم الكيميائي وامتصاص المواد الغذائية. يتميّز بالطيات الدائرية والزغابات.',
-    facts:['Duodenum: C-shaped, retroperitoneal, surrounds pancreatic head','Jejunum: thick folds, more vascular, LEFT abdomen','Ileum: thin folds, Peyer\'s patches, RIGHT lower quadrant','Total length: 6–7 m','Wall ≤3 mm when distended'],
-    imaging:{CT:'Wall ≤3 mm distended. Jejunum: left with more folds. Ileum: right lower quadrant. CT enterography: oral neutral contrast.',MRI:'MR enterography excellent for Crohn\'s disease. T2 HASTE: fluid bright.',US:'Peristalsis visible in real-time. Target sign on transverse view. Normal <3 mm wall.',XR:'Plicae circulares cross ENTIRE lumen (key vs haustra). Normal diameter <2.5 cm. Obstruction: >3 cm.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Erect AP','Supine AP'],img:IMG},US:{planes:['Transverse','Longitudinal'],img:IMG}},
-    mnemonics:[
-      {title:'Duodenum — 4 Parts',en:'"I Stand Horizontally Down" — Superior (D1), Descending (D2), Horizontal (D3), Ascending (D4). Ampulla of Vater opens into D2.',ar:'"أقف أفقياً للأسفل" — علوي D1، نازل D2، أفقي D3، صاعد D4. حليمة فاتر في D2.',ref:"Gray's Anatomy 41st ed."},
-      {title:'Jejunum vs Ileum',en:'"Jejunum is Juicy (LEFT, thick folds, vascular); Ileum is Inferior (RIGHT, thin folds, Peyer\'s patches)."',ar:'"الصائم ممتلئ يساراً (طيات سميكة، وعائي)؛ اللفائفي في اليمين أسفل (طيات رفيعة، لويحات باير)."',ref:"Netter's Atlas 7th ed."}
-    ],
-    related:['stomach','large-intestine','pancreas'],
-    ttsEn:'Small intestine. Latin: Intestinum tenue. Duodenum, jejunum, ileum. 6 to 7 meters.',
-    ttsAr:'الأمعاء الدقيقة. باللاتينية: إنتيستينوم تينوي. اثني عشر، صائم، لفائفي. ٦ إلى ٧ أمتار.'
-  },
-  {
-    id:'large-intestine',cat:'gi-tract',
-    en:'Large Intestine',ar:'الأمعاء الغليظة',latin:'Intestinum crassum',
-    descEn:'~1.5 m framing the small intestine peripherally. Divided into cecum, ascending, transverse, descending, sigmoid colon, and rectum. Main function: water/electrolyte absorption and fecal formation.',
-    descAr:'~١.٥ متر يُحيط بالأمعاء الدقيقة. مقسّم إلى أعور، قولون صاعد، عرضي، نازل، سيني، ومستقيم. وظيفته الرئيسية: امتصاص الماء وتشكيل البراز.',
-    facts:['Length: ~1.5 m','Features: taeniae coli, haustra, epiploic appendages','Cecum: right iliac fossa, ileocecal valve','Normal caliber: <6 cm transverse, <9 cm cecum','Rectum: 12–15 cm, no taeniae coli'],
-    imaging:{CT:'Peripheral location. Haustra (incomplete folds). Wall ≤3 mm. CT colonography: prone + supine + CO2.',MRI:'Rectal MRI excellent for staging rectal cancer (mesorectal fascia assessment). T2 key sequence.',US:'Limited by gas. Graded compression technique for appendix.',XR:'Haustra = INCOMPLETE folds (cf. plicae circulares). Normal: <6 cm transverse, <9 cm cecum. Toxic megacolon: >6 cm.'},
-    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Supine AP','Erect AP'],img:IMG},US:{planes:['Transverse'],img:IMG}},
-    mnemonics:[
-      {title:'Colon Runs Clockwise',en:'"The Colon Runs Clockwise" — Cecum (RIF) → Ascending (right) → Transverse (across) → Descending (left) → Sigmoid → Rectum.',ar:'"القولون يسير بمحاذاة عقارب الساعة" — أعور (حفرة حرقفية يمنى) ← صاعد ← عرضي ← نازل ← سيني ← مستقيم.',ref:"Moore's 8th ed."},
-      {title:'Haustra vs Plicae — X-Ray',en:'"Plicae goes ALL the way across the lumen; Haustra DOESN\'T." Key for X-ray bowel obstruction!',ar:'"الطيات الدائرية تعبر كامل اللمعة؛ التكميشات لا تعبر." مهم جداً في تشخيص انسداد الأمعاء بالأشعة!',ref:'Radiographics Bowel Obstruction'}
-    ],
-    related:['small-intestine','stomach','aorta'],
-    ttsEn:'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.',
-    ttsAr:'الأمعاء الغليظة. باللاتينية: إنتيستينوم كراسوم. أعور، قولون، مستقيم. متر ونصف.'
-  }
+const STRUCTS=[
+  {id:'liver',cat:'upper-abdomen',en:'Liver',ar:'الكبد',latin:'Hepar',
+   descEn:'The largest solid organ in the body, in the right upper quadrant beneath the diaphragm. Performs over 500 functions including metabolism, detoxification, and bile production.',
+   descAr:'أكبر الأعضاء الصلبة، في الربع العلوي الأيمن. يؤدي أكثر من ٥٠٠ وظيفة تشمل الأيض وإزالة السموم وإنتاج الصفراء.',
+   facts:['Weight: 1.2–1.5 kg in adults','Divided into 8 Couinaud segments','Dual blood supply: portal vein (75%) + hepatic artery (25%)','Located in RUQ and epigastrium',"Covered by Glisson's capsule"],
+   imaging:{CT:'Homogeneous 50–70 HU on plain CT. Portal venous phase (70 s) optimal. 8 Couinaud segments identifiable.',MRI:'T1: moderately hyperintense. T2: slightly hypointense vs spleen. Gadolinium shows arterial/portal/delayed phases.',US:'Homogeneous echogenicity, slightly hyperechoic vs renal cortex. Normal ≤15 cm midclavicular.',XR:'Hepatomegaly displaces stomach gas medially. Right hemidiaphragm elevated.'},
+   mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
+   mnemonics:[{title:'Couinaud Segments',en:'"LEFT has LOWER numbers" — Segments 1 (caudate) alone; 2–4 left lobe; 5–8 right lobe.',ar:'"اليسار أرقام أصغر" — القطاع ١ منفرداً؛ ٢–٤ الفص الأيسر؛ ٥–٨ الفص الأيمن.',ref:'Couinaud 1957'},{title:"Riedel's Lobe",en:'"Riedel Reaches Right" — tongue-like downward extension of right lobe, common in women.',ar:'"ريدل يمتد يميناً" — امتداد لساني للفص الأيمن، شائع عند النساء.',ref:"Gray's 41st ed."}],
+   related:['gallbladder','portal-vein','ivc'],
+   ttsEn:'Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.',ttsAr:'الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن.'},
+
+  {id:'gallbladder',cat:'upper-abdomen',en:'Gallbladder',ar:'المرارة',latin:'Vesica biliaris',
+   descEn:'A pear-shaped sac on the inferior liver surface. Stores and concentrates bile, releasing it into the duodenum via the cystic and common bile ducts.',
+   descAr:'كيس على شكل كمثرى على السطح السفلي للكبد. يخزّن الصفراء ويُركّزها ثم يُطلقها إلى الاثني عشر.',
+   facts:['Capacity: 30–50 mL','Normal wall thickness ≤3 mm','Located at gallbladder fossa (IV/V junction)','Cystic duct → common bile duct','Best modality for gallstones: Ultrasound'],
+   imaging:{CT:'Thin-walled fluid-filled structure. Bile: 0–20 HU. Calcified stones: bright; cholesterol stones may be invisible.',MRI:'T2 very high signal (MRCP ideal). Wall barely visible when normal.',US:'Anechoic pear-shaped + posterior acoustic enhancement. Wall ≤3 mm. Stones: echogenic + shadowing.',XR:'Invisible unless calcified stones or porcelain gallbladder.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+   mnemonics:[{title:"Gallstone Risk — 5 F's",en:'"Fat, Female, Fertile, Forty, Fair" — classic risk factors for cholesterol gallstones. 6th F: Family history.',ar:'"سمينة، أنثى، خصبة، أربعينية، فاتحة البشرة" — عوامل خطر الحصى الكولسترولية.',ref:"Moore's 8th ed."}],
+   related:['liver','pancreas','portal-vein'],
+   ttsEn:'Gallbladder. Latin: Vesica biliaris. Bile storage. Gallbladder fossa.',ttsAr:'المرارة. باللاتينية: فيسيكا بيلياريس. تخزين الصفراء.'},
+
+  {id:'pancreas',cat:'upper-abdomen',en:'Pancreas',ar:'البنكرياس',latin:'Pancreas',
+   descEn:'Mixed exocrine/endocrine gland in the retroperitoneum behind the stomach. Head in the duodenal C-curve; tail to the splenic hilum. Essential for digestion and glucose homeostasis.',
+   descAr:'غدة مختلطة خلف الصفاق خلف المعدة. الرأس في منحنى الاثني عشر والذيل إلى نقير الطحال.',
+   facts:['Parts: Head, Neck, Body, Tail + Uncinate process','Retroperitoneal (except tail)','Main duct (Wirsung) ≤3 mm','Exocrine: acinar cells → digestive enzymes','Endocrine: Islets of Langerhans → insulin, glucagon'],
+   imaging:{CT:'Pancreatic phase (35–40 s) optimal. Attenuation ~40 HU. Duct ≤3 mm. Fat lobulations in elderly.',MRI:'T1: high signal (proteinaceous secretions). MRCP shows duct. DWI for masses.',US:'Echogenicity ≥ liver. Head anterior to IVC; tail posterior to stomach.',XR:'Calcifications of chronic pancreatitis visible. Organ not directly seen.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG},US:{planes:['Transverse','Oblique'],img:IMG}},
+   mnemonics:[{title:'Parts — HNBT',en:'"Hang Neatly Before Tail" — Head (duodenal curve), Neck (over portal vein), Body (crosses spine), Tail (to spleen).',ar:'"رأس ثم عنق والجسم ثم الذيل".',ref:"Netter's 7th ed."},{title:'Enzymes — PALE',en:'"PALE" — Protease, Amylase, Lipase, Elastase. All secreted as inactive zymogens.',ar:'"PALE" — بروتياز، أميلاز، ليباز، إيلاستاز. كلها سلائف زيموجينية.',ref:"Moore's 8th ed."}],
+   related:['gallbladder','spleen','stomach','portal-vein'],
+   ttsEn:'Pancreas. Greek: all flesh. Retroperitoneal. Head, neck, body, tail.',ttsAr:'البنكرياس. يوناني: كل اللحم. خلف صفاقي.'},
+
+  {id:'spleen',cat:'upper-abdomen',en:'Spleen',ar:'الطحال',latin:'Lien / Splen',
+   descEn:'The largest lymphoid organ, in the left upper quadrant under ribs 9–11. Filters blood, recycles iron from aged RBCs, and serves as an immunological reservoir.',
+   descAr:'أكبر عضو لمفاوي في الربع العلوي الأيسر. يرشّح الدم ويُعيد تدوير الحديد ويعمل كخزّان مناعي.',
+   facts:['Normal size: ≤12 cm long-axis','LUQ, posterior to stomach','Hilum on medial surface','Fragile capsule — rupture risk in trauma','Red pulp: filtration | White pulp: immune function'],
+   imaging:{CT:'Homogeneous ~50 HU. Arterial phase: "zebra stripes" (normal). Portal phase: homogeneous. Size ≤12 cm.',MRI:'T1: hypointense vs liver. T2: hyperintense vs liver. Arterial phase heterogeneous (normal).',US:'Homogeneous crescent-shaped. ≤12 cm. Splenomegaly >12 cm.',XR:'Splenomegaly displaces stomach medially and elevates left hemidiaphragm.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+   mnemonics:[{title:'Size — 1×3×5×7×9×11',en:'"1×3×5×7×9×11" — 1 inch thick, 3 wide, 5 long. Weighs 7 oz. Under ribs 9, 10, 11.',ar:'"١×٣×٥×٧×٩×١١" — سُمك ١ إنش، عرض ٣، طول ٥. تحت الأضلاع ٩، ١٠، ١١.',ref:"Gray's 41st ed."},{title:'Functions — FIST',en:'"FIST" — Filtration, Immune response, Storage (platelets/monocytes), haemaTopoiesis (fetal).',ar:'"FIST" — ترشيح، استجابة مناعية، تخزين، تكوين دم (جنيني).',ref:"Moore's 8th ed."}],
+   related:['pancreas','stomach','portal-vein'],
+   ttsEn:'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.',ttsAr:'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'},
+
+  {id:'kidneys',cat:'urinary',en:'Kidneys',ar:'الكليتان',latin:'Renes',
+   descEn:'Paired retroperitoneal organs at T12–L3. Filter ~180 L/day, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.',
+   descAr:'عضوان مزدوجان خلف صفاقيان عند T12–L3. يرشّحان ١٨٠ لتراً يومياً وينظّمان الشوارد وضغط الدم.',
+   facts:['Size: 9–12 cm long, 5–6 cm wide','Right kidney slightly lower (liver)','Cortex + medulla + renal sinus','Blood supply: renal arteries from aorta at L1','Left renal vein crosses the aorta'],
+   imaging:{CT:'Cortex ~30 HU unenhanced. Nephrographic phase (90–100 s): cortex > medulla. Renal sinus: fat density.',MRI:'T1: cortex slightly hyperintense vs medulla. Corticomedullary differentiation best post-contrast.',US:'Hyperechoic sinus centrally. Cortex ≤ liver/spleen echogenicity. Medullary pyramids: hypoechoic triangles.',XR:'KUB: renal outlines visible if perinephric fat present. Right at L1–L3; left at T12–L2.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},'X-Ray':{planes:['AP (KUB)'],img:IMG}},
+   mnemonics:[{title:'Functions — RAVE',en:'"RAVE" — Renin, Activated vitamin D, Volume regulation, Erythropoietin.',ar:'"RAVE" — رينين، فيتامين D منشّط، تنظيم حجم، إريثروبويتين.',ref:"Moore's 8th ed."},{title:'Cortex Rule',en:'"Cortex echogenicity ≤ liver/spleen on US." If cortex > spleen → abnormal (CKD).',ar:'"صدى القشرة ≤ الكبد/الطحال. إذا تجاوز ← غير طبيعي."',ref:'Radiographics'}],
+   related:['adrenal-glands','aorta','ivc'],
+   ttsEn:'Kidneys. Latin: Renes. Retroperitoneal. T12 to L3. Filter 180 liters per day.',ttsAr:'الكليتان. باللاتينية: رينيس. خلف صفاقيتان. من T12 إلى L3.'},
+
+  {id:'adrenal-glands',cat:'urinary',en:'Adrenal Glands',ar:'الغدد الكظرية',latin:'Glandulae suprarenales',
+   descEn:'Small triangular glands atop each kidney. Outer cortex (3 zones) secretes aldosterone, cortisol, androgens. Inner medulla secretes epinephrine and norepinephrine.',
+   descAr:'غدد صغيرة مثلثة فوق كل كلية. القشرة (٣ مناطق) تُفرز ألدوستيرون وكورتيزول وأندروجينات. اللب يُفرز الأدرينالين.',
+   facts:['Right: pyramidal, medial to right kidney upper pole','Left: semilunar, anterior to left kidney upper pole','Normal limb thickness ≤10 mm','Cortex zones: GFR (Glomerulosa, Fasciculata, Reticularis)','Adenoma: <10 HU on unenhanced CT'],
+   imaging:{CT:'Inverted V or Y shape. Limb ≤10 mm. Adenomas: <10 HU. Absolute washout >50% at 15 min.',MRI:'Chemical shift: adenomas lose signal on opposed-phase. Pheochromocytoma: bright T2.',US:'Difficult in adults. Best in neonates: hypoechoic cortex + hyperechoic medulla.',XR:'Not visible unless large calcified mass.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+   mnemonics:[{title:'Zones — GFR',en:'"GFR" (outer→inner): Glomerulosa (Aldosterone), Fasciculata (Cortisol), Reticularis (androgens).',ar:'"GFR" من الخارج للداخل: كبيبية (ألدوستيرون)، محزوزة (كورتيزول)، شبكية (أندروجينات).',ref:"Gray's 41st ed."},{title:'Salt Sugar Sex Shock',en:'"Salt, Sugar, Sex, Shock" — Aldosterone, Cortisol, Androgens, Epinephrine.',ar:'"ملح، سكر، جنس، صدمة" — ألدوستيرون، كورتيزول، أندروجينات، أدرينالين.',ref:"Moore's 8th ed."}],
+   related:['kidneys','aorta'],
+   ttsEn:'Adrenal glands. Latin: Glandulae suprarenales. Cortex and medulla.',ttsAr:'الغدد الكظرية. القشرة واللب. هرمونات الإجهاد.'},
+
+  {id:'aorta',cat:'vascular',en:'Abdominal Aorta',ar:'الأبهر البطني',latin:'Aorta abdominalis',
+   descEn:'Continuation of the descending aorta below the diaphragm at T12. Bifurcates at L4 into common iliac arteries. Major branches supply all abdominal organs.',
+   descAr:'امتداد الأبهر النازل أسفل الحجاب الحاجز عند T12. يتفرع عند L4 إلى الشريانين الحرقفيين.',
+   facts:['Enters abdomen at T12 through aortic hiatus','Bifurcates at L4 → common iliac arteries','Normal diameter ≤3 cm (AAA if >3 cm)','Branches: celiac (T12), SMA (L1), renal (L1), IMA (L3)','Lies to the LEFT of IVC'],
+   imaging:{CT:'Round, left of midline. Measure outer-to-outer. Normal ≤3 cm. CTA arterial phase for branches.',MRI:'Flow void on SE. Bright on GRE/MRA. Gold standard for non-radiation vascular imaging.',US:'Pulsatile anechoic tube. Normal <3 cm. AAA screening: males ≥65 with smoking history.',XR:'Calcified wall on lateral X-ray. Aneurysm = widened soft tissue opacity.'},
+   mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},Angio:{planes:['Frontal','Lateral'],img:IMG}},
+   mnemonics:[{title:'Branches Mnemonic',en:'"Curious Surgeons Rarely Inject Gut Lumens" — Celiac (T12), SMA (L1), Renals (L1), IMA (L3), Gonadal (L2), Lumbars.',ar:'"الجراحون الفضوليون نادراً ما يحقنون تجاويف الأمعاء" — جذع بطني، SMA، كلوية، IMA، تناسلية، قطنية.',ref:"Netter's 7th ed."},{title:'AAA Screening',en:'"One-time US: Male ≥65 who ever Smoked" — AAA = aorta >3 cm.',ar:'"فحص واحد: ذكر ≥٦٥ سنة مدخّن" — تمدد = أبهر > ٣ سم.',ref:'USPSTF'}],
+   related:['ivc','portal-vein','kidneys'],
+   ttsEn:'Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.',ttsAr:'الأبهر البطني. من T12 إلى L4. الطبيعي أقل من ٣ سم.'},
+
+  {id:'ivc',cat:'vascular',en:'Inferior Vena Cava',ar:'الوريد الأجوف السفلي',latin:'Vena cava inferior',
+   descEn:'The largest vein, formed at L5 by union of common iliac veins. Ascends right of aorta, passes through diaphragm at T8 into the right atrium.',
+   descAr:'أكبر وريد، يتشكّل عند L5 من اتحاد الوريدين الحرقفيين. يصعد يمين الأبهر ويمر عبر الحجاب الحاجز عند T8.',
+   facts:['Forms at L5 by common iliac veins','Right of aorta','Passes diaphragm at T8','Tributaries: renal, hepatic, lumbar, gonadal veins','No valves in abdominal IVC'],
+   imaging:{CT:'Right of aorta. Variable caliber with respiration. Hepatic veins enter below diaphragm. Thrombosis: filling defect.',MRI:'Variable signal. Bright on TOF. Acute thrombus: T1 bright.',US:'Easily compressible. Collapses on inspiration. Hepatic veins visible entering IVC.',XR:'Not visible unless calcified or massively dilated.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+   mnemonics:[{title:'Tributaries — ILRHGS',en:'"I Like Riding Horses Going South" — Iliac, Lumbar, Renal, Hepatic, Gonadal, Suprarenal.',ar:'"أحب ركوب الخيل جهة الجنوب" — حرقفية، قطنية، كلوية، كبدية، تناسلية، كظرية.',ref:"Gray's 41st ed."}],
+   related:['aorta','liver','kidneys'],
+   ttsEn:'Inferior vena cava. Largest vein. Right of aorta. T8 to L5.',ttsAr:'الوريد الأجوف السفلي. أكبر وريد. يمين الأبهر.'},
+
+  {id:'portal-vein',cat:'vascular',en:'Portal Vein',ar:'الوريد البابي',latin:'Vena portae hepatis',
+   descEn:'Formed by SMV + splenic vein behind the pancreatic neck at L2. Carries nutrient-rich blood from the GI tract and spleen to the liver (75% of hepatic blood supply).',
+   descAr:'يتشكّل من الوريد المساريقي العلوي والطحالي خلف عنق البنكرياس عند L2. يحمل دماً غنياً إلى الكبد (٧٥٪ من إمداده الدموي).',
+   facts:['Formed at L2: SMV + splenic vein','Normal diameter ≤13 mm at porta hepatis','Provides 75% of hepatic blood supply','Normal flow: hepatopetal (towards liver)','Portal HTN: gradient >10 mmHg'],
+   imaging:{CT:'Portal venous phase (70 s) optimal. Round at hepatic hilum. Thrombosis: filling defect.',MRI:'Flow void or bright on GRE. Acute thrombus: T1 bright.',US:'Doppler: hepatopetal flow. Monophasic waveform. Diameter ≤13 mm at hilum.',XR:'Not visible.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Oblique','Longitudinal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+   mnemonics:[{title:'Formation',en:'"SMV Marries Splenic behind Pancreatic Neck at L2."',ar:'"المساريقي يتزوج الطحالي خلف عنق البنكرياس عند L2."',ref:"Moore's 8th ed."},{title:'Portal HTN — SPADE',en:'"SPADE" — Splenomegaly, Portal vein >13 mm, Ascites, portoDuodenal collaterals, Esophageal varices.',ar:'"SPADE" — ضخامة طحال، وريد بابي >١٣ مم، استسقاء، وصلات، دوالي مريء.',ref:'Radiographics'}],
+   related:['liver','spleen','pancreas','ivc'],
+   ttsEn:'Portal vein. Latin: Vena portae hepatis. Formed at L2. Normal under 13 millimeters.',ttsAr:'الوريد البابي. يتشكّل عند L2. الطبيعي أقل من ١٣ ملم.'},
+
+  {id:'stomach',cat:'gi-tract',en:'Stomach',ar:'المعدة',latin:'Gaster / Ventriculus',
+   descEn:'J-shaped muscular organ in the LUQ. Receives food from esophagus via the GEJ; delivers chyme to duodenum via the pylorus. Secretes HCl, pepsin, and intrinsic factor.',
+   descAr:'عضو عضلي على شكل J في الربع العلوي الأيسر. يستقبل الطعام من المريء ويُرسل الكيموس إلى الاثني عشر عبر البواب.',
+   facts:['Regions: fundus, body (corpus), antrum, pylorus','Capacity: ~1 L (up to 4 L)','Normal wall ≤5 mm when distended','Greater curvature: left | Lesser curvature: right','Blood supply: celiac axis branches'],
+   imaging:{CT:'Wall ≤5 mm distended. Rugae visible. Air-fluid level common. Oral contrast optimal.',MRI:'T2 shows fluid well. T1 post-contrast for wall. Rarely used routinely.',US:'"Target sign" on transverse view. Pyloric stenosis: muscle >4 mm in infants.',XR:'Gastric air bubble LUQ on erect film. Free air under diaphragm = perforation!'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Erect PA','Barium Study'],img:IMG},US:{planes:['Longitudinal'],img:IMG}},
+   mnemonics:[{title:'Parts — FBAP',en:'"Fun Boys Always Perform" — Fundus, Body, Antrum, Pylorus.',ar:'"القاع والجسم والقناة والبواب".',ref:"Netter's 7th ed."},{title:'Gastric Cells',en:'"Chief Makes Pepsin, Parietal Has Acid" — Chief: pepsinogen; Parietal: HCl + intrinsic factor; G-cells: gastrin.',ar:'"الرئيسية: بيبسينوجين؛ الجدارية: HCl + عامل داخلي؛ G: غاسترين."',ref:"Moore's 8th ed."}],
+   related:['pancreas','spleen','portal-vein'],
+   ttsEn:'Stomach. Latin: Gaster. Fundus, body, antrum, pylorus. Left upper quadrant.',ttsAr:'المعدة. باللاتينية: غاستر. القاع، الجسم، القناة المعدية، البواب.'},
+
+  {id:'small-intestine',cat:'gi-tract',en:'Small Intestine',ar:'الأمعاء الدقيقة',latin:'Intestinum tenue',
+   descEn:'Coiled tube ~6–7 m: duodenum (25 cm), jejunum (~2.5 m), ileum (~3.5 m). Site of chemical digestion and nutrient absorption. Characterised by plicae circulares and villi.',
+   descAr:'أنبوب ملتوٍ ~٦–٧ أمتار: اثني عشر، صائم، لفائفي. موقع الهضم الكيميائي وامتصاص المواد الغذائية.',
+   facts:['Duodenum: C-shaped, retroperitoneal, surrounds pancreatic head','Jejunum: thick folds, vascular, LEFT abdomen','Ileum: thin folds, Peyer\'s patches, RIGHT lower quadrant','Total length: 6–7 m','Wall ≤3 mm when distended'],
+   imaging:{CT:'Wall ≤3 mm distended. Jejunum: left with more folds. Ileum: right lower quadrant. CT enterography: neutral oral contrast.',MRI:'MR enterography excellent for Crohn\'s. T2 HASTE: fluid bright.',US:'Peristalsis visible in real-time. Target sign. Wall <3 mm.',XR:'Plicae circulares cross ENTIRE lumen (vs haustra). Normal <2.5 cm diameter. Obstruction >3 cm.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Erect AP','Supine AP'],img:IMG},US:{planes:['Transverse','Longitudinal'],img:IMG}},
+   mnemonics:[{title:'Duodenum — 4 Parts',en:'"I Stand Horizontally Down" — Superior (D1), Descending (D2), Horizontal (D3), Ascending (D4). Ampulla of Vater opens into D2.',ar:'"أقف أفقياً للأسفل" — علوي D1، نازل D2، أفقي D3، صاعد D4. حليمة فاتر في D2.',ref:"Gray's 41st ed."},{title:'Jejunum vs Ileum',en:'"Jejunum is Juicy (LEFT, thick folds); Ileum is Inferior (RIGHT, thin, Peyer\'s patches)."',ar:'"الصائم ممتلئ يساراً (طيات سميكة)؛ اللفائفي يمين أسفل (رفيع، لويحات باير)."',ref:"Netter's 7th ed."}],
+   related:['stomach','large-intestine','pancreas'],
+   ttsEn:'Small intestine. Latin: Intestinum tenue. Duodenum, jejunum, ileum. 6 to 7 meters.',ttsAr:'الأمعاء الدقيقة. اثني عشر، صائم، لفائفي. ٦ إلى ٧ أمتار.'},
+
+  {id:'large-intestine',cat:'gi-tract',en:'Large Intestine',ar:'الأمعاء الغليظة',latin:'Intestinum crassum',
+   descEn:'~1.5 m framing the small intestine. Cecum → ascending → transverse → descending → sigmoid → rectum. Water/electrolyte absorption and fecal formation.',
+   descAr:'~١.٥ متر يُحيط بالأمعاء الدقيقة. أعور ← صاعد ← عرضي ← نازل ← سيني ← مستقيم. امتصاص ماء وتشكيل براز.',
+   facts:['Length: ~1.5 m','Features: taeniae coli, haustra, epiploic appendages','Cecum: right iliac fossa, ileocecal valve','Normal caliber: <6 cm transverse, <9 cm cecum','Rectum: 12–15 cm, no taeniae coli'],
+   imaging:{CT:'Peripheral location. Haustra (incomplete folds). Wall ≤3 mm. CT colonography: prone + supine + CO2.',MRI:'Rectal MRI: excellent for staging rectal cancer (mesorectal fascia). T2 key sequence.',US:'Limited by gas. Graded compression for appendix.',XR:'Haustra = INCOMPLETE folds (key vs plicae). Normal: <6 cm transverse, <9 cm cecum.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Supine AP','Erect AP'],img:IMG},US:{planes:['Transverse'],img:IMG}},
+   mnemonics:[{title:'Colon Runs Clockwise',en:'"The Colon Runs Clockwise" — Cecum (RIF) → Ascending → Transverse → Descending → Sigmoid → Rectum.',ar:'"القولون يسير بمحاذاة عقارب الساعة" — أعور ← صاعد ← عرضي ← نازل ← سيني ← مستقيم.',ref:"Moore's 8th ed."},{title:'Haustra vs Plicae',en:'"Plicae goes ALL the way across; Haustra DOESN\'T." Key for X-ray bowel obstruction!',ar:'"الطيات الدائرية تعبر كامل اللمعة؛ التكميشات لا تعبر." مهم جداً لتشخيص الانسداد!',ref:'Radiographics'}],
+   related:['small-intestine','stomach','aorta'],
+   ttsEn:'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.',ttsAr:'الأمعاء الغليظة. أعور، قولون، مستقيم. متر ونصف.'}
 ];
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════
-let current = null;
-let currentMod = null;
-let ttsEnabled = false;
-let ttsLang = 'en';
-let ttsSpeed = 1.0;
+// ═══════════════════════════════════════════
+let current=null, currentMod=null, activeTool='pan', viewMode='normal';
+let ttsEnabled=false, ttsLang='en', ttsSpeed=1.0;
+// Per-panel state: {img, rotation, flipped, inverted, zoom, panX, panY, annotations}
+const panelStates=[];
+let activePanel=0;
+// Drawing state
+let isDrawing=false, drawStart={x:0,y:0}, measurePts=[], anglePts=[];
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // SIDEBAR
-// ═══════════════════════════════════════════════════
-function buildSidebar() {
-  const list = document.getElementById('sidebar-list');
-  list.innerHTML = '';
-  CATS.forEach(cat => {
-    const structs = STRUCTS.filter(s => s.cat === cat.id);
-    const grp = document.createElement('div');
-    grp.className = `cat-group cat-${cat.id}`;
-    grp.innerHTML = `
+// ═══════════════════════════════════════════
+function buildSidebar(){
+  const list=document.getElementById('sidebar-list');
+  list.innerHTML='';
+  CATS.forEach(cat=>{
+    const structs=STRUCTS.filter(s=>s.cat===cat.id);
+    const grp=document.createElement('div');
+    grp.className=`cat-group cat-${cat.id}`;
+    grp.innerHTML=`
       <div class="cat-header" onclick="this.closest('.cat-group').classList.toggle('collapsed')">
         <span class="cat-dot"></span>
         <span>${cat.en}</span>
-        <span style="font-size:10px;color:var(--text-muted);direction:rtl;margin-left:auto;margin-right:4px;">${cat.ar}</span>
+        <span style="font-size:9px;color:var(--text-muted);direction:rtl;margin-left:auto;margin-right:3px;">${cat.ar}</span>
         <span class="cat-chevron">▾</span>
       </div>
       <div class="cat-items">
-        ${structs.map(s => `
+        ${structs.map(s=>`
           <div class="structure-item" id="item-${s.id}" onclick="loadStructure('${s.id}')">
             <div><div class="str-en">${s.en}</div><div class="str-ar">${s.ar}</div></div>
           </div>`).join('')}
@@ -615,304 +697,576 @@ function buildSidebar() {
   });
 }
 
-document.getElementById('search-input').addEventListener('input', function() {
-  const q = this.value.toLowerCase();
-  document.querySelectorAll('.structure-item').forEach(el => {
-    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+document.getElementById('search-input').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('.structure-item').forEach(el=>{
+    el.style.display=(!q||el.textContent.toLowerCase().includes(q))?'':'none';
   });
-  if (q) document.querySelectorAll('.cat-group').forEach(g => g.classList.remove('collapsed'));
+  if(q) document.querySelectorAll('.cat-group').forEach(g=>g.classList.remove('collapsed'));
 });
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // LOAD STRUCTURE
-// ═══════════════════════════════════════════════════
-function loadStructure(id) {
-  const s = STRUCTS.find(x => x.id === id);
-  if (!s) return;
-  current = s;
+// ═══════════════════════════════════════════
+function loadStructure(id){
+  const s=STRUCTS.find(x=>x.id===id);
+  if(!s) return;
+  current=s;
+  document.querySelectorAll('.structure-item').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('item-'+id);
+  if(el){el.classList.add('active');el.scrollIntoView({block:'nearest'});}
 
-  document.querySelectorAll('.structure-item').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById('item-' + id);
-  if (el) { el.classList.add('active'); el.scrollIntoView({block:'nearest'}); }
+  document.getElementById('welcome-screen').style.display='none';
+  const sv=document.getElementById('structure-view');
+  sv.style.display='flex'; sv.style.flexDirection='column';
+  sv.classList.remove('fade-in'); void sv.offsetWidth; sv.classList.add('fade-in');
 
-  document.getElementById('welcome-screen').style.display = 'none';
-  const sv = document.getElementById('structure-view');
-  sv.style.display = 'flex';
-  sv.style.flexDirection = 'column';
-  sv.classList.remove('fade-in');
-  void sv.offsetWidth;
-  sv.classList.add('fade-in');
+  const cat=CATS.find(c=>c.id===s.cat);
+  document.getElementById('bc-cat').textContent=cat?cat.en:'';
+  document.getElementById('bc-name').textContent=s.en;
+  document.getElementById('s-name-en').textContent=s.en;
+  document.getElementById('s-name-ar').textContent=s.ar;
+  document.getElementById('s-name-latin').textContent=s.latin;
+  document.getElementById('s-cat-badge').innerHTML=`<span class="cat-badge ${s.cat}">${cat?cat.en:''}</span>`;
 
-  // Header
-  const cat = CATS.find(c => c.id === s.cat);
-  document.getElementById('bc-cat').textContent = cat ? cat.en : '';
-  document.getElementById('bc-name').textContent = s.en;
-  document.getElementById('s-name-en').textContent = s.en;
-  document.getElementById('s-name-ar').textContent = s.ar;
-  document.getElementById('s-name-latin').textContent = s.latin;
-  document.getElementById('s-cat-badge').innerHTML = `<span class="cat-badge ${s.cat}">${cat ? cat.en : ''}</span>`;
-
-  // Overview
-  document.getElementById('s-desc-en').textContent = s.descEn;
-  document.getElementById('s-desc-ar').textContent = s.descAr;
-  document.getElementById('s-facts').innerHTML = s.facts.map(f => `<li>${f}</li>`).join('');
-  document.getElementById('s-related').innerHTML = (s.related || []).map(rid => {
-    const rs = STRUCTS.find(x => x.id === rid);
-    return rs ? `<span class="related-chip" onclick="loadStructure('${rid}')">${rs.en} · ${rs.ar}</span>` : '';
+  document.getElementById('s-desc-en').textContent=s.descEn;
+  document.getElementById('s-desc-ar').textContent=s.descAr;
+  document.getElementById('s-facts').innerHTML=s.facts.map(f=>`<li>${f}</li>`).join('');
+  document.getElementById('s-related').innerHTML=(s.related||[]).map(rid=>{
+    const rs=STRUCTS.find(x=>x.id===rid);
+    return rs?`<span class="related-chip" onclick="loadStructure('${rid}')">${rs.en} · ${rs.ar}</span>`:'';
   }).join('');
 
-  // Imaging guide
-  document.getElementById('s-imaging').innerHTML = Object.entries(s.imaging || {}).map(([mod, txt]) => `
+  document.getElementById('s-imaging').innerHTML=Object.entries(s.imaging||{}).map(([mod,txt])=>`
     <div class="imaging-card">
       <span class="modality-tag ${mod}">${mod}</span>
       <p>${txt}</p>
     </div>`).join('');
 
-  // Mnemonics
-  document.getElementById('s-mnemonics').innerHTML = (s.mnemonics || []).map(m => `
+  document.getElementById('s-mnemonics').innerHTML=(s.mnemonics||[]).map(m=>`
     <div class="mnemonic-card">
       <div class="mnemonic-title">🧠 ${m.title}</div>
       <div class="mnemonic-en">${m.en}</div>
       <div class="mnemonic-ar">${m.ar}</div>
-      ${m.ref ? `<div class="mnemonic-ref">📚 ${m.ref}</div>` : ''}
+      ${m.ref?`<div class="mnemonic-ref">📚 ${m.ref}</div>`:''}
     </div>`).join('');
 
-  // Images
   buildImageTab(s);
-
-  // SRS
   renderSRS(id);
-
-  // Activate overview tab
   activateTab('info');
 
-  if (window.innerWidth < 768) closeSidebar();
-  if (ttsEnabled) speak(s['tts' + (ttsLang === 'ar' ? 'Ar' : 'En')], ttsLang);
+  if(window.innerWidth<768) closeSidebar();
+  if(ttsEnabled) speak(s['tts'+(ttsLang==='ar'?'Ar':'En')],ttsLang);
 }
 
-// ═══════════════════════════════════════════════════
-// IMAGES TAB
-// ═══════════════════════════════════════════════════
-function buildImageTab(s) {
-  const sel = document.getElementById('mod-selector');
-  sel.innerHTML = '';
-  const mods = Object.keys(s.mods || {});
-  if (!mods.length) return;
-  mods.forEach(mod => {
-    const b = document.createElement('button');
-    b.className = 'mod-btn';
-    b.textContent = mod;
-    b.dataset.mod = mod;
-    b.onclick = () => selectMod(mod, s);
+// ═══════════════════════════════════════════
+// IMAGES TAB — Full tools
+// ═══════════════════════════════════════════
+function buildImageTab(s){
+  const sel=document.getElementById('mod-selector');
+  sel.innerHTML='';
+  const mods=Object.keys(s.mods||{});
+  if(!mods.length) return;
+  mods.forEach(mod=>{
+    const b=document.createElement('button');
+    b.className='mod-btn'; b.textContent=mod; b.dataset.mod=mod;
+    b.onclick=()=>selectMod(mod,s);
     sel.appendChild(b);
   });
-  selectMod(mods[0], s);
+  selectMod(mods[0],s);
 }
 
-function selectMod(mod, s) {
-  currentMod = mod;
-  const md = s.mods[mod];
-  if (!md) return;
+function selectMod(mod,s){
+  currentMod=mod;
+  const md=s.mods[mod];
+  if(!md) return;
 
-  document.querySelectorAll('.mod-btn').forEach(b => {
-    b.className = 'mod-btn';
-    if (b.dataset.mod === mod) b.classList.add(`mod-active-${mod}`);
+  // Update buttons
+  document.querySelectorAll('.mod-btn').forEach(b=>{
+    b.className='mod-btn';
+    if(b.dataset.mod===mod) b.classList.add('mod-active-'+mod.replace(/[^a-zA-Z]/g,''));
   });
 
-  const pt = document.getElementById('plane-toggle');
-  pt.innerHTML = (md.planes || []).map((p, i) => `
-    <button class="plane-btn${i === 0 ? ' active' : ''}" data-plane="${p}" onclick="togglePlane(this)">${p}</button>`).join('');
+  // Show/hide modality-specific tools
+  document.querySelectorAll('.tools-ct,.tools-mri,.tools-us').forEach(el=>el.style.display='none');
+  if(mod==='CT') document.getElementById('tools-ct').style.display='block';
+  else if(mod==='MRI') document.getElementById('tools-mri').style.display='block';
+  else if(mod==='US') document.getElementById('tools-us').style.display='block';
 
-  renderCanvases(s, mod);
+  // Plane toggle
+  const pt=document.getElementById('plane-toggle');
+  pt.innerHTML=(md.planes||[]).map((p,i)=>`
+    <button class="plane-btn${i===0?' active':''}" data-plane="${p}" onclick="togglePlane(this)">${p}</button>`).join('');
+
+  renderPanels(s,mod);
 }
 
-function togglePlane(btn) {
+function togglePlane(btn){
   btn.classList.toggle('active');
-  if (current && currentMod) renderCanvases(current, currentMod);
+  if(current&&currentMod) renderPanels(current,currentMod);
 }
 
-function renderCanvases(s, mod) {
-  const ws = document.getElementById('image-workspace');
-  const planes = [...document.querySelectorAll('.plane-btn.active')].map(b => b.dataset.plane);
-  if (!planes.length) { ws.innerHTML = '<p style="color:var(--text-muted);padding:20px;font-size:13px;">Select at least one plane above.</p>'; return; }
+function setViewMode(mode){
+  viewMode=mode;
+  document.querySelectorAll('.view-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.vmode===mode));
+  if(current&&currentMod) renderPanels(current,currentMod);
+}
 
-  ws.className = 'image-workspace' + (planes.length === 1 ? ' single' : planes.length >= 3 ? ' triple' : '');
-  ws.innerHTML = '';
-  const imgUrl = s.mods[mod]?.img || '';
+// ═══════════════════════════════════════════
+// CANVAS PANELS
+// ═══════════════════════════════════════════
+function renderPanels(s,mod){
+  const ws=document.getElementById('canvas-workspace');
+  let planes=[...document.querySelectorAll('.plane-btn.active')].map(b=>b.dataset.plane);
+  if(!planes.length) planes=[s.mods[mod].planes[0]];
 
-  planes.forEach((plane, i) => {
-    const div = document.createElement('div');
-    div.className = 'canvas-panel' + (i === 0 ? ' panel-active' : '');
-    div.innerHTML = `<canvas id="cv-${i}" style="width:100%;height:100%;min-height:260px;display:block;"></canvas>
+  // In split mode, show exactly 2 panels
+  const count= viewMode==='split'?Math.min(planes.length,2):planes.length;
+  const displayPlanes=planes.slice(0,count);
+
+  ws.className='canvas-workspace mode-'+Math.min(count,3);
+  ws.innerHTML='';
+  panelStates.length=0;
+
+  displayPlanes.forEach((plane,i)=>{
+    const imgUrl=s.mods[mod]?.img||'';
+    panelStates.push({imgUrl,rotation:0,flippedH:false,flippedV:false,inverted:false,zoom:1,panX:0,panY:0,annotations:[],mod,plane});
+
+    const div=document.createElement('div');
+    div.className='canvas-panel'+(i===0?' active-panel':'');
+    div.dataset.idx=i;
+    div.innerHTML=`
+      <canvas id="cv-${i}"></canvas>
       <div class="panel-label">${mod} · ${plane}</div>
-      <div class="panel-active-badge">ACTIVE</div>`;
-    div.onclick = function() {
-      document.querySelectorAll('.canvas-panel').forEach(p => p.classList.remove('panel-active'));
-      this.classList.add('panel-active');
+      <div class="active-badge">ACTIVE</div>
+      <div class="hu-overlay" id="hu-${i}"></div>`;
+
+    div.onclick=function(e){
+      // Don't switch panel when clicking tool interactions
+      if(e.target.tagName==='CANVAS') return;
+      setActivePanel(i);
     };
     ws.appendChild(div);
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const cv = document.getElementById('cv-' + i);
-      if (!cv) return;
-      const w = cv.offsetWidth || 400;
-      const h = cv.offsetHeight || 280;
-      cv.width = w; cv.height = h;
-      const ctx = cv.getContext('2d');
-      if (imgUrl) {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => ctx.drawImage(img, 0, 0, w, h);
-        img.onerror = () => drawPlaceholder(ctx, w, h, mod, plane);
-        img.src = imgUrl;
-      } else {
-        drawPlaceholder(ctx, w, h, mod, plane);
-      }
-    }));
   });
+
+  // Give DOM time to render, then size + draw canvases
+  // Use ResizeObserver for accurate sizing
+  setTimeout(()=>{
+    displayPlanes.forEach((_,i)=>{
+      sizeAndDraw(i,true);
+      setupCanvasEvents(i);
+    });
+    setActivePanel(0);
+  },60);
 }
 
-function drawPlaceholder(ctx, w, h, mod, plane) {
-  ctx.fillStyle = '#090d12';
-  ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = 'rgba(30,50,70,0.8)';
-  ctx.beginPath();
-  ctx.arc(w/2, h/2, Math.min(w,h)*0.28, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = 'rgba(20,180,160,0.5)';
-  ctx.font = `bold ${Math.floor(Math.min(w,h)*0.07)}px IBM Plex Mono,monospace`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(mod, w/2, h/2 - 8);
-  ctx.fillStyle = 'rgba(160,180,200,0.35)';
-  ctx.font = `${Math.floor(Math.min(w,h)*0.042)}px IBM Plex Sans,sans-serif`;
-  ctx.fillText(plane, w/2, h/2 + h*0.1);
+function sizeAndDraw(idx, loadImg){
+  const cv=document.getElementById('cv-'+idx);
+  if(!cv) return;
+  const parent=cv.parentElement;
+  if(!parent) return;
+  const W=parent.offsetWidth||400;
+  const H=parent.offsetHeight||300;
+  if(W<10||H<10){setTimeout(()=>sizeAndDraw(idx,loadImg),80);return;}
+  cv.width=W; cv.height=H;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+
+  const ps=panelStates[idx];
+  if(!ps) return;
+
+  if(loadImg && ps.imgUrl){
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{ps.imgObj=img; drawPanel(idx);};
+    img.onerror=()=>drawPanel(idx);
+    img.src=ps.imgUrl;
+  } else {
+    drawPanel(idx);
+  }
 }
 
-// ═══════════════════════════════════════════════════
+function drawPanel(idx){
+  const cv=document.getElementById('cv-'+idx);
+  const ps=panelStates[idx];
+  if(!cv||!ps) return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.save();
+
+  // Background
+  ctx.fillStyle='#050810';
+  ctx.fillRect(0,0,W,H);
+
+  // Apply transforms
+  ctx.translate(W/2+ps.panX, H/2+ps.panY);
+  ctx.scale(ps.zoom*(ps.flippedH?-1:1), ps.zoom*(ps.flippedV?-1:1));
+  ctx.rotate(ps.rotation*Math.PI/180);
+
+  if(ps.imgObj){
+    // Fit image
+    const iw=ps.imgObj.naturalWidth, ih=ps.imgObj.naturalHeight;
+    const scale=Math.min((W*0.95)/iw,(H*0.95)/ih);
+    const dw=iw*scale, dh=ih*scale;
+    if(ps.inverted){
+      ctx.filter='invert(100%)';
+    }
+    ctx.drawImage(ps.imgObj,-dw/2,-dh/2,dw,dh);
+    ctx.filter='none';
+  } else {
+    // Placeholder
+    ctx.fillStyle='rgba(20,40,60,0.9)';
+    ctx.beginPath();
+    ctx.arc(0,0,Math.min(W,H)*0.25,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='rgba(20,180,160,0.7)';
+    ctx.font=`bold ${Math.floor(Math.min(W,H)*0.07)}px IBM Plex Mono,monospace`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(ps.mod||'IMG',0,-8);
+    ctx.fillStyle='rgba(160,190,210,0.4)';
+    ctx.font=`${Math.floor(Math.min(W,H)*0.042)}px IBM Plex Sans,sans-serif`;
+    ctx.fillText(ps.plane||'',0,H*0.1);
+  }
+
+  ctx.restore();
+
+  // Draw annotations on top (no transforms)
+  drawAnnotations(ctx,idx,W,H);
+}
+
+function drawAnnotations(ctx,idx,W,H){
+  const ps=panelStates[idx];
+  if(!ps||!ps.annotations) return;
+  ctx.save();
+  ctx.strokeStyle='#00ffaa';
+  ctx.fillStyle='#00ffaa';
+  ctx.lineWidth=1.5;
+  ctx.font='11px IBM Plex Mono,monospace';
+  ps.annotations.forEach(a=>{
+    if(a.type==='line'){
+      ctx.beginPath();
+      ctx.moveTo(a.x1,a.y1);
+      ctx.lineTo(a.x2,a.y2);
+      ctx.stroke();
+      const d=Math.hypot(a.x2-a.x1,a.y2-a.y1).toFixed(0);
+      ctx.fillText(d+'px*',(a.x1+a.x2)/2,(a.y1+a.y2)/2-5);
+    } else if(a.type==='rect'){
+      ctx.strokeRect(a.x,a.y,a.w,a.h);
+      ctx.fillText(`${Math.abs(a.w)}×${Math.abs(a.h)}px*`,a.x+3,a.y-5);
+    } else if(a.type==='label'){
+      ctx.fillStyle='rgba(0,0,0,0.6)';
+      ctx.fillRect(a.x,a.y-14,ctx.measureText(a.text).width+6,17);
+      ctx.fillStyle='#00ffaa';
+      ctx.fillText(a.text,a.x+3,a.y);
+    }
+  });
+  ctx.restore();
+}
+
+// ═══════════════════════════════════════════
+// CANVAS EVENTS
+// ═══════════════════════════════════════════
+function setupCanvasEvents(idx){
+  const cv=document.getElementById('cv-'+idx);
+  if(!cv) return;
+
+  let lastX=0,lastY=0;
+
+  cv.addEventListener('mousedown',e=>{
+    setActivePanel(idx);
+    const r=cv.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    isDrawing=true; lastX=x; lastY=y; drawStart={x,y};
+    measurePts=[]; anglePts=[];
+
+    if(activeTool==='annotate'){
+      const label=prompt('Label text:');
+      if(label){
+        panelStates[idx].annotations.push({type:'label',x,y,text:label});
+        drawPanel(idx);
+      }
+      isDrawing=false;
+    } else if(activeTool==='hu'){
+      const hv=Math.round(Math.random()*200-50);
+      document.getElementById('hu-'+idx).style.display='block';
+      document.getElementById('hu-'+idx).textContent='HU: '+hv+'*';
+    }
+    e.preventDefault();
+  });
+
+  cv.addEventListener('mousemove',e=>{
+    if(!isDrawing) return;
+    const r=cv.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const ps=panelStates[idx];
+
+    if(activeTool==='pan'){
+      ps.panX+=(x-lastX); ps.panY+=(y-lastY);
+      drawPanel(idx);
+    } else if(activeTool==='zoom'){
+      ps.zoom=Math.max(0.1,Math.min(8,ps.zoom+(y-lastY)*-0.005));
+      drawPanel(idx);
+    } else if(activeTool==='measure'||activeTool==='roi-rect'){
+      // Draw live preview
+      const cv2=document.getElementById('cv-'+idx);
+      drawPanel(idx);
+      const ctx=cv2.getContext('2d');
+      ctx.save();
+      ctx.strokeStyle='#00ffaa'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+      if(activeTool==='measure'){
+        ctx.beginPath(); ctx.moveTo(drawStart.x,drawStart.y); ctx.lineTo(x,y); ctx.stroke();
+        const d=Math.hypot(x-drawStart.x,y-drawStart.y).toFixed(0);
+        ctx.fillStyle='#00ffaa'; ctx.font='11px IBM Plex Mono,monospace';
+        ctx.fillText(d+'px*',(drawStart.x+x)/2,(drawStart.y+y)/2-5);
+      } else {
+        ctx.strokeRect(drawStart.x,drawStart.y,x-drawStart.x,y-drawStart.y);
+      }
+      ctx.restore();
+    }
+    lastX=x; lastY=y;
+  });
+
+  cv.addEventListener('mouseup',e=>{
+    if(!isDrawing){isDrawing=false;return;}
+    const r=cv.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const ps=panelStates[idx];
+
+    if(activeTool==='measure'){
+      ps.annotations.push({type:'line',x1:drawStart.x,y1:drawStart.y,x2:x,y2:y});
+    } else if(activeTool==='roi-rect'){
+      ps.annotations.push({type:'rect',x:drawStart.x,y:drawStart.y,w:x-drawStart.x,h:y-drawStart.y});
+    }
+    isDrawing=false;
+    drawPanel(idx);
+    e.preventDefault();
+  });
+
+  // Wheel zoom
+  cv.addEventListener('wheel',e=>{
+    const ps=panelStates[idx];
+    ps.zoom=Math.max(0.1,Math.min(8,ps.zoom-e.deltaY*0.001));
+    drawPanel(idx);
+    e.preventDefault();
+  },{passive:false});
+
+  // Touch pan
+  let lastTouch=null;
+  cv.addEventListener('touchstart',e=>{
+    setActivePanel(idx);
+    lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    e.preventDefault();
+  },{passive:false});
+  cv.addEventListener('touchmove',e=>{
+    if(!lastTouch) return;
+    const ps=panelStates[idx];
+    ps.panX+=e.touches[0].clientX-lastTouch.x;
+    ps.panY+=e.touches[0].clientY-lastTouch.y;
+    lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    drawPanel(idx);
+    e.preventDefault();
+  },{passive:false});
+}
+
+function setActivePanel(idx){
+  activePanel=idx;
+  document.querySelectorAll('.canvas-panel').forEach((p,i)=>p.classList.toggle('active-panel',i===idx));
+}
+
+// ═══════════════════════════════════════════
+// TOOL ACTIONS
+// ═══════════════════════════════════════════
+function setTool(tool){
+  activeTool=tool;
+  document.querySelectorAll('.tool-btn[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));
+  // Cursor
+  const cursors={pan:'grab',zoom:'ns-resize',measure:'crosshair',angle:'crosshair','roi-rect':'crosshair','roi-ellipse':'crosshair',annotate:'text',hu:'crosshair'};
+  document.querySelectorAll('.canvas-panel canvas').forEach(cv=>{cv.style.cursor=cursors[tool]||'crosshair';});
+}
+
+function applyInvert(){
+  if(!panelStates[activePanel]) return;
+  panelStates[activePanel].inverted=!panelStates[activePanel].inverted;
+  drawPanel(activePanel);
+}
+
+function applyRotate(deg){
+  if(!panelStates[activePanel]) return;
+  panelStates[activePanel].rotation=(panelStates[activePanel].rotation+deg+360)%360;
+  drawPanel(activePanel);
+}
+
+function applyFlip(dir){
+  if(!panelStates[activePanel]) return;
+  if(dir==='h') panelStates[activePanel].flippedH=!panelStates[activePanel].flippedH;
+  else panelStates[activePanel].flippedV=!panelStates[activePanel].flippedV;
+  drawPanel(activePanel);
+}
+
+function resetPanel(){
+  if(!panelStates[activePanel]) return;
+  const ps=panelStates[activePanel];
+  ps.rotation=0; ps.flippedH=false; ps.flippedV=false; ps.inverted=false;
+  ps.zoom=1; ps.panX=0; ps.panY=0; ps.annotations=[];
+  const huEl=document.getElementById('hu-'+activePanel);
+  if(huEl) huEl.style.display='none';
+  drawPanel(activePanel);
+}
+
+function savePanel(){
+  const cv=document.getElementById('cv-'+activePanel);
+  if(!cv) return;
+  const a=document.createElement('a');
+  a.download='omnirad-panel.png';
+  a.href=cv.toDataURL('image/png');
+  a.click();
+}
+
+function applyWindowPreset(preset){
+  // Visual feedback — in real DICOM this would adjust HU windowing
+  const presets={abdomen:'W400/L40',liver:'W160/L60',lung:'W1500/L-600',bone:'W2000/L300',brain:'W80/L40',soft:'W350/L50'};
+  if(!preset||!panelStates[activePanel]) return;
+  // For educational demo, just show label on canvas
+  const ps=panelStates[activePanel];
+  ps.annotations=ps.annotations.filter(a=>a.type!=='wl');
+  ps.annotations.push({type:'label',x:8,y:cv_h(activePanel)-12,text:presets[preset]+'*'});
+  drawPanel(activePanel);
+}
+
+function cv_h(idx){
+  const cv=document.getElementById('cv-'+idx);
+  return cv?cv.height:300;
+}
+
+// ═══════════════════════════════════════════
 // TABS
-// ═══════════════════════════════════════════════════
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+// ═══════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>activateTab(btn.dataset.tab));
 });
 
-function activateTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+function activateTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.add('active');
   document.querySelector(`.tab-panel[data-panel="${tab}"]`)?.classList.add('active');
-  if (tab === 'images' && current && currentMod) setTimeout(() => renderCanvases(current, currentMod), 50);
+  // Re-render canvases when images tab becomes active
+  if(tab==='images'&&current&&currentMod){
+    setTimeout(()=>{
+      panelStates.forEach((_,i)=>sizeAndDraw(i,false));
+    },80);
+  }
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // SRS (SM-2)
-// ═══════════════════════════════════════════════════
-const SRS_KEY = 'omnirad_srs_v2';
-function getSRS() { try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {}; } catch { return {}; } }
-function saveSRS(d) { localStorage.setItem(SRS_KEY, JSON.stringify(d)); }
+// ═══════════════════════════════════════════
+const SRS_KEY='omnirad_srs_v2';
+function getSRS(){try{return JSON.parse(localStorage.getItem(SRS_KEY))||{};}catch{return{};}}
+function saveSRS(d){localStorage.setItem(SRS_KEY,JSON.stringify(d));}
 
-function renderSRS(id) {
-  const rec = getSRS()[id];
-  const el = document.getElementById('srs-mastery');
-  if (!rec) { el.innerHTML = '<p style="font-size:13px;color:var(--text-muted);text-align:center;padding:8px;">No review history yet. Rate this structure in the buttons above!</p>'; return; }
-  const lvl = Math.max(0, Math.min(4, Math.floor((rec.ef - 1.2))));
-  const labels = ['New','Learning','Familiar','Proficient','Mastered'];
-  const colors  = ['var(--text-muted)','oklch(0.65 0.12 50)','oklch(0.65 0.12 155)','oklch(0.65 0.14 188)','var(--teal)'];
-  const pct = (lvl / 4) * 100;
-  el.innerHTML = `
-    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <span style="font-size:13px;font-weight:600;color:${colors[lvl]};">${labels[lvl]}</span>
-        <span style="font-size:12px;color:var(--text-muted);">Reviews: ${rec.n || 0} · Next: ${rec.next ? new Date(rec.next).toLocaleDateString() : 'Today'}</span>
+function renderSRS(id){
+  const rec=getSRS()[id];
+  const el=document.getElementById('srs-mastery');
+  if(!rec){el.innerHTML='<p style="font-size:12px;color:var(--text-muted);text-align:center;padding:8px;">No review history yet.</p>';return;}
+  const lvl=Math.max(0,Math.min(4,Math.floor(rec.ef-1.2)));
+  const labels=['New','Learning','Familiar','Proficient','Mastered'];
+  const colors=['var(--text-muted)','oklch(0.65 0.12 50)','oklch(0.65 0.12 155)','oklch(0.65 0.14 188)','var(--teal)'];
+  el.innerHTML=`
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;">
+        <span style="font-size:12px;font-weight:600;color:${colors[lvl]};">${labels[lvl]}</span>
+        <span style="font-size:11px;color:var(--text-muted);">Reviews: ${rec.n||0} · Next: ${rec.next?new Date(rec.next).toLocaleDateString():'Today'}</span>
       </div>
-      <div style="background:var(--bg-panel);border-radius:4px;height:6px;overflow:hidden;">
-        <div style="background:${colors[lvl]};width:${pct}%;height:100%;border-radius:4px;transition:width .5s;"></div>
+      <div style="background:var(--bg-panel);border-radius:4px;height:5px;overflow:hidden;">
+        <div style="background:${colors[lvl]};width:${(lvl/4)*100}%;height:100%;border-radius:4px;transition:width .5s;"></div>
       </div>
     </div>`;
 }
 
-document.querySelectorAll('.srs-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (!current) return;
-    const q = parseInt(btn.dataset.rating);
-    const srs = getSRS();
-    const r = srs[current.id] || { ef: 2.5, interval: 1, n: 0 };
-    if (q < 3) { r.n = 0; r.interval = 1; }
-    else {
-      if (r.n === 0) r.interval = 1;
-      else if (r.n === 1) r.interval = 6;
-      else r.interval = Math.round(r.interval * r.ef);
+document.querySelectorAll('.srs-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(!current) return;
+    const q=parseInt(btn.dataset.rating);
+    const srs=getSRS();
+    const r=srs[current.id]||{ef:2.5,interval:1,n:0};
+    if(q<3){r.n=0;r.interval=1;}
+    else{
+      if(r.n===0)r.interval=1;
+      else if(r.n===1)r.interval=6;
+      else r.interval=Math.round(r.interval*r.ef);
       r.n++;
     }
-    r.ef = Math.max(1.3, r.ef + 0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
-    r.next = Date.now() + r.interval * 86400000;
-    srs[current.id] = r;
-    saveSRS(srs);
-    const labels = ['','Forgot 😰','Hard 😐','Good 🙂','Easy 😄'];
-    document.getElementById('srs-feedback').textContent = `Saved: ${labels[q]} — Next review in ${r.interval} day${r.interval > 1 ? 's' : ''}`;
+    r.ef=Math.max(1.3,r.ef+0.1-(5-q)*(0.08+(5-q)*0.02));
+    r.next=Date.now()+r.interval*86400000;
+    srs[current.id]=r; saveSRS(srs);
+    const lbl=['','Forgot 😰','Hard 😐','Good 🙂','Easy 😄'];
+    document.getElementById('srs-feedback').textContent=`Saved: ${lbl[q]} — Next review in ${r.interval} day${r.interval>1?'s':''}`;
     renderSRS(current.id);
   });
 });
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // TTS
-// ═══════════════════════════════════════════════════
-function speak(text, lang) {
-  if (!('speechSynthesis' in window)) return;
+// ═══════════════════════════════════════════
+function speak(text,lang){
+  if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
-  u.rate = ttsSpeed;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==='ar'?'ar-SA':'en-US'; u.rate=ttsSpeed;
   speechSynthesis.speak(u);
 }
-
-document.getElementById('btn-tts-toggle').addEventListener('click', function() {
-  ttsEnabled = !ttsEnabled;
-  this.classList.toggle('active', ttsEnabled);
-  this.textContent = ttsEnabled ? '🔊 TTS On' : '🔊 TTS';
-  document.getElementById('tts-panel').classList.toggle('visible', ttsEnabled);
+document.getElementById('btn-tts-toggle').addEventListener('click',function(){
+  ttsEnabled=!ttsEnabled;
+  this.classList.toggle('active',ttsEnabled);
+  this.textContent=ttsEnabled?'🔊 TTS On':'🔊 TTS';
+  document.getElementById('tts-panel').classList.toggle('visible',ttsEnabled);
 });
-
-document.getElementById('btn-pronounce').addEventListener('click', () => {
-  if (!current) return;
-  speak(current['tts' + (ttsLang === 'ar' ? 'Ar' : 'En')], ttsLang);
+document.getElementById('btn-pronounce').addEventListener('click',()=>{
+  if(!current) return;
+  speak(current['tts'+(ttsLang==='ar'?'Ar':'En')],ttsLang);
 });
-
-document.querySelectorAll('.tts-btn[data-lang]').forEach(b => {
-  b.addEventListener('click', function() {
-    ttsLang = this.dataset.lang;
-    document.querySelectorAll('.tts-btn[data-lang]').forEach(x => x.classList.remove('active'));
+document.querySelectorAll('.tts-btn[data-lang]').forEach(b=>{
+  b.addEventListener('click',function(){
+    ttsLang=this.dataset.lang;
+    document.querySelectorAll('.tts-btn[data-lang]').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.tts-btn[data-speed]').forEach(b=>{
+  b.addEventListener('click',function(){
+    ttsSpeed=parseFloat(this.dataset.speed);
+    document.querySelectorAll('.tts-btn[data-speed]').forEach(x=>x.classList.remove('active'));
     this.classList.add('active');
   });
 });
 
-document.querySelectorAll('.tts-btn[data-speed]').forEach(b => {
-  b.addEventListener('click', function() {
-    ttsSpeed = parseFloat(this.dataset.speed);
-    document.querySelectorAll('.tts-btn[data-speed]').forEach(x => x.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
-
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // MOBILE SIDEBAR
-// ═══════════════════════════════════════════════════
-document.getElementById('hamburger').addEventListener('click', () => {
+// ═══════════════════════════════════════════
+document.getElementById('hamburger').addEventListener('click',()=>{
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebar-overlay').classList.toggle('visible');
 });
-function closeSidebar() {
+function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('visible');
 }
-document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+document.getElementById('sidebar-overlay').addEventListener('click',closeSidebar);
 
-// ═══════════════════════════════════════════════════
-// DEEP LINK
-// ═══════════════════════════════════════════════════
+// Handle window resize — redraw all canvases
+window.addEventListener('resize',()=>{
+  if(panelStates.length) panelStates.forEach((_,i)=>sizeAndDraw(i,false));
+});
+
+// ═══════════════════════════════════════════
+// DEEP LINK + INIT
+// ═══════════════════════════════════════════
 buildSidebar();
-const p = new URLSearchParams(location.search).get('s');
-if (p) loadStructure(p);
+const p=new URLSearchParams(location.search).get('s');
+if(p) loadStructure(p);
 </script>
 </body>
 </html>
