@@ -700,6 +700,42 @@ html[lang="ar"] .topbar-nav { margin-right: 0; margin-left: auto; }
   .logo-text { display: none; }
 }
 
+/* ─── SETUP GUIDE ─── */
+.setup-guide {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  max-width: 520px;
+  width: 100%;
+  text-align: left;
+}
+html[lang="ar"] .setup-guide { text-align: right; }
+.setup-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+}
+.setup-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.setup-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.setup-num { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.setup-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.setup-text strong { color: var(--text-primary); }
+.setup-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  line-height: 1.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
@@ -849,6 +885,14 @@ const T = {
     inputPlaceholder: 'Ask about radiologic anatomy…',
     welcomeTitle:     'Radiologic Anatomy AI',
     welcomeSub:       'Ask anything about anatomy as seen on CT, MRI, Ultrasound, X-Ray, Nuclear Medicine, Angiography, Mammography, or PET.',
+    setupTitle:       '🔑 First-time setup (1 minute)',
+    setupSteps: [
+      { icon: '1️⃣', text: 'Go to <a href="https://console.anthropic.com" target="_blank" style="color:var(--teal)">console.anthropic.com</a> and create a free account' },
+      { icon: '2️⃣', text: 'Add a payment method — you get <strong>$5 free credits</strong> (~500 questions)' },
+      { icon: '3️⃣', text: 'Click <strong>API Keys → Create Key</strong>, copy the key (starts with sk-ant-)' },
+      { icon: '4️⃣', text: 'Paste it in the <strong>API Key</strong> field on the left sidebar — saved automatically' },
+    ],
+    setupNote: '🔒 Your key is stored only in your browser. No one else can see it.',
     refuseMsg:        "I'm specialized in radiologic anatomy only. Please ask me about anatomical structures as seen in medical imaging modalities.",
     limitReached:     'You\'ve reached the daily limit of 20 questions. It resets at midnight.',
     noKey:            'Please enter your Anthropic API key in the sidebar.',
@@ -876,6 +920,14 @@ const T = {
     inputPlaceholder: 'اسأل عن تشريح الأشعة...',
     welcomeTitle:     'مساعد تشريح الأشعة بالذكاء الاصطناعي',
     welcomeSub:       'اسأل عن أي بنية تشريحية كما تظهر على CT، MRI، الموجات فوق الصوتية، الأشعة السينية، الطب النووي، التصوير الوعائي، التصوير الشعاعي للثدي، أو PET.',
+    setupTitle:       '🔑 إعداد أول مرة (دقيقة واحدة)',
+    setupSteps: [
+      { icon: '1️⃣', text: 'اذهب إلى <a href="https://console.anthropic.com" target="_blank" style="color:var(--teal)">console.anthropic.com</a> وأنشئ حساباً مجانياً' },
+      { icon: '2️⃣', text: 'أضف طريقة دفع — ستحصل على <strong>$5 رصيد مجاني</strong> يكفي لـ ~٥٠٠ سؤال' },
+      { icon: '3️⃣', text: 'اضغط <strong>API Keys → Create Key</strong>، انسخ المفتاح (يبدأ بـ sk-ant-)' },
+      { icon: '4️⃣', text: 'الصقه في حقل <strong>مفتاح API</strong> في الشريط الجانبي الأيمن — يُحفظ تلقائياً' },
+    ],
+    setupNote: '🔒 مفتاحك محفوظ في متصفحك فقط. لا يراه أحد غيرك.',
     refuseMsg:        'أنا متخصص في تشريح الأشعة فقط. يرجى السؤال عن البنى التشريحية كما تظهر في أوضاع التصوير الطبي.',
     limitReached:     'وصلت إلى الحد اليومي من ٢٠ سؤالاً. يُعاد منتصف الليل.',
     noKey:            'يرجى إدخال مفتاح Anthropic API في الشريط الجانبي.',
@@ -1166,27 +1218,46 @@ function renderWelcome() {
   const feed = document.getElementById('messages');
   feed.innerHTML = '';
   const lang = T[currentLang];
+  const hasKey = !!getKey();
 
   const div = document.createElement('div');
   div.className = 'welcome';
   div.id = 'welcomeScreen';
+
+  // Setup guide (shown only when no API key)
+  const setupHTML = !hasKey ? `
+    <div class="setup-guide">
+      <div class="setup-title">${lang.setupTitle}</div>
+      <div class="setup-steps">
+        ${lang.setupSteps.map(s => `
+          <div class="setup-step">
+            <span class="setup-num">${s.icon}</span>
+            <span class="setup-text">${s.text}</span>
+          </div>`).join('')}
+      </div>
+      <div class="setup-note">${lang.setupNote}</div>
+    </div>` : '';
+
   div.innerHTML = `
     <div class="welcome-icon">✦</div>
     <div>
       <h2>${lang.welcomeTitle}</h2>
       <p>${lang.welcomeSub}</p>
     </div>
-    <div class="starters" id="starters"></div>`;
+    ${setupHTML}
+    ${hasKey ? `<div class="starters" id="starters"></div>` : ''}`;
   feed.appendChild(div);
 
-  const startersEl = div.querySelector('#starters');
-  lang.starters.forEach(s => {
-    const btn = document.createElement('button');
-    btn.className = 'starter-card';
-    btn.innerHTML = `<span class="starter-emoji">${s.emoji}</span><span class="starter-text">${s.text}</span>`;
-    btn.onclick = () => sendMessage(s.text);
-    startersEl.appendChild(btn);
-  });
+  if (hasKey) {
+    const startersEl = div.querySelector('#starters');
+    lang.starters.forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'starter-card';
+      btn.innerHTML = `<span class="starter-emoji">${s.emoji}</span><span class="starter-text">${s.text}</span>`;
+      btn.onclick = () => sendMessage(s.text);
+      startersEl.appendChild(btn);
+    });
+  }
 }
 
 // ── TOPICS SIDEBAR ──
