@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-26 — Task #8 in progress*
+*Last updated: 2026-06-26 — Task #8 in progress · Clinic module logged*
 
 ---
 
@@ -40,6 +40,7 @@
 | 6 | canvas H variable conflict with document.documentElement caused blank panels | Task #5 | Task #5 | 🔴 Urgent | ✅ Resolved | 2026-06-26 |
 | 7 | bindTb() accumulated multiple listeners causing Mode toggle to cancel itself | Task #5 | Task #5 | 🔴 Urgent | ✅ Resolved | 2026-06-26 |
 | 8 | Colorization Toggle — manual polygon approach failed after 5 attempts. Requires TotalSegmentator segmentation masks (pre-processed) for accurate organ boundaries. Cannot be done with hand-drawn coordinates. Defer to Phase 2 when CT images are processed through TotalSegmentator pipeline. | Task #6 | Phase 2 (after Task #12) | 🟡 Medium | 🔴 Deferred | — |
+| 9 | Clinic Module — Case-based clinical simulation workflow: Case Queue → Imaging Request → Structured Report. Inspired by VIXOM architecture. Bridges Atlas (what is it) with clinical thinking (how to reason). High structural value. Build AFTER Task #12 (full content expansion) when enough structures exist to support real cases. Belongs between SRS and AI Assistant in Phase 2 roadmap. Medical Lexicon and Oncology Staging deferred to Phase 4+ as separate scope expansion. | Architecture Review 2026-06-26 | Phase 2.5 (Task #10.5) | 💡 Idea | 🔴 Open | — |
 
 ---
 

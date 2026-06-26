@@ -3,7 +3,7 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v1.8 |
+| Version | v1.9 |
 | Date | 2026-06-26 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
@@ -508,9 +508,10 @@ OmniRad/
 | 7 | Build TTS Module | Phase 1 | ✅ Done — 2026-06-26 |
 | 8 | MVP test with 5-7 students | Phase 1 | 🟡 In Progress — 2026-06-26 |
 | 9 | Build SRS Module | Phase 2 | ⏳ |
-| 10 | Build Mnemonics Library | Phase 2 | ⏳ |
+| 10 | Build Mnemonics Library + Medical Lexicon layer | Phase 2 | ⏳ |
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ⏳ |
 | 12 | Expand content (full Abdomen) | Phase 2 | ⏳ |
+| 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ⏳ |
 | 13 | Extended test with 20-30 students | Phase 2 | ⏳ |
 | 14 | Build user accounts (Backend) | Phase 3 | ⏳ |
 | 15 | Expand to additional body regions | Phase 3 | ⏳ |
@@ -636,6 +637,13 @@ Then: "Do you approve? yes/no/edit"
 ---
 
 # ⑫ Version History
+
+- **v1.9 — 2026-06-26**
+  - Architecture review: VIXOM platform analysed for structural ideas
+  - Clinic Module (Case Queue → Imaging Request → Structured Report) approved as Task #12.5 — Phase 2.5
+  - Medical Lexicon merged into Task #10 (Mnemonics Library) as an additional layer — not a separate task
+  - Oncology Staging deferred to Phase 4+ (out of Phase 1–3 scope)
+  - OMNIRAD_ISSUES.md: Issue #9 logged for Clinic Module
 
 - **v1.8 — 2026-06-26**
   - Task #8 in progress: MVP Test with 5–7 Students
