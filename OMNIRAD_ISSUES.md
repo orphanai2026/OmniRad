@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-26 — Task #9 approved ✅ · SRS Module delivered · Logo standardized*
+*Last updated: 2026-06-26 — Task #11 approved ✅ · AI Assistant (AR/EN) delivered*
 
 ---
 
@@ -59,6 +59,8 @@
 | 7 | Build TTS Module | 2026-06-26 | Mohammed Saeed Alzahrani | atlas.html · Web Speech API · EN+AR · Slow/Normal/Fast · Floating panel · MutationObserver re-inject |
 | 8 | MVP Test with 5–7 Students | 2026-06-26 | Mohammed Saeed Alzahrani | 5 participants · 80% prefer over Radiopaedia · Mobile fix applied · Decision: proceed to Phase 2 |
 | 9 | Build SRS Module | 2026-06-26 | Mohammed Saeed Alzahrani | modules/srs.js · pages/srs.html · SM-2 algorithm · 4-button rating · Mastery bar · Dashboard · Logo fix |
+| 11 | Build AI Assistant (AR/EN) | 2026-06-26 | Mohammed Saeed Alzahrani | pages/ai-chat.html · Claude Haiku 4.5 · AR/EN · RTL · 20q/day limit · cache · setup guide · Quick Topics |
+| 10 | Build Mnemonics Library + Medical Lexicon | 2026-06-26 | Mohammed Saeed Alzahrani | pages/mnemonics.html · modules/lexicon.js · data/mnemonics.json · data/lexicon.json · 12 mnemonics EN+AR · 18 lexicon terms · TTS ♀♂ US · inline tooltips in atlas |
 
 ---
 
@@ -142,6 +144,10 @@
 | 9 | ⏳ تُملأ بعد الاختبار | — | — | — |
 
 ---
+
+| 14 | Atlas topbar missing Home/nav links — fixed in Task #10: added Home, Mnemonics, My Progress nav pills | Task #10 | Task #10 | 🟡 Medium | ✅ Resolved | 2026-06-26 |
+| 15 | Comparison page logo text-only (no OR mark) — fixed in Task #10 | Task #10 | Task #10 | 🟡 Medium | ✅ Resolved | 2026-06-26 |
+| 16 | index.html Mnemonics + My Progress nav links were href="#" — fixed in Task #10 | Task #10 | Task #10 | 🔴 Urgent | ✅ Resolved | 2026-06-26 |
 
 | 13 | Logo inconsistency across pages — atlas.html used logo-dot (small dot) while index.html used OR mark + text. Standardized all pages to OR mark + OmniRad text pattern. | Task #9 | All pages | 🟡 Medium | ✅ Resolved | 2026-06-26 |
 

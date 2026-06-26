@@ -3,7 +3,7 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v2.1 |
+| Version | v2.2 |
 | Date | 2026-06-26 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
@@ -508,8 +508,8 @@ OmniRad/
 | 7 | Build TTS Module | Phase 1 | ✅ Done — 2026-06-26 |
 | 8 | MVP test with 5-7 students | Phase 1 | ✅ Done — 2026-06-26 |
 | 9 | Build SRS Module | Phase 2 | ✅ Done — 2026-06-26 |
-| 10 | Build Mnemonics Library + Medical Lexicon layer | Phase 2 | ⏳ |
-| 11 | Build AI Assistant (AR/EN) | Phase 2 | ⏳ |
+| 10 | Build Mnemonics Library + Medical Lexicon layer | Phase 2 | ✅ Done — 2026-06-26 |
+| 11 | Build AI Assistant (AR/EN) | Phase 2 | ✅ Done — 2026-06-26 |
 | 12 | Expand content (full Abdomen) | Phase 2 | ⏳ |
 | 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ⏳ |
 | 13 | Extended test with 20-30 students | Phase 2 | ⏳ |
@@ -637,6 +637,28 @@ Then: "Do you approve? yes/no/edit"
 ---
 
 # ⑫ Version History
+
+- **v2.3 — 2026-06-26**
+  - Task #11 approved: Build AI Assistant (AR/EN) ✅
+  - Delivered: pages/ai-chat.html (new) · index.html (AI Assistant nav link added)
+  - Claude Haiku 4.5 · direct browser fetch · strict radiologic anatomy system prompt
+  - AR/EN bilingual · RTL full support · language toggle
+  - Daily limit: 20 questions/day · localStorage counter · auto-reset midnight
+  - Cache: exact-match questions cached 24h in localStorage
+  - Setup guide: 4-step instructions always visible on welcome screen (AR/EN)
+  - Quick Topics sidebar: 8 topics · Starter cards: 4 per language
+  - API Key: user-managed · stored in localStorage · masked input · validation indicator
+  - Refused out-of-scope questions styled with 🚫 indicator
+
+- **v2.2 — 2026-06-26**
+  - Task #10 approved: Build Mnemonics Library + Medical Lexicon layer ✅
+  - Delivered: pages/mnemonics.html (new) · modules/lexicon.js (new) · data/mnemonics.json (new) · data/lexicon.json (new) · pages/atlas.html (nav fix) · pages/comparison.html (logo fix) · index.html (nav links fix)
+  - Mnemonics Library: 12 entries EN+AR · Gray's/Moore's/Netter's referenced · search + filter + TTS (♀♂ US voices)
+  - Medical Lexicon: 18 terms · inline tooltips in atlas · Latin/Greek etymology · IPA · click-to-open · related terms navigation
+  - TTS: American English male + female voice selection · rate 0.82 · auto voice detection
+  - Atlas topbar: Home + Mnemonics + My Progress nav pills added
+  - Comparison logo: OR mark standardized
+  - index.html: Mnemonics + My Progress nav links fixed (were href="#")
 
 - **v2.1 — 2026-06-26**
   - Task #9 approved: Build SRS Module ✅
