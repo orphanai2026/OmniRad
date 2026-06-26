@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Mnemonics Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══ TOKENS ═════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg:#0d1117;--bg-s:#161b22;--bg-r:#1c2128;--bg-o:#21262d;
+  --bdr:#30363d;--bdr-s:#21262d;
+  --tx:#e6edf3;--tx2:#8b949e;--tx3:#484f58;
+  --teal:#39d0b8;--teal2:#2ab5a0;--teal3:#1a7a6e;
+  --teal-g:rgba(57,208,184,.18);--teal-s:rgba(57,208,184,.08);
+}
+[data-theme="dim"] {
+  --bg:#d4d9e0;--bg-s:#dde1e8;--bg-r:#e3e7ed;--bg-o:#eaedf2;
+  --bdr:#b0b8c4;--bdr-s:#c4cad4;
+  --tx:#1c2128;--tx2:#444c56;--tx3:#656d76;
+  --teal:#0d6e61;--teal2:#0a5a50;--teal3:#084840;
+  --teal-g:rgba(13,110,97,.18);--teal-s:rgba(13,110,97,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6;transition:background .25s,color .25s}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+/* ═══ TOPBAR ══════════════════════════════════════════════════ */
+.topbar{position:sticky;top:0;z-index:200;background:var(--bg-s);border-bottom:1px solid var(--bdr-s);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:56px;gap:1rem}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--tx);font-weight:600;font-size:1.05rem}
+.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:5px;display:grid;place-items:center;font-weight:700;font-size:.78rem;color:#0d1117;letter-spacing:-.02em;flex-shrink:0}
+.logo-text{font-weight:600;font-size:1rem;letter-spacing:-.02em}
+.logo-text span{color:var(--teal)}
+.nav-links{display:flex;align-items:center;gap:.25rem}
+.nav-link{padding:.3rem .75rem;border-radius:6px;color:var(--tx2);font-size:.82rem;text-decoration:none;transition:all .12s;font-weight:500}
+.nav-link:hover{background:var(--bg-r);color:var(--tx)}
+.nav-link.active{background:var(--teal-s);color:var(--teal)}
+.topbar-right{display:flex;align-items:center;gap:.5rem}
+.theme-btn{display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;transition:all .15s}
+.theme-btn:hover{border-color:var(--teal2);color:var(--teal)}
+
+/* ═══ HERO ════════════════════════════════════════════════════ */
+.hero{padding:2.5rem 2.5rem 1.5rem;border-bottom:1px solid var(--bdr-s)}
+.hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem}
+.hero-title{font-size:2rem;font-weight:600;letter-spacing:-.03em;line-height:1.2;margin-bottom:.5rem}
+.hero-sub{font-size:.9rem;color:var(--tx2);max-width:600px;line-height:1.6}
+.hero-stats{display:flex;gap:1.5rem;margin-top:1.25rem;flex-wrap:wrap}
+.stat-chip{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--tx2)}
+.stat-num{font-weight:600;color:var(--teal);font-family:'IBM Plex Mono',monospace}
+.source-badge{display:inline-flex;align-items:center;gap:.35rem;margin-top:.75rem;padding:.25rem .7rem;border:1px solid var(--bdr);border-radius:99px;font-size:.7rem;color:var(--tx3);background:var(--bg-r)}
+.source-badge span{color:var(--tx2);font-weight:500}
+
+/* ═══ CONTROLS ════════════════════════════════════════════════ */
+.controls{padding:1rem 2.5rem;border-bottom:1px solid var(--bdr-s);display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;background:var(--bg-s)}
+.search-wrap{flex:1;min-width:200px;position:relative}
+.search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:.9rem;pointer-events:none}
+.search-input{width:100%;padding:.48rem .9rem .48rem 2.2rem;border:1px solid var(--bdr);border-radius:7px;background:var(--bg-r);color:var(--tx);font-size:.85rem;font-family:inherit;transition:border-color .15s;outline:none}
+.search-input:focus{border-color:var(--teal2)}
+.search-input::placeholder{color:var(--tx3)}
+.filter-group{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap}
+.filter-lbl{font-size:.72rem;font-weight:500;color:var(--tx3);white-space:nowrap}
+.fbtn{padding:.3rem .72rem;border-radius:6px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.75rem;font-weight:500;transition:all .12s}
+.fbtn:hover{border-color:var(--teal2);color:var(--tx)}
+.fbtn.active{background:var(--teal-g);border-color:var(--teal);color:var(--teal)}
+.lang-seg{display:flex;border:1px solid var(--bdr);border-radius:7px;overflow:hidden}
+.lang-btn{padding:.3rem .7rem;font-size:.75rem;font-weight:500;color:var(--tx2);background:var(--bg-r);transition:all .12s;border:none}
+.lang-btn:not(:last-child){border-right:1px solid var(--bdr)}
+.lang-btn.active{background:var(--teal-g);color:var(--teal)}
+.result-count{font-size:.75rem;color:var(--tx3);margin-left:auto;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+
+/* ═══ GRID ════════════════════════════════════════════════════ */
+.grid-wrap{padding:1.5rem 2.5rem}
+.mn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.empty-state{padding:4rem 2rem;text-align:center;color:var(--tx3)}
+.empty-icon{font-size:2.5rem;margin-bottom:.75rem;opacity:.4}
+.empty-msg{font-size:.88rem}
+
+/* ═══ CARD ════════════════════════════════════════════════════ */
+.mn-card{background:var(--bg-s);border:1.5px solid var(--bdr-s);border-radius:12px;overflow:hidden;transition:border-color .15s,box-shadow .15s;display:flex;flex-direction:column}
+.mn-card:hover{border-color:var(--teal3);box-shadow:0 4px 20px rgba(57,208,184,.07)}
+.mn-card-hdr{padding:.75rem 1rem .6rem;border-bottom:1px solid var(--bdr-s);display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;background:var(--bg-r)}
+.mn-term{font-size:.9rem;font-weight:600;letter-spacing:-.01em;flex:1;line-height:1.3}
+.mn-term-ar{font-size:.78rem;color:var(--tx3);direction:rtl;margin-top:.15rem}
+.mn-badges{display:flex;flex-direction:column;align-items:flex-end;gap:.25rem}
+.badge{font-size:.64rem;padding:.15rem .5rem;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-weight:500;border:1px solid;white-space:nowrap}
+.badge-en{color:#60a5fa;border-color:#1d4ed844;background:#1d4ed812}
+.badge-ar{color:#c084fc;border-color:#7c3aed44;background:#7c3aed12}
+.badge-easy{color:#4ade80;border-color:#16a34a44;background:#16a34a12}
+.badge-medium{color:#fb923c;border-color:#c2410c44;background:#c2410c12}
+.badge-hard{color:#f87171;border-color:#b91c1c44;background:#b91c1c12}
+.mn-card-body{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.75rem}
+.mn-mnemonic-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);font-weight:600}
+.mn-mnemonic{font-family:'IBM Plex Mono',monospace;font-size:.83rem;color:var(--tx);line-height:1.5;background:var(--teal-s);border:1px solid var(--teal3);border-radius:7px;padding:.55rem .75rem}
+.mn-explanation{font-size:.8rem;color:var(--tx2);line-height:1.6}
+.mn-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:auto;padding-top:.5rem}
+.mn-tag{font-size:.68rem;padding:.1rem .45rem;border-radius:4px;border:1px solid var(--bdr-s);color:var(--tx3);background:var(--bg-o)}
+.mn-mod-tag{border-color:var(--teal3);color:var(--teal);background:var(--teal-s)}
+.mn-card-footer{padding:.55rem 1rem;border-top:1px solid var(--bdr-s);display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.mn-source{font-size:.65rem;color:var(--tx3);font-style:italic;flex:1;line-height:1.35}
+.mn-actions{display:flex;gap:.3rem}
+.mn-speak-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx3);font-size:.8rem;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.mn-speak-btn:hover{border-color:var(--teal);color:var(--teal)}
+.mn-speak-btn.speaking{animation:mnPulse .7s infinite}
+@keyframes mnPulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ═══ VOICE SELECTOR ══════════════════════════════════════════ */
+.voice-bar{display:flex;align-items:center;gap:.5rem;padding:.75rem 2.5rem;border-bottom:1px solid var(--bdr-s);background:var(--bg)}
+.voice-lbl{font-size:.72rem;color:var(--tx3);font-weight:500}
+.voice-seg{display:flex;border:1px solid var(--bdr);border-radius:7px;overflow:hidden}
+.voice-btn{padding:.28rem .65rem;font-size:.73rem;font-weight:500;color:var(--tx2);background:var(--bg-r);border:none;transition:all .12s}
+.voice-btn:not(:last-child){border-right:1px solid var(--bdr)}
+.voice-btn.active{background:var(--teal-g);color:var(--teal)}
+.voice-note{font-size:.7rem;color:var(--tx3);margin-left:.5rem}
+
+/* ═══ RESPONSIVE ══════════════════════════════════════════════ */
+@media (max-width:768px) {
+  .hero{padding:1.5rem 1rem 1rem}
+  .hero-title{font-size:1.5rem}
+  .controls{padding:.75rem 1rem}
+  .grid-wrap{padding:1rem}
+  .mn-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .voice-bar{padding:.6rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══════════════════════════════════════════════ -->
+<header class="topbar">
+  <a href="../index.html" class="logo">
+    <div class="logo-mark">OR</div>
+    <span class="logo-text">Omni<span>Rad</span></span>
+  </a>
+  <nav class="nav-links">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="atlas.html" class="nav-link">Atlas</a>
+    <a href="comparison.html" class="nav-link">Compare</a>
+    <a href="mnemonics.html" class="nav-link active">Mnemonics</a>
+    <a href="srs.html" class="nav-link">SRS</a>
+  </nav>
+  <div class="topbar-right">
+    <button class="theme-btn" id="theme-btn">
+      <span id="t-icon">☾</span>
+      <span id="t-lbl">Dim</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══ HERO ═════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-eyebrow">Mnemonics Library</div>
+  <h1 class="hero-title">Remember Everything. Forget Nothing.</h1>
+  <p class="hero-sub">Evidence-based mnemonics for radiologic anatomy — curated in English and Arabic. Every mnemonic is referenced to Gray's Anatomy, Moore's, or Netter's.</p>
+  <div class="hero-stats">
+    <div class="stat-chip"><span class="stat-num" id="total-count">0</span> mnemonics</div>
+    <div class="stat-chip"><span class="stat-num">2</span> languages</div>
+    <div class="stat-chip"><span class="stat-num">Upper Abdomen</span> · Phase 1</div>
+  </div>
+  <div class="source-badge">📖 Sources: <span>Gray's Anatomy 41st</span> · <span>Moore's Clinical 9th</span> · <span>Netter's Atlas 8th</span> · <span>Dorland's Medical Dictionary</span></div>
+</section>
+
+<!-- ═══ VOICE BAR ═════════════════════════════════════════════ -->
+<div class="voice-bar">
+  <span class="voice-lbl">🔊 TTS Voice:</span>
+  <div class="voice-seg" id="voice-seg">
+    <button class="voice-btn active" data-vp="F">♀ Female (US)</button>
+    <button class="voice-btn" data-vp="M">♂ Male (US)</button>
+  </div>
+  <span class="voice-note">American English pronunciation</span>
+</div>
+
+<!-- ═══ CONTROLS ══════════════════════════════════════════════ -->
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search" type="search" placeholder="Search mnemonics, terms, tags…" autocomplete="off">
+  </div>
+  <div class="filter-group">
+    <span class="filter-lbl">Region:</span>
+    <button class="fbtn active" data-reg="all">All</button>
+    <button class="fbtn" data-reg="Upper Abdomen">Abdomen</button>
+    <button class="fbtn" data-reg="Retroperitoneum">Retroperitoneum</button>
+  </div>
+  <div class="filter-group">
+    <span class="filter-lbl">Difficulty:</span>
+    <button class="fbtn active" data-diff="all">All</button>
+    <button class="fbtn" data-diff="easy">Easy</button>
+    <button class="fbtn" data-diff="medium">Medium</button>
+    <button class="fbtn" data-diff="hard">Hard</button>
+  </div>
+  <div class="filter-group">
+    <span class="filter-lbl">Language:</span>
+    <div class="lang-seg" id="lang-seg">
+      <button class="lang-btn active" data-lang="all">Both</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="ar">AR</button>
+    </div>
+  </div>
+  <span class="result-count" id="result-count">— results</span>
+</div>
+
+<!-- ═══ GRID ══════════════════════════════════════════════════ -->
+<div class="grid-wrap">
+  <div class="mn-grid" id="mn-grid">
+    <div class="empty-state">
+      <div class="empty-icon">📚</div>
+      <div class="empty-msg">Loading mnemonics…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── Data ────────────────────────────────────────────────────
+let MN_DATA = [];
+
+// ── State ────────────────────────────────────────────────────
+let filters = { search:'', region:'all', diff:'all', lang:'all' };
+
+// ── TTS ─────────────────────────────────────────────────────
+const TTS = {
+  synth    : window.speechSynthesis || null,
+  voiceM   : null,
+  voiceF   : null,
+  preferred: 'F',
+  current  : null,
+};
+
+function loadVoices() {
+  if (!TTS.synth) return;
+  const v = TTS.synth.getVoices().filter(v => v.lang === 'en-US' || v.lang.startsWith('en-US'));
+  const fp = ['samantha','zira','ava','susan','karen','victoria','allison'];
+  const mp = ['alex','daniel','david','mark','ryan','tom','fred'];
+  TTS.voiceF = v.find(x => fp.some(p => x.name.toLowerCase().includes(p))) || v[0] || null;
+  TTS.voiceM = v.find(x => mp.some(p => x.name.toLowerCase().includes(p))) || v[1] || v[0] || null;
+}
+if (window.speechSynthesis) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+}
+
+function speak(text, btn) {
+  if (!TTS.synth) return;
+  TTS.synth.cancel();
+  if (TTS.current && TTS.current !== btn) {
+    TTS.current.textContent = '🔊';
+    TTS.current.classList.remove('speaking');
+  }
+  if (TTS.current === btn) {
+    TTS.current = null;
+    btn.textContent = '🔊';
+    btn.classList.remove('speaking');
+    return;
+  }
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang  = 'en-US';
+  utter.rate  = 0.88;
+  utter.pitch = 1;
+  const voice = TTS.preferred === 'M' ? TTS.voiceM : TTS.voiceF;
+  if (voice) utter.voice = voice;
+  utter.onstart = () => {
+    TTS.current = btn;
+    btn.textContent = '⏹';
+    btn.classList.add('speaking');
+  };
+  utter.onend = utter.onerror = () => {
+    btn.textContent = '🔊';
+    btn.classList.remove('speaking');
+    if (TTS.current === btn) TTS.current = null;
+  };
+  TTS.synth.speak(utter);
+}
+
+// ── Voice selector ───────────────────────────────────────────
+document.getElementById('voice-seg').addEventListener('click', e => {
+  const btn = e.target.closest('[data-vp]');
+  if (!btn) return;
+  TTS.preferred = btn.dataset.vp;
+  document.querySelectorAll('[data-vp]').forEach(b => b.classList.toggle('active', b === btn));
+  if (TTS.synth) TTS.synth.cancel();
+});
+
+// ── Build card ───────────────────────────────────────────────
+function buildCard(mn) {
+  const modBadges = (mn.modality || []).map(m => `<span class="mn-tag mn-mod-tag">${m}</span>`).join('');
+  const tagBadges = (mn.tags || []).map(t => `<span class="mn-tag">${t}</span>`).join('');
+  const langBadge = mn.language === 'ar'
+    ? '<span class="badge badge-ar">AR</span>'
+    : '<span class="badge badge-en">EN</span>';
+  const diffBadge = `<span class="badge badge-${mn.difficulty}">${mn.difficulty}</span>`;
+  const dir = mn.language === 'ar' ? ' dir="rtl"' : '';
+  const termAr = mn.term_ar ? `<div class="mn-term-ar" dir="rtl">${mn.term_ar}</div>` : '';
+
+  return `
+    <article class="mn-card" data-id="${mn.id}">
+      <div class="mn-card-hdr">
+        <div>
+          <div class="mn-term"${dir}>${mn.term}</div>
+          ${termAr}
+        </div>
+        <div class="mn-badges">
+          ${langBadge}
+          ${diffBadge}
+        </div>
+      </div>
+      <div class="mn-card-body">
+        <div>
+          <div class="mn-mnemonic-label">Mnemonic</div>
+          <div class="mn-mnemonic"${dir}>${escHtml(mn.mnemonic)}</div>
+        </div>
+        <div class="mn-explanation"${dir}>${escHtml(mn.explanation)}</div>
+        <div class="mn-tags">
+          ${modBadges}
+          ${tagBadges}
+        </div>
+      </div>
+      <div class="mn-card-footer">
+        <div class="mn-source">📖 ${escHtml(mn.source || '')}</div>
+        <div class="mn-actions">
+          <button class="mn-speak-btn" data-text="${escAttr(mn.mnemonic)}" title="Pronounce mnemonic">🔊</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Filter ────────────────────────────────────────────────────
+function applyFilters() {
+  const q = filters.search.toLowerCase().trim();
+  return MN_DATA.filter(mn => {
+    if (filters.lang !== 'all' && mn.language !== filters.lang) return false;
+    if (filters.region !== 'all' && mn.region !== filters.region) return false;
+    if (filters.diff !== 'all' && mn.difficulty !== filters.diff) return false;
+    if (q) {
+      const haystack = [mn.term, mn.term_ar, mn.mnemonic, mn.explanation, ...(mn.tags||[]), mn.category].join(' ').toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+// ── Render ────────────────────────────────────────────────────
+function render() {
+  const results = applyFilters();
+  const grid = document.getElementById('mn-grid');
+  document.getElementById('result-count').textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
+
+  if (!results.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-msg">No mnemonics match your filters. Try broadening your search.</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = results.map(buildCard).join('');
+
+  // Bind speak buttons
+  grid.querySelectorAll('.mn-speak-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      speak(btn.dataset.text, btn);
+    });
+  });
+}
+
+// ── Controls ──────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', e => {
+  filters.search = e.target.value;
+  render();
+});
+
+document.querySelectorAll('.fbtn[data-reg]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    filters.region = btn.dataset.reg;
+    document.querySelectorAll('.fbtn[data-reg]').forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+});
+
+document.querySelectorAll('.fbtn[data-diff]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    filters.diff = btn.dataset.diff;
+    document.querySelectorAll('.fbtn[data-diff]').forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+});
+
+document.getElementById('lang-seg').addEventListener('click', e => {
+  const btn = e.target.closest('[data-lang]');
+  if (!btn) return;
+  filters.lang = btn.dataset.lang;
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b === btn));
+  render();
+});
+
+// ── Load data ─────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const r = await fetch('../data/mnemonics.json');
+    if (!r.ok) throw new Error('fetch failed');
+    MN_DATA = await r.json();
+    document.getElementById('total-count').textContent = MN_DATA.length;
+    render();
+  } catch (e) {
+    document.getElementById('mn-grid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-msg">Could not load mnemonics data. Ensure <code>data/mnemonics.json</code> is accessible.</div>
+      </div>`;
+  }
+}
+
+// ── Theme ─────────────────────────────────────────────────────
+const H = document.documentElement;
+document.getElementById('theme-btn').addEventListener('click', () => {
+  const t = H.dataset.theme === 'dark' ? 'dim' : 'dark';
+  H.dataset.theme = t;
+  document.getElementById('t-icon').textContent = t === 'dark' ? '☾' : '◑';
+  document.getElementById('t-lbl').textContent  = t === 'dark' ? 'Dim' : 'Dark';
+  localStorage.setItem('omnirad-theme', t);
+});
+const saved = localStorage.getItem('omnirad-theme') || 'dark';
+H.dataset.theme = saved;
+document.getElementById('t-icon').textContent = saved === 'dark' ? '☾' : '◑';
+document.getElementById('t-lbl').textContent  = saved === 'dark' ? 'Dim' : 'Dark';
+
+// ── Init ──────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
