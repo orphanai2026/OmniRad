@@ -117,12 +117,13 @@ code, .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; }
 }
 .nav-logo-text { font-weight: 600; font-size: 1rem; letter-spacing: -0.02em; }
 .nav-logo-text span { color: var(--accent); }
-.nav-links { display: flex; align-items: center; gap: 4px; list-style: none; flex: 1; }
+.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; overflow: hidden; }
 .nav-links a {
   text-decoration: none; color: var(--text-secondary);
-  font-size: 0.875rem; font-weight: 500;
-  padding: 6px 12px; border-radius: var(--radius-sm);
+  font-size: 0.8rem; font-weight: 500;
+  padding: 5px 9px; border-radius: var(--radius-sm);
   transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
 }
 .nav-links a:hover { color: var(--text-primary); background: var(--bg-overlay); }
 .nav-links a.active { color: var(--accent); background: var(--accent-subtle); }
