@@ -588,6 +588,114 @@ select.structure-select:focus {
   .sync-toggle { margin-left: 0; }
 }
 
+/* ─── CANVAS VIEWER ──────────────────────────────────────────────── */
+.viewer-canvas-wrap {
+  flex: 1;
+  position: relative;
+  background: oklch(0.08 0.005 240);
+  min-height: 260px;
+  overflow: hidden;
+  cursor: crosshair;
+}
+.viewer-canvas-wrap canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+.canvas-label {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: oklch(0 0 0 / 0.70);
+  backdrop-filter: blur(4px);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  color: #fff;
+  pointer-events: none;
+  z-index: 2;
+}
+.hu-readout {
+  position: absolute;
+  bottom: 8px; left: 8px;
+  background: oklch(0 0 0 / 0.70);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: oklch(0.75 0.30 145);
+  display: none;
+  z-index: 2;
+}
+
+/* Tools bar per card */
+.viewer-tools {
+  display: flex;
+  gap: 3px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-raised);
+  flex-wrap: wrap;
+}
+.tool-chip {
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.70rem;
+  font-family: 'IBM Plex Mono', monospace;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.tool-chip:hover { background: var(--bg-overlay); color: var(--text-primary); }
+.tool-chip.active { background: var(--teal-subtle); border-color: var(--teal); color: var(--teal); }
+
+/* Fullscreen overlay */
+#fullscreen-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 1000;
+  flex-direction: column;
+}
+#fullscreen-overlay.open { display: flex; }
+#fs-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#fs-mod-label { font-size: 0.85rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace; color: var(--teal); }
+#fs-struct-label { font-size: 0.80rem; color: var(--text-muted); }
+#fs-close {
+  margin-left: auto;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.80rem;
+  font-family: var(--font);
+  cursor: pointer;
+}
+#fs-close:hover { background: var(--bg-raised); color: var(--text-primary); }
+#fs-canvas-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #050810;
+  position: relative;
+}
+#fs-canvas-wrap canvas { max-width: 100%; max-height: 100%; }
+
 /* ─── REDUCED MOTION ──────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0ms !important; }
@@ -748,183 +856,246 @@ select.structure-select:focus {
 
 </main>
 
+<!-- FULLSCREEN OVERLAY -->
+<div id="fullscreen-overlay">
+  <div id="fs-header">
+    <span id="fs-mod-label">CT</span>
+    <span id="fs-struct-label">Liver · Axial</span>
+    <button id="fs-close" onclick="closeFullscreen()">✕ Close (ESC)</button>
+  </div>
+  <div id="fs-canvas-wrap">
+    <canvas id="fs-canvas"></canvas>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════════════════════
-   OMNIRAD — COMPARISON ENGINE
-   Task #4 · Vanilla JS · No frameworks
+   OMNIRAD — COMPARISON ENGINE (Fixed + Enhanced)
    ═══════════════════════════════════════════════════════════ */
 
 // ── DATA ─────────────────────────────────────────────────────
 const STRUCTURES = {
-  liver:       { name: 'Liver', ar: 'الكبد',        system: 'Abdomen · Right Upper Quadrant' },
-  spleen:      { name: 'Spleen', ar: 'الطحال',      system: 'Abdomen · Left Upper Quadrant' },
-  kidney:      { name: 'Right Kidney', ar: 'الكلية اليمنى', system: 'Retroperitoneum' },
-  pancreas:    { name: 'Pancreas', ar: 'البنكرياس', system: 'Retroperitoneum · Epigastrium' },
-  gallbladder: { name: 'Gallbladder', ar: 'المرارة', system: 'Abdomen · Right Upper Quadrant' },
+  liver:       { name: 'Liver',         ar: 'الكبد',            system: 'Abdomen · RUQ' },
+  spleen:      { name: 'Spleen',        ar: 'الطحال',           system: 'Abdomen · LUQ' },
+  kidney:      { name: 'Right Kidney',  ar: 'الكلية اليمنى',   system: 'Retroperitoneum' },
+  pancreas:    { name: 'Pancreas',      ar: 'البنكرياس',        system: 'Retroperitoneum' },
+  gallbladder: { name: 'Gallbladder',   ar: 'المرارة',          system: 'Abdomen · RUQ' },
+  kidneys:     { name: 'Kidneys',       ar: 'الكليتان',         system: 'Retroperitoneum' },
+  aorta:       { name: 'Abdominal Aorta', ar: 'الأبهر البطني', system: 'Retroperitoneum' },
+  stomach:     { name: 'Stomach',       ar: 'المعدة',           system: 'Abdomen · LUQ' },
 };
 
 const MODALITIES = {
-  ct:    { label: 'CT',    full: 'Computed Tomography',  planes: ['Axial','Coronal','Sagittal'] },
-  mri:   { label: 'MRI',   full: 'Magnetic Resonance',   planes: ['Axial','Coronal','Sagittal'] },
-  us:    { label: 'US',    full: 'Ultrasound',            planes: ['Long axis','Short axis','Oblique'] },
-  xray:  { label: 'X-Ray', full: 'Plain Radiography',    planes: ['PA','Lateral','AP'] },
-  angio: { label: 'Angio', full: 'Angiography',          planes: ['AP','Lateral','3D'] },
-  nm:    { label: 'NM',    full: 'Nuclear Medicine',     planes: ['Anterior','Posterior','SPECT'] },
-  mammo: { label: 'Mammo', full: 'Mammography',          planes: ['CC','MLO','Lateral'] },
+  ct:    { label:'CT',    full:'Computed Tomography',  planes:['Axial','Coronal','Sagittal'],  color:'oklch(0.72 0.14 188)' },
+  mri:   { label:'MRI',   full:'Magnetic Resonance',   planes:['Axial','Coronal','Sagittal'],  color:'oklch(0.72 0.14 285)' },
+  us:    { label:'US',    full:'Ultrasound',            planes:['Longitudinal','Transverse','Oblique'], color:'oklch(0.75 0.14 155)' },
+  xray:  { label:'X-Ray', full:'Plain Radiography',    planes:['PA','Lateral','AP'],           color:'oklch(0.75 0.10 50)' },
+  angio: { label:'Angio', full:'Angiography',          planes:['AP','Lateral','3D-VR'],        color:'oklch(0.70 0.14 355)' },
+  nm:    { label:'NM',    full:'Nuclear Medicine',     planes:['Anterior','Posterior','SPECT'],color:'oklch(0.70 0.14 30)' },
+  mammo: { label:'Mammo', full:'Mammography',          planes:['CC','MLO','Lateral'],          color:'oklch(0.70 0.14 50)' },
+  pet:   { label:'PET',   full:'PET / PET-CT',         planes:['Axial','Coronal','MIP'],       color:'oklch(0.70 0.14 15)' },
 };
+
+// Real CC0 image from Wikimedia (Häggström M.D.)
+const IMG_CC0 = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
 
 // ── STATE ─────────────────────────────────────────────────────
 const state = {
   structure: 'liver',
-  active:    new Set(['ct','mri','us']),
-  sync:      false,
-  planes:    {},  // per modality plane selection
+  active: new Set(['ct','mri']),
+  sync: false,
+  activeTool: {}, // per card: mod → tool
+  zoom: {},       // per card: mod → zoom
+  panX: {}, panY:{},
+  rotation: {},
+  inverted: {},
+  imgCache: {},   // url → Image object
 };
 
 // ── DOM REFS ──────────────────────────────────────────────────
-const gridWrap      = document.getElementById('gridWrap');
-const emptyState    = document.getElementById('emptyState');
-const countBadge    = document.getElementById('countBadge');
-const structSel     = document.getElementById('structureSelect');
-const syncToggle    = document.getElementById('syncToggle');
-const themeToggle   = document.getElementById('themeToggle');
-const themeLabel    = document.getElementById('themeLabel');
-const compArea      = document.getElementById('comparisonArea');
+const gridWrap   = document.getElementById('gridWrap');
+const emptyState = document.getElementById('emptyState');
+const countBadge = document.getElementById('countBadge');
+const structSel  = document.getElementById('structureSelect');
+const syncToggle = document.getElementById('syncToggle');
+const themeToggle= document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+
+// Add PET checkbox to HTML dynamically
+(function addPET(){
+  const grp = document.getElementById('modalityGroup');
+  const lbl = document.createElement('label');
+  lbl.className='mod-chip'; lbl.dataset.mod='pet';
+  lbl.innerHTML='<input type="checkbox" value="pet"><span class="mod-dot"></span> PET';
+  grp.appendChild(lbl);
+})();
 
 // ── THEME ─────────────────────────────────────────────────────
-function initTheme() {
-  const saved = localStorage.getItem('omnirad-theme') || 'dark';
+function initTheme(){
+  const saved=localStorage.getItem('omnirad-theme')||'dark';
   applyTheme(saved);
 }
-
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  themeLabel.textContent = t === 'dark' ? 'Dim' : 'Dark';
-  localStorage.setItem('omnirad-theme', t);
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  themeLabel.textContent=t==='dark'?'Dim':'Dark';
+  localStorage.setItem('omnirad-theme',t);
 }
-
-themeToggle.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  applyTheme(current === 'dark' ? 'dim' : 'dark');
+themeToggle.addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  applyTheme(cur==='dark'?'dim':'dark');
 });
 
-// ── URL PARAMS (launched from Atlas) ─────────────────────────
-function readURLParams() {
-  const params = new URLSearchParams(window.location.search);
-  const s = params.get('structure');
-  const m = params.get('modalities');
-  if (s && STRUCTURES[s]) {
-    state.structure = s;
-    structSel.value = s;
+// ── URL PARAMS ────────────────────────────────────────────────
+function readURLParams(){
+  const params=new URLSearchParams(window.location.search);
+  const s=params.get('structure');
+  const m=params.get('modalities');
+  if(s&&STRUCTURES[s]){state.structure=s; structSel.value=s;}
+  if(m){
+    const mods=m.split(',').filter(x=>MODALITIES[x]);
+    if(mods.length){state.active=new Set(mods); syncCheckboxes();}
   }
-  if (m) {
-    const mods = m.split(',').filter(x => MODALITIES[x]);
-    if (mods.length) {
-      state.active = new Set(mods);
-      syncCheckboxes();
+}
+function syncCheckboxes(){
+  document.querySelectorAll('#modalityGroup .mod-chip').forEach(chip=>{
+    const mod=chip.dataset.mod;
+    const cb=chip.querySelector('input');
+    const on=state.active.has(mod);
+    cb.checked=on; chip.classList.toggle('active',on);
+  });
+}
+
+// ── IMAGE LOADING ─────────────────────────────────────────────
+function loadImg(url, cb){
+  if(state.imgCache[url]){cb(state.imgCache[url]);return;}
+  const img=new Image(); // NO crossOrigin — allows Wikimedia images
+  img.onload=()=>{state.imgCache[url]=img; cb(img);};
+  img.onerror=()=>cb(null);
+  img.src=url;
+}
+
+// ── CANVAS DRAW ───────────────────────────────────────────────
+function drawCanvas(cvId, mod, plane){
+  const cv=document.getElementById(cvId);
+  if(!cv) return;
+  const parent=cv.parentElement;
+  if(!parent) return;
+
+  const W=parent.offsetWidth||400;
+  const H=parent.offsetHeight||280;
+  if(W<10||H<10){setTimeout(()=>drawCanvas(cvId,mod,plane),80);return;}
+  cv.width=W; cv.height=H;
+
+  const ctx=cv.getContext('2d');
+  const mInfo=MODALITIES[mod];
+  const struct=STRUCTURES[state.structure];
+  const zoom=state.zoom[mod]||1;
+  const px=state.panX[mod]||0;
+  const py=state.panY[mod]||0;
+  const rot=state.rotation[mod]||0;
+  const inv=state.inverted[mod]||false;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#050810';
+  ctx.fillRect(0,0,W,H);
+
+  const drawWithImg=(imgObj)=>{
+    ctx.save();
+    ctx.translate(W/2+px, H/2+py);
+    ctx.scale(zoom, zoom);
+    ctx.rotate(rot*Math.PI/180);
+    if(inv) ctx.filter='invert(100%)';
+    if(imgObj){
+      const iw=imgObj.naturalWidth, ih=imgObj.naturalHeight;
+      const sc=Math.min((W*0.96)/iw,(H*0.96)/ih);
+      ctx.drawImage(imgObj,-iw*sc/2,-ih*sc/2,iw*sc,ih*sc);
+    } else {
+      // Stylised placeholder with modality color
+      ctx.fillStyle=mInfo.color.replace(')','/0.12)');
+      ctx.beginPath(); ctx.arc(0,0,Math.min(W,H)*0.28,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=mInfo.color;
+      ctx.font=`bold ${Math.floor(Math.min(W,H)*0.08)}px IBM Plex Mono,monospace`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(mInfo.label,0,-8);
+      ctx.fillStyle='rgba(200,220,240,0.35)';
+      ctx.font=`${Math.floor(Math.min(W,H)*0.042)}px IBM Plex Sans,sans-serif`;
+      ctx.fillText(plane,0,H*0.1);
+      ctx.fillStyle='rgba(150,170,190,0.2)';
+      ctx.font=`${Math.floor(Math.min(W,H)*0.032)}px IBM Plex Sans,sans-serif`;
+      ctx.fillText(struct.name,0,H*0.18);
     }
-  }
+    ctx.filter='none';
+    ctx.restore();
+  };
+
+  loadImg(IMG_CC0, drawWithImg);
 }
 
-function syncCheckboxes() {
-  document.querySelectorAll('#modalityGroup .mod-chip').forEach(chip => {
-    const mod = chip.dataset.mod;
-    const cb  = chip.querySelector('input');
-    const on  = state.active.has(mod);
-    cb.checked = on;
-    chip.classList.toggle('active', on);
-  });
-}
+// ── BUILD CARD ────────────────────────────────────────────────
+function buildCard(mod){
+  const info=MODALITIES[mod];
+  const planes=info.planes;
+  if(!state.activeTool[mod]) state.activeTool[mod]='pan';
+  if(!state.zoom[mod]) state.zoom[mod]=1;
+  if(!state.panX[mod]) state.panX[mod]=0;
+  if(!state.panY[mod]) state.panY[mod]=0;
+  if(!state.rotation[mod]) state.rotation[mod]=0;
 
-// ── PLACEHOLDER IMAGE ─────────────────────────────────────────
-function makePlaceholder(mod, plane, structKey) {
-  const info = MODALITIES[mod];
-  const struct = STRUCTURES[structKey];
-  return `
-    <div class="img-placeholder">
-      <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="8" width="48" height="48" rx="6" stroke="currentColor" stroke-width="2" opacity="0.5"/>
-        <circle cx="32" cy="30" r="12" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
-        <path d="M20 46 Q32 36 44 46" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-        <circle cx="32" cy="30" r="4" fill="currentColor" opacity="0.2"/>
-      </svg>
-      <span>${struct.name} · ${info.label} · ${plane}</span>
-      <span style="font-size:0.65rem;opacity:0.5;">Image placeholder</span>
-    </div>
-  `;
-}
-
-// ── RENDER GRID ───────────────────────────────────────────────
-function renderGrid() {
-  const mods = [...state.active];
-  const count = mods.length;
-
-  if (count === 0) {
-    gridWrap.innerHTML = '';
-    gridWrap.style.display = 'none';
-    emptyState.style.display = 'flex';
-    countBadge.textContent = '0';
-    return;
-  }
-
-  emptyState.style.display = 'none';
-  gridWrap.style.display = 'grid';
-  gridWrap.setAttribute('data-count', Math.min(count, 8));
-  countBadge.textContent = count;
-
-  gridWrap.innerHTML = mods.map(mod => buildCard(mod)).join('');
-
-  // Activate saved planes
-  gridWrap.querySelectorAll('.plane-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const card = tab.closest('.viewer-card');
-      card.querySelectorAll('.plane-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-    });
-  });
-}
-
-function buildCard(mod) {
-  const info   = MODALITIES[mod];
-  const planes = info.planes;
-  const defaultPlane = planes[0];
-
-  const planeTabs = planes.map((p, i) =>
-    `<button class="plane-tab${i===0?' active':''}" aria-label="View ${p} plane">${p}</button>`
+  const planeTabs=planes.map((p,i)=>
+    `<button class="plane-tab${i===0?' active':''}" data-plane="${p}" aria-label="${p} plane">${p}</button>`
   ).join('');
 
+  const cvId=`cv-${mod}`;
+  const struct=STRUCTURES[state.structure];
+
   return `
-    <article class="viewer-card" data-mod="${mod}" role="img" aria-label="${info.full} viewer">
+    <article class="viewer-card" data-mod="${mod}">
       <header class="viewer-header">
         <div class="viewer-modality">
           <span class="mod-badge ${mod}">${info.label}</span>
           <span class="viewer-name">${info.full}</span>
         </div>
-        <div class="viewer-plane-tabs" role="tablist" aria-label="Image planes">
-          ${planeTabs}
-        </div>
+        <div class="viewer-plane-tabs">${planeTabs}</div>
       </header>
 
-      <div class="viewer-image">
-        ${makePlaceholder(mod, defaultPlane, state.structure)}
-        <div class="scan-overlay"></div>
+      <div class="viewer-tools">
+        <button class="tool-chip active" data-tool="pan" data-mod="${mod}" onclick="setCardTool('${mod}','pan',this)">✋ Pan</button>
+        <button class="tool-chip" data-tool="zoom" data-mod="${mod}" onclick="setCardTool('${mod}','zoom',this)">🔍 Zoom</button>
+        <button class="tool-chip" data-tool="measure" data-mod="${mod}" onclick="setCardTool('${mod}','measure',this)">📏</button>
+        <button class="tool-chip" data-tool="roi" data-mod="${mod}" onclick="setCardTool('${mod}','roi',this)">⬜ ROI</button>
+        ${mod==='ct'?`<button class="tool-chip" data-tool="hu" data-mod="${mod}" onclick="setCardTool('${mod}','hu',this)">🔢 HU</button>`:''}
+        <button class="tool-chip" onclick="applyCardInvert('${mod}')" title="Invert">◑</button>
+        <button class="tool-chip" onclick="applyCardRotate('${mod}',90)" title="Rotate CW">↻</button>
+        <button class="tool-chip" onclick="applyCardReset('${mod}')" title="Reset">✕</button>
+      </div>
+
+      <div class="viewer-canvas-wrap" id="wrap-${mod}">
+        <canvas id="${cvId}"></canvas>
+        <div class="canvas-label">${struct.name} · ${info.label} · ${planes[0]}</div>
+        <div class="hu-readout" id="hu-${mod}"></div>
         <span class="sync-indicator">SYNC</span>
+        <div class="scan-overlay"></div>
       </div>
 
       <footer class="viewer-footer">
-        <span class="viewer-info">${STRUCTURES[state.structure].name} · ${defaultPlane}</span>
+        <span class="viewer-info" id="info-${mod}">${struct.name} · ${planes[0]}</span>
         <div class="viewer-actions">
-          <button class="icon-btn" data-tip="Zoom in" aria-label="Zoom in">
+          <button class="icon-btn" data-tip="Zoom in" onclick="zoomCard('${mod}',1.2)" aria-label="Zoom in">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
             </svg>
           </button>
-          <button class="icon-btn" data-tip="Fullscreen" aria-label="Fullscreen">
+          <button class="icon-btn" data-tip="Zoom out" onclick="zoomCard('${mod}',0.8)" aria-label="Zoom out">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M8 11h6"/>
+            </svg>
+          </button>
+          <button class="icon-btn" data-tip="Fullscreen" onclick="openFullscreen('${mod}')" aria-label="Fullscreen">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
             </svg>
           </button>
-          <button class="icon-btn" data-tip="Save image" aria-label="Save image">
+          <button class="icon-btn" data-tip="Save PNG" onclick="saveCard('${mod}')" aria-label="Save">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
@@ -935,45 +1106,236 @@ function buildCard(mod) {
   `;
 }
 
-// ── MODALITY CHIPS ────────────────────────────────────────────
-document.getElementById('modalityGroup').addEventListener('change', e => {
-  if (e.target.type !== 'checkbox') return;
-  const chip = e.target.closest('.mod-chip');
-  const mod  = chip.dataset.mod;
+// ── RENDER GRID ───────────────────────────────────────────────
+function renderGrid(){
+  const mods=[...state.active];
+  const count=mods.length;
 
-  if (e.target.checked) {
-    state.active.add(mod);
-    chip.classList.add('active');
-  } else {
-    state.active.delete(mod);
-    chip.classList.remove('active');
+  countBadge.textContent=count;
+
+  if(count===0){
+    gridWrap.innerHTML=''; gridWrap.style.display='none';
+    emptyState.style.display='flex'; return;
   }
+  emptyState.style.display='none';
+  gridWrap.style.display='grid';
+  gridWrap.setAttribute('data-count',Math.min(count,8));
+  gridWrap.innerHTML=mods.map(m=>buildCard(m)).join('');
 
+  // Plane tabs
+  gridWrap.querySelectorAll('.plane-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const card=tab.closest('.viewer-card');
+      const mod=card.dataset.mod;
+      card.querySelectorAll('.plane-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const plane=tab.dataset.plane;
+      document.getElementById(`info-${mod}`).textContent=`${STRUCTURES[state.structure].name} · ${plane}`;
+      document.querySelector(`#wrap-${mod} .canvas-label`).textContent=
+        `${STRUCTURES[state.structure].name} · ${MODALITIES[mod].label} · ${plane}`;
+      redrawCard(mod);
+    });
+  });
+
+  // Canvas mouse events + draw
+  setTimeout(()=>{
+    mods.forEach(mod=>{
+      redrawCard(mod);
+      setupCardEvents(mod);
+    });
+  },80);
+}
+
+function redrawCard(mod){
+  const cv=document.getElementById(`cv-${mod}`);
+  if(!cv) return;
+  const activeTab=document.querySelector(`[data-mod="${mod}"] .plane-tab.active`);
+  const plane=activeTab?activeTab.dataset.plane:MODALITIES[mod].planes[0];
+  drawCanvas(`cv-${mod}`,mod,plane);
+}
+
+// ── CANVAS EVENTS ─────────────────────────────────────────────
+function setupCardEvents(mod){
+  const cv=document.getElementById(`cv-${mod}`);
+  if(!cv) return;
+  let isDragging=false, lastX=0, lastY=0, drawStart={x:0,y:0};
+  let annotations=[];
+
+  cv.addEventListener('mousedown',e=>{
+    const r=cv.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    isDragging=true; lastX=x; lastY=y; drawStart={x,y};
+    if(state.activeTool[mod]==='hu'){
+      const val=Math.round(Math.random()*200-50);
+      const el=document.getElementById(`hu-${mod}`);
+      if(el){el.style.display='block'; el.textContent=`HU: ${val}*`;}
+    }
+    e.preventDefault();
+  });
+
+  cv.addEventListener('mousemove',e=>{
+    if(!isDragging) return;
+    const r=cv.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    if(state.activeTool[mod]==='pan'||!state.activeTool[mod]){
+      state.panX[mod]=(state.panX[mod]||0)+(x-lastX);
+      state.panY[mod]=(state.panY[mod]||0)+(y-lastY);
+      redrawCard(mod);
+      if(state.sync){
+        [...state.active].filter(m=>m!==mod).forEach(m2=>{
+          state.panX[m2]=state.panX[mod];
+          state.panY[m2]=state.panY[mod];
+          redrawCard(m2);
+        });
+      }
+    } else if(state.activeTool[mod]==='zoom'){
+      state.zoom[mod]=Math.max(0.1,Math.min(10,(state.zoom[mod]||1)-(y-lastY)*0.008));
+      redrawCard(mod);
+    }
+    lastX=x; lastY=y;
+  });
+
+  cv.addEventListener('mouseup',()=>{isDragging=false;});
+  cv.addEventListener('mouseleave',()=>{isDragging=false;});
+
+  cv.addEventListener('wheel',e=>{
+    state.zoom[mod]=Math.max(0.1,Math.min(10,(state.zoom[mod]||1)-e.deltaY*0.001));
+    redrawCard(mod);
+    if(state.sync){
+      [...state.active].filter(m=>m!==mod).forEach(m2=>{
+        state.zoom[m2]=state.zoom[mod]; redrawCard(m2);
+      });
+    }
+    e.preventDefault();
+  },{passive:false});
+
+  // Touch
+  let lastTouch=null;
+  cv.addEventListener('touchstart',e=>{
+    lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    e.preventDefault();
+  },{passive:false});
+  cv.addEventListener('touchmove',e=>{
+    if(!lastTouch) return;
+    state.panX[mod]=(state.panX[mod]||0)+e.touches[0].clientX-lastTouch.x;
+    state.panY[mod]=(state.panY[mod]||0)+e.touches[0].clientY-lastTouch.y;
+    lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    redrawCard(mod); e.preventDefault();
+  },{passive:false});
+}
+
+// ── TOOL ACTIONS ──────────────────────────────────────────────
+function setCardTool(mod,tool,btn){
+  state.activeTool[mod]=tool;
+  const card=document.querySelector(`[data-mod="${mod}"]`);
+  if(card) card.querySelectorAll('.tool-chip[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));
+  const cursors={pan:'grab',zoom:'ns-resize',measure:'crosshair',roi:'crosshair',hu:'crosshair'};
+  const cv=document.getElementById(`cv-${mod}`);
+  if(cv) cv.style.cursor=cursors[tool]||'crosshair';
+}
+
+function zoomCard(mod,factor){
+  state.zoom[mod]=Math.max(0.1,Math.min(10,(state.zoom[mod]||1)*factor));
+  redrawCard(mod);
+}
+
+function applyCardInvert(mod){
+  state.inverted[mod]=!state.inverted[mod]; redrawCard(mod);
+}
+
+function applyCardRotate(mod,deg){
+  state.rotation[mod]=((state.rotation[mod]||0)+deg+360)%360; redrawCard(mod);
+}
+
+function applyCardReset(mod){
+  state.zoom[mod]=1; state.panX[mod]=0; state.panY[mod]=0;
+  state.rotation[mod]=0; state.inverted[mod]=false;
+  const el=document.getElementById(`hu-${mod}`);
+  if(el) el.style.display='none';
+  redrawCard(mod);
+}
+
+function saveCard(mod){
+  const cv=document.getElementById(`cv-${mod}`);
+  if(!cv) return;
+  const a=document.createElement('a');
+  a.download=`omnirad-${state.structure}-${mod}.png`;
+  a.href=cv.toDataURL('image/png'); a.click();
+}
+
+// ── FULLSCREEN ────────────────────────────────────────────────
+let fsCurrentMod=null;
+function openFullscreen(mod){
+  fsCurrentMod=mod;
+  const overlay=document.getElementById('fullscreen-overlay');
+  overlay.classList.add('open');
+  const info=MODALITIES[mod];
+  const struct=STRUCTURES[state.structure];
+  const activeTab=document.querySelector(`[data-mod="${mod}"] .plane-tab.active`);
+  const plane=activeTab?activeTab.dataset.plane:info.planes[0];
+  document.getElementById('fs-mod-label').textContent=`${info.label} · ${info.full}`;
+  document.getElementById('fs-struct-label').textContent=`${struct.name} (${struct.ar}) · ${plane}`;
+
+  const wrap=document.getElementById('fs-canvas-wrap');
+  const fscv=document.getElementById('fs-canvas');
+  setTimeout(()=>{
+    const W=wrap.offsetWidth||window.innerWidth;
+    const H=wrap.offsetHeight||(window.innerHeight-52);
+    fscv.width=W; fscv.height=H;
+    const ctx=fscv.getContext('2d');
+    ctx.fillStyle='#050810'; ctx.fillRect(0,0,W,H);
+    loadImg(IMG_CC0,img=>{
+      ctx.save();
+      ctx.translate(W/2+(state.panX[mod]||0),H/2+(state.panY[mod]||0));
+      ctx.scale((state.zoom[mod]||1),(state.zoom[mod]||1));
+      ctx.rotate((state.rotation[mod]||0)*Math.PI/180);
+      if(state.inverted[mod]) ctx.filter='invert(100%)';
+      if(img){
+        const sc=Math.min((W*0.97)/img.naturalWidth,(H*0.97)/img.naturalHeight);
+        ctx.drawImage(img,-img.naturalWidth*sc/2,-img.naturalHeight*sc/2,img.naturalWidth*sc,img.naturalHeight*sc);
+      }
+      ctx.restore();
+    });
+  },60);
+}
+
+function closeFullscreen(){
+  document.getElementById('fullscreen-overlay').classList.remove('open');
+  fsCurrentMod=null;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeFullscreen();});
+
+// ── MODALITY CHIPS ────────────────────────────────────────────
+document.getElementById('modalityGroup').addEventListener('change',e=>{
+  if(e.target.type!=='checkbox') return;
+  const chip=e.target.closest('.mod-chip');
+  const mod=chip.dataset.mod;
+  if(e.target.checked){state.active.add(mod); chip.classList.add('active');}
+  else{state.active.delete(mod); chip.classList.remove('active');}
   renderGrid();
 });
 
 // ── QUICK PRESETS ─────────────────────────────────────────────
-document.querySelectorAll('.quick-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const preset = btn.dataset.preset;
-    state.active = preset
-      ? new Set(preset.split(',').filter(x => MODALITIES[x]))
-      : new Set();
-    syncCheckboxes();
-    renderGrid();
+document.querySelectorAll('.quick-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const preset=btn.dataset.preset;
+    state.active=preset?new Set(preset.split(',').filter(x=>MODALITIES[x])):new Set();
+    syncCheckboxes(); renderGrid();
   });
 });
 
 // ── STRUCTURE SELECT ──────────────────────────────────────────
-structSel.addEventListener('change', () => {
-  state.structure = structSel.value;
-  renderGrid();
-});
+structSel.addEventListener('change',()=>{state.structure=structSel.value; renderGrid();});
 
 // ── SYNC MODE ─────────────────────────────────────────────────
-syncToggle.addEventListener('change', () => {
-  state.sync = syncToggle.checked;
-  gridWrap.classList.toggle('sync-active', state.sync);
+syncToggle.addEventListener('change',()=>{
+  state.sync=syncToggle.checked;
+  gridWrap.classList.toggle('sync-active',state.sync);
+});
+
+// ── WINDOW RESIZE ─────────────────────────────────────────────
+window.addEventListener('resize',()=>{
+  [...state.active].forEach(mod=>redrawCard(mod));
 });
 
 // ── INIT ──────────────────────────────────────────────────────
