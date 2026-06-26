@@ -1,212 +1,389 @@
 {
-  "liver": {
-    "term": "Liver",
-    "ipa": "/ˈlɪvər/",
-    "origin": "Old English: lifer",
-    "roots": [
-      { "root": "lifer", "lang": "Old English", "meaning": "liver" }
-    ],
-    "definition": "The largest solid abdominal organ; a bilobed gland performing >500 metabolic functions.",
-    "clinical_note": "Derived from Old English; the Latin term 'hepar' (ἧπαρ, Greek) is used in compound terms: hepatic, hepatitis, hepatomegaly.",
-    "related_terms": ["hepatic","hepatomegaly","hepatitis","hepatocyte"]
+  "meta": {
+    "version": "2.0",
+    "lastUpdated": "2026-06-26",
+    "totalTerms": 38
   },
-  "hepatic": {
-    "term": "Hepatic",
-    "ipa": "/hɪˈpætɪk/",
-    "origin": "Latin: hepaticus; Greek: hēpatikos",
-    "roots": [
-      { "root": "hepar (ἧπαρ)", "lang": "Greek", "meaning": "liver" },
-      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
-    ],
-    "definition": "Relating to the liver.",
-    "clinical_note": "Used in: hepatic artery, hepatic vein, hepatic portal system, hepatic encephalopathy.",
-    "related_terms": ["liver","hepatomegaly","hepatitis"]
-  },
-  "spleen": {
-    "term": "Spleen",
-    "ipa": "/spliːn/",
-    "origin": "Latin: splen; Greek: splēn (σπλήν)",
-    "roots": [
-      { "root": "splēn (σπλήν)", "lang": "Greek", "meaning": "spleen" }
-    ],
-    "definition": "A lymphoid and haematopoietic organ in the left upper quadrant, responsible for blood filtration and immune surveillance.",
-    "clinical_note": "Splenomegaly = enlarged spleen. Splenic hilum = gateway for splenic vessels. Greeks believed the spleen was the seat of melancholy.",
-    "related_terms": ["splenic","splenomegaly","splenectomy"]
-  },
-  "splenic": {
-    "term": "Splenic",
-    "ipa": "/ˈsplɛnɪk/",
-    "origin": "Latin: splenicus; Greek: splēnikos",
-    "roots": [
-      { "root": "splēn (σπλήν)", "lang": "Greek", "meaning": "spleen" },
-      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
-    ],
-    "definition": "Relating to the spleen.",
-    "clinical_note": "Used in: splenic artery, splenic vein, splenic flexure, splenic infarct.",
-    "related_terms": ["spleen","splenomegaly"]
-  },
-  "pancreas": {
-    "term": "Pancreas",
-    "ipa": "/ˈpæŋkriəs/",
-    "origin": "Greek: pankreas (πάγκρεας)",
-    "roots": [
-      { "root": "pan (πᾶν)", "lang": "Greek", "meaning": "all / entire" },
-      { "root": "kreas (κρέας)", "lang": "Greek", "meaning": "flesh / meat" }
-    ],
-    "definition": "A retroperitoneal gland with exocrine (digestive enzymes) and endocrine (insulin, glucagon) functions.",
-    "clinical_note": "Literally 'all flesh' — named for its fleshy appearance. The pancreatic head rests in the duodenal C-loop; the tail reaches the splenic hilum.",
-    "related_terms": ["pancreatic","pancreatitis","pancreatectomy"]
-  },
-  "pancreatic": {
-    "term": "Pancreatic",
-    "ipa": "/ˌpæŋkriˈætɪk/",
-    "origin": "Greek: pankreatikos",
-    "roots": [
-      { "root": "pankreas (πάγκρεας)", "lang": "Greek", "meaning": "pancreas (all flesh)" },
-      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
-    ],
-    "definition": "Relating to the pancreas.",
-    "clinical_note": "Pancreatic duct (Wirsung duct), pancreatic head, pancreatic tail. 'Pancreatic' modifies nearly all structures associated with the gland.",
-    "related_terms": ["pancreas","pancreatitis"]
-  },
-  "kidney": {
-    "term": "Kidney",
-    "ipa": "/ˈkɪdni/",
-    "origin": "Middle English: kidnei; Old English: cwið (womb) + ey (egg) — 'egg-shaped organ'",
-    "roots": [
-      { "root": "cwið", "lang": "Old English", "meaning": "womb / abdomen" },
-      { "root": "ey", "lang": "Old English", "meaning": "egg" }
-    ],
-    "definition": "Paired retroperitoneal organs that filter blood and produce urine; regulate electrolytes, acid-base balance, and blood pressure.",
-    "clinical_note": "Latin 'ren' (renis) used in compound terms: renal, renin. Greek 'nephros' (νεφρός) gives: nephron, nephritis, nephrectomy.",
-    "related_terms": ["renal","nephric","nephrotic","glomerulus"]
-  },
-  "renal": {
-    "term": "Renal",
-    "ipa": "/ˈriːnəl/",
-    "origin": "Latin: renalis",
-    "roots": [
-      { "root": "ren (renis)", "lang": "Latin", "meaning": "kidney" },
-      { "root": "-alis", "lang": "Latin", "meaning": "pertaining to" }
-    ],
-    "definition": "Relating to the kidney.",
-    "clinical_note": "Renal artery, renal vein, renal pelvis, renal cell carcinoma (RCC), renal cortex, renal medulla.",
-    "related_terms": ["kidney","nephric","renin"]
-  },
-  "gallbladder": {
-    "term": "Gallbladder",
-    "ipa": "/ˈɡɔːlˌblædər/",
-    "origin": "Old English: gealla (bile) + blæddre (bladder)",
-    "roots": [
-      { "root": "gealla", "lang": "Old English", "meaning": "bile / gall" },
-      { "root": "blæddre", "lang": "Old English", "meaning": "bladder / sac" }
-    ],
-    "definition": "A pear-shaped hollow organ on the undersurface of the liver that stores and concentrates bile.",
-    "clinical_note": "Greek 'cholē' (χολή) = bile → cholecystitis, cholecystectomy, cholelithiasis. Latin 'vesica fellea' also used.",
-    "related_terms": ["cholecystic","cholelithiasis","cholecystitis","biliary"]
-  },
-  "cholecystic": {
-    "term": "Cholecystic",
-    "ipa": "/ˌkɒlɪˈsɪstɪk/",
-    "origin": "Greek: cholē + kystis",
-    "roots": [
-      { "root": "cholē (χολή)", "lang": "Greek", "meaning": "bile" },
-      { "root": "kystis (κύστις)", "lang": "Greek", "meaning": "bladder / sac" },
-      { "root": "-ikos", "lang": "Greek", "meaning": "pertaining to" }
-    ],
-    "definition": "Relating to the gallbladder.",
-    "clinical_note": "Cholecystitis (inflammation), cholecystectomy (surgical removal), cholecystography. The cystic duct drains the gallbladder into the common bile duct.",
-    "related_terms": ["gallbladder","cholecystitis","cholecystectomy"]
-  },
-  "peritoneum": {
-    "term": "Peritoneum",
-    "ipa": "/ˌpɛrɪtəˈniːəm/",
-    "origin": "Greek: peritonaion (περιτόναιον)",
-    "roots": [
-      { "root": "peri- (περί)", "lang": "Greek", "meaning": "around / surrounding" },
-      { "root": "teinein (τείνειν)", "lang": "Greek", "meaning": "to stretch" }
-    ],
-    "definition": "The serous membrane lining the abdominal cavity and covering most abdominal organs.",
-    "clinical_note": "Parietal peritoneum: lines cavity walls. Visceral peritoneum: covers organs. Retroperitoneal organs (kidneys, pancreas, aorta) lie behind the parietal layer.",
-    "related_terms": ["peritoneal","retroperitoneal","mesentery"]
-  },
-  "retroperitoneal": {
-    "term": "Retroperitoneal",
-    "ipa": "/ˌrɛtrəʊˌpɛrɪtəˈniːəl/",
-    "origin": "Latin: retro + Greek: peritonaion",
-    "roots": [
-      { "root": "retro-", "lang": "Latin", "meaning": "behind / posterior" },
-      { "root": "peritonaion (περιτόναιον)", "lang": "Greek", "meaning": "peritoneum (stretched around)" }
-    ],
-    "definition": "Located behind the peritoneum; not covered by peritoneum anteriorly.",
-    "clinical_note": "Primary retroperitoneal structures: kidneys, adrenal glands, aorta, IVC, pancreas (except tail). Secondary retroperitoneal: duodenum (2nd–4th parts), ascending and descending colon.",
-    "related_terms": ["peritoneum","retroperitoneum"]
-  },
-  "couinaud": {
-    "term": "Couinaud Segments",
-    "ipa": "/kuːˈiːnoʊ/",
-    "origin": "Eponym: Claude Couinaud, French surgeon (1922–2008)",
-    "roots": [
-      { "root": "Couinaud C.", "lang": "Eponym", "meaning": "French hepatic surgeon" }
-    ],
-    "definition": "A functional anatomical classification of the liver into 8 independent segments based on hepatic venous and portal venous anatomy.",
-    "clinical_note": "Each segment has its own portal pedicle (portal vein + hepatic artery + bile duct) and is drained by a hepatic vein. Fundamental to liver resection planning on CT/MRI.",
-    "related_terms": ["liver","hepatic vein","portal vein","hepatectomy"]
-  },
-  "parenchyma": {
-    "term": "Parenchyma",
-    "ipa": "/pəˈrɛŋkɪmə/",
-    "origin": "Greek: parenkhyma (παρέγχυμα)",
-    "roots": [
-      { "root": "para- (παρά)", "lang": "Greek", "meaning": "beside / alongside" },
-      { "root": "enkhein (ἐγχεῖν)", "lang": "Greek", "meaning": "to pour in" }
-    ],
-    "definition": "The functional cells of an organ, as distinct from its supporting stroma and connective tissue.",
-    "clinical_note": "Hepatic parenchyma = hepatocytes. Renal parenchyma = cortex + medulla (nephrons). On imaging: 'parenchymal enhancement' refers to the functional tissue taking up contrast.",
-    "related_terms": ["stroma","cortex","medulla"]
-  },
-  "hilum": {
-    "term": "Hilum",
-    "ipa": "/ˈhaɪləm/",
-    "origin": "Latin: hilum",
-    "roots": [
-      { "root": "hilum", "lang": "Latin", "meaning": "a small thing; the scar on a bean seed (entry point)" }
-    ],
-    "definition": "The depression or pit on an organ through which vessels, nerves, and ducts enter and exit.",
-    "clinical_note": "Renal hilum → renal artery, renal vein, ureter. Splenic hilum → splenic artery/vein. Hepatic hilum (porta hepatis) → portal vein, hepatic artery, common hepatic duct. Key landmark on CT.",
-    "related_terms": ["porta hepatis","renal pelvis","splenic vessels"]
-  },
-  "portal": {
-    "term": "Portal (vein)",
-    "ipa": "/ˈpɔːrtəl/",
-    "origin": "Latin: porta",
-    "roots": [
-      { "root": "porta", "lang": "Latin", "meaning": "gate / doorway" }
-    ],
-    "definition": "Relating to the portal vein or portal circulation. The portal vein carries nutrient-rich blood from the GI tract and spleen to the liver.",
-    "clinical_note": "Portal hypertension → varices, splenomegaly, ascites. On CT: portal phase (60–80 s) — liver enhances maximally. On US: hepatopetal flow (toward liver) is normal; hepatofugal = portal hypertension.",
-    "related_terms": ["hepatic","portal hypertension","hepatic vein"]
-  },
-  "cortex": {
-    "term": "Cortex",
-    "ipa": "/ˈkɔːrtɛks/",
-    "origin": "Latin: cortex (corticis)",
-    "roots": [
-      { "root": "cortex", "lang": "Latin", "meaning": "bark / outer layer / rind" }
-    ],
-    "definition": "The outer layer of an organ, typically distinct in function from the deeper medulla.",
-    "clinical_note": "Renal cortex: contains glomeruli and proximal/distal tubules. Enhances earlier than medulla in corticomedullary phase CT. Normal cortical thickness ≥ 10 mm.",
-    "related_terms": ["medulla","parenchyma","glomerulus"]
-  },
-  "medulla": {
-    "term": "Medulla",
-    "ipa": "/mɪˈdʌlə/",
-    "origin": "Latin: medulla",
-    "roots": [
-      { "root": "medulla", "lang": "Latin", "meaning": "marrow / inner part / pith" }
-    ],
-    "definition": "The inner region of an organ, as distinct from the outer cortex.",
-    "clinical_note": "Renal medulla: contains the loops of Henle, collecting ducts, and renal pyramids. On MRI T2: medullary pyramids are hyperintense. Adrenal medulla: chromaffin cells → epinephrine.",
-    "related_terms": ["cortex","renal pyramids","adrenal"]
-  }
+  "terms": [
+    {
+      "id": "hepar",
+      "term": "Hepar",
+      "language": "Latin",
+      "ipa": "/ˈhiːpɑr/",
+      "meaning": { "en": "Liver", "ar": "الكبد" },
+      "etymology": "Greek: hêpar (ἧπαρ) — liver. Related to 'hepatic'.",
+      "relatedTerms": ["hepatic", "hepatocyte", "hepatomegaly"],
+      "structureId": "liver"
+    },
+    {
+      "id": "hepatic",
+      "term": "Hepatic",
+      "language": "Latin/Greek",
+      "ipa": "/hɪˈpætɪk/",
+      "meaning": { "en": "Pertaining to the liver", "ar": "متعلق بالكبد" },
+      "etymology": "Greek: hepatikos — of the liver.",
+      "relatedTerms": ["hepar", "hepatocyte", "portal"],
+      "structureId": "liver"
+    },
+    {
+      "id": "couinaud",
+      "term": "Couinaud Segments",
+      "language": "Eponym",
+      "ipa": "/kwɪˈnoʊ/",
+      "meaning": { "en": "8-segment surgical classification of the liver", "ar": "التصنيف الجراحي الثماني للكبد" },
+      "etymology": "Named after Claude Couinaud (1922–2008), French surgeon and anatomist.",
+      "relatedTerms": ["hepar", "hepatic"],
+      "structureId": "liver"
+    },
+    {
+      "id": "vesica",
+      "term": "Vesica",
+      "language": "Latin",
+      "ipa": "/ˈvɛsɪkə/",
+      "meaning": { "en": "Bladder / sac / pouch", "ar": "مثانة / كيس / جراب" },
+      "etymology": "Latin: vesica — bladder. Used in vesica biliaris (gallbladder) and vesica urinaria (urinary bladder).",
+      "relatedTerms": ["biliaris", "cholecyst"],
+      "structureId": "gallbladder"
+    },
+    {
+      "id": "biliaris",
+      "term": "Biliaris",
+      "language": "Latin",
+      "ipa": "/bɪˈliːərɪs/",
+      "meaning": { "en": "Relating to bile", "ar": "متعلق بالصفراء" },
+      "etymology": "Latin: bilis — bile. From Greek: kholê. Bilirubin derives from the same root.",
+      "relatedTerms": ["vesica", "choledoch", "bile"],
+      "structureId": "gallbladder"
+    },
+    {
+      "id": "cholecyst",
+      "term": "Cholecyst-",
+      "language": "Greek",
+      "ipa": "/ˈkɒlɪsɪst/",
+      "meaning": { "en": "Gallbladder (prefix in medical terms)", "ar": "المرارة (بادئة في المصطلحات الطبية)" },
+      "etymology": "Greek: kholê (bile) + kystis (bladder/sac). Cholecystitis = gallbladder inflammation.",
+      "relatedTerms": ["vesica", "biliaris", "choledoch"],
+      "structureId": "gallbladder"
+    },
+    {
+      "id": "choledoch",
+      "term": "Choledochus",
+      "language": "Greek",
+      "ipa": "/kɒˈledəkəs/",
+      "meaning": { "en": "Containing bile — refers to common bile duct", "ar": "حاوٍ للصفراء — يشير إلى القناة الصفراوية المشتركة" },
+      "etymology": "Greek: kholê (bile) + dekhomai (to receive/contain). Choledocholithiasis = CBD stones.",
+      "relatedTerms": ["vesica", "biliaris"],
+      "structureId": "gallbladder"
+    },
+    {
+      "id": "pancreas-term",
+      "term": "Pancreas",
+      "language": "Greek",
+      "ipa": "/ˈpæŋkriəs/",
+      "meaning": { "en": "All flesh / entirely of flesh", "ar": "كل اللحم / لحمي بالكامل" },
+      "etymology": "Greek: pan (all) + kreas (flesh). Named for its fleshy appearance without a prominent capsule.",
+      "relatedTerms": ["wirsung", "acinar", "langerhans"],
+      "structureId": "pancreas"
+    },
+    {
+      "id": "wirsung",
+      "term": "Duct of Wirsung",
+      "language": "Eponym",
+      "ipa": "/ˈvɪrsʊŋ/",
+      "meaning": { "en": "Main pancreatic duct", "ar": "القناة البنكرياسية الرئيسية" },
+      "etymology": "Named after Johann Georg Wirsung (1589–1643), German anatomist who first described the main pancreatic duct.",
+      "relatedTerms": ["pancreas-term", "acinar"],
+      "structureId": "pancreas"
+    },
+    {
+      "id": "langerhans",
+      "term": "Islets of Langerhans",
+      "language": "Eponym",
+      "ipa": "/ˈlæŋərhænz/",
+      "meaning": { "en": "Endocrine clusters in pancreas producing insulin and glucagon", "ar": "مجموعات الخلايا الصمّاء في البنكرياس التي تنتج الأنسولين والجلوكاجون" },
+      "etymology": "Named after Paul Langerhans (1847–1888), German pathologist who described them in 1869.",
+      "relatedTerms": ["pancreas-term", "wirsung"],
+      "structureId": "pancreas"
+    },
+    {
+      "id": "lien",
+      "term": "Lien",
+      "language": "Latin",
+      "ipa": "/ˈlaɪən/",
+      "meaning": { "en": "Spleen", "ar": "الطحال" },
+      "etymology": "Latin: lien — spleen. Also Greek: splên (σπλήν). Both roots used: lienal artery / splenic artery.",
+      "relatedTerms": ["splenomegaly", "hilum"],
+      "structureId": "spleen"
+    },
+    {
+      "id": "splenomegaly",
+      "term": "Splenomegaly",
+      "language": "Greek",
+      "ipa": "/ˌspliːnəˈmɛɡəli/",
+      "meaning": { "en": "Enlargement of the spleen (>12 cm on US)", "ar": "ضخامة الطحال (> ١٢ سم بالموجات فوق الصوتية)" },
+      "etymology": "Greek: splên (spleen) + megas (large). Clinically defined as long-axis >12 cm on ultrasound.",
+      "relatedTerms": ["lien", "hilum"],
+      "structureId": "spleen"
+    },
+    {
+      "id": "hilum",
+      "term": "Hilum",
+      "language": "Latin",
+      "ipa": "/ˈhaɪləm/",
+      "meaning": { "en": "Notch or depression where vessels/ducts enter an organ", "ar": "الشقّ أو المنخفض حيث تدخل الأوعية والقنوات للعضو" },
+      "etymology": "Latin: hilum — a small thing, trifle. Anatomically: the entry/exit point for vessels, nerves, lymphatics.",
+      "relatedTerms": ["lien", "hepar", "ren"],
+      "structureId": "spleen"
+    },
+    {
+      "id": "ren",
+      "term": "Ren",
+      "language": "Latin",
+      "ipa": "/rɛn/",
+      "meaning": { "en": "Kidney (singular)", "ar": "الكلية (مفردة)" },
+      "etymology": "Latin: ren (pl. renes). Greek: nephros (νεφρός). Renal = from Latin; nephrotic/nephritis = from Greek.",
+      "relatedTerms": ["cortex", "medulla", "nephrographic"],
+      "structureId": "kidneys"
+    },
+    {
+      "id": "nephrographic",
+      "term": "Nephrographic phase",
+      "language": "Greek",
+      "ipa": "/ˌnɛfrəˈɡræfɪk/",
+      "meaning": { "en": "CT phase (90–120s) when kidney parenchyma enhances homogeneously", "ar": "مرحلة CT (٩٠–١٢٠ ثانية) حين يتباين حمة الكلية بشكل منتظم" },
+      "etymology": "Greek: nephros (kidney) + graphein (to write/record). Key phase for detecting renal masses.",
+      "relatedTerms": ["ren", "cortex", "medulla"],
+      "structureId": "kidneys"
+    },
+    {
+      "id": "suprarenal",
+      "term": "Suprarenal",
+      "language": "Latin",
+      "ipa": "/ˌsuːprəˈriːnəl/",
+      "meaning": { "en": "Above the kidney — another name for adrenal", "ar": "فوق الكلية — اسم آخر للكظرية" },
+      "etymology": "Latin: supra (above) + renalis (renal/kidney). Synonymous with adrenal (Latin: ad = near + ren = kidney).",
+      "relatedTerms": ["ren", "cortex", "aldosterone"],
+      "structureId": "adrenal-glands"
+    },
+    {
+      "id": "aldosterone",
+      "term": "Aldosterone",
+      "language": "Modern",
+      "ipa": "/ælˈdɒstəroʊn/",
+      "meaning": { "en": "Mineralocorticoid hormone from zona glomerulosa; regulates Na+/K+", "ar": "هرمون قشراني معدني من المنطقة الكبيبية؛ ينظّم الصوديوم والبوتاسيوم" },
+      "etymology": "From aldehyde + sterol + ketone — describing its chemical structure. Discovered 1952 by Sylvia Simpson.",
+      "relatedTerms": ["suprarenal", "cortisol"],
+      "structureId": "adrenal-glands"
+    },
+    {
+      "id": "cortisol",
+      "term": "Cortisol",
+      "language": "Modern",
+      "ipa": "/ˈkɔːrtɪzɒl/",
+      "meaning": { "en": "Glucocorticoid from zona fasciculata; stress hormone", "ar": "قشراني سكري من المنطقة المحزوزة؛ هرمون الإجهاد" },
+      "etymology": "From cortex + sterol + -ol (alcohol group). Primary stress hormone with immunosuppressive effects.",
+      "relatedTerms": ["suprarenal", "aldosterone"],
+      "structureId": "adrenal-glands"
+    },
+    {
+      "id": "aorta-term",
+      "term": "Aorta",
+      "language": "Greek",
+      "ipa": "/eɪˈɔːrtə/",
+      "meaning": { "en": "The great artery from the heart", "ar": "الشريان العظيم الخارج من القلب" },
+      "etymology": "Greek: aortê (αορτή) — from aeirein, to lift or carry. Aristotle used this term.",
+      "relatedTerms": ["celiac", "mesenteric", "iliac"],
+      "structureId": "aorta"
+    },
+    {
+      "id": "celiac",
+      "term": "Celiac",
+      "language": "Greek",
+      "ipa": "/ˈsiːliæk/",
+      "meaning": { "en": "Pertaining to the abdomen / belly", "ar": "متعلق بالبطن" },
+      "etymology": "Greek: koilia (κοιλία) — belly, hollow. Celiac axis = first unpaired branch of abdominal aorta at T12.",
+      "relatedTerms": ["aorta-term", "mesenteric"],
+      "structureId": "aorta"
+    },
+    {
+      "id": "mesenteric",
+      "term": "Mesenteric",
+      "language": "Greek",
+      "ipa": "/ˌmɛzənˈtɛrɪk/",
+      "meaning": { "en": "Pertaining to the mesentery (SMA or IMA)", "ar": "متعلق بالمساريقا (الشريان المساريقي العلوي أو السفلي)" },
+      "etymology": "Greek: mesos (middle) + enteron (intestine). Mesentery = the fan-shaped fold suspending the bowel.",
+      "relatedTerms": ["aorta-term", "celiac", "iliac"],
+      "structureId": "aorta"
+    },
+    {
+      "id": "vena",
+      "term": "Vena",
+      "language": "Latin",
+      "ipa": "/ˈviːnə/",
+      "meaning": { "en": "Vein", "ar": "وريد" },
+      "etymology": "Latin: vena — vein, blood vessel. Root of 'venous', 'venipuncture'. Greek equivalent: phleps (φλέψ).",
+      "relatedTerms": ["cava", "inferior"],
+      "structureId": "ivc"
+    },
+    {
+      "id": "cava",
+      "term": "Cava",
+      "language": "Latin",
+      "ipa": "/ˈkɑːvə/",
+      "meaning": { "en": "Hollow / cavity", "ar": "مجوّف / تجويف" },
+      "etymology": "Latin: cavus — hollow. Vena cava = hollow vein. Refers to the large lumen of these great veins.",
+      "relatedTerms": ["vena", "inferior"],
+      "structureId": "ivc"
+    },
+    {
+      "id": "porta",
+      "term": "Porta",
+      "language": "Latin",
+      "ipa": "/ˈpɔːrtə/",
+      "meaning": { "en": "Gate / door / entrance", "ar": "بوابة / مدخل" },
+      "etymology": "Latin: porta — gate. Porta hepatis = 'gate of the liver' where portal vein, hepatic artery, and bile duct enter.",
+      "relatedTerms": ["hepatis", "mesenteric"],
+      "structureId": "portal-vein"
+    },
+    {
+      "id": "hepatopetal",
+      "term": "Hepatopetal",
+      "language": "Latin/Greek",
+      "ipa": "/ˌhɛpətəˈpiːtəl/",
+      "meaning": { "en": "Flow towards the liver (normal portal flow direction)", "ar": "تدفق نحو الكبد (الاتجاه الطبيعي للوريد البابي)" },
+      "etymology": "Greek: hêpar (liver) + Latin: petere (to seek/move toward). Opposite: hepatofugal (away from liver = abnormal).",
+      "relatedTerms": ["porta", "hepatofugal"],
+      "structureId": "portal-vein"
+    },
+    {
+      "id": "hepatofugal",
+      "term": "Hepatofugal",
+      "language": "Latin/Greek",
+      "ipa": "/ˌhɛpətəˈfjuːɡəl/",
+      "meaning": { "en": "Flow away from the liver (abnormal — portal hypertension sign)", "ar": "تدفق بعيداً عن الكبد (غير طبيعي — علامة ارتفاع ضغط باب الكبد)" },
+      "etymology": "Greek: hêpar (liver) + Latin: fugere (to flee). Reversal of portal flow = serious sign.",
+      "relatedTerms": ["hepatopetal", "porta"],
+      "structureId": "portal-vein"
+    },
+    {
+      "id": "gaster",
+      "term": "Gaster",
+      "language": "Greek",
+      "ipa": "/ˈɡæstər/",
+      "meaning": { "en": "Stomach / belly", "ar": "المعدة / البطن" },
+      "etymology": "Greek: gastêr (γαστήρ) — stomach. Root of gastric, gastritis, gastroscopy, gastroenterology.",
+      "relatedTerms": ["pylorus", "fundus", "antrum"],
+      "structureId": "stomach"
+    },
+    {
+      "id": "pylorus",
+      "term": "Pylorus",
+      "language": "Greek",
+      "ipa": "/paɪˈlɔːrəs/",
+      "meaning": { "en": "Gatekeeper — the muscular valve between stomach and duodenum", "ar": "البوّاب — الصمام العضلي بين المعدة والاثني عشر" },
+      "etymology": "Greek: pylôros (πυλωρός) — gatekeeper, from pylê (gate) + ôros (guard). Pyloric stenosis in infants is a key pediatric emergency.",
+      "relatedTerms": ["gaster", "fundus", "antrum"],
+      "structureId": "stomach"
+    },
+    {
+      "id": "fundus",
+      "term": "Fundus",
+      "language": "Latin",
+      "ipa": "/ˈfʌndəs/",
+      "meaning": { "en": "Bottom / base — the superior dome-shaped part of the stomach", "ar": "القاعدة / الأسفل — الجزء العلوي القبّي من المعدة" },
+      "etymology": "Latin: fundus — bottom, base. Used in multiple organs: gastric fundus, uterine fundus, ocular fundus.",
+      "relatedTerms": ["gaster", "pylorus", "antrum"],
+      "structureId": "stomach"
+    },
+    {
+      "id": "rugae",
+      "term": "Rugae",
+      "language": "Latin",
+      "ipa": "/ˈruːdʒiː/",
+      "meaning": { "en": "Folds / wrinkles of the gastric mucosa", "ar": "تجاعيد / طيات الغشاء المخاطي المعدي" },
+      "etymology": "Latin: ruga (pl. rugae) — wrinkle, fold. Gastric rugae increase surface area and allow expansion.",
+      "relatedTerms": ["gaster", "plicae"],
+      "structureId": "stomach"
+    },
+    {
+      "id": "intestinum",
+      "term": "Intestinum",
+      "language": "Latin",
+      "ipa": "/ɪnˈtɛstɪnəm/",
+      "meaning": { "en": "Intestine / gut — internal organ of the digestive tract", "ar": "الأمعاء — العضو الداخلي للجهاز الهضمي" },
+      "etymology": "Latin: intestinum — internal (from intus = within). Intestinum tenue = thin/small intestine; crassum = thick/large.",
+      "relatedTerms": ["tenue", "crassum", "duodenum"],
+      "structureId": "small-intestine"
+    },
+    {
+      "id": "duodenum-term",
+      "term": "Duodenum",
+      "language": "Latin",
+      "ipa": "/ˌdjuːəˈdiːnəm/",
+      "meaning": { "en": "Twelve — named for being 12 finger-breadths long", "ar": "اثنا عشر — سُمّي لكونه بطول ١٢ إصبعاً" },
+      "etymology": "Latin: duodeni — twelve each. Medieval anatomists measured it as 12 finger-breadths (~25 cm). Fixed retroperitoneal segment.",
+      "relatedTerms": ["intestinum", "jejunum", "ileum-term"],
+      "structureId": "small-intestine"
+    },
+    {
+      "id": "jejunum",
+      "term": "Jejunum",
+      "language": "Latin",
+      "ipa": "/dʒɪˈdʒuːnəm/",
+      "meaning": { "en": "Empty — often found empty at autopsy", "ar": "فارغ — غالباً ما يوجد فارغاً في التشريح" },
+      "etymology": "Latin: jejunus — fasting, empty. Anatomists noted it was typically empty post-mortem.",
+      "relatedTerms": ["intestinum", "duodenum-term", "ileum-term"],
+      "structureId": "small-intestine"
+    },
+    {
+      "id": "ileum-term",
+      "term": "Ileum",
+      "language": "Greek",
+      "ipa": "/ˈɪliəm/",
+      "meaning": { "en": "Twisted / coiled — the terminal part of small intestine", "ar": "ملتوٍ — الجزء الطرفي من الأمعاء الدقيقة" },
+      "etymology": "Greek: eilein (εἴλειν) — to twist, roll. Note: ileum (intestine) vs ilium (hip bone) — different spelling!",
+      "relatedTerms": ["jejunum", "duodenum-term", "plicae"],
+      "structureId": "small-intestine"
+    },
+    {
+      "id": "plicae",
+      "term": "Plicae circulares",
+      "language": "Latin",
+      "ipa": "/ˈplaɪsiː sɜːˈkjʊlærɪz/",
+      "meaning": { "en": "Circular folds of the small intestinal mucosa (Kerckring's valves)", "ar": "الطيات الدائرية للغشاء المخاطي للأمعاء الدقيقة (صمامات كيركرينج)" },
+      "etymology": "Latin: plica (fold) + circularis (circular). Permanent folds unlike rugae. Key X-ray finding in small bowel.",
+      "relatedTerms": ["intestinum", "rugae", "villi"],
+      "structureId": "small-intestine"
+    },
+    {
+      "id": "cecum",
+      "term": "Cecum",
+      "language": "Latin",
+      "ipa": "/ˈsiːkəm/",
+      "meaning": { "en": "Blind / blind pouch — the beginning of the large intestine", "ar": "أعمى / كيس أعمى — بداية الأمعاء الغليظة" },
+      "etymology": "Latin: caecus — blind, blind pouch. Called 'blind' because it has only one opening (the ileocecal valve side).",
+      "relatedTerms": ["intestinum", "haustra", "sigmoid"],
+      "structureId": "large-intestine"
+    },
+    {
+      "id": "haustra",
+      "term": "Haustra",
+      "language": "Latin",
+      "ipa": "/ˈhɔːstrə/",
+      "meaning": { "en": "Sacculations of the colon between taeniae coli — key X-ray landmark", "ar": "تكييسات القولون بين أشرطة القولون — علامة شعاعية مهمة" },
+      "etymology": "Latin: haustrum (pl. haustra) — bucket of a waterwheel (from haurire, to draw water). Describes the bucket-like pouches.",
+      "relatedTerms": ["taeniae", "cecum", "sigmoid"],
+      "structureId": "large-intestine"
+    },
+    {
+      "id": "taeniae",
+      "term": "Taeniae coli",
+      "language": "Latin",
+      "ipa": "/ˈtiːniː ˈkoʊlaɪ/",
+      "meaning": { "en": "Three longitudinal muscle bands running along the colon", "ar": "ثلاثة أشرطة عضلية طولية تمتد على طول القولون" },
+      "etymology": "Latin: taenia (pl. taeniae) — ribbon, band. Coli: of the colon. The three taeniae converge at the appendix base.",
+      "relatedTerms": ["haustra", "cecum"],
+      "structureId": "large-intestine"
+    }
+  ]
 }

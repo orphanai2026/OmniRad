@@ -1,0 +1,836 @@
+{
+  "meta": {
+    "version": "2.0",
+    "region": "abdomen",
+    "lastUpdated": "2026-06-26",
+    "imageCredit": "Mikael Häggström, M.D. — CC0 1.0 Universal Public Domain Dedication",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/User:Mikael_H%C3%A4ggstr%C3%B6m",
+    "disclaimer": "Educational use only. All measurements are illustrative."
+  },
+  "structures": [
+    {
+      "id": "liver",
+      "name": {
+        "en": "Liver",
+        "ar": "الكبد",
+        "latin": "Hepar"
+      },
+      "category": "upper-abdomen",
+      "description": {
+        "en": "The largest solid organ in the body, located in the right upper quadrant beneath the diaphragm. It performs over 500 functions including metabolism, detoxification, and bile production.",
+        "ar": "أكبر الأعضاء الصلبة في الجسم، يقع في الربع العلوي الأيمن أسفل الحجاب الحاجز. يؤدي أكثر من 500 وظيفة تشمل الأيض وإزالة السموم وإنتاج الصفراء."
+      },
+      "keyFacts": {
+        "en": [
+          "Weight: 1.2–1.5 kg in adults",
+          "Divided into 8 Couinaud segments",
+          "Dual blood supply: portal vein (75%) + hepatic artery (25%)",
+          "Located in RUQ and epigastrium",
+          "Covered by Glisson's capsule"
+        ],
+        "ar": [
+          "الوزن: ١.٢–١.٥ كغ عند البالغين",
+          "مقسّم إلى ٨ قطاعات كووينو",
+          "إمداد دموي مزدوج: الوريد البابي (٧٥٪) + الشريان الكبدي (٢٥٪)",
+          "يقع في الربع العلوي الأيمن والشرسوف",
+          "مغطى بكبسولة غليسون"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Homogeneous parenchyma with attenuation 50–70 HU on plain CT. Portal venous phase (70s) is optimal. Couinaud segments identifiable by hepatic veins.",
+        "mri": "T1: moderately hyperintense. T2: slightly hypointense relative to spleen. Gadolinium enhances in arterial, portal, and delayed phases.",
+        "us": "Homogeneous echogenicity, slightly hyperechoic compared to renal cortex. Normal size: ≤15 cm in midclavicular line.",
+        "xray": "Right hemidiaphragm elevated by hepatic mass. Hepatomegaly displaces stomach gas medially."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal", "Sagittal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Sagittal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal", "Transverse"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        },
+        "X-Ray": {
+          "planes": ["PA"],
+          "images": {
+            "PA": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png"
+          }
+        }
+      },
+      "srsKey": "liver",
+      "mnemonicIds": ["liver-segments", "liver-lobes"],
+      "lexiconTerms": ["hepar", "hepatic", "glisson", "couinaud"],
+      "ttsText": {
+        "en": "Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.",
+        "ar": "الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن."
+      },
+      "relatedStructures": ["gallbladder", "portal-vein", "ivc"]
+    },
+    {
+      "id": "gallbladder",
+      "name": {
+        "en": "Gallbladder",
+        "ar": "المرارة",
+        "latin": "Vesica biliaris"
+      },
+      "category": "upper-abdomen",
+      "description": {
+        "en": "A small pear-shaped sac located on the inferior surface of the liver at the gallbladder fossa. Stores and concentrates bile produced by the liver, releasing it into the duodenum via the cystic duct and common bile duct.",
+        "ar": "كيس صغير على شكل كمثرى يقع على السطح السفلي للكبد في حفرة المرارة. يخزّن الصفراء المنتجة من الكبد ويركّزها، ثم يطلقها إلى الاثني عشر عبر القناة الكيسية والقناة الصفراوية المشتركة."
+      },
+      "keyFacts": {
+        "en": [
+          "Capacity: 30–50 mL",
+          "Located at gallbladder fossa (segments IV/V junction)",
+          "Normal wall thickness: ≤3 mm",
+          "Normal length: 7–10 cm",
+          "Cystic duct connects to common hepatic duct → common bile duct"
+        ],
+        "ar": [
+          "السعة: ٣٠–٥٠ ملليلتر",
+          "تقع في حفرة المرارة (تقاطع القطاعين IV/V)",
+          "سُمك الجدار الطبيعي: ≤ ٣ ملم",
+          "الطول الطبيعي: ٧–١٠ سم",
+          "القناة الكيسية تتصل بالقناة الكبدية المشتركة ← القناة الصفراوية المشتركة"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Thin-walled fluid-filled structure in gallbladder fossa. Bile density: 0–20 HU. Wall imperceptible on normal CT. Look for stones (calcified: bright; cholesterol: may be invisible).",
+        "mri": "T1: low signal bile. T2: very high signal bile (MRCP ideal). Wall barely visible when normal. HASTE/MRCP sequences best.",
+        "us": "Anechoic pear-shaped structure. Posterior acoustic enhancement. Wall ≤3mm. Stones: echogenic foci + posterior shadowing. Best modality for gallstones.",
+        "xray": "Not visible on plain X-ray unless calcified stones or porcelain gallbladder present."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal", "Transverse"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Gallbladder_ultrasound.jpg/400px-Gallbladder_ultrasound.jpg",
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Gallbladder_ultrasound.jpg/400px-Gallbladder_ultrasound.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        }
+      },
+      "srsKey": "gallbladder",
+      "mnemonicIds": ["5Fs-gallstones"],
+      "lexiconTerms": ["vesica", "biliaris", "cholecyst", "choledoch"],
+      "ttsText": {
+        "en": "Gallbladder. Latin: Vesica biliaris. Bile storage. Gallbladder fossa.",
+        "ar": "المرارة. باللاتينية: فيسيكا بيلياريس. تخزين الصفراء. حفرة المرارة."
+      },
+      "relatedStructures": ["liver", "pancreas", "portal-vein"]
+    },
+    {
+      "id": "pancreas",
+      "name": {
+        "en": "Pancreas",
+        "ar": "البنكرياس",
+        "latin": "Pancreas"
+      },
+      "category": "upper-abdomen",
+      "description": {
+        "en": "A mixed exocrine/endocrine gland lying transversely in the retroperitoneum behind the stomach. Head nestled in the C-curve of the duodenum; tail extends to the splenic hilum. Essential for digestion and glucose homeostasis.",
+        "ar": "غدة مختلطة خارجية/داخلية الإفراز تمتد بشكل أفقي في خلف الصفاق خلف المعدة. رأسها في تقوّس الاثني عشر وذيلها يمتد إلى نقير الطحال. ضرورية للهضم والتحكم في السكر."
+      },
+      "keyFacts": {
+        "en": [
+          "Parts: Head, Neck, Body, Tail + Uncinate process",
+          "Retroperitoneal organ (except tail — intraperitoneal)",
+          "Main duct (Wirsung) diameter: ≤3 mm",
+          "Exocrine: acinar cells → digestive enzymes",
+          "Endocrine: Islets of Langerhans → insulin, glucagon"
+        ],
+        "ar": [
+          "الأجزاء: الرأس، العنق، الجسم، الذيل + النتوء المعقوف",
+          "عضو خلف صفاقي (ما عدا الذيل — داخل الصفاق)",
+          "قطر القناة الرئيسية (فيرسونج): ≤ ٣ ملم",
+          "الخارجي: الخلايا الحلقية ← إنزيمات الهضم",
+          "الداخلي: جزر لانغرهانس ← الأنسولين، الجلوكاجون"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Attenuation similar to soft tissue (~40 HU). Enhances avidly in pancreatic phase (35–40s). Duct ≤3mm. Fat lobulations common in elderly. Best seen in pancreatic phase.",
+        "mri": "T1: high signal (due to proteinaceous secretions). T2: moderate signal. MRCP shows duct anatomy. DWI useful for masses.",
+        "us": "Echogenicity ≥ liver parenchyma. Head located anterior to IVC; tail posterior to stomach. Duct seen as hyperechoic line ≤3mm.",
+        "xray": "Not directly visible. Pancreatic calcifications (chronic pancreatitis) may be seen on plain X-ray."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Transverse", "Oblique"],
+          "images": {
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Oblique": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        }
+      },
+      "srsKey": "pancreas",
+      "mnemonicIds": ["pancreas-parts", "pancreas-enzymes"],
+      "lexiconTerms": ["pancreas", "wirsung", "acinar", "langerhans", "uncinate"],
+      "ttsText": {
+        "en": "Pancreas. Greek origin: all flesh. Retroperitoneal. Head, neck, body, tail.",
+        "ar": "البنكرياس. أصل يوناني: كل اللحم. خلف صفاقي. رأس، عنق، جسم، ذيل."
+      },
+      "relatedStructures": ["gallbladder", "spleen", "stomach", "portal-vein"]
+    },
+    {
+      "id": "spleen",
+      "name": {
+        "en": "Spleen",
+        "ar": "الطحال",
+        "latin": "Lien / Splen"
+      },
+      "category": "upper-abdomen",
+      "description": {
+        "en": "The largest lymphoid organ, located in the left upper quadrant under the 9th–11th ribs. Filters blood, recycles iron from aged erythrocytes, and serves as an immunological reservoir for lymphocytes and monocytes.",
+        "ar": "أكبر عضو لمفاوي في الجسم، يقع في الربع العلوي الأيسر تحت الأضلاع ٩–١١. يرشّح الدم ويُعيد تدوير الحديد من كريات الدم الحمراء المُعمَّرة، ويعمل كخزّان مناعي للخلايا الليمفاوية والوحيدات."
+      },
+      "keyFacts": {
+        "en": [
+          "Normal size: ≤12 cm in length",
+          "Left upper quadrant (LUQ), posterior to stomach",
+          "Hilum on medial surface — splenic vessels enter here",
+          "Fibrous capsule — fragile, risk of rupture in trauma",
+          "Red pulp: filtration | White pulp: immune function"
+        ],
+        "ar": [
+          "الحجم الطبيعي: ≤ ١٢ سم طولاً",
+          "الربع العلوي الأيسر، خلف المعدة",
+          "النقير على السطح الإنسي — تدخل منه أوعية الطحال",
+          "كبسولة ليفية — هشة، خطر التمزق عند الإصابة",
+          "اللب الأحمر: الترشيح | اللب الأبيض: الوظيفة المناعية"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Homogeneous soft tissue attenuation (~50 HU). Arterial phase: characteristic zebra/tiger stripes (heterogeneous enhancement — normal!). Portal phase: homogeneous. Size by craniocaudal length ≤12cm.",
+        "mri": "T1: slightly hypointense compared to liver. T2: hyperintense compared to liver. Heterogeneous in arterial phase (normal). Iron deposition: signal void on T2*.",
+        "us": "Homogeneous, similar to or slightly more echogenic than left kidney cortex. Crescent shape. Measure in long axis ≤12 cm. Splenomegaly: >12 cm.",
+        "xray": "Not directly seen. Splenomegaly displaces stomach bubble medially and left hemidiaphragm superiorly."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal", "Coronal"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        }
+      },
+      "srsKey": "spleen",
+      "mnemonicIds": ["spleen-size", "spleen-functions"],
+      "lexiconTerms": ["lien", "splen", "splenomegaly", "hilum"],
+      "ttsText": {
+        "en": "Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.",
+        "ar": "الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر."
+      },
+      "relatedStructures": ["pancreas", "stomach", "portal-vein"]
+    },
+    {
+      "id": "kidneys",
+      "name": {
+        "en": "Kidneys",
+        "ar": "الكليتان",
+        "latin": "Renes (sing. Ren)"
+      },
+      "category": "urinary",
+      "description": {
+        "en": "Paired retroperitoneal organs flanking the vertebral column at T12–L3. Filter approximately 180 L of blood per day, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.",
+        "ar": "عضوان مزدوجان خلف صفاقيان على جانبي العمود الفقري عند مستوى T12–L3. يرشّحان حوالي ١٨٠ لتراً من الدم يومياً وينظّمان الشوارد وتوازن الحموضة وضغط الدم عبر نظام رينين-أنجيوتنسين."
+      },
+      "keyFacts": {
+        "en": [
+          "Size: 9–12 cm long, 5–6 cm wide",
+          "Right kidney: slightly lower (displaced by liver)",
+          "Cortex + medulla + renal sinus",
+          "Blood supply: renal arteries from aorta at L1",
+          "Right renal vein short; left renal vein crosses aorta"
+        ],
+        "ar": [
+          "الحجم: ٩–١٢ سم طولاً، ٥–٦ سم عرضاً",
+          "الكلية اليمنى: أخفض قليلاً (تُزيحها الكبد)",
+          "القشرة + اللب + الجيب الكلوي",
+          "الإمداد الدموي: الشرايين الكلوية من الأبهر عند L1",
+          "الوريد الكلوي الأيمن قصير؛ الأيسر يعبر الأبهر"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Cortex: ~30 HU unenhanced. Nephrographic phase (90–100s): homogeneous enhancement, cortex brighter than medulla. Renal sinus: fat density. Collect system: low density on non-contrast.",
+        "mri": "T1: cortex slightly hyperintense vs medulla. T2: cortex intermediate, medulla slightly hyperintense. Corticomedullary differentiation best on dynamic post-contrast.",
+        "us": "Hyperechoic renal sinus centrally. Cortex echogenicity ≤ liver/spleen. Medullary pyramids: hypoechoic triangular structures. Measure in long axis.",
+        "xray": "Renal outlines visible on KUB if surrounded by perinephric fat. Right kidney at L1–L3; left kidney at T12–L2."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Kidney_cortex_medulla_simple.svg/400px-Kidney_cortex_medulla_simple.svg.png"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal", "Transverse"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ultrasound_Kidney_0003.jpg/400px-Ultrasound_Kidney_0003.jpg",
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ultrasound_Kidney_0003.jpg/400px-Ultrasound_Kidney_0003.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        },
+        "X-Ray": {
+          "planes": ["AP (KUB)"],
+          "images": {
+            "AP (KUB)": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/KUB_unremarkable.jpg/400px-KUB_unremarkable.jpg"
+          }
+        }
+      },
+      "srsKey": "kidneys",
+      "mnemonicIds": ["kidney-hormones", "kidney-zones"],
+      "lexiconTerms": ["ren", "renal", "cortex", "medulla", "nephrographic"],
+      "ttsText": {
+        "en": "Kidneys. Latin: Renes. Retroperitoneal. T12 to L3. Filter 180 liters per day.",
+        "ar": "الكليتان. باللاتينية: رينيس. خلف صفاقيتان. من T12 إلى L3. تُرشّحان ١٨٠ لتراً يومياً."
+      },
+      "relatedStructures": ["adrenal-glands", "aorta", "ivc"]
+    },
+    {
+      "id": "adrenal-glands",
+      "name": {
+        "en": "Adrenal Glands",
+        "ar": "الغدد الكظرية",
+        "latin": "Glandulae suprarenales"
+      },
+      "category": "urinary",
+      "description": {
+        "en": "Small triangular glands sitting atop each kidney. Composed of outer cortex (zona glomerulosa, fasciculata, reticularis) and inner medulla. Critical for stress response, mineral and glucocorticoid secretion.",
+        "ar": "غدد صغيرة مثلثة الشكل تجلس فوق كل كلية. تتكون من قشرة خارجية (المنطقة الكبيبية، المحزوزة، الشبكية) ولب داخلي. حيوية للاستجابة للإجهاد وإفراز القشرانيات المعدنية والسكرية."
+      },
+      "keyFacts": {
+        "en": [
+          "Right: pyramidal shape, medial to upper pole of right kidney",
+          "Left: semilunar shape, anterior to upper pole of left kidney",
+          "Normal limb thickness: ≤10 mm",
+          "Cortex: aldosterone, cortisol, androgens",
+          "Medulla: epinephrine (adrenaline), norepinephrine"
+        ],
+        "ar": [
+          "اليمنى: شكل هرمي، إنسي لقطب الكلية اليمنى العلوي",
+          "اليسرى: شكل هلالي، أمام القطب العلوي للكلية اليسرى",
+          "سماكة الذراع الطبيعية: ≤ ١٠ ملم",
+          "القشرة: الألدوستيرون، الكورتيزول، الأندروجينات",
+          "اللب: الأدرينالين، النورأدرينالين"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Inverted V or Y shape on CT. Limb thickness ≤10mm. Density similar to spleen. Adenomas: <10 HU on unenhanced CT (lipid rich). Washout >50% at 15 min (absolute).",
+        "mri": "Chemical shift imaging (in-phase/opposed-phase): adenomas lose signal on opposed-phase. T2: adrenal medulla slightly hyperintense. Pheochromocytoma: markedly hyperintense T2.",
+        "us": "Difficult to see. Best in neonates. Hypoechoic cortex surrounding hyperechoic medulla. Usually seen only when enlarged.",
+        "xray": "Not visible on plain X-ray unless large calcified mass (e.g., old granulomatous disease)."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        }
+      },
+      "srsKey": "adrenal-glands",
+      "mnemonicIds": ["adrenal-zones", "adrenal-hormones"],
+      "lexiconTerms": ["suprarenal", "cortex", "medulla", "aldosterone", "cortisol"],
+      "ttsText": {
+        "en": "Adrenal glands. Latin: Glandulae suprarenales. Cortex and medulla. Stress hormones.",
+        "ar": "الغدد الكظرية. باللاتينية: غلاندولاي سوبرارينالس. القشرة واللب. هرمونات الإجهاد."
+      },
+      "relatedStructures": ["kidneys", "aorta"]
+    },
+    {
+      "id": "aorta",
+      "name": {
+        "en": "Abdominal Aorta",
+        "ar": "الأبهر البطني",
+        "latin": "Aorta abdominalis"
+      },
+      "category": "vascular",
+      "description": {
+        "en": "The continuation of the descending thoracic aorta below the diaphragm (at T12). Descends anterior to the vertebral column, bifurcating at L4 into the common iliac arteries. Major branches supply all abdominal organs.",
+        "ar": "امتداد الأبهر الصدري النازل أسفل الحجاب الحاجز (عند T12). ينزل أمام العمود الفقري ليتفرع عند L4 إلى الشريانين الحرقفيين المشتركين. فروعه الرئيسية تُمدّ جميع أعضاء البطن."
+      },
+      "keyFacts": {
+        "en": [
+          "Enters abdomen at T12 through aortic hiatus",
+          "Bifurcates at L4 → right and left common iliac arteries",
+          "Normal diameter: ≤3 cm (AAA if >3 cm)",
+          "Major branches: celiac (T12), SMA (L1), renal (L1), IMA (L3)",
+          "Lies to the left of IVC"
+        ],
+        "ar": [
+          "يدخل البطن عند T12 عبر الشق الأبهري",
+          "يتفرع عند L4 ← الشريانان الحرقفيان الأيمن والأيسر",
+          "القطر الطبيعي: ≤ ٣ سم (تمدد وعائي أبهري إذا تجاوز ٣ سم)",
+          "الفروع الرئيسية: الجذع البطني (T12)، SMA (L1)، الكلوية (L1)، IMA (L3)",
+          "يقع يسار الوريد الأجوف السفلي"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Round structure, left of midline. Measure outer-to-outer at widest point. Normal ≤3cm. Calcifications common in elderly (atherosclerosis). CT angiography: arterial phase shows branches clearly.",
+        "mri": "Flow void on spin echo (dark). Bright on GRE/TOF MRA. MRA gold standard for non-radiation vascular imaging. Good for branch assessment.",
+        "us": "Pulsatile anechoic tubular structure. Measure at widest point. Normal: <3cm. AAA screening: males >65 years. Easily visualised on B-mode.",
+        "xray": "Calcified aortic wall visible on lateral X-ray. Aneurysm may show as widened soft tissue opacity. Eggshell calcification pattern."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal", "Sagittal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Sagittal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal", "Transverse"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        },
+        "Angio": {
+          "planes": ["Frontal", "Lateral"],
+          "images": {
+            "Frontal": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Aortic-angiogram.jpg/400px-Aortic-angiogram.jpg",
+            "Lateral": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Aortic-angiogram.jpg/400px-Aortic-angiogram.jpg"
+          }
+        },
+        "X-Ray": {
+          "planes": ["AP", "Lateral"],
+          "images": {
+            "AP": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png",
+            "Lateral": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png"
+          }
+        }
+      },
+      "srsKey": "aorta",
+      "mnemonicIds": ["aorta-branches", "aaa-screening"],
+      "lexiconTerms": ["aorta", "celiac", "mesenteric", "iliac", "bifurcation"],
+      "ttsText": {
+        "en": "Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.",
+        "ar": "الأبهر البطني. باللاتينية: أورطا أبدوميناليس. من T12 إلى L4. الطبيعي أقل من ٣ سم."
+      },
+      "relatedStructures": ["ivc", "portal-vein", "kidneys"]
+    },
+    {
+      "id": "ivc",
+      "name": {
+        "en": "Inferior Vena Cava",
+        "ar": "الوريد الأجوف السفلي",
+        "latin": "Vena cava inferior"
+      },
+      "category": "vascular",
+      "description": {
+        "en": "The largest vein in the body, formed by the union of the two common iliac veins at L5. Ascends to the right of the aorta, passing through the central tendon of the diaphragm at T8 to drain into the right atrium.",
+        "ar": "أكبر وريد في الجسم، يتشكّل من اتحاد الوريدين الحرقفيين المشتركين عند L5. يصعد يمين الأبهر، يمر عبر الوتر المركزي للحجاب الحاجز عند T8 ليصبّ في الأذين الأيمن."
+      },
+      "keyFacts": {
+        "en": [
+          "Forms at L5 by union of common iliac veins",
+          "Lies to the right of the aorta",
+          "Passes diaphragm at T8 (caval opening)",
+          "Tributaries: renal veins, hepatic veins, lumbar veins",
+          "No valves in abdominal IVC"
+        ],
+        "ar": [
+          "يتشكّل عند L5 من اتحاد الوريدين الحرقفيين",
+          "يقع يمين الأبهر",
+          "يمر عبر الحجاب الحاجز عند T8 (الفتحة الأجوفية)",
+          "روافده: الأوردة الكلوية، الكبدية، القطنية",
+          "لا صمامات في الوريد الأجوف البطني"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Right of aorta. Oval or round, variable in caliber with respiration (collapses on inspiration). Hepatic veins drain into IVC just below diaphragm. Thrombosis appears as filling defect.",
+        "mri": "Variable signal due to flow. Bright on TOF. Flow-related enhancement on GRE. Thrombus: intermediate T1, variable T2 signal.",
+        "us": "Easily compressible (unlike arteries). Respiratory variation: collapses on inspiration. Right of aorta. Hepatic veins visible entering IVC.",
+        "xray": "Not directly visible unless calcified or massively dilated."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal", "Transverse"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        }
+      },
+      "srsKey": "ivc",
+      "mnemonicIds": ["ivc-tributaries"],
+      "lexiconTerms": ["vena", "cava", "inferior", "hepatic-veins"],
+      "ttsText": {
+        "en": "Inferior vena cava. Latin: Vena cava inferior. Largest vein. Right of aorta. T8 to L5.",
+        "ar": "الوريد الأجوف السفلي. باللاتينية: فينا كافا إنفيريور. أكبر وريد. يمين الأبهر. من T8 إلى L5."
+      },
+      "relatedStructures": ["aorta", "liver", "kidneys"]
+    },
+    {
+      "id": "portal-vein",
+      "name": {
+        "en": "Portal Vein",
+        "ar": "الوريد البابي",
+        "latin": "Vena portae hepatis"
+      },
+      "category": "vascular",
+      "description": {
+        "en": "Formed by the union of the superior mesenteric vein (SMV) and splenic vein behind the neck of the pancreas at the level of L2. Carries nutrient-rich blood from the GI tract and spleen to the liver.",
+        "ar": "يتشكّل من اتحاد الوريد المساريقي العلوي والوريد الطحالي خلف عنق البنكرياس عند مستوى L2. يحمل الدم الغني بالمواد الغذائية من الجهاز الهضمي والطحال إلى الكبد."
+      },
+      "keyFacts": {
+        "en": [
+          "Formed at L2: SMV + splenic vein",
+          "Normal diameter: ≤13 mm at porta hepatis",
+          "Divides into right and left branches in hepatic hilum",
+          "Provides 75% of hepatic blood supply",
+          "Portal hypertension: >10 mmHg gradient"
+        ],
+        "ar": [
+          "يتشكّل عند L2: الوريد المساريقي العلوي + الوريد الطحالي",
+          "القطر الطبيعي: ≤ ١٣ ملم عند النقير الكبدي",
+          "يتفرع إلى فرعين أيمن وأيسر في نقير الكبد",
+          "يُوفّر ٧٥٪ من الإمداد الدموي للكبد",
+          "ارتفاع ضغط باب الكبد: تدرج ضغط > ١٠ ملم زئبق"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Portal venous phase (70s) is optimal. Round/tubular structure at hepatic hilum. Flow towards liver (hepatopetal). Doppler US critical. Thrombosis: filling defect in lumen.",
+        "mri": "Variable signal. Patent portal vein: flow void or bright on GRE. Thrombosis: T1 bright (acute), T2 variable. Gadolinium confirms patency.",
+        "us": "Doppler: hepatopetal flow (towards liver). Waveform: monophasic. Diameter measured at hepatic hilum ≤13mm. Key for portal hypertension assessment.",
+        "xray": "Not visible on plain X-ray."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "US": {
+          "planes": ["Oblique", "Longitudinal"],
+          "images": {
+            "Oblique": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        },
+        "MRI": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Normal_liver_MRI.jpg/400px-Normal_liver_MRI.jpg"
+          }
+        }
+      },
+      "srsKey": "portal-vein",
+      "mnemonicIds": ["portal-tributaries", "portal-hypertension-signs"],
+      "lexiconTerms": ["porta", "hepatis", "mesenteric", "hepatopetal", "hepatofugal"],
+      "ttsText": {
+        "en": "Portal vein. Latin: Vena portae hepatis. Formed at L2. Normal under 13 millimeters.",
+        "ar": "الوريد البابي. باللاتينية: فينا بورتاي هيباتيس. يتشكّل عند L2. الطبيعي أقل من ١٣ ملم."
+      },
+      "relatedStructures": ["liver", "spleen", "pancreas", "ivc"]
+    },
+    {
+      "id": "stomach",
+      "name": {
+        "en": "Stomach",
+        "ar": "المعدة",
+        "latin": "Gaster / Ventriculus"
+      },
+      "category": "gi-tract",
+      "description": {
+        "en": "A J-shaped muscular organ in the left upper quadrant. Receives food from the esophagus via the gastroesophageal junction and delivers chyme to the duodenum via the pylorus. Secretes HCl, pepsin, and intrinsic factor.",
+        "ar": "عضو عضلي على شكل حرف J في الربع العلوي الأيسر. يستقبل الطعام من المريء عبر الوصل المعدي المريئي ويرسل الكيموس إلى الاثني عشر عبر البواب. يُفرز HCl والبيبسين والعامل الداخلي."
+      },
+      "keyFacts": {
+        "en": [
+          "Regions: fundus, body (corpus), antrum, pylorus",
+          "Capacity: ~1 L (expandable to 4 L)",
+          "Normal wall thickness: ≤5 mm when distended",
+          "Greater curvature: left side | Lesser curvature: right side",
+          "Blood supply: branches of celiac axis"
+        ],
+        "ar": [
+          "المناطق: القاع، الجسم، القناة المعدية، البواب",
+          "السعة: ~١ لتر (قابل للتمدد إلى ٤ لتر)",
+          "سُمك الجدار الطبيعي: ≤ ٥ ملم عند الامتلاء",
+          "الانحناء الأكبر: الجهة اليسرى | الانحناء الأصغر: الجهة اليمنى",
+          "الإمداد الدموي: فروع الجذع البطني"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Wall ≤5mm when distended. Gastric folds visible. Optimal with oral contrast. Arterial phase for vascularity assessment. Air-fluid level common. Rugae pattern in antrum.",
+        "mri": "Wall assessment: T1 post-contrast. T2 shows fluid contents well. MR fluoroscopy possible but rarely used clinically.",
+        "us": "Limited by gas. Can see gastric wall layers ('target sign'). Useful in paediatrics for pyloric stenosis (pyloric muscle >4mm).",
+        "xray": "Gastric air bubble in LUQ on erect film. Rugae pattern visible with double-contrast barium study. Free air under diaphragm = perforation."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "X-Ray": {
+          "planes": ["Erect PA", "Barium Study"],
+          "images": {
+            "Erect PA": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png",
+            "Barium Study": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png"
+          }
+        },
+        "US": {
+          "planes": ["Longitudinal"],
+          "images": {
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        }
+      },
+      "srsKey": "stomach",
+      "mnemonicIds": ["stomach-regions", "stomach-cells"],
+      "lexiconTerms": ["gaster", "ventriculus", "pylorus", "fundus", "rugae", "antrum"],
+      "ttsText": {
+        "en": "Stomach. Latin: Gaster or Ventriculus. Fundus, body, antrum, pylorus. Left upper quadrant.",
+        "ar": "المعدة. باللاتينية: غاستر أو فينتريكولوس. القاع، الجسم، القناة المعدية، البواب. الربع العلوي الأيسر."
+      },
+      "relatedStructures": ["pancreas", "spleen", "portal-vein"]
+    },
+    {
+      "id": "small-intestine",
+      "name": {
+        "en": "Small Intestine",
+        "ar": "الأمعاء الدقيقة",
+        "latin": "Intestinum tenue"
+      },
+      "category": "gi-tract",
+      "description": {
+        "en": "A coiled tube ~6–7 meters long, divided into duodenum (25 cm), jejunum (~2.5 m), and ileum (~3.5 m). Site of chemical digestion and nutrient absorption. Characterised by plicae circulares (Kerckring's folds) and villi.",
+        "ar": "أنبوب ملتوٍ بطول ~٦–٧ أمتار، مقسّم إلى الاثني عشر (٢٥ سم)، الصائم (~٢.٥ م)، واللفائفي (~٣.٥ م). موقع الهضم الكيميائي وامتصاص المواد الغذائية. يتميّز بالطيات الدائرية والزغابات."
+      },
+      "keyFacts": {
+        "en": [
+          "Duodenum: C-shaped, retroperitoneal, surrounds pancreatic head",
+          "Jejunum: left upper/central abdomen, thick folds, more vascular",
+          "Ileum: right lower abdomen, thin folds, Peyer's patches",
+          "Total length: 6–7 m",
+          "Wall thickness: ≤3 mm when distended"
+        ],
+        "ar": [
+          "الاثني عشر: شكل C، خلف صفاقي، يحيط برأس البنكرياس",
+          "الصائم: يسار وسط البطن، طيات سميكة، أكثر وعائية",
+          "اللفائفي: يمين أسفل البطن، طيات رفيعة، لويحات باير",
+          "الطول الكلي: ٦–٧ أمتار",
+          "سُمك الجدار: ≤ ٣ ملم عند الامتلاء"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Wall ≤3mm when distended. Jejunum: more folds (plicae circulares) in left abdomen. Ileum: smoother, right lower quadrant. CT enterography: oral neutral contrast. Mesenteric vessels: fan-shaped in mesentery.",
+        "mri": "MR enterography: excellent for Crohn's disease. T2 HASTE: fluid in lumen bright. Post-contrast: wall enhancement assessment. Less radiation than CT.",
+        "us": "Peristalsis visible in real-time. Normal: compressible, <3mm wall. Target sign on transverse view (hyperechoic mucosa, hypoechoic muscle). Limited by gas.",
+        "xray": "Small bowel loops central/left abdomen. Valvulae conniventes (Kerckring's): complete folds across entire lumen. Normal: <2.5cm diameter. Dilated: >3cm = obstruction."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "X-Ray": {
+          "planes": ["Erect AP", "Supine AP"],
+          "images": {
+            "Erect AP": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png",
+            "Supine AP": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png"
+          }
+        },
+        "US": {
+          "planes": ["Transverse", "Longitudinal"],
+          "images": {
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg",
+            "Longitudinal": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        }
+      },
+      "srsKey": "small-intestine",
+      "mnemonicIds": ["duodenum-parts", "jejunum-vs-ileum"],
+      "lexiconTerms": ["intestinum", "tenue", "duodenum", "jejunum", "ileum", "villi", "plicae"],
+      "ttsText": {
+        "en": "Small intestine. Latin: Intestinum tenue. Duodenum, jejunum, ileum. 6 to 7 meters total.",
+        "ar": "الأمعاء الدقيقة. باللاتينية: إنتيستينوم تينوي. الاثني عشر، الصائم، اللفائفي. ٦ إلى ٧ أمتار إجمالاً."
+      },
+      "relatedStructures": ["stomach", "large-intestine", "pancreas"]
+    },
+    {
+      "id": "large-intestine",
+      "name": {
+        "en": "Large Intestine",
+        "ar": "الأمعاء الغليظة",
+        "latin": "Intestinum crassum"
+      },
+      "category": "gi-tract",
+      "description": {
+        "en": "Approximately 1.5 m long, framing the small intestine peripherally. Divided into cecum, ascending, transverse, descending, sigmoid colon, and rectum. Primary functions: water/electrolyte absorption and fecal formation.",
+        "ar": "بطول ~١.٥ متر، يُحاط بالأمعاء الدقيقة من المحيط. مقسّم إلى الأعور، القولون الصاعد والعرضي والنازل والسيني، والمستقيم. وظائفه الرئيسية: امتصاص الماء والشوارد وتشكيل البراز."
+      },
+      "keyFacts": {
+        "en": [
+          "Length: ~1.5 m",
+          "Distinguishing features: taeniae coli, haustra, epiploic appendages",
+          "Cecum: right iliac fossa, ileocecal valve",
+          "Appendix: arises from posteromedial cecum at McBurney's point region",
+          "Rectum: 12–15 cm, no taeniae, ampulla stores feces"
+        ],
+        "ar": [
+          "الطول: ~١.٥ متر",
+          "المميزات: أشرطة القولون، التكميشات، الزوائد الثربية",
+          "الأعور: الحفرة الحرقفية اليمنى، الصمام الحرقفي الأعوري",
+          "الزائدة الدودية: تنشأ من الجهة الخلفية الإنسية للأعور عند نقطة ماكبيرني",
+          "المستقيم: ١٢–١٥ سم، بلا أشرطة، القمع يختزن البراز"
+        ]
+      },
+      "imagingFindings": {
+        "ct": "Peripheral location framing small bowel. Haustral folds (incomplete, don't cross full lumen). Wall ≤3mm distended. Fecal material and gas common. CT colonography: prone + supine, insufflated with CO2.",
+        "mri": "MR colonography less common. T2: water in lumen bright. Rectal MRI: excellent for rectal cancer staging (mesorectal fascia assessment).",
+        "us": "Target sign visible. Limited utility due to gas. Best for appendix assessment (graded compression technique).",
+        "xray": "Peripheral location. Haustral markings. Normal caliber: <6cm (transverse), <9cm (cecum). Toxic megacolon: >6cm widespread. Air-fluid levels in obstruction."
+      },
+      "modalities": {
+        "CT": {
+          "planes": ["Axial", "Coronal"],
+          "images": {
+            "Axial": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg",
+            "Coronal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"
+          }
+        },
+        "X-Ray": {
+          "planes": ["Supine AP", "Erect AP"],
+          "images": {
+            "Supine AP": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png",
+            "Erect AP": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Chest_Xray_PA_3-8-2010.png/350px-Chest_Xray_PA_3-8-2010.png"
+          }
+        },
+        "US": {
+          "planes": ["Transverse"],
+          "images": {
+            "Transverse": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Liver_US.jpg/400px-Liver_US.jpg"
+          }
+        }
+      },
+      "srsKey": "large-intestine",
+      "mnemonicIds": ["colon-segments", "haustra-vs-plicae"],
+      "lexiconTerms": ["intestinum", "crassum", "cecum", "haustra", "taeniae", "sigmoid"],
+      "ttsText": {
+        "en": "Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.",
+        "ar": "الأمعاء الغليظة. باللاتينية: إنتيستينوم كراسوم. الأعور، القولون، المستقيم. متر ونصف."
+      },
+      "relatedStructures": ["small-intestine", "stomach", "aorta"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "upper-abdomen",
+      "label": { "en": "Upper Abdomen", "ar": "البطن العلوي" },
+      "structures": ["liver", "gallbladder", "pancreas", "spleen"]
+    },
+    {
+      "id": "urinary",
+      "label": { "en": "Urinary System", "ar": "الجهاز البولي" },
+      "structures": ["kidneys", "adrenal-glands"]
+    },
+    {
+      "id": "vascular",
+      "label": { "en": "Vascular", "ar": "الأوعية الدموية" },
+      "structures": ["aorta", "ivc", "portal-vein"]
+    },
+    {
+      "id": "gi-tract",
+      "label": { "en": "GI Tract", "ar": "الجهاز الهضمي" },
+      "structures": ["stomach", "small-intestine", "large-intestine"]
+    }
+  ]
+}
