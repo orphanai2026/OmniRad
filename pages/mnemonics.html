@@ -1,444 +1,472 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OmniRad — Mnemonics Library</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ═══ TOKENS ═════════════════════════════════════════════════ */
-[data-theme="dark"] {
-  --bg:#0d1117;--bg-s:#161b22;--bg-r:#1c2128;--bg-o:#21262d;
-  --bdr:#30363d;--bdr-s:#21262d;
-  --tx:#e6edf3;--tx2:#8b949e;--tx3:#484f58;
-  --teal:#39d0b8;--teal2:#2ab5a0;--teal3:#1a7a6e;
-  --teal-g:rgba(57,208,184,.18);--teal-s:rgba(57,208,184,.08);
+:root{
+  --bg-base:oklch(0.13 0.012 240);
+  --bg-surface:oklch(0.17 0.012 240);
+  --bg-panel:oklch(0.21 0.014 240);
+  --bg-hover:oklch(0.25 0.014 240);
+  --teal:oklch(0.72 0.14 188);
+  --teal-bg:oklch(0.20 0.04 188);
+  --text-primary:oklch(0.93 0.01 240);
+  --text-sec:oklch(0.68 0.01 240);
+  --text-muted:oklch(0.48 0.01 240);
+  --border:oklch(0.28 0.012 240);
+  --border-light:oklch(0.35 0.012 240);
+  --radius:8px; --radius-lg:12px;
+  --font:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
 }
-[data-theme="dim"] {
-  --bg:#d4d9e0;--bg-s:#dde1e8;--bg-r:#e3e7ed;--bg-o:#eaedf2;
-  --bdr:#b0b8c4;--bdr-s:#c4cad4;
-  --tx:#1c2128;--tx2:#444c56;--tx3:#656d76;
-  --teal:#0d6e61;--teal2:#0a5a50;--teal3:#084840;
-  --teal-g:rgba(13,110,97,.18);--teal-s:rgba(13,110,97,.08);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;scroll-behavior:smooth}
-body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6;transition:background .25s,color .25s}
-button{font-family:inherit;cursor:pointer;border:none;background:none}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:var(--font);background:var(--bg-base);color:var(--text-primary);}
 
-/* ═══ TOPBAR ══════════════════════════════════════════════════ */
-.topbar{position:sticky;top:0;z-index:200;background:var(--bg-s);border-bottom:1px solid var(--bdr-s);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:56px;gap:1rem}
-.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--tx);font-weight:600;font-size:1.05rem}
-.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:5px;display:grid;place-items:center;font-weight:700;font-size:.78rem;color:#0d1117;letter-spacing:-.02em;flex-shrink:0}
-.logo-text{font-weight:600;font-size:1rem;letter-spacing:-.02em}
-.logo-text span{color:var(--teal)}
-.nav-links{display:flex;align-items:center;gap:.25rem}
-.nav-link{padding:.3rem .75rem;border-radius:6px;color:var(--tx2);font-size:.82rem;text-decoration:none;transition:all .12s;font-weight:500}
-.nav-link:hover{background:var(--bg-r);color:var(--tx)}
-.nav-link.active{background:var(--teal-s);color:var(--teal)}
-.topbar-right{display:flex;align-items:center;gap:.5rem}
-.theme-btn{display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;transition:all .15s}
-.theme-btn:hover{border-color:var(--teal2);color:var(--teal)}
+/* TOPBAR */
+#topbar{display:flex;align-items:center;gap:12px;padding:0 24px;height:52px;background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;}
+.logo-text{font-size:16px;font-weight:600;color:var(--text-primary);}
+.topbar-div{width:1px;height:24px;background:var(--border);}
+.nav-pills{display:flex;gap:4px;}
+.nav-pill{padding:5px 12px;border-radius:20px;font-size:13px;font-weight:500;color:var(--text-sec);text-decoration:none;transition:all .15s;}
+.nav-pill:hover{background:var(--bg-panel);color:var(--text-primary);}
+.nav-pill.active{background:var(--teal-bg);color:var(--teal);}
+#hamburger{display:none;margin-left:auto;padding:6px;background:transparent;border:none;cursor:pointer;flex-direction:column;gap:4px;}
+#hamburger span{display:block;width:22px;height:2px;background:var(--text-sec);border-radius:2px;}
 
-/* ═══ HERO ════════════════════════════════════════════════════ */
-.hero{padding:2.5rem 2.5rem 1.5rem;border-bottom:1px solid var(--bdr-s)}
-.hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem}
-.hero-title{font-size:2rem;font-weight:600;letter-spacing:-.03em;line-height:1.2;margin-bottom:.5rem}
-.hero-sub{font-size:.9rem;color:var(--tx2);max-width:600px;line-height:1.6}
-.hero-stats{display:flex;gap:1.5rem;margin-top:1.25rem;flex-wrap:wrap}
-.stat-chip{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--tx2)}
-.stat-num{font-weight:600;color:var(--teal);font-family:'IBM Plex Mono',monospace}
-.source-badge{display:inline-flex;align-items:center;gap:.35rem;margin-top:.75rem;padding:.25rem .7rem;border:1px solid var(--bdr);border-radius:99px;font-size:.7rem;color:var(--tx3);background:var(--bg-r)}
-.source-badge span{color:var(--tx2);font-weight:500}
+/* HERO */
+.hero{padding:48px 40px 32px;max-width:900px;}
+.hero-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--teal);margin-bottom:14px;}
+.hero-title{font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;}
+.hero-subtitle{font-size:15px;color:var(--text-sec);line-height:1.6;max-width:560px;margin-bottom:20px;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:var(--text-muted);}
+.hero-meta b{color:var(--teal);}
+.hero-sources{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);font-size:11px;color:var(--text-muted);}
+.source-chip{background:var(--bg-panel);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;}
 
-/* ═══ CONTROLS ════════════════════════════════════════════════ */
-.controls{padding:1rem 2.5rem;border-bottom:1px solid var(--bdr-s);display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;background:var(--bg-s)}
-.search-wrap{flex:1;min-width:200px;position:relative}
-.search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:.9rem;pointer-events:none}
-.search-input{width:100%;padding:.48rem .9rem .48rem 2.2rem;border:1px solid var(--bdr);border-radius:7px;background:var(--bg-r);color:var(--tx);font-size:.85rem;font-family:inherit;transition:border-color .15s;outline:none}
-.search-input:focus{border-color:var(--teal2)}
-.search-input::placeholder{color:var(--tx3)}
-.filter-group{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap}
-.filter-lbl{font-size:.72rem;font-weight:500;color:var(--tx3);white-space:nowrap}
-.fbtn{padding:.3rem .72rem;border-radius:6px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.75rem;font-weight:500;transition:all .12s}
-.fbtn:hover{border-color:var(--teal2);color:var(--tx)}
-.fbtn.active{background:var(--teal-g);border-color:var(--teal);color:var(--teal)}
-.lang-seg{display:flex;border:1px solid var(--bdr);border-radius:7px;overflow:hidden}
-.lang-btn{padding:.3rem .7rem;font-size:.75rem;font-weight:500;color:var(--tx2);background:var(--bg-r);transition:all .12s;border:none}
-.lang-btn:not(:last-child){border-right:1px solid var(--bdr)}
-.lang-btn.active{background:var(--teal-g);color:var(--teal)}
-.result-count{font-size:.75rem;color:var(--tx3);margin-left:auto;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+/* TTS row */
+.tts-row{display:flex;align-items:center;gap:10px;padding:10px 40px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.tts-label{font-size:12px;color:var(--text-muted);}
+.tts-voice-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.tts-voice-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+.tts-note{font-size:11px;color:var(--text-muted);margin-left:8px;}
 
-/* ═══ GRID ════════════════════════════════════════════════════ */
-.grid-wrap{padding:1.5rem 2.5rem}
-.mn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
-.empty-state{padding:4rem 2rem;text-align:center;color:var(--tx3)}
-.empty-icon{font-size:2.5rem;margin-bottom:.75rem;opacity:.4}
-.empty-msg{font-size:.88rem}
+/* FILTERS */
+.filters-bar{padding:14px 40px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;border-bottom:1px solid var(--border);background:var(--bg-base);position:sticky;top:52px;z-index:90;}
+#search-box{flex:1;min-width:220px;padding:8px 14px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-size:13px;font-family:var(--font);outline:none;}
+#search-box:focus{border-color:var(--teal);}
+#search-box::placeholder{color:var(--text-muted);}
+.filter-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.filter-label{font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.filter-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.filter-btn:hover{border-color:var(--border-light);color:var(--text-sec);}
+.filter-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+#results-count{font-size:12px;color:var(--text-muted);margin-left:auto;}
 
-/* ═══ CARD ════════════════════════════════════════════════════ */
-.mn-card{background:var(--bg-s);border:1.5px solid var(--bdr-s);border-radius:12px;overflow:hidden;transition:border-color .15s,box-shadow .15s;display:flex;flex-direction:column}
-.mn-card:hover{border-color:var(--teal3);box-shadow:0 4px 20px rgba(57,208,184,.07)}
-.mn-card-hdr{padding:.75rem 1rem .6rem;border-bottom:1px solid var(--bdr-s);display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;background:var(--bg-r)}
-.mn-term{font-size:.9rem;font-weight:600;letter-spacing:-.01em;flex:1;line-height:1.3}
-.mn-term-ar{font-size:.78rem;color:var(--tx3);direction:rtl;margin-top:.15rem}
-.mn-badges{display:flex;flex-direction:column;align-items:flex-end;gap:.25rem}
-.badge{font-size:.64rem;padding:.15rem .5rem;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-weight:500;border:1px solid;white-space:nowrap}
-.badge-en{color:#60a5fa;border-color:#1d4ed844;background:#1d4ed812}
-.badge-ar{color:#c084fc;border-color:#7c3aed44;background:#7c3aed12}
-.badge-easy{color:#4ade80;border-color:#16a34a44;background:#16a34a12}
-.badge-medium{color:#fb923c;border-color:#c2410c44;background:#c2410c12}
-.badge-hard{color:#f87171;border-color:#b91c1c44;background:#b91c1c12}
-.mn-card-body{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.75rem}
-.mn-mnemonic-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);font-weight:600}
-.mn-mnemonic{font-family:'IBM Plex Mono',monospace;font-size:.83rem;color:var(--tx);line-height:1.5;background:var(--teal-s);border:1px solid var(--teal3);border-radius:7px;padding:.55rem .75rem}
-.mn-explanation{font-size:.8rem;color:var(--tx2);line-height:1.6}
-.mn-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:auto;padding-top:.5rem}
-.mn-tag{font-size:.68rem;padding:.1rem .45rem;border-radius:4px;border:1px solid var(--bdr-s);color:var(--tx3);background:var(--bg-o)}
-.mn-mod-tag{border-color:var(--teal3);color:var(--teal);background:var(--teal-s)}
-.mn-card-footer{padding:.55rem 1rem;border-top:1px solid var(--bdr-s);display:flex;align-items:center;justify-content:space-between;gap:.5rem}
-.mn-source{font-size:.65rem;color:var(--tx3);font-style:italic;flex:1;line-height:1.35}
-.mn-actions{display:flex;gap:.3rem}
-.mn-speak-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx3);font-size:.8rem;display:flex;align-items:center;justify-content:center;transition:all .12s}
-.mn-speak-btn:hover{border-color:var(--teal);color:var(--teal)}
-.mn-speak-btn.speaking{animation:mnPulse .7s infinite}
-@keyframes mnPulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* GRID */
+.mnemonics-grid{padding:24px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
 
-/* ═══ VOICE SELECTOR ══════════════════════════════════════════ */
-.voice-bar{display:flex;align-items:center;gap:.5rem;padding:.75rem 2.5rem;border-bottom:1px solid var(--bdr-s);background:var(--bg)}
-.voice-lbl{font-size:.72rem;color:var(--tx3);font-weight:500}
-.voice-seg{display:flex;border:1px solid var(--bdr);border-radius:7px;overflow:hidden}
-.voice-btn{padding:.28rem .65rem;font-size:.73rem;font-weight:500;color:var(--tx2);background:var(--bg-r);border:none;transition:all .12s}
-.voice-btn:not(:last-child){border-right:1px solid var(--bdr)}
-.voice-btn.active{background:var(--teal-g);color:var(--teal)}
-.voice-note{font-size:.7rem;color:var(--tx3);margin-left:.5rem}
+/* CARD */
+.mnemonic-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px;transition:border-color .15s;}
+.mnemonic-card:hover{border-color:var(--border-light);}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.card-title{font-size:14px;font-weight:600;line-height:1.3;}
+.card-badges{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;}
+.badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);}
+.badge-easy{background:oklch(0.65 0.12 155/.2);color:oklch(0.65 0.12 155);}
+.badge-medium{background:oklch(0.65 0.12 50/.2);color:oklch(0.65 0.12 50);}
+.badge-hard{background:oklch(0.55 0.12 25/.2);color:oklch(0.55 0.12 25);}
+.badge-type{background:var(--bg-panel);color:var(--text-muted);border:1px solid var(--border);}
 
-/* ═══ RESPONSIVE ══════════════════════════════════════════════ */
-@media (max-width:768px) {
-  .hero{padding:1.5rem 1rem 1rem}
-  .hero-title{font-size:1.5rem}
-  .controls{padding:.75rem 1rem}
-  .grid-wrap{padding:1rem}
-  .mn-grid{grid-template-columns:1fr}
-  .nav-links{display:none}
-  .voice-bar{padding:.6rem 1rem}
+.card-structure{font-size:11px;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+
+.card-mnemonic-en{font-size:13px;line-height:1.65;color:var(--text-sec);background:var(--bg-panel);border-radius:var(--radius);padding:10px 12px;border-left:3px solid var(--teal);}
+.card-mnemonic-ar{font-size:12px;line-height:1.65;color:var(--text-muted);direction:rtl;text-align:right;background:var(--bg-panel);border-radius:var(--radius);padding:9px 12px;border-right:3px solid oklch(0.72 0.14 188/.4);display:none;}
+.card-mnemonic-ar.show{display:block;}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;}
+.card-ref{font-size:11px;color:var(--text-muted);font-style:italic;}
+.card-actions{display:flex;gap:6px;}
+.card-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.card-btn:hover{background:var(--bg-hover);color:var(--text-primary);}
+.card-btn.tts-active{color:var(--teal);border-color:var(--teal);}
+
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.tag{padding:2px 7px;border-radius:4px;background:var(--bg-panel);border:1px solid var(--border);font-size:10px;color:var(--text-muted);}
+
+/* EMPTY STATE */
+#empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;}
+#empty-state.show{display:flex;}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.5;}
+.empty-title{font-size:18px;font-weight:600;margin-bottom:8px;}
+.empty-subtitle{font-size:14px;color:var(--text-muted);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero{padding:28px 16px 20px;}
+  .hero-title{font-size:26px;}
+  .tts-row{padding:10px 16px;}
+  .filters-bar{padding:12px 16px;}
+  .mnemonics-grid{padding:16px;grid-template-columns:1fr;}
+  .nav-pills{display:none;}
+  #hamburger{display:flex;}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ TOPBAR ═══════════════════════════════════════════════ -->
-<header class="topbar">
+<header id="topbar">
   <a href="../index.html" class="logo">
     <div class="logo-mark">OR</div>
-    <span class="logo-text">Omni<span>Rad</span></span>
+    <span class="logo-text">OmniRad</span>
   </a>
-  <nav class="nav-links">
-    <a href="../index.html" class="nav-link">Home</a>
-    <a href="atlas.html" class="nav-link">Atlas</a>
-    <a href="comparison.html" class="nav-link">Compare</a>
-    <a href="mnemonics.html" class="nav-link active">Mnemonics</a>
-    <a href="srs.html" class="nav-link">SRS</a>
+  <div class="topbar-div"></div>
+  <nav class="nav-pills">
+    <a href="../index.html" class="nav-pill">Home</a>
+    <a href="atlas.html" class="nav-pill">Atlas</a>
+    <a href="comparison.html" class="nav-pill">Compare</a>
+    <a href="mnemonics.html" class="nav-pill active">Mnemonics</a>
+    <a href="srs.html" class="nav-pill">My Progress</a>
+    <a href="ai-chat.html" class="nav-pill">AI Assistant</a>
   </nav>
-  <div class="topbar-right">
-    <button class="theme-btn" id="theme-btn">
-      <span id="t-icon">☾</span>
-      <span id="t-lbl">Dim</span>
-    </button>
-  </div>
+  <button id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </header>
 
-<!-- ═══ HERO ═════════════════════════════════════════════════ -->
-<section class="hero">
-  <div class="hero-eyebrow">Mnemonics Library</div>
-  <h1 class="hero-title">Remember Everything. Forget Nothing.</h1>
-  <p class="hero-sub">Evidence-based mnemonics for radiologic anatomy — curated in English and Arabic. Every mnemonic is referenced to Gray's Anatomy, Moore's, or Netter's.</p>
-  <div class="hero-stats">
-    <div class="stat-chip"><span class="stat-num" id="total-count">0</span> mnemonics</div>
-    <div class="stat-chip"><span class="stat-num">2</span> languages</div>
-    <div class="stat-chip"><span class="stat-num">Upper Abdomen</span> · Phase 1</div>
+<div class="hero">
+  <div class="hero-eyebrow">MNEMONICS LIBRARY</div>
+  <h1 class="hero-title">Remember Everything.<br>Forget Nothing.</h1>
+  <p class="hero-subtitle">Evidence-based mnemonics for radiologic anatomy — curated in English and Arabic. Every mnemonic is referenced to Gray's Anatomy, Moore's, or Netter's.</p>
+  <div class="hero-meta">
+    <span>mnemonics</span>
+    <span>·</span>
+    <span><b id="total-count">22</b> entries</span>
+    <span>·</span>
+    <span><b>2</b> languages</span>
+    <span>·</span>
+    <span style="color:var(--teal);font-weight:600;">Upper Abdomen</span>
+    <span>·</span>
+    <span>Phase 1</span>
   </div>
-  <div class="source-badge">📖 Sources: <span>Gray's Anatomy 41st</span> · <span>Moore's Clinical 9th</span> · <span>Netter's Atlas 8th</span> · <span>Dorland's Medical Dictionary</span></div>
-</section>
-
-<!-- ═══ VOICE BAR ═════════════════════════════════════════════ -->
-<div class="voice-bar">
-  <span class="voice-lbl">🔊 TTS Voice:</span>
-  <div class="voice-seg" id="voice-seg">
-    <button class="voice-btn active" data-vp="F">♀ Female (US)</button>
-    <button class="voice-btn" data-vp="M">♂ Male (US)</button>
+  <div class="hero-sources">
+    <span>📚 Sources:</span>
+    <span class="source-chip">Gray's Anatomy 41st</span>
+    <span class="source-chip">Moore's Clinical 9th</span>
+    <span class="source-chip">Netter's Atlas 8th</span>
+    <span class="source-chip">Dorland's Medical Dictionary</span>
   </div>
-  <span class="voice-note">American English pronunciation</span>
 </div>
 
-<!-- ═══ CONTROLS ══════════════════════════════════════════════ -->
-<div class="controls">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input class="search-input" id="search" type="search" placeholder="Search mnemonics, terms, tags…" autocomplete="off">
-  </div>
-  <div class="filter-group">
-    <span class="filter-lbl">Region:</span>
-    <button class="fbtn active" data-reg="all">All</button>
-    <button class="fbtn" data-reg="Upper Abdomen">Abdomen</button>
-    <button class="fbtn" data-reg="Retroperitoneum">Retroperitoneum</button>
-  </div>
-  <div class="filter-group">
-    <span class="filter-lbl">Difficulty:</span>
-    <button class="fbtn active" data-diff="all">All</button>
-    <button class="fbtn" data-diff="easy">Easy</button>
-    <button class="fbtn" data-diff="medium">Medium</button>
-    <button class="fbtn" data-diff="hard">Hard</button>
-  </div>
-  <div class="filter-group">
-    <span class="filter-lbl">Language:</span>
-    <div class="lang-seg" id="lang-seg">
-      <button class="lang-btn active" data-lang="all">Both</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="ar">AR</button>
-    </div>
-  </div>
-  <span class="result-count" id="result-count">— results</span>
+<div class="tts-row">
+  <span class="tts-label">🔊 TTS Voice:</span>
+  <button class="tts-voice-btn active" data-gender="female" onclick="setVoice('female',this)">♀ Female (US)</button>
+  <button class="tts-voice-btn" data-gender="male" onclick="setVoice('male',this)">♂ Male (US)</button>
+  <span class="tts-note">American English pronunciation</span>
 </div>
 
-<!-- ═══ GRID ══════════════════════════════════════════════════ -->
-<div class="grid-wrap">
-  <div class="mn-grid" id="mn-grid">
-    <div class="empty-state">
-      <div class="empty-icon">📚</div>
-      <div class="empty-msg">Loading mnemonics…</div>
-    </div>
+<div class="filters-bar">
+  <input type="text" id="search-box" placeholder="Search mnemonics, terms, tags…" oninput="applyFilters()">
+  <div class="filter-group">
+    <span class="filter-label">Region:</span>
+    <button class="filter-btn active" data-filter="region" data-val="all" onclick="setFilter('region','all',this)">All</button>
+    <button class="filter-btn" data-filter="region" data-val="abdomen" onclick="setFilter('region','abdomen',this)">Abdomen</button>
+    <button class="filter-btn" data-filter="region" data-val="retroperitoneum" onclick="setFilter('region','retroperitoneum',this)">Retroperitoneum</button>
   </div>
+  <div class="filter-group">
+    <span class="filter-label">Difficulty:</span>
+    <button class="filter-btn active" data-filter="diff" data-val="all" onclick="setFilter('diff','all',this)">All</button>
+    <button class="filter-btn" data-filter="diff" data-val="easy" onclick="setFilter('diff','easy',this)">Easy</button>
+    <button class="filter-btn" data-filter="diff" data-val="medium" onclick="setFilter('diff','medium',this)">Medium</button>
+    <button class="filter-btn" data-filter="diff" data-val="hard" onclick="setFilter('diff','hard',this)">Hard</button>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Language:</span>
+    <button class="filter-btn active" data-filter="lang" data-val="both" onclick="setFilter('lang','both',this)">Both</button>
+    <button class="filter-btn" data-filter="lang" data-val="en" onclick="setFilter('lang','en',this)">EN</button>
+    <button class="filter-btn" data-filter="lang" data-val="ar" onclick="setFilter('lang','ar',this)">AR</button>
+  </div>
+  <span id="results-count"></span>
+</div>
+
+<div class="mnemonics-grid" id="mnemonics-grid"></div>
+<div id="empty-state">
+  <div class="empty-icon">🔍</div>
+  <div class="empty-title">No mnemonics found</div>
+  <div class="empty-subtitle">Try a different search term or filter</div>
 </div>
 
 <script>
-'use strict';
+// ═══════════════════════════════════════════
+// EMBEDDED DATA — no fetch needed
+// ═══════════════════════════════════════════
+const MNEMONICS = [
+  {id:"liver-segments",structureId:"liver",structureName:"Liver",
+   title:"Couinaud Liver Segments",
+   en:'"LEFT has LOWER numbers" — Segments 1 (caudate) alone; 2–4 left lobe; 5–8 right lobe. Remember: hepatic veins define segment boundaries.',
+   ar:'"اليسار أرقام أصغر" — القطاع ١ (الذيلي) منفرداً؛ ٢–٤ الفص الأيسر؛ ٥–٨ الفص الأيمن. الأوردة الكبدية تُحدد حدود القطاعات.',
+   type:"rule",difficulty:"medium",tags:["liver","surgery","anatomy"],ref:"Couinaud C. Le Foie. 1957",region:"abdomen"},
 
-// ── Data ────────────────────────────────────────────────────
-let MN_DATA = [];
+  {id:"liver-riedel",structureId:"liver",structureName:"Liver",
+   title:"Riedel's Lobe",
+   en:'"Riedel Reaches Right" — Tongue-like downward extension of the RIGHT lobe, common in women. Not pathological — don\'t mistake it for hepatomegaly on US!',
+   ar:'"ريدل يمتد يميناً" — امتداد لساني للفص الأيمن، شائع عند النساء. ليس مرضياً — لا تخطئه كضخامة كبد في السونار!',
+   type:"phrase",difficulty:"easy",tags:["liver","anatomy","variant","ultrasound"],ref:"Gray's Anatomy 41st ed.",region:"abdomen"},
 
-// ── State ────────────────────────────────────────────────────
-let filters = { search:'', region:'all', diff:'all', lang:'all' };
+  {id:"5Fs-gallstones",structureId:"gallbladder",structureName:"Gallbladder",
+   title:"Gallstone Risk Factors — 5 F's",
+   en:'"Fat, Female, Fertile, Forty, Fair" — Classic risk factors for cholesterol gallstones. A 6th F: Family history. Remember: symptomatic gallstones = cholecystectomy.',
+   ar:'"سمينة، أنثى، خصبة، أربعينية، فاتحة البشرة" — عوامل الخطر الكلاسيكية لحصى الكولسترول. F سادسة: التاريخ العائلي.',
+   type:"acronym",difficulty:"easy",tags:["gallbladder","clinical","pathology"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"abdomen"},
 
-// ── TTS ─────────────────────────────────────────────────────
-const TTS = {
-  synth    : window.speechSynthesis || null,
-  voiceM   : null,
-  voiceF   : null,
-  preferred: 'F',
-  current  : null,
+  {id:"pancreas-parts",structureId:"pancreas",structureName:"Pancreas",
+   title:"Pancreas Parts — HNBT",
+   en:'"Hang Neatly Before Tail" — Head (in duodenal C-curve), Neck (over portal vein), Body (crosses spine at L1/L2), Tail (to splenic hilum, intraperitoneal).',
+   ar:'"رأس ثم عنق والجسم ثم الذيل" — الرأس في منحنى الاثني عشر، العنق فوق الوريد البابي، الجسم يعبر العمود، الذيل إلى نقير الطحال.',
+   type:"acronym",difficulty:"easy",tags:["pancreas","anatomy"],ref:"Netter's Atlas of Human Anatomy 7th ed.",region:"retroperitoneum"},
+
+  {id:"pancreas-enzymes",structureId:"pancreas",structureName:"Pancreas",
+   title:"Pancreatic Exocrine Enzymes — PALE",
+   en:'"PALE" — Protease (trypsin/chymotrypsin), Amylase, Lipase, Elastase. All secreted as INACTIVE zymogens — activated in the duodenum by enterokinase.',
+   ar:'"PALE" — بروتياز (تريبسين/كيموتريبسين)، أميلاز، ليباز، إيلاستاز. كلها تُفرز كزيموجينات غير نشطة — تُنشَّط في الاثني عشر.',
+   type:"acronym",difficulty:"medium",tags:["pancreas","biochemistry","physiology"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"retroperitoneum"},
+
+  {id:"spleen-size",structureId:"spleen",structureName:"Spleen",
+   title:"Spleen Size — 1×3×5×7×9×11 Rule",
+   en:'"1×3×5×7×9×11" — Spleen is: 1 inch thick, 3 inches wide, 5 inches long. Weighs 7 ounces. Under ribs 9, 10, 11. Splenomegaly on US: long-axis >12 cm.',
+   ar:'"١×٣×٥×٧×٩×١١" — سُمك ١ إنش، عرض ٣، طول ٥. وزنه ٧ أوقية. تحت الأضلاع ٩، ١٠، ١١. ضخامة الطحال في السونار: طول > ١٢ سم.',
+   type:"rule",difficulty:"easy",tags:["spleen","anatomy","size","ultrasound"],ref:"Gray's Anatomy 41st ed.",region:"abdomen"},
+
+  {id:"spleen-functions",structureId:"spleen",structureName:"Spleen",
+   title:"Spleen Functions — FIST",
+   en:'"FIST" — Filtration of blood (removes old RBCs & pathogens), Immune response (B/T lymphocytes), Storage (platelets 1/3, monocytes), haemaTopoiesis (in fetal life only).',
+   ar:'"FIST" — ترشيح الدم (إزالة كريات الدم الحمراء المُعمَّرة)، الاستجابة المناعية، التخزين (الصفائح والوحيدات)، تكوين الدم (في الجنين فقط).',
+   type:"acronym",difficulty:"medium",tags:["spleen","physiology","functions"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"abdomen"},
+
+  {id:"kidney-rave",structureId:"kidneys",structureName:"Kidneys",
+   title:"Kidney Endocrine Functions — RAVE",
+   en:'"RAVE" — Renin (BP regulation via angiotensin), Activated vitamin D (calcitriol → Ca²⁺ absorption), Volume regulation (ADH response), Erythropoietin (RBC production in bone marrow).',
+   ar:'"RAVE" — رينين (تنظيم ضغط الدم)، فيتامين D المنشّط (كالسيتريول → امتصاص الكالسيوم)، تنظيم الحجم، إريثروبويتين (إنتاج كريات الدم الحمراء).',
+   type:"acronym",difficulty:"medium",tags:["kidneys","physiology","hormones"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"retroperitoneum"},
+
+  {id:"kidney-cortex",structureId:"kidneys",structureName:"Kidneys",
+   title:"Renal Cortex Echogenicity Rule",
+   en:'"Cortex echogenicity must be ≤ liver and ≤ spleen on US." If cortex echogenicity > spleen → ABNORMAL: think CKD, diffuse nephritis, or glycogen storage disease.',
+   ar:'"صدى القشرة الكلوية يجب أن يكون ≤ الكبد وأقل من الطحال في السونار." إذا تجاوز الطحال ← غير طبيعي: فكّر في الفشل الكلوي المزمن أو التهاب الكلى.',
+   type:"rule",difficulty:"easy",tags:["kidneys","ultrasound","imaging"],ref:"Radiographics — Renal US Guidelines",region:"retroperitoneum"},
+
+  {id:"adrenal-gfr",structureId:"adrenal-glands",structureName:"Adrenal Glands",
+   title:"Adrenal Cortex Zones — GFR",
+   en:'"GFR" (outer → inner): Glomerulosa (Aldosterone = Salt), Fasciculata (Cortisol = Sugar), Reticularis (Androgens = Sex). "The deeper you go, the more sex!"',
+   ar:'"GFR" (من الخارج للداخل): كبيبية (ألدوستيرون = ملح)، محزوزة (كورتيزول = سكر)، شبكية (أندروجينات = جنس). "كلما تعمّقت زادت هرمونات الجنس!"',
+   type:"acronym",difficulty:"medium",tags:["adrenal-glands","zones","physiology"],ref:"Gray's Anatomy 41st ed.",region:"retroperitoneum"},
+
+  {id:"adrenal-4s",structureId:"adrenal-glands",structureName:"Adrenal Glands",
+   title:"Adrenal Hormones — Salt Sugar Sex Shock",
+   en:'"Salt, Sugar, Sex, Shock" — Cortex: Salt (aldosterone), Sugar (cortisol), Sex (androgens). Medulla: Shock response (epinephrine + norepinephrine = catecholamines).',
+   ar:'"ملح، سكر، جنس، صدمة" — القشرة: ملح (ألدوستيرون)، سكر (كورتيزول)، جنس (أندروجينات). اللب: الصدمة (أدرينالين + نورأدرينالين).',
+   type:"phrase",difficulty:"easy",tags:["adrenal-glands","hormones","clinical"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"retroperitoneum"},
+
+  {id:"aorta-branches",structureId:"aorta",structureName:"Abdominal Aorta",
+   title:"Abdominal Aorta Branches Mnemonic",
+   en:'"Curious Surgeons Rarely Inject Gut Lumens" — Celiac (T12), Superior mesenteric (L1), Renals (L1), Inferior mesenteric (L3), Gonadal (L2), Lumbars (L1–L4).',
+   ar:'"الجراحون الفضوليون نادراً ما يحقنون تجاويف الأمعاء" — جذع بطني (T12)، SMA (L1)، كلوية (L1)، IMA (L3)، تناسلية (L2)، قطنية.',
+   type:"phrase",difficulty:"hard",tags:["aorta","vascular","anatomy","branches"],ref:"Netter's Atlas of Human Anatomy 7th ed.",region:"retroperitoneum"},
+
+  {id:"aaa-screening",structureId:"aorta",structureName:"Abdominal Aorta",
+   title:"AAA Screening — Who & When",
+   en:'"One-time ultrasound: Male ≥65 who ever Smoked" — Abdominal aortic aneurysm = aorta >3 cm. Repair threshold: >5.5 cm (men), >5.0 cm (women), or growing >1 cm/year.',
+   ar:'"فحص سونار واحد: ذكر ≥٦٥ سنة سبق له التدخين" — تمدد الأبهر = قطر > ٣ سم. حد الإصلاح: > ٥.٥ سم (رجال)، > ٥.٠ سم (نساء)، أو نمو > ١ سم/سنة.',
+   type:"rule",difficulty:"easy",tags:["aorta","screening","clinical","AAA"],ref:"USPSTF AAA Screening Guidelines",region:"retroperitoneum"},
+
+  {id:"ivc-tributaries",structureId:"ivc",structureName:"Inferior Vena Cava",
+   title:"IVC Tributaries — I Like Riding Horses Going South",
+   en:'"I Like Riding Horses Going South" — Iliac (common), Lumbar, Renal, Hepatic, Gonadal, Suprarenal veins drain into IVC. Note: left gonadal → left renal vein (not directly into IVC).',
+   ar:'"أحب ركوب الخيل جهة الجنوب" — حرقفية، قطنية، كلوية، كبدية، تناسلية، كظرية تصبّ في الوريد الأجوف السفلي. ملاحظة: التناسلية اليسرى → الكلوية اليسرى.',
+   type:"phrase",difficulty:"medium",tags:["ivc","vascular","anatomy"],ref:"Gray's Anatomy 41st ed.",region:"retroperitoneum"},
+
+  {id:"portal-formation",structureId:"portal-vein",structureName:"Portal Vein",
+   title:"Portal Vein Formation",
+   en:'"SMV Marries Splenic vein behind the Pancreatic Neck at L2" — Superior Mesenteric Vein + Splenic Vein → Portal Vein. Normal diameter ≤13 mm at porta hepatis.',
+   ar:'"المساريقي يتزوج الطحالي خلف عنق البنكرياس عند L2" — الوريد المساريقي العلوي + الطحالي = الوريد البابي. القطر الطبيعي ≤ ١٣ ملم عند النقير الكبدي.',
+   type:"phrase",difficulty:"easy",tags:["portal-vein","vascular","anatomy","formation"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"abdomen"},
+
+  {id:"portal-spade",structureId:"portal-vein",structureName:"Portal Vein",
+   title:"Portal Hypertension Signs — SPADE",
+   en:'"SPADE" — Splenomegaly, Portal vein diameter >13 mm, Ascites, portoDuodenal/esophageal collaterals, Esophageal varices (risk of life-threatening bleeding).',
+   ar:'"SPADE" — ضخامة طحال، وريد بابي > ١٣ ملم، استسقاء، وصلات عروقية دوارية/معدية، دوالي مريء (خطر نزيف مميت).',
+   type:"acronym",difficulty:"medium",tags:["portal-vein","pathology","imaging","portal-hypertension"],ref:"Radiographics — Portal Hypertension Imaging",region:"abdomen"},
+
+  {id:"stomach-parts",structureId:"stomach",structureName:"Stomach",
+   title:"Stomach Regions — Fun Boys Always Perform",
+   en:'"Fun Boys Always Perform" — Fundus (dome above GEJ), Body (corpus, main region), Antrum (distal funnel), Pylorus (gatekeeper to duodenum). Normal wall ≤5 mm distended.',
+   ar:'"القاع والجسم والقناة والبواب" — قاع (قبة فوق الوصل المعدي المريئي)، جسم (المنطقة الرئيسية)، قناة معدية (مسرب بعيد)، بواب (البوّاب للاثني عشر).',
+   type:"acronym",difficulty:"easy",tags:["stomach","anatomy","regions"],ref:"Netter's Atlas 7th ed.",region:"abdomen"},
+
+  {id:"stomach-cells",structureId:"stomach",structureName:"Stomach",
+   title:"Gastric Cell Types",
+   en:'"Chief Makes Pepsin, Parietal Has Acid" — Chief cells: pepsinogen (→ pepsin). Parietal cells: HCl + intrinsic factor (B12 absorption). G-cells: gastrin. Mucous cells: protection.',
+   ar:'"الرئيسية تصنع البيبسين، الجدارية لديها الحامض" — خلايا رئيسية: بيبسينوجين (← بيبسين). جدارية: HCl + عامل داخلي (امتصاص B12). G: غاسترين.',
+   type:"phrase",difficulty:"medium",tags:["stomach","histology","physiology","cells"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"abdomen"},
+
+  {id:"duodenum-parts",structureId:"small-intestine",structureName:"Small Intestine",
+   title:"Duodenum 4 Parts — I Stand Horizontally Down",
+   en:'"I Stand Horizontally Down" — D1 Superior, D2 Descending (Ampulla of Vater opens here!), D3 Horizontal, D4 Ascending. D1–D3 retroperitoneal; D4 transitions to jejunum at ligament of Treitz.',
+   ar:'"أقف أفقياً للأسفل" — D1 علوي، D2 نازل (حليمة فاتر تفتح هنا!)، D3 أفقي، D4 صاعد. D1–D3 خلف صفاقية؛ D4 ينتقل للصائم عند رباط تريتز.',
+   type:"acronym",difficulty:"easy",tags:["small-intestine","duodenum","anatomy"],ref:"Gray's Anatomy 41st ed.",region:"abdomen"},
+
+  {id:"jejunum-ileum",structureId:"small-intestine",structureName:"Small Intestine",
+   title:"Jejunum vs Ileum — X-Ray & CT Differences",
+   en:'"Jejunum is Juicy (LEFT, thick plicae circulares, vascular, empty); Ileum is Inferior (RIGHT lower quadrant, thin/few folds, Peyer\'s patches, full of content)." Key for bowel obstruction imaging!',
+   ar:'"الصائم ممتلئ يساراً (طيات دائرية سميكة، وعائي، فارغ)؛ اللفائفي في اليمين أسفل (طيات رفيعة/قليلة، لويحات باير، ممتلئ)." مهم لتصوير انسداد الأمعاء!',
+   type:"phrase",difficulty:"medium",tags:["small-intestine","jejunum","ileum","imaging","xray"],ref:"Netter's Atlas 7th ed.",region:"abdomen"},
+
+  {id:"colon-clockwise",structureId:"large-intestine",structureName:"Large Intestine",
+   title:"Colon Segments Run Clockwise",
+   en:'"The Colon Runs Clockwise" — Cecum (right iliac fossa) → Ascending → Transverse → Descending → Sigmoid → Rectum. Forms a frame around the small bowel loops.',
+   ar:'"القولون يسير بمحاذاة عقارب الساعة" — أعور (حفرة حرقفية يمنى) ← صاعد ← عرضي ← نازل ← سيني ← مستقيم. يُشكّل إطاراً حول حلقات الأمعاء الدقيقة.',
+   type:"rule",difficulty:"easy",tags:["large-intestine","colon","anatomy"],ref:"Moore's Clinically Oriented Anatomy 8th ed.",region:"abdomen"},
+
+  {id:"haustra-plicae",structureId:"large-intestine",structureName:"Large Intestine",
+   title:"Haustra vs Plicae Circulares — X-Ray Key",
+   en:'"Plicae circulares cross the ENTIRE lumen; Haustra DO NOT." — Critical for X-ray bowel obstruction: central loops + complete folds = small bowel; peripheral + incomplete = large bowel.',
+   ar:'"الطيات الدائرية تعبر كامل اللمعة؛ التكميشات لا تعبر." — مهم جداً لتشخيص انسداد الأمعاء بالأشعة: مركزية + طيات كاملة = أمعاء دقيقة؛ محيطية + ناقصة = غليظة.',
+   type:"rule",difficulty:"medium",tags:["large-intestine","small-intestine","xray","imaging","obstruction"],ref:"Radiographics — Bowel Obstruction",region:"abdomen"}
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let filters={region:'all',diff:'all',lang:'both'};
+let ttsVoice='female';
+let speaking=null;
+
+// Structure colors
+const STRUCT_COLORS={
+  liver:'oklch(0.72 0.14 188)',gallbladder:'oklch(0.72 0.14 188)',
+  pancreas:'oklch(0.72 0.14 188)',spleen:'oklch(0.72 0.14 188)',
+  kidneys:'oklch(0.72 0.14 240)','adrenal-glands':'oklch(0.72 0.14 240)',
+  aorta:'oklch(0.70 0.14 355)',ivc:'oklch(0.70 0.14 355)','portal-vein':'oklch(0.70 0.14 355)',
+  stomach:'oklch(0.75 0.14 130)','small-intestine':'oklch(0.75 0.14 130)','large-intestine':'oklch(0.75 0.14 130)'
 };
 
-function loadVoices() {
-  if (!TTS.synth) return;
-  const v = TTS.synth.getVoices().filter(v => v.lang === 'en-US' || v.lang.startsWith('en-US'));
-  const fp = ['samantha','zira','ava','susan','karen','victoria','allison'];
-  const mp = ['alex','daniel','david','mark','ryan','tom','fred'];
-  TTS.voiceF = v.find(x => fp.some(p => x.name.toLowerCase().includes(p))) || v[0] || null;
-  TTS.voiceM = v.find(x => mp.some(p => x.name.toLowerCase().includes(p))) || v[1] || v[0] || null;
-}
-if (window.speechSynthesis) {
-  speechSynthesis.getVoices();
-  speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function renderCards(data){
+  const grid=document.getElementById('mnemonics-grid');
+  const empty=document.getElementById('empty-state');
+  grid.innerHTML='';
 
-function speak(text, btn) {
-  if (!TTS.synth) return;
-  TTS.synth.cancel();
-  if (TTS.current && TTS.current !== btn) {
-    TTS.current.textContent = '🔊';
-    TTS.current.classList.remove('speaking');
-  }
-  if (TTS.current === btn) {
-    TTS.current = null;
-    btn.textContent = '🔊';
-    btn.classList.remove('speaking');
+  if(!data.length){
+    empty.classList.add('show');
+    document.getElementById('results-count').textContent='0 results';
     return;
   }
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang  = 'en-US';
-  utter.rate  = 0.88;
-  utter.pitch = 1;
-  const voice = TTS.preferred === 'M' ? TTS.voiceM : TTS.voiceF;
-  if (voice) utter.voice = voice;
-  utter.onstart = () => {
-    TTS.current = btn;
-    btn.textContent = '⏹';
-    btn.classList.add('speaking');
-  };
-  utter.onend = utter.onerror = () => {
-    btn.textContent = '🔊';
-    btn.classList.remove('speaking');
-    if (TTS.current === btn) TTS.current = null;
-  };
-  TTS.synth.speak(utter);
-}
+  empty.classList.remove('show');
+  document.getElementById('results-count').textContent=data.length+' result'+(data.length!==1?'s':'');
 
-// ── Voice selector ───────────────────────────────────────────
-document.getElementById('voice-seg').addEventListener('click', e => {
-  const btn = e.target.closest('[data-vp]');
-  if (!btn) return;
-  TTS.preferred = btn.dataset.vp;
-  document.querySelectorAll('[data-vp]').forEach(b => b.classList.toggle('active', b === btn));
-  if (TTS.synth) TTS.synth.cancel();
-});
+  data.forEach(m=>{
+    const color=STRUCT_COLORS[m.structureId]||'var(--teal)';
+    const showAr=filters.lang==='ar'||filters.lang==='both';
+    const showEn=filters.lang==='en'||filters.lang==='both';
 
-// ── Build card ───────────────────────────────────────────────
-function buildCard(mn) {
-  const modBadges = (mn.modality || []).map(m => `<span class="mn-tag mn-mod-tag">${m}</span>`).join('');
-  const tagBadges = (mn.tags || []).map(t => `<span class="mn-tag">${t}</span>`).join('');
-  const langBadge = mn.language === 'ar'
-    ? '<span class="badge badge-ar">AR</span>'
-    : '<span class="badge badge-en">EN</span>';
-  const diffBadge = `<span class="badge badge-${mn.difficulty}">${mn.difficulty}</span>`;
-  const dir = mn.language === 'ar' ? ' dir="rtl"' : '';
-  const termAr = mn.term_ar ? `<div class="mn-term-ar" dir="rtl">${mn.term_ar}</div>` : '';
-
-  return `
-    <article class="mn-card" data-id="${mn.id}">
-      <div class="mn-card-hdr">
+    const card=document.createElement('div');
+    card.className='mnemonic-card';
+    card.innerHTML=`
+      <div class="card-header">
         <div>
-          <div class="mn-term"${dir}>${mn.term}</div>
-          ${termAr}
+          <div class="card-structure" style="color:${color};">${m.structureName}</div>
+          <div class="card-title">${m.title}</div>
         </div>
-        <div class="mn-badges">
-          ${langBadge}
-          ${diffBadge}
-        </div>
-      </div>
-      <div class="mn-card-body">
-        <div>
-          <div class="mn-mnemonic-label">Mnemonic</div>
-          <div class="mn-mnemonic"${dir}>${escHtml(mn.mnemonic)}</div>
-        </div>
-        <div class="mn-explanation"${dir}>${escHtml(mn.explanation)}</div>
-        <div class="mn-tags">
-          ${modBadges}
-          ${tagBadges}
+        <div class="card-badges">
+          <span class="badge badge-${m.difficulty}">${m.difficulty}</span>
+          <span class="badge badge-type">${m.type}</span>
         </div>
       </div>
-      <div class="mn-card-footer">
-        <div class="mn-source">📖 ${escHtml(mn.source || '')}</div>
-        <div class="mn-actions">
-          <button class="mn-speak-btn" data-text="${escAttr(mn.mnemonic)}" title="Pronounce mnemonic">🔊</button>
+      ${showEn?`<div class="card-mnemonic-en">${m.en}</div>`:''}
+      ${showAr?`<div class="card-mnemonic-ar${showAr?' show':''}">${m.ar}</div>`:''}
+      <div class="card-tags">${(m.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-footer">
+        <div class="card-ref">📚 ${m.ref}</div>
+        <div class="card-actions">
+          <button class="card-btn" onclick="speakCard('${m.id}','en')" title="Pronounce EN">🔊 EN</button>
+          <button class="card-btn" onclick="speakCard('${m.id}','ar')" title="Pronounce AR">🔊 AR</button>
+          <button class="card-btn" onclick="openAtlas('${m.structureId}')" title="View in Atlas">🔬 Atlas</button>
         </div>
-      </div>
-    </article>
-  `;
+      </div>`;
+    grid.appendChild(card);
+  });
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function escAttr(s) {
-  return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// ── Filter ────────────────────────────────────────────────────
-function applyFilters() {
-  const q = filters.search.toLowerCase().trim();
-  return MN_DATA.filter(mn => {
-    if (filters.lang !== 'all' && mn.language !== filters.lang) return false;
-    if (filters.region !== 'all' && mn.region !== filters.region) return false;
-    if (filters.diff !== 'all' && mn.difficulty !== filters.diff) return false;
-    if (q) {
-      const haystack = [mn.term, mn.term_ar, mn.mnemonic, mn.explanation, ...(mn.tags||[]), mn.category].join(' ').toLowerCase();
-      if (!haystack.includes(q)) return false;
+function applyFilters(){
+  const q=document.getElementById('search-box').value.toLowerCase().trim();
+  const filtered=MNEMONICS.filter(m=>{
+    if(filters.diff!=='all' && m.difficulty!==filters.diff) return false;
+    if(filters.region!=='all'){
+      if(filters.region==='abdomen' && m.region!=='abdomen') return false;
+      if(filters.region==='retroperitoneum' && m.region!=='retroperitoneum') return false;
+    }
+    if(q){
+      const searchable=[m.title,m.en,m.ar,m.structureName,...(m.tags||[])].join(' ').toLowerCase();
+      if(!searchable.includes(q)) return false;
     }
     return true;
   });
+  renderCards(filtered);
 }
 
-// ── Render ────────────────────────────────────────────────────
-function render() {
-  const results = applyFilters();
-  const grid = document.getElementById('mn-grid');
-  document.getElementById('result-count').textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
+function setFilter(type,val,btn){
+  filters[type]=val;
+  document.querySelectorAll(`[data-filter="${type}"]`).forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
 
-  if (!results.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-      <div class="empty-icon">🔍</div>
-      <div class="empty-msg">No mnemonics match your filters. Try broadening your search.</div>
-    </div>`;
-    return;
+// ═══════════════════════════════════════════
+// TTS
+// ═══════════════════════════════════════════
+function setVoice(gender,btn){
+  ttsVoice=gender;
+  document.querySelectorAll('.tts-voice-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function speakCard(id,lang){
+  const m=MNEMONICS.find(x=>x.id===id);
+  if(!m||!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const text=lang==='ar'?m.ar:m.en;
+  const utt=new SpeechSynthesisUtterance(text.replace(/["""]/g,''));
+  utt.lang=lang==='ar'?'ar-SA':'en-US';
+  utt.rate=0.82;
+
+  // Try to pick appropriate voice
+  if(lang==='en'){
+    const voices=speechSynthesis.getVoices();
+    const target=voices.find(v=>v.lang.startsWith('en')&&(ttsVoice==='female'?/female|zira|samantha|karen/i.test(v.name):/male|david|daniel/i.test(v.name)));
+    if(target) utt.voice=target;
   }
-
-  grid.innerHTML = results.map(buildCard).join('');
-
-  // Bind speak buttons
-  grid.querySelectorAll('.mn-speak-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      speak(btn.dataset.text, btn);
-    });
-  });
+  speechSynthesis.speak(utt);
 }
 
-// ── Controls ──────────────────────────────────────────────────
-document.getElementById('search').addEventListener('input', e => {
-  filters.search = e.target.value;
-  render();
-});
-
-document.querySelectorAll('.fbtn[data-reg]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    filters.region = btn.dataset.reg;
-    document.querySelectorAll('.fbtn[data-reg]').forEach(b => b.classList.toggle('active', b === btn));
-    render();
-  });
-});
-
-document.querySelectorAll('.fbtn[data-diff]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    filters.diff = btn.dataset.diff;
-    document.querySelectorAll('.fbtn[data-diff]').forEach(b => b.classList.toggle('active', b === btn));
-    render();
-  });
-});
-
-document.getElementById('lang-seg').addEventListener('click', e => {
-  const btn = e.target.closest('[data-lang]');
-  if (!btn) return;
-  filters.lang = btn.dataset.lang;
-  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b === btn));
-  render();
-});
-
-// ── Load data ─────────────────────────────────────────────────
-async function loadData() {
-  try {
-    const r = await fetch('../data/mnemonics.json');
-    if (!r.ok) throw new Error('fetch failed');
-    MN_DATA = await r.json();
-    document.getElementById('total-count').textContent = MN_DATA.length;
-    render();
-  } catch (e) {
-    document.getElementById('mn-grid').innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">⚠️</div>
-        <div class="empty-msg">Could not load mnemonics data. Ensure <code>data/mnemonics.json</code> is accessible.</div>
-      </div>`;
-  }
+function openAtlas(structureId){
+  window.location.href=`atlas.html?s=${structureId}`;
 }
 
-// ── Theme ─────────────────────────────────────────────────────
-const H = document.documentElement;
-document.getElementById('theme-btn').addEventListener('click', () => {
-  const t = H.dataset.theme === 'dark' ? 'dim' : 'dark';
-  H.dataset.theme = t;
-  document.getElementById('t-icon').textContent = t === 'dark' ? '☾' : '◑';
-  document.getElementById('t-lbl').textContent  = t === 'dark' ? 'Dim' : 'Dark';
-  localStorage.setItem('omnirad-theme', t);
-});
-const saved = localStorage.getItem('omnirad-theme') || 'dark';
-H.dataset.theme = saved;
-document.getElementById('t-icon').textContent = saved === 'dark' ? '☾' : '◑';
-document.getElementById('t-lbl').textContent  = saved === 'dark' ? 'Dim' : 'Dark';
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+document.getElementById('total-count').textContent=MNEMONICS.length;
+renderCards(MNEMONICS);
 
-// ── Init ──────────────────────────────────────────────────────
-loadData();
+// Load voices async
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+}
 </script>
 </body>
 </html>

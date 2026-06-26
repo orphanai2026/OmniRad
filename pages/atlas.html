@@ -262,6 +262,16 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 .fade-in{animation:fadeIn .2s ease;}
 @keyframes tts-pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .tts-speaking{animation:tts-pulse .8s infinite;}
+
+/* EXPAND FULLSCREEN */
+#expand-overlay{display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column;}
+#expand-overlay.open{display:flex;}
+#expand-header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--bg-surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+#expand-label{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--teal);}
+#expand-close{margin-left:auto;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;cursor:pointer;font-family:var(--font);}
+#expand-close:hover{background:var(--bg-hover);color:var(--text-primary);}
+#expand-canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:#050810;}
+#expand-canvas-wrap canvas{max-width:100%;max-height:100%;}
 </style>
 </head>
 <body>
@@ -374,8 +384,9 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
               <div class="toolbar-divider"></div>
               <!-- View mode -->
               <div style="display:flex;gap:4px;margin-left:auto;">
-                <button class="view-mode-btn active" data-vmode="normal" title="Normal view" onclick="setViewMode('normal')">⊞</button>
-                <button class="view-mode-btn" data-vmode="split" title="Split 2 modalities" onclick="setViewMode('split')">⊟</button>
+                <button class="view-mode-btn active" data-vmode="normal" title="Normal view" onclick="setViewMode('normal')">⊞ Normal</button>
+                <button class="view-mode-btn" data-vmode="split" title="Split 2 planes" onclick="setViewMode('split')">⊟ Split</button>
+                <button class="view-mode-btn" id="btn-expand" title="Expand fullscreen" onclick="toggleExpand()">⛶ Expand</button>
               </div>
             </div>
             <!-- Canvas area -->
@@ -522,6 +533,17 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
   <button class="tts-btn" data-speed="0.7">0.7×</button>
   <button class="tts-btn active" data-speed="1.0">1.0×</button>
   <button class="tts-btn" data-speed="1.3">1.3×</button>
+</div>
+
+<!-- EXPAND FULLSCREEN OVERLAY -->
+<div id="expand-overlay">
+  <div id="expand-header">
+    <span id="expand-label">CT · Axial</span>
+    <button id="expand-close" onclick="toggleExpand()">✕ Close (ESC)</button>
+  </div>
+  <div id="expand-canvas-wrap">
+    <canvas id="expand-canvas"></canvas>
+  </div>
 </div>
 
 <script>
@@ -842,8 +864,6 @@ function renderPanels(s,mod){
       <div class="hu-overlay" id="hu-${i}"></div>`;
 
     div.onclick=function(e){
-      // Don't switch panel when clicking tool interactions
-      if(e.target.tagName==='CANVAS') return;
       setActivePanel(i);
     };
     ws.appendChild(div);
@@ -876,7 +896,6 @@ function sizeAndDraw(idx, loadImg){
 
   if(loadImg && ps.imgUrl){
     const img=new Image();
-    img.crossOrigin='anonymous';
     img.onload=()=>{ps.imgObj=img; drawPanel(idx);};
     img.onerror=()=>drawPanel(idx);
     img.src=ps.imgUrl;
@@ -1074,6 +1093,40 @@ function setActivePanel(idx){
   activePanel=idx;
   document.querySelectorAll('.canvas-panel').forEach((p,i)=>p.classList.toggle('active-panel',i===idx));
 }
+
+// EXPAND FULLSCREEN
+let expandOpen=false;
+function toggleExpand(){
+  expandOpen=!expandOpen;
+  const overlay=document.getElementById('expand-overlay');
+  overlay.classList.toggle('open',expandOpen);
+  document.getElementById('btn-expand')?.classList.toggle('active',expandOpen);
+
+  if(expandOpen){
+    const ps=panelStates[activePanel];
+    if(!ps) return;
+    document.getElementById('expand-label').textContent=`${ps.mod} · ${ps.plane}`;
+    const wrap=document.getElementById('expand-canvas-wrap');
+    const ecv=document.getElementById('expand-canvas');
+    const W=wrap.offsetWidth||window.innerWidth;
+    const H=wrap.offsetHeight||(window.innerHeight-50);
+    ecv.width=W; ecv.height=H;
+    const ctx=ecv.getContext('2d');
+    ctx.fillStyle='#050810'; ctx.fillRect(0,0,W,H);
+    if(ps.imgObj){
+      const iw=ps.imgObj.naturalWidth, ih=ps.imgObj.naturalHeight;
+      const scale=Math.min((W*0.98)/iw,(H*0.98)/ih);
+      ctx.drawImage(ps.imgObj,(W-iw*scale)/2,(H-ih*scale)/2,iw*scale,ih*scale);
+    } else {
+      ctx.fillStyle='rgba(20,180,160,0.5)';
+      ctx.font=`bold 28px IBM Plex Mono,monospace`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(ps.mod+' · '+ps.plane, W/2, H/2);
+    }
+  }
+}
+// ESC to close expand
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&expandOpen) toggleExpand();});
 
 // ═══════════════════════════════════════════
 // TOOL ACTIONS
