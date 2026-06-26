@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — SRS Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══ TOKENS ═══════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg:#0d1117; --bg-s:#161b22; --bg-r:#1c2128; --bg-o:#21262d;
+  --bdr:#30363d; --bdr-s:#21262d;
+  --tx:#e6edf3; --tx2:#8b949e; --tx3:#484f58;
+  --teal:#39d0b8; --teal2:#2ab5a0; --teal3:#1a7a6e;
+  --teal-g:rgba(57,208,184,.18); --teal-s:rgba(57,208,184,.08);
+}
+[data-theme="dim"] {
+  --bg:#d4d9e0; --bg-s:#dde1e8; --bg-r:#e3e7ed; --bg-o:#eaedf2;
+  --bdr:#b0b8c4; --bdr-s:#c4cad4;
+  --tx:#1c2128; --tx2:#444c56; --tx3:#656d76;
+  --teal:#0d6e61; --teal2:#0a5a50; --teal3:#084840;
+  --teal-g:rgba(13,110,97,.18); --teal-s:rgba(13,110,97,.08);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:16px; scroll-behavior:smooth; }
+body {
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  background:var(--bg); color:var(--tx);
+  min-height:100vh; line-height:1.6;
+  transition:background .25s, color .25s;
+}
+button { font-family:inherit; cursor:pointer; border:none; background:none; }
+a { color:inherit; text-decoration:none; }
+
+/* ═══ TOPBAR ════════════════════════════════════════════════ */
+.topbar {
+  position:sticky; top:0; z-index:200;
+  background:var(--bg-s); border-bottom:1px solid var(--bdr-s);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.5rem; height:56px; gap:1rem;
+}
+
+
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--tx);font-weight:600;font-size:1.05rem;flex-shrink:0}
+.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:5px;display:grid;place-items:center;font-weight:700;font-size:.78rem;color:#0d1117;letter-spacing:-.02em;flex-shrink:0}
+.logo-text{font-weight:600;font-size:1rem;letter-spacing:-.02em}
+.logo-text span{color:var(--teal)}
+.topbar-right { display:flex; align-items:center; gap:.75rem; }
+.back-btn, .theme-btn {
+  display:flex; align-items:center; gap:.4rem;
+  padding:.3rem .75rem; border-radius:99px;
+  border:1px solid var(--bdr); background:var(--bg-r);
+  color:var(--tx2); font-size:.78rem; font-weight:500;
+  transition:all .15s;
+}
+.back-btn:hover  { border-color:var(--teal2); color:var(--teal); }
+.theme-btn:hover { border-color:var(--teal2); color:var(--teal); }
+
+/* ═══ LAYOUT ════════════════════════════════════════════════ */
+.page { max-width:900px; margin:0 auto; padding:2rem 1.5rem 4rem; }
+
+/* ═══ PAGE HEADER ═══════════════════════════════════════════ */
+.page-hdr { margin-bottom:2rem; }
+.page-eyebrow {
+  font-size:.72rem; font-weight:500; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:.35rem;
+}
+.page-title {
+  font-size:1.75rem; font-weight:600; letter-spacing:-.02em; line-height:1.2;
+}
+.page-sub { font-size:.88rem; color:var(--tx2); margin-top:.35rem; }
+
+/* ═══ KPI CARDS ═════════════════════════════════════════════ */
+.kpi-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+  gap:.9rem; margin-bottom:2rem;
+}
+.kpi-card {
+  background:var(--bg-s); border:1.5px solid var(--bdr-s);
+  border-radius:12px; padding:1rem 1.1rem;
+  display:flex; flex-direction:column; gap:.25rem;
+}
+.kpi-card.highlight { border-color:var(--teal3); background:var(--teal-s); }
+.kpi-lbl {
+  font-size:.65rem; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--tx3); font-weight:600;
+}
+.kpi-val {
+  font-size:1.6rem; font-weight:600; letter-spacing:-.03em;
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--tx);
+}
+.kpi-card.highlight .kpi-val { color:var(--teal); }
+.kpi-sub { font-size:.72rem; color:var(--tx3); }
+
+/* ═══ SECTION ════════════════════════════════════════════════ */
+.sec-title {
+  font-size:.72rem; font-weight:600; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--tx3);
+  margin-bottom:.85rem; padding-bottom:.5rem;
+  border-bottom:1px solid var(--bdr-s);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.sec-wrap { margin-bottom:2rem; }
+
+/* ═══ STRUCTURE ROWS ════════════════════════════════════════ */
+.struct-list { display:flex; flex-direction:column; gap:.55rem; }
+.struct-row {
+  background:var(--bg-s); border:1px solid var(--bdr-s);
+  border-radius:10px; padding:.75rem 1rem;
+  display:flex; align-items:center; gap:1rem;
+  cursor:pointer; transition:all .14s;
+}
+.struct-row:hover { border-color:var(--teal3); background:var(--teal-s); }
+.struct-row.due { border-left:3px solid #f06080; }
+.struct-row.mastered { border-left:3px solid #90e080; }
+
+.struct-icon {
+  width:34px; height:34px; border-radius:8px;
+  background:var(--bg-o); display:flex; align-items:center;
+  justify-content:center; font-size:1rem; flex-shrink:0;
+}
+.struct-info { flex:1; min-width:0; }
+.struct-name { font-size:.9rem; font-weight:600; color:var(--tx); }
+.struct-ar   { font-size:.72rem; color:var(--tx3); direction:rtl; }
+.struct-meta { font-size:.72rem; color:var(--tx2); margin-top:.15rem; }
+
+.struct-right { display:flex; flex-direction:column; align-items:flex-end; gap:.35rem; flex-shrink:0; }
+.mastery-bar-bg {
+  width:80px; height:4px; border-radius:99px;
+  background:var(--bg-o); overflow:hidden;
+}
+.mastery-bar-fill {
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg, var(--teal3), var(--teal));
+}
+.mastery-pct {
+  font-size:.72rem; font-weight:600; color:var(--tx2);
+  font-family:'IBM Plex Mono',monospace;
+}
+.due-badge {
+  font-size:.62rem; font-weight:600; padding:.12rem .45rem;
+  border-radius:99px; background:#f0608022; color:#f06080;
+  border:1px solid #f0608040; white-space:nowrap;
+}
+.next-badge {
+  font-size:.62rem; font-weight:500; color:var(--tx3);
+  white-space:nowrap;
+}
+
+/* ═══ EMPTY STATE ════════════════════════════════════════════ */
+.empty-state {
+  text-align:center; padding:3rem 1rem;
+  color:var(--tx3);
+}
+.empty-state-icon { font-size:2.5rem; margin-bottom:.75rem; }
+.empty-state-txt  { font-size:.9rem; margin-bottom:1rem; }
+.empty-state-cta  {
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.5rem 1.25rem; border-radius:8px;
+  background:var(--teal-g); border:1px solid var(--teal3);
+  color:var(--teal); font-size:.84rem; font-weight:500;
+  cursor:pointer; transition:all .14s; text-decoration:none;
+}
+.empty-state-cta:hover { background:var(--teal-s); }
+
+/* ═══ WEAKNESS TABLE ════════════════════════════════════════ */
+.weak-list { display:flex; flex-direction:column; gap:.45rem; }
+.weak-row {
+  display:flex; align-items:center; gap:.85rem;
+  padding:.6rem .9rem; border-radius:8px;
+  background:var(--bg-s); border:1px solid var(--bdr-s);
+}
+.weak-rank {
+  font-size:.72rem; font-weight:700; color:var(--tx3);
+  font-family:'IBM Plex Mono',monospace; width:20px; flex-shrink:0;
+}
+.weak-name { flex:1; font-size:.85rem; font-weight:500; }
+.weak-bar-bg {
+  width:120px; height:5px; border-radius:99px;
+  background:var(--bg-o); overflow:hidden; flex-shrink:0;
+}
+.weak-bar-fill {
+  height:100%; border-radius:99px; background:#f06080;
+  transition:width .4s;
+}
+.weak-pct {
+  font-size:.72rem; font-weight:600; color:#f06080;
+  font-family:'IBM Plex Mono',monospace; width:32px;
+  text-align:right; flex-shrink:0;
+}
+
+/* ═══ RESET BUTTON ══════════════════════════════════════════ */
+.reset-btn {
+  padding:.4rem .9rem; border-radius:6px;
+  border:1px solid #f0608040; color:#f06080;
+  background:transparent; font-size:.75rem; font-weight:500;
+  cursor:pointer; transition:all .14s;
+}
+.reset-btn:hover { background:#f0608018; border-color:#f06080; }
+
+/* ═══ RESPONSIVE ════════════════════════════════════════════ */
+@media (max-width:600px) {
+  .page { padding:1.5rem 1rem 3rem; }
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .weak-bar-bg { width:80px; }
+  .struct-right { gap:.2rem; }
+  .mastery-bar-bg { width:60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══════════════════════════════════════════ -->
+<header class="topbar">
+  <a href="../index.html" class="logo"><div class="logo-mark">OR</div><span class="logo-text">Omni<span>Rad</span></span></a>
+  <div class="topbar-right">
+    <a class="back-btn" href="atlas.html">← Back to Atlas</a>
+    <button class="theme-btn" id="theme-btn">
+      <span id="t-icon">☾</span>
+      <span id="t-lbl">Dim</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═════════════════════════════════════════════ -->
+<main class="page">
+
+  <!-- Page Header -->
+  <div class="page-hdr">
+    <div class="page-eyebrow">🧠 Spaced Repetition System</div>
+    <h1 class="page-title">SRS Dashboard</h1>
+    <p class="page-sub">Track your mastery progress across all reviewed anatomical structures.</p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card highlight">
+      <div class="kpi-lbl">Due Today</div>
+      <div class="kpi-val" id="kpi-due">—</div>
+      <div class="kpi-sub">structures need review</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl">Reviewed</div>
+      <div class="kpi-val" id="kpi-reviewed">—</div>
+      <div class="kpi-sub">total structures</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl">Mastered</div>
+      <div class="kpi-val" id="kpi-mastered">—</div>
+      <div class="kpi-sub">≥80% mastery level</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl">Total Reviews</div>
+      <div class="kpi-val" id="kpi-total">—</div>
+      <div class="kpi-sub">across all structures</div>
+    </div>
+  </div>
+
+  <!-- Due Now -->
+  <div class="sec-wrap" id="due-sec">
+    <div class="sec-title">
+      <span>⚠️ Due for Review</span>
+    </div>
+    <div class="struct-list" id="due-list"></div>
+  </div>
+
+  <!-- All Structures -->
+  <div class="sec-wrap" id="all-sec">
+    <div class="sec-title">
+      <span>📋 All Structures</span>
+      <button class="reset-btn" id="reset-btn" title="Clear all SRS data">🗑 Reset All</button>
+    </div>
+    <div class="struct-list" id="all-list"></div>
+  </div>
+
+  <!-- Weakness Report -->
+  <div class="sec-wrap" id="weak-sec">
+    <div class="sec-title">
+      <span>📉 Weakest Structures</span>
+    </div>
+    <div class="weak-list" id="weak-list"></div>
+  </div>
+
+</main>
+
+<script>
+'use strict';
+
+// ── Same token definitions as atlas.html ──────────────────
+const STRUCTURES = {
+  liver:       { name:'Liver',        ar:'الكبد',       icon:'🫀', sys:'Hepatobiliary'    },
+  spleen:      { name:'Spleen',       ar:'الطحال',      icon:'🩸', sys:'Lymphoreticular'  },
+  kidney:      { name:'Right Kidney', ar:'الكلية اليمنى',icon:'🫘', sys:'Urinary'          },
+  pancreas:    { name:'Pancreas',     ar:'البنكرياس',   icon:'🦠', sys:'Hepatobiliary'    },
+  gallbladder: { name:'Gallbladder',  ar:'المرارة',     icon:'💛', sys:'Hepatobiliary'    },
+};
+
+// ── SM-2 helpers (duplicated from srs.js for standalone page) ──
+const SRS_KEY = 'omnirad_srs';
+function srsLoad()  { try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {}; } catch { return {}; } }
+
+function masteryLevel(card) {
+  if (!card || !card.totalReviews) return 0;
+  return Math.min(100, Math.round((card.interval / 30) * 100));
+}
+function masteryLabel(pct) {
+  if (pct === 0)  return { txt:'New',        cls:'new'    };
+  if (pct < 20)   return { txt:'Learning',   cls:'learn'  };
+  if (pct < 50)   return { txt:'Familiar',   cls:'mid'    };
+  if (pct < 80)   return { txt:'Proficient', cls:'good'   };
+  return            { txt:'Mastered',     cls:'master' };
+}
+function isDue(card) {
+  if (!card || !card.totalReviews) return false; // never reviewed = not due (unstarted)
+  return Date.now() >= card.nextReview;
+}
+function daysUntil(card) {
+  if (!card || !card.totalReviews) return null;
+  const ms = card.nextReview - Date.now();
+  return Math.max(0, Math.ceil(ms / 86400000));
+}
+
+// ── Theme ─────────────────────────────────────────────────
+const H = document.documentElement;
+const saved = localStorage.getItem('omnirad-theme') || 'dark';
+H.dataset.theme = saved;
+document.getElementById('t-icon').textContent = saved === 'dark' ? '☾' : '◑';
+document.getElementById('t-lbl').textContent  = saved === 'dark' ? 'Dim' : 'Dark';
+document.getElementById('theme-btn').addEventListener('click', () => {
+  const t = H.dataset.theme === 'dark' ? 'dim' : 'dark';
+  H.dataset.theme = t;
+  document.getElementById('t-icon').textContent = t === 'dark' ? '☾' : '◑';
+  document.getElementById('t-lbl').textContent  = t === 'dark' ? 'Dim' : 'Dark';
+  localStorage.setItem('omnirad-theme', t);
+});
+
+// ── Build row HTML ─────────────────────────────────────────
+function buildStructRow(id, card) {
+  const s    = STRUCTURES[id];
+  if (!s) return '';
+  const pct  = masteryLevel(card);
+  const lbl  = masteryLabel(pct);
+  const due  = isDue(card);
+  const days = daysUntil(card);
+  const rowCls = due ? 'struct-row due' : pct >= 80 ? 'struct-row mastered' : 'struct-row';
+  const dueTxt = due
+    ? `<span class="due-badge">Due Now</span>`
+    : days !== null ? `<span class="next-badge">in ${days}d</span>` : '';
+
+  const lastDate = card.lastReview
+    ? new Date(card.lastReview).toLocaleDateString('en-GB',{day:'numeric',month:'short'})
+    : '—';
+
+  return `
+<div class="${rowCls}" data-id="${id}" role="button" tabindex="0">
+  <div class="struct-icon">${s.icon}</div>
+  <div class="struct-info">
+    <div class="struct-name">${s.name}</div>
+    <div class="struct-ar">${s.ar}</div>
+    <div class="struct-meta">${s.sys} · ${card.totalReviews||0} review${(card.totalReviews||0)===1?'':'s'} · Last: ${lastDate}</div>
+  </div>
+  <div class="struct-right">
+    <div class="mastery-bar-bg">
+      <div class="mastery-bar-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="mastery-pct">${pct}%</div>
+    ${dueTxt}
+  </div>
+</div>`;
+}
+
+// ── Build weakness row ─────────────────────────────────────
+function buildWeakRow(rank, id, card) {
+  const s   = STRUCTURES[id]; if (!s) return '';
+  const pct = masteryLevel(card);
+  const invPct = 100 - pct; // weakness = inverse of mastery
+  return `
+<div class="weak-row">
+  <span class="weak-rank">#${rank}</span>
+  <span class="weak-name">${s.name}</span>
+  <div class="weak-bar-bg">
+    <div class="weak-bar-fill" style="width:${invPct}%"></div>
+  </div>
+  <span class="weak-pct">${invPct}%</span>
+</div>`;
+}
+
+// ── Render dashboard ───────────────────────────────────────
+function renderDashboard() {
+  const data = srsLoad();
+  const allIds = Object.keys(STRUCTURES);
+
+  // Compute stats
+  let dueCount     = 0;
+  let reviewedCount= 0;
+  let masteredCount= 0;
+  let totalReviews = 0;
+
+  const dueItems  = [];
+  const allItems  = [];
+  const weakItems = [];
+
+  allIds.forEach(id => {
+    const card = data[id] || { rep:0, interval:0, ef:2.5, totalReviews:0, nextReview:0, lastReview:0 };
+    const pct  = masteryLevel(card);
+    const due  = isDue(card);
+
+    if (card.totalReviews > 0) {
+      reviewedCount++;
+      totalReviews += card.totalReviews;
+      if (pct >= 80) masteredCount++;
+      if (due) dueCount++;
+    }
+
+    allItems.push({ id, card, pct });
+    if (due && card.totalReviews > 0) dueItems.push({ id, card, pct });
+    if (card.totalReviews > 0) weakItems.push({ id, card, pct });
+  });
+
+  // KPIs
+  document.getElementById('kpi-due').textContent      = dueCount;
+  document.getElementById('kpi-reviewed').textContent = reviewedCount;
+  document.getElementById('kpi-mastered').textContent = masteredCount;
+  document.getElementById('kpi-total').textContent    = totalReviews;
+
+  // Due list
+  const dueList = document.getElementById('due-list');
+  const dueSec  = document.getElementById('due-sec');
+  if (dueItems.length === 0) {
+    dueList.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">✅</div>
+      <div class="empty-state-txt">No structures due for review right now.</div>
+    </div>`;
+  } else {
+    dueList.innerHTML = dueItems.map(({id,card}) => buildStructRow(id,card)).join('');
+  }
+
+  // All structures list
+  const allList = document.getElementById('all-list');
+  if (reviewedCount === 0) {
+    allList.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">🧠</div>
+      <div class="empty-state-txt">You haven't reviewed any structures yet.<br>Open the Atlas and rate structures to begin.</div>
+      <a class="empty-state-cta" href="atlas.html">→ Open Atlas</a>
+    </div>`;
+  } else {
+    // Sort: due first, then by mastery ascending
+    allItems.sort((a,b) => {
+      const aDue = isDue(a.card) ? 1 : 0;
+      const bDue = isDue(b.card) ? 1 : 0;
+      if (aDue !== bDue) return bDue - aDue;
+      return a.pct - b.pct;
+    });
+    allList.innerHTML = allItems.map(({id,card}) => buildStructRow(id,card)).join('');
+  }
+
+  // Weakness report (bottom 3 by mastery, only if reviewed)
+  const weakSec  = document.getElementById('weak-sec');
+  const weakList = document.getElementById('weak-list');
+  const weakSorted = weakItems.sort((a,b) => a.pct - b.pct).slice(0,3);
+  if (weakSorted.length === 0) {
+    weakList.innerHTML = `<div style="color:var(--tx3);font-size:.84rem;padding:.5rem 0">Review structures in the Atlas to see your weakness report.</div>`;
+  } else {
+    weakList.innerHTML = weakSorted.map(({id,card},i) => buildWeakRow(i+1,id,card)).join('');
+  }
+
+  // Click rows → open atlas at that structure
+  document.querySelectorAll('.struct-row[data-id]').forEach(row => {
+    row.addEventListener('click', () => {
+      window.location.href = `atlas.html?s=${row.dataset.id}`;
+    });
+    row.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        window.location.href = `atlas.html?s=${row.dataset.id}`;
+      }
+    });
+  });
+}
+
+// ── Reset confirmation ─────────────────────────────────────
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if (confirm('Reset all SRS data? This cannot be undone.')) {
+    localStorage.removeItem(SRS_KEY);
+    renderDashboard();
+  }
+});
+
+// ── Boot ──────────────────────────────────────────────────
+renderDashboard();
+</script>
+</body>
+</html>
