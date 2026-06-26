@@ -472,21 +472,28 @@ function srsInit() {
   const main = document.getElementById('main');
   if (!main) return;
 
-  // Inject immediately for initial load
-  // curStruct is defined in atlas.html global scope
-  if (typeof curStruct !== 'undefined') {
-    srsInject(curStruct);
-  }
-
   // Re-inject whenever #main content changes (structure navigation)
+  // This fires after every render() call that replaces main.innerHTML
   const obs = new MutationObserver(() => {
+    // Wait for render() to finish binding events before injecting
     setTimeout(() => {
       if (typeof curStruct !== 'undefined') {
         srsInject(curStruct);
       }
-    }, 250); // slight delay to let render() finish
+    }, 300);
   });
   obs.observe(main, { childList: true, subtree: false });
+
+  // Initial inject — use rAF×2 to match atlas.html's own initPanels timing
+  // render() calls requestAnimationFrame(()=>requestAnimationFrame(()=>initPanels()))
+  // so we wait one tick longer to be after that
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    setTimeout(() => {
+      if (typeof curStruct !== 'undefined') {
+        srsInject(curStruct);
+      }
+    }, 300);
+  }));
 }
 
 // ── Boot ──────────────────────────────────────────────────
