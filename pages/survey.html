@@ -663,8 +663,11 @@
 ═══════════════════════════════════════════ */
 
 const REQUIRED = ['q1','q2','q3','q4','q5','q6','q7','q9','q10','q11','q12','q13','q14','q19'];
-const TOTAL_Q = 20;
-let answeredCount = 0;
+const SURVEY_KEY = 'omnirad_survey_responses';
+
+function getSurveyData() {
+  try { return JSON.parse(localStorage.getItem(SURVEY_KEY) || '[]'); } catch(e) { return []; }
+}
 
 /* ─── Scale buttons ─── */
 document.querySelectorAll('.scale-btn').forEach(btn => {
@@ -698,7 +701,6 @@ function markAnswered(wrapId) {
   if (el && !el.classList.contains('answered')) {
     el.classList.add('answered');
     el.classList.remove('error');
-    answeredCount++;
   }
 }
 
@@ -778,11 +780,9 @@ document.getElementById('surveyForm').addEventListener('submit', e => {
   const data = collectData();
 
   // Save to localStorage
-  const key = 'omnirad_survey_responses';
-  let all = [];
-  try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  let all = getSurveyData();
   all.push(data);
-  localStorage.setItem(key, JSON.stringify(all));
+  localStorage.setItem(SURVEY_KEY, JSON.stringify(all));
 
   // Show success
   document.getElementById('form-screen').style.display = 'none';
@@ -792,19 +792,20 @@ document.getElementById('surveyForm').addEventListener('submit', e => {
 
 /* ─── Export: Copy JSON ─── */
 document.getElementById('btnCopyJSON').addEventListener('click', () => {
-  const key = 'omnirad_survey_responses';
-  const data = localStorage.getItem(key) || '[]';
+  const data = localStorage.getItem(SURVEY_KEY) || '[]';
+  const btn = document.getElementById('btnCopyJSON');
   navigator.clipboard.writeText(data).then(() => {
-    document.getElementById('btnCopyJSON').textContent = '✓ تم النسخ!';
-    setTimeout(() => document.getElementById('btnCopyJSON').textContent = 'نسخ JSON', 2000);
+    btn.textContent = '✓ تم النسخ!';
+    setTimeout(() => btn.textContent = 'نسخ JSON', 2000);
+  }).catch(() => {
+    btn.textContent = '✗ فشل النسخ';
+    setTimeout(() => btn.textContent = 'نسخ JSON', 2000);
   });
 });
 
 /* ─── Export: Download CSV ─── */
 document.getElementById('btnDownloadCSV').addEventListener('click', () => {
-  const key = 'omnirad_survey_responses';
-  let all = [];
-  try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  const all = getSurveyData();
   if (!all.length) { alert('لا توجد بيانات بعد'); return; }
 
   const headers = ['timestamp', ...Object.keys(all[0].responses)];
@@ -823,24 +824,31 @@ document.getElementById('btnDownloadCSV').addEventListener('click', () => {
 /* ─── View all responses ─── */
 document.getElementById('btnViewAll').addEventListener('click', () => {
   const key = 'omnirad_survey_responses';
-  let all = [];
-  try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  const all = getSurveyData();
 
+  // H2 fix: check popup wasn't blocked before using it
   const win = window.open('', '_blank');
-  win.document.write(`
-    <html dir="rtl"><head>
-    <meta charset="UTF-8">
-    <title>OmniRad — استجابات الاستبيان</title>
-    <style>
-      body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 20px; }
-      pre { white-space: pre-wrap; word-break: break-all; }
-      h2 { color: #22d3ee; }
-      .entry { border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    </style></head><body>
-    <h2>OmniRad Survey — ${all.length} استجابة</h2>
-    ${all.map((r,i) => `<div class="entry"><b>#${i+1} — ${r.timestamp}</b><pre>${JSON.stringify(r.responses, null, 2)}</pre></div>`).join('')}
-    </body></html>
-  `);
+  if (!win) { alert('المتصفح منع فتح النافذة — يرجى السماح بالنوافذ المنبثقة لهذا الموقع'); return; }
+
+  // S1 fix: build DOM safely instead of document.write with user content
+  win.document.open();
+  win.document.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>OmniRad — استجابات الاستبيان</title><style>body{font-family:monospace;background:#0d1117;color:#c9d1d9;padding:20px}pre{white-space:pre-wrap;word-break:break-all}h2{color:#22d3ee}.entry{border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}</style></head><body><h2 id="ttl"></h2><div id="root"></div></body></html>');
+  win.document.close();
+  // Set title safely via textContent (no HTML injection)
+  win.document.getElementById('ttl').textContent = `OmniRad Survey — ${all.length} استجابة`;
+  const root = win.document.getElementById('root');
+  all.forEach((r, i) => {
+    const div = win.document.createElement('div');
+    div.className = 'entry';
+    const hdr = win.document.createElement('b');
+    hdr.textContent = `#${i + 1} — ${r.timestamp}`;
+    const pre = win.document.createElement('pre');
+    // JSON.stringify output is safe as textContent
+    pre.textContent = JSON.stringify(r.responses, null, 2);
+    div.appendChild(hdr);
+    div.appendChild(pre);
+    root.appendChild(div);
+  });
 });
 
 /* ─── Init progress ─── */

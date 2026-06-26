@@ -1707,7 +1707,15 @@ function ttsError(btn, msg) {
 function ttsNow(text) {
   const el = document.getElementById('tts-now');
   if (!el) return;
-  el.innerHTML = text ? `Speaking: <span>${text}</span>` : 'Click 🔊 on any term';
+  el.textContent = '';
+  if (text) {
+    el.appendChild(document.createTextNode('Speaking: '));
+    const span = document.createElement('span');
+    span.textContent = text;
+    el.appendChild(span);
+  } else {
+    el.textContent = 'Click 🔊 on any term';
+  }
 }
 
 // ── Build speak button ────────────────────────────────────
