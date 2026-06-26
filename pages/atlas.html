@@ -1,1919 +1,918 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OmniRad — Smart Atlas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ═══ TOKENS ═══════════════════════════════════════════════ */
-:root { --z-sticky:200; --z-fs:900; }
-[data-theme="dark"] {
-  --bg:       #0d1117; --bg-s:  #161b22; --bg-r:  #1c2128;
-  --bg-o:     #21262d; --bdr:   #30363d; --bdr-s: #21262d;
-  --tx:       #e6edf3; --tx2:   #8b949e; --tx3:   #484f58;
-  --teal:     #39d0b8; --teal2: #2ab5a0; --teal3: #1a7a6e;
-  --teal-g:   rgba(57,208,184,.18); --teal-s: rgba(57,208,184,.08);
-  --cvs-bg:   #0b0f18; --cvs-r: rgba(57,208,184,.30);
-  --cvs-f:    rgba(30,130,115,.10); --cvs-t: rgba(57,208,184,.65);
-  --cvs-grid: rgba(57,208,184,.06);
+:root{
+  --bg-base:oklch(0.13 0.012 240);
+  --bg-surface:oklch(0.17 0.012 240);
+  --bg-panel:oklch(0.21 0.014 240);
+  --bg-hover:oklch(0.25 0.014 240);
+  --bg-active:oklch(0.28 0.016 240);
+  --teal:oklch(0.72 0.14 188);
+  --teal-dim:oklch(0.55 0.12 188);
+  --teal-bg:oklch(0.20 0.04 188);
+  --text-primary:oklch(0.93 0.01 240);
+  --text-sec:oklch(0.68 0.01 240);
+  --text-muted:oklch(0.48 0.01 240);
+  --border:oklch(0.28 0.012 240);
+  --border-light:oklch(0.35 0.012 240);
+  --ct:oklch(0.72 0.14 188);
+  --mri:oklch(0.72 0.14 285);
+  --us:oklch(0.75 0.14 155);
+  --xray:oklch(0.75 0.10 50);
+  --angio:oklch(0.70 0.14 355);
+  --cat-upper:oklch(0.72 0.14 188);
+  --cat-urinary:oklch(0.72 0.14 240);
+  --cat-vascular:oklch(0.70 0.14 355);
+  --cat-gi:oklch(0.75 0.14 130);
+  --radius:8px;
+  --radius-lg:12px;
+  --font:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
 }
-[data-theme="dim"] {
-  --bg:       #d4d9e0; --bg-s:  #dde1e8; --bg-r:  #e3e7ed;
-  --bg-o:     #eaedf2; --bdr:   #b0b8c4; --bdr-s: #c4cad4;
-  --tx:       #1c2128; --tx2:   #444c56; --tx3:   #656d76;
-  --teal:     #0d6e61; --teal2: #0a5a50; --teal3: #084840;
-  --teal-g:   rgba(13,110,97,.18); --teal-s: rgba(13,110,97,.08);
-  --cvs-bg:   #182030; --cvs-r: rgba(30,160,140,.60);
-  --cvs-f:    rgba(20,120,105,.20); --cvs-t: rgba(30,160,140,.90);
-  --cvs-grid: rgba(30,160,140,.10);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:var(--text-primary);overflow:hidden;}
+
+/* TOPBAR */
+#topbar{display:flex;align-items:center;gap:12px;padding:0 16px;height:52px;background:var(--bg-surface);border-bottom:1px solid var(--border);position:fixed;top:0;left:0;right:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;letter-spacing:-0.5px;}
+.logo-text{font-size:16px;font-weight:600;color:var(--text-primary);}
+.topbar-div{width:1px;height:24px;background:var(--border);}
+.nav-pills{display:flex;gap:4px;}
+.nav-pill{padding:5px 12px;border-radius:20px;font-size:13px;font-weight:500;color:var(--text-sec);text-decoration:none;transition:all .15s;}
+.nav-pill:hover{background:var(--bg-panel);color:var(--text-primary);}
+.nav-pill.active{background:var(--teal-bg);color:var(--teal);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+#btn-tts-toggle{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;}
+#btn-tts-toggle.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+#hamburger{display:none;padding:6px;background:transparent;border:none;cursor:pointer;flex-direction:column;gap:4px;}
+#hamburger span{display:block;width:22px;height:2px;background:var(--text-sec);border-radius:2px;}
+
+/* LAYOUT */
+#layout{display:flex;margin-top:52px;height:calc(100vh - 52px);overflow:hidden;}
+
+/* SIDEBAR */
+#sidebar{width:240px;flex-shrink:0;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s ease;}
+.sidebar-search{padding:12px;border-bottom:1px solid var(--border);}
+#search-input{width:100%;padding:7px 10px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;}
+#search-input:focus{border-color:var(--teal);}
+#search-input::placeholder{color:var(--text-muted);}
+.sidebar-list{flex:1;overflow-y:auto;padding:8px 0;}
+.sidebar-list::-webkit-scrollbar{width:4px;}
+.sidebar-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.cat-group{margin-bottom:4px;}
+.cat-header{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);cursor:pointer;user-select:none;}
+.cat-header:hover{color:var(--text-sec);}
+.cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.cat-upper-abdomen .cat-dot{background:var(--cat-upper);}
+.cat-urinary .cat-dot{background:var(--cat-urinary);}
+.cat-vascular .cat-dot{background:var(--cat-vascular);}
+.cat-gi-tract .cat-dot{background:var(--cat-gi);}
+.cat-chevron{margin-left:auto;font-size:10px;transition:transform .2s;}
+.cat-group.collapsed .cat-chevron{transform:rotate(-90deg);}
+.cat-group.collapsed .cat-items{display:none;}
+.structure-item{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 24px;cursor:pointer;transition:background .1s;}
+.structure-item:hover{background:var(--bg-hover);}
+.structure-item.active{background:var(--teal-bg);border-right:2px solid var(--teal);}
+.str-en{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.3;}
+.str-ar{font-size:11px;color:var(--text-muted);direction:rtl;}
+.structure-item.active .str-en{color:var(--teal);}
+
+/* MAIN */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+#main::-webkit-scrollbar{width:6px;}
+#main::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* WELCOME */
+#welcome-screen{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;}
+.welcome-inner{text-align:center;max-width:440px;}
+.welcome-icon{width:64px;height:64px;background:var(--teal-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
+.welcome-inner h2{font-size:20px;font-weight:600;margin-bottom:8px;}
+.welcome-inner p{font-size:14px;color:var(--text-sec);line-height:1.6;}
+.welcome-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
+.w-stat{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;}
+.w-stat-num{font-size:22px;font-weight:700;color:var(--teal);font-family:var(--mono);}
+.w-stat-label{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+/* STRUCTURE VIEW */
+#structure-view{display:none;flex-direction:column;}
+.struct-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.struct-breadcrumb{font-size:11px;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.struct-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.struct-title-block{flex:1;}
+.struct-name-en{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:4px;}
+.struct-name-ar{font-size:18px;color:var(--text-sec);direction:rtl;font-weight:400;margin-bottom:4px;}
+.struct-name-latin{font-size:14px;font-style:italic;color:var(--teal);font-family:var(--mono);opacity:.8;}
+.struct-actions{display:flex;gap:8px;flex-shrink:0;}
+.action-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-sec);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.action-btn:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--border-light);}
+.action-btn.teal{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+.cat-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:8px;}
+.cat-badge.upper-abdomen{background:oklch(0.72 0.14 188/.15);color:var(--cat-upper);}
+.cat-badge.urinary{background:oklch(0.72 0.14 240/.15);color:var(--cat-urinary);}
+.cat-badge.vascular{background:oklch(0.70 0.14 355/.15);color:var(--cat-vascular);}
+.cat-badge.gi-tract{background:oklch(0.75 0.14 130/.15);color:var(--cat-gi);}
+
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg-surface);overflow-x:auto;}
+.tab-btn{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-muted);border:none;background:transparent;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--font);}
+.tab-btn:hover{color:var(--text-primary);}
+.tab-btn.active{color:var(--teal);border-bottom-color:var(--teal);}
+.tab-panel{display:none;padding:20px 24px;}
+.tab-panel.active{display:block;}
+
+/* INFO TAB */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px;}
+.info-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
+.info-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px;}
+.info-description{font-size:14px;line-height:1.7;color:var(--text-sec);}
+.key-facts-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.key-facts-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.5;}
+.key-facts-list li::before{content:'▸';color:var(--teal);flex-shrink:0;margin-top:1px;}
+.related-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.related-chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg-panel);font-size:12px;color:var(--text-sec);cursor:pointer;transition:all .15s;}
+.related-chip:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-bg);}
+
+/* IMAGES TAB */
+.modality-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.mod-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all .15s;}
+.mod-btn:hover{border-color:var(--border-light);color:var(--text-sec);}
+.mod-active-CT{border-color:var(--ct)!important;background:oklch(0.72 0.14 188/.15)!important;color:var(--ct)!important;}
+.mod-active-MRI{border-color:var(--mri)!important;background:oklch(0.72 0.14 285/.15)!important;color:var(--mri)!important;}
+.mod-active-US{border-color:var(--us)!important;background:oklch(0.75 0.14 155/.15)!important;color:var(--us)!important;}
+.mod-active-XR,.mod-active-X-Ray{border-color:var(--xray)!important;background:oklch(0.75 0.10 50/.15)!important;color:var(--xray)!important;}
+.mod-active-Angio{border-color:var(--angio)!important;background:oklch(0.70 0.14 355/.15)!important;color:var(--angio)!important;}
+.plane-toggle{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.plane-btn{padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all .1s;}
+.plane-btn.active{background:var(--bg-active);border-color:var(--border-light);color:var(--text-primary);}
+.image-workspace{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:300px;}
+.image-workspace.single{grid-template-columns:1fr;}
+.image-workspace.triple{grid-template-columns:repeat(3,1fr);}
+.canvas-panel{background:#000;border-radius:var(--radius);border:2px solid var(--border);overflow:hidden;position:relative;min-height:260px;cursor:crosshair;transition:border-color .15s;}
+.canvas-panel.panel-active{border-color:var(--teal);}
+.canvas-panel canvas{display:block;width:100%;height:100%;}
+.panel-label{position:absolute;top:8px;left:8px;background:oklch(0 0 0/.7);backdrop-filter:blur(4px);padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:var(--mono);color:#fff;pointer-events:none;}
+.panel-active-badge{position:absolute;top:8px;right:8px;background:var(--teal);color:#000;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);display:none;}
+.canvas-panel.panel-active .panel-active-badge{display:block;}
+
+/* IMAGING TAB */
+.imaging-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;}
+.imaging-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.modality-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:var(--mono);margin-bottom:8px;}
+.modality-tag.CT{background:oklch(0.72 0.14 188/.2);color:var(--ct);}
+.modality-tag.MRI{background:oklch(0.72 0.14 285/.2);color:var(--mri);}
+.modality-tag.US{background:oklch(0.75 0.14 155/.2);color:var(--us);}
+.modality-tag.XR{background:oklch(0.75 0.10 50/.2);color:var(--xray);}
+.imaging-card p{font-size:13px;line-height:1.6;color:var(--text-sec);}
+
+/* MNEMONICS TAB */
+.mnemonic-card{background:var(--bg-panel);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.mnemonic-title{font-size:13px;font-weight:600;margin-bottom:8px;}
+.mnemonic-en{font-size:13px;line-height:1.6;color:var(--text-sec);}
+.mnemonic-ar{font-size:12px;line-height:1.6;color:var(--text-muted);direction:rtl;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
+.mnemonic-ref{font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic;}
+
+/* SRS */
+.srs-box{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
+.srs-prompt{font-size:12px;color:var(--text-muted);margin-bottom:10px;}
+.srs-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.srs-btn{padding:8px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-panel);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font);}
+.srs-btn:hover{transform:translateY(-1px);}
+.srs-emoji{font-size:18px;display:block;margin-bottom:3px;}
+.srs-label-en{font-size:11px;font-weight:600;display:block;}
+.srs-label-ar{font-size:10px;color:var(--text-muted);display:block;direction:rtl;}
+.srs-btn[data-rating="1"]{border-color:oklch(0.55 0.12 25);}
+.srs-btn[data-rating="1"]:hover{background:oklch(0.55 0.12 25/.15);}
+.srs-btn[data-rating="2"]{border-color:oklch(0.65 0.12 50);}
+.srs-btn[data-rating="2"]:hover{background:oklch(0.65 0.12 50/.15);}
+.srs-btn[data-rating="3"]{border-color:oklch(0.65 0.12 155);}
+.srs-btn[data-rating="3"]:hover{background:oklch(0.65 0.12 155/.15);}
+.srs-btn[data-rating="4"]{border-color:var(--teal);}
+.srs-btn[data-rating="4"]:hover{background:var(--teal-bg);}
+#srs-feedback{margin-top:12px;font-size:13px;color:var(--text-sec);text-align:center;min-height:20px;}
+
+/* TTS panel */
+#tts-panel{position:fixed;bottom:20px;right:20px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:10px 14px;display:none;gap:8px;align-items:center;box-shadow:0 2px 12px oklch(0 0 0/.5);z-index:200;}
+#tts-panel.visible{display:flex;}
+.tts-btn{padding:4px 10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .1s;font-family:var(--font);}
+.tts-btn.active{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);}
+
+/* DISCLAIMER */
+.disclaimer{font-size:11px;color:var(--text-muted);padding:12px 24px;border-top:1px solid var(--border);text-align:center;}
+
+/* OVERLAY */
+#sidebar-overlay{display:none;position:fixed;inset:0;background:oklch(0 0 0/.5);z-index:80;}
+#sidebar-overlay.visible{display:block;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{position:fixed;top:52px;left:0;bottom:0;transform:translateX(-100%);z-index:90;width:260px;}
+  #sidebar.open{transform:translateX(0);}
+  #hamburger{display:flex;}
+  .nav-pills{display:none;}
+  .image-workspace,.image-workspace.triple{grid-template-columns:1fr;}
+  .struct-header{padding:12px 16px;}
+  .tab-panel{padding:12px 16px;}
+  .info-grid,.imaging-grid{grid-template-columns:1fr;}
+  .srs-buttons{grid-template-columns:repeat(2,1fr);}
+  .struct-title-row{flex-direction:column;gap:10px;}
 }
 
-/* ═══ RESET ════════════════════════════════════════════════ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;scroll-behavior:smooth}
-body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6;transition:background .25s,color .25s}
-button{font-family:inherit;cursor:pointer;border:none;background:none}
-
-/* ═══ TOPBAR ════════════════════════════════════════════════ */
-.topbar{position:sticky;top:0;z-index:var(--z-sticky);background:var(--bg-s);border-bottom:1px solid var(--bdr-s);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:56px;gap:1rem}
-.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--tx);font-weight:600;font-size:1.05rem;flex-shrink:0}
-.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:5px;display:grid;place-items:center;font-weight:700;font-size:.78rem;color:#0d1117;letter-spacing:-.02em;flex-shrink:0}
-.logo-text{font-weight:600;font-size:1rem;letter-spacing:-.02em}
-.logo-text span{color:var(--teal)}
-.breadcrumb{font-size:.8rem;color:var(--tx3);display:flex;align-items:center;gap:.4rem}
-.breadcrumb span{color:var(--tx2)}
-.theme-btn{display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;transition:all .15s}
-.theme-btn:hover{border-color:var(--teal2);color:var(--teal)}
-.nav-pill{display:flex;align-items:center;padding:.28rem .7rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;text-decoration:none;transition:all .15s}
-.nav-pill:hover{border-color:var(--teal2);color:var(--teal)}
-
-/* ═══ LAYOUT ════════════════════════════════════════════════ */
-.page{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 56px)}
-
-/* ═══ SIDEBAR ═══════════════════════════════════════════════ */
-.sidebar{border-right:1px solid var(--bdr-s);background:var(--bg-s);padding:1.5rem 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
-.sb-label{font-size:.67rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);padding:0 1.25rem .6rem}
-.sb-list{list-style:none}
-.sb-item{display:flex;align-items:center;gap:.65rem;padding:.55rem 1.25rem;cursor:pointer;font-size:.88rem;color:var(--tx2);transition:background .12s,color .12s;border-left:2px solid transparent}
-.sb-item:hover{background:var(--bg-r);color:var(--tx)}
-.sb-item.active{background:var(--teal-s);color:var(--teal);border-left-color:var(--teal);font-weight:500}
-.sb-icon{width:28px;height:28px;border-radius:6px;background:var(--bg-o);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.sb-item.active .sb-icon{background:var(--teal-g)}
-.sb-name{flex:1}.sb-ar{font-size:.72rem;color:var(--tx3);direction:rtl}
-
-/* ═══ MAIN ══════════════════════════════════════════════════ */
-.main{padding:2rem 2.5rem;transition:opacity .18s}
-.main.fading{opacity:0}
-
-/* ═══ STRUCTURE HEADER ══════════════════════════════════════ */
-.s-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--bdr-s)}
-.s-eyebrow{font-size:.72rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:.35rem}
-.s-name{font-size:2rem;font-weight:600;letter-spacing:-.02em;line-height:1.2}
-.s-ar{font-size:1.1rem;color:var(--tx3);margin-top:.2rem;direction:rtl}
-.s-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
-.tag{font-size:.72rem;padding:.2rem .6rem;border-radius:99px;border:1px solid var(--bdr);color:var(--tx2);background:var(--bg-r);font-family:'IBM Plex Mono',monospace}
-.tag.sys{border-color:var(--teal3);color:var(--teal);background:var(--teal-s)}
-.s-meta{display:flex;flex-direction:column;gap:.5rem;min-width:175px;flex-shrink:0}
-.meta-card{background:var(--bg-r);border:1px solid var(--bdr-s);border-radius:8px;padding:.55rem .9rem}
-.meta-lbl{font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:.12rem}
-.meta-val{font-size:.85rem;font-weight:500}
-
-/* ═══ INFO CARDS ════════════════════════════════════════════ */
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.75rem}
-.info-card{background:var(--bg-s);border:1px solid var(--bdr-s);border-radius:10px;padding:1rem 1.1rem}
-.info-lbl{font-size:.67rem;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);font-weight:600;margin-bottom:.35rem}
-.info-txt{font-size:.84rem;color:var(--tx2);line-height:1.55}
-
-/* ═══ VIEWER SECTION ════════════════════════════════════════ */
-.viewer-wrap{background:var(--bg-s);border:1.5px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
-.viewer-hdr{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1.1rem;border-bottom:1px solid var(--bdr-s);background:var(--bg-r)}
-.viewer-title{font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3)}
-.viewer-body{padding:.9rem 1.1rem}
-
-/* ═══ MODALITY SELECTOR ═════════════════════════════════════ */
-.mod-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.85rem}
-.mod-lbl{font-size:.74rem;color:var(--tx3);font-weight:500;margin-right:.2rem;white-space:nowrap}
-.mod-btn{padding:.3rem .78rem;border-radius:6px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.77rem;font-weight:500;font-family:'IBM Plex Mono',monospace;transition:all .12s}
-.mod-btn:hover:not(:disabled){border-color:var(--teal2);color:var(--tx)}
-.mod-btn.active{background:var(--teal-g);border-color:var(--teal);color:var(--teal);box-shadow:0 0 0 1px var(--teal3)}
-.mod-btn:disabled{opacity:.28;cursor:not-allowed}
-
-/* ═══ VIEW MODE BUTTONS ═════════════════════════════════════ */
-.view-row{display:flex;align-items:center;gap:.28rem}
-.vbtn{display:flex;align-items:center;gap:.28rem;padding:.26rem .58rem;border-radius:5px;border:1px solid var(--bdr);background:var(--bg-o);color:var(--tx3);font-size:.69rem;font-weight:500;transition:all .12s;white-space:nowrap}
-.vbtn:hover{border-color:var(--teal2);color:var(--teal)}
-.vbtn.active{background:var(--teal-g);border-color:var(--teal);color:var(--teal)}
-
-/* ═══ IMAGE GRID ════════════════════════════════════════════ */
-.img-grid{display:grid;gap:.75rem;transition:grid-template-columns .2s}
-.img-grid.g3{grid-template-columns:repeat(3,1fr)}
-.img-grid.g2{grid-template-columns:repeat(2,1fr)}
-.img-grid.g1{grid-template-columns:1fr}
-.img-grid.split{grid-template-columns:1fr 1fr}
-/* Split mode: two independent column wrappers */
-.img-grid-split-wrap{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.split-col{display:flex;flex-direction:column;gap:.75rem;min-width:0}
-
-/* ═══ PANEL ═════════════════════════════════════════════════ */
-.panel{background:var(--cvs-bg);border:1.5px solid var(--bdr);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
-.panel:hover{border-color:var(--teal3)}
-.panel.panel-active{border-color:var(--teal)!important;box-shadow:0 0 0 2px var(--teal-g)}
-.panel-active-badge{position:absolute;top:.38rem;left:.38rem;z-index:6;background:var(--teal);color:#060a12;font:.6rem/1 'IBM Plex Mono',monospace;font-weight:700;padding:.15rem .38rem;border-radius:3px;pointer-events:none;letter-spacing:.04em}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:.45rem .8rem;border-bottom:1px solid var(--bdr-s);background:var(--bg-s);flex-shrink:0}
-.panel-lbl{font-size:.72rem;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--tx2)}
-.panel-right{display:flex;align-items:center;gap:.35rem}
-.mod-badge{font-size:.62rem;padding:.12rem .42rem;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-weight:600}
-.xbtn{padding:.13rem .3rem;border-radius:4px;border:1px solid var(--bdr-s);background:var(--bg-o);color:var(--tx3);font-size:.62rem;cursor:pointer;transition:all .1s;line-height:1}
-.xbtn:hover{border-color:var(--teal);color:var(--teal)}
-
-/* badge colors */
-.b-ct   {background:rgba(200,140,60,.25);color:#e8a44a;border:1px solid rgba(200,140,60,.35)}
-.b-mri  {background:rgba(100,80,200,.25);color:#a090e8;border:1px solid rgba(100,80,200,.35)}
-.b-us   {background:rgba(60,180,130,.25);color:#50c896;border:1px solid rgba(60,180,130,.35)}
-.b-nm   {background:rgba(180,60,180,.25);color:#d080d0;border:1px solid rgba(180,60,180,.35)}
-.b-pet  {background:rgba(220,100,60,.25);color:#e88060;border:1px solid rgba(220,100,60,.35)}
-.b-rt   {background:rgba(220,60,60,.25); color:#e87070;border:1px solid rgba(220,60,60,.35)}
-.b-angio{background:rgba(60,120,200,.25);color:#60a0e8;border:1px solid rgba(60,120,200,.35)}
-.b-xray {background:rgba(140,140,160,.25);color:#b0b0c8;border:1px solid rgba(140,140,160,.35)}
-.b-mammo{background:rgba(200,60,140,.25);color:#e070b8;border:1px solid rgba(200,60,140,.35)}
-
-/* ═══ CANVAS VIEWER ═════════════════════════════════════════ */
-.cvs-wrap{position:relative;width:100%;overflow:hidden;background:var(--cvs-bg);flex:1;min-height:300px;cursor:crosshair}
-/* Normal mode canvas sizes */
-.img-grid.g1 .cvs-wrap{aspect-ratio:16/9;min-height:420px}
-.img-grid.g2 .cvs-wrap{aspect-ratio:4/3;min-height:340px}
-.img-grid.g3 .cvs-wrap{aspect-ratio:1/1;min-height:280px}
-/* Split mode */
-.split-col .cvs-wrap{aspect-ratio:4/3;min-height:320px}
-.split-col .img-grid.g2 .cvs-wrap{aspect-ratio:4/3;min-height:280px}
-.split-col .img-grid.g3 .cvs-wrap{aspect-ratio:1/1;min-height:220px}
-.cvs-wrap canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
-.cvs-bg{z-index:1}.cvs-dr{z-index:2;pointer-events:none}
-.cvs-stat{position:absolute;top:.4rem;right:.4rem;z-index:5;background:rgba(0,0,0,.75);color:var(--teal);font:500 .6rem 'IBM Plex Mono',monospace;padding:.18rem .42rem;border-radius:4px;pointer-events:none;border:1px solid rgba(57,208,184,.22)}
-.cvs-ol{position:absolute;bottom:.4rem;left:.4rem;right:.4rem;z-index:5;display:flex;flex-wrap:wrap;gap:.25rem;pointer-events:none}
-.mtag{background:rgba(0,0,0,.78);color:var(--teal);font:.6rem 'IBM Plex Mono',monospace;padding:.17rem .38rem;border-radius:3px;border:1px solid rgba(57,208,184,.28);backdrop-filter:blur(4px)}
-.mtag.lbl{color:#f0d060;border-color:rgba(240,208,96,.32)}
-
-/* ═══ VIEWER NOTE ═══════════════════════════════════════════ */
-.vnote{font-size:.72rem;color:var(--tx3);font-style:italic;font-family:'IBM Plex Mono',monospace;padding:.5rem 0 .1rem;grid-column:1/-1}
-
-/* ═══ SPLIT MOD ROW ═════════════════════════════════════════ */
-.split-row{display:flex;align-items:center;gap:.45rem;padding:.45rem 0 .75rem;flex-wrap:wrap}
-.split-lbl{font-size:.67rem;color:var(--tx3);font-weight:500;white-space:nowrap}
-.smod-btn{padding:.2rem .52rem;border-radius:5px;border:1px solid var(--bdr-s);background:var(--bg-o);color:var(--tx3);font-size:.67rem;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:all .1s}
-.smod-btn:hover:not(:disabled){border-color:var(--teal2);color:var(--teal)}
-.smod-btn.active{background:var(--teal-s);border-color:var(--teal2);color:var(--teal)}
-.smod-btn:disabled{opacity:.22;cursor:not-allowed}
-
-/* ═══ PLANE TOGGLES ══════════════════════════════════════════ */
-.plane-row{display:flex;align-items:center;gap:.35rem;margin-bottom:.75rem;flex-wrap:wrap}
-.plane-lbl{font-size:.7rem;color:var(--tx3);font-weight:500;white-space:nowrap;margin-right:.15rem}
-.plane-btn{display:flex;align-items:center;gap:.28rem;padding:.26rem .62rem;border-radius:6px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx3);font-size:.72rem;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:all .12s;user-select:none}
-.plane-btn::before{content:'○';font-size:.65rem;margin-right:.15rem;opacity:.5}
-.plane-btn.on{background:var(--teal-s);border-color:var(--teal2);color:var(--teal);font-weight:500}
-.plane-btn.on::before{content:'●';opacity:1}
-.plane-btn:hover{border-color:var(--teal3);color:var(--teal)}
-.split-plane-rows{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem}
-.split-plane-rows .plane-row{margin-bottom:0;background:var(--bg-r);border:1px solid var(--bdr-s);border-radius:8px;padding:.35rem .65rem}
-
-/* ═══ TOOLS SECTION ═════════════════════════════════════════ */
-.tools-wrap{background:var(--bg-s);border:1.5px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:2rem}
-.tools-hdr{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border-bottom:1px solid var(--bdr-s);background:var(--bg-r)}
-.tools-title{font-size:.69rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);display:flex;align-items:center;gap:.45rem}
-.tools-disc{font-size:.64rem;color:var(--tx3);font-style:italic;font-family:'IBM Plex Mono',monospace}
-.tb-body{padding:.65rem 1rem;display:flex;flex-direction:column;gap:.5rem}
-.tb-row{display:flex;align-items:center;gap:.28rem;flex-wrap:wrap}
-.tb-lbl{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);min-width:60px;flex-shrink:0}
-.tdiv{width:1px;height:20px;background:var(--bdr);margin:0 .1rem;flex-shrink:0}
-
-/* ═══ TOOL BUTTONS ══════════════════════════════════════════ */
-.tbtn{position:relative;display:flex;align-items:center;gap:.27rem;padding:.28rem .55rem;border-radius:6px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.7rem;font-weight:500;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;transition:all .12s;white-space:nowrap;user-select:none}
-.tbtn:hover{border-color:var(--teal2);color:var(--tx);background:var(--bg-o)}
-.tbtn.active{background:var(--teal-g);border-color:var(--teal);color:var(--teal);box-shadow:0 0 0 1px var(--teal3)}
-.tbtn.danger{border-color:rgba(220,80,80,.4);color:#d06060}
-.tbtn.danger:hover{border-color:#e07070;background:rgba(220,80,80,.1);color:#e07070}
-.tbtn.save{border-color:rgba(60,180,130,.4);color:#40b890}
-.tbtn.save:hover{border-color:#50c896;background:rgba(60,180,130,.1);color:#50c896}
-
-/* Tooltip */
-.tbtn::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%) translateY(3px);background:#0d1117;color:#c8d0da;font-size:.6rem;font-family:'IBM Plex Mono',monospace;white-space:nowrap;padding:.2rem .52rem;border-radius:5px;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);pointer-events:none;opacity:0;transition:opacity .15s,transform .15s;z-index:50}
-.tbtn:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ═══ PRESETS & SLIDERS ═════════════════════════════════════ */
-.pbtn{padding:.22rem .5rem;border-radius:5px;border:1px solid var(--bdr-s);background:var(--bg-o);color:var(--tx3);font-size:.65rem;font-family:'IBM Plex Mono',monospace;font-weight:500;cursor:pointer;transition:all .12s;white-space:nowrap}
-.pbtn:hover{border-color:var(--teal3);color:var(--teal)}
-.pbtn.active{background:var(--teal-s);border-color:var(--teal2);color:var(--teal)}
-.sl-row{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
-.sl-item{display:flex;align-items:center;gap:.38rem}
-.sl-lbl{font-size:.64rem;color:var(--tx3);font-family:'IBM Plex Mono',monospace;white-space:nowrap;min-width:56px}
-.sl-val{font-size:.64rem;color:var(--teal);font-family:'IBM Plex Mono',monospace;min-width:36px;text-align:right}
-input[type=range].tsl{-webkit-appearance:none;width:88px;height:3px;border-radius:2px;background:var(--bdr);outline:none;cursor:pointer}
-input[type=range].tsl::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--teal);cursor:pointer;transition:transform .1s}
-input[type=range].tsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
-
-/* ═══ CROSS REFS ════════════════════════════════════════════ */
-.xref-sec{margin-bottom:2rem}
-.sec-title{font-size:.77rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);margin-bottom:.7rem}
-.xref-grid{display:flex;flex-wrap:wrap;gap:.45rem}
-.xref-btn{display:flex;align-items:center;gap:.38rem;padding:.38rem .85rem;border-radius:8px;border:1px solid var(--bdr);background:var(--bg-s);color:var(--tx2);font-size:.81rem;transition:all .12s;cursor:pointer}
-.xref-btn:hover{border-color:var(--teal2);color:var(--teal);background:var(--teal-s)}
-.xarr{font-size:.74rem;opacity:.5}
-
-/* ═══ STATUS BAR ════════════════════════════════════════════ */
-.sbar{display:flex;align-items:center;gap:1rem;padding:.6rem 1rem;background:var(--bg-r);border:1px solid var(--bdr-s);border-radius:8px;margin-bottom:1.5rem;font-size:.75rem;color:var(--tx3)}
-.sdot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
-
-/* ═══ RT WARNING ════════════════════════════════════════════ */
-.rt-warn{background:rgba(220,80,80,.08);border:1px solid rgba(220,80,80,.25);border-radius:6px;padding:.35rem .7rem;font-size:.64rem;color:#c06060;font-family:'IBM Plex Mono',monospace}
-
-/* ═══ FULLSCREEN OVERLAY ════════════════════════════════════ */
-.fs-ov{display:none;position:fixed;inset:0;z-index:var(--z-fs);background:#060a12;flex-direction:column}
-.fs-ov.open{display:flex}
-.fs-top{display:flex;align-items:center;justify-content:space-between;padding:.52rem 1rem;background:#0d1117;border-bottom:1px solid #21262d;flex-shrink:0;gap:.75rem}
-.fs-left{display:flex;align-items:center;gap:.6rem;flex:1;flex-wrap:wrap}
-.fs-title{font:.7rem/1 'IBM Plex Mono',monospace;color:var(--teal);font-weight:600;white-space:nowrap}
-.fs-mods{display:flex;gap:.28rem;flex-wrap:wrap}
-.fs-close{padding:.28rem .7rem;border-radius:6px;border:1px solid rgba(220,80,80,.4);background:rgba(220,80,80,.1);color:#d06060;font-size:.73rem;font-weight:500;cursor:pointer;flex-shrink:0;transition:all .12s;white-space:nowrap}
-.fs-close:hover{border-color:#e07070;color:#e07070}
-.fs-body{flex:1;position:relative;overflow:hidden;background:#060a12}
-.fs-body canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
-.fs-body .cvs-stat{font-size:.7rem;top:.6rem;right:.6rem}
-.fs-body .cvs-ol{bottom:5.5rem}
-
-/* floating toolbar */
-.fs-tb{position:absolute;bottom:.75rem;left:50%;transform:translateX(-50%);z-index:10;background:rgba(13,17,23,.92);border:1px solid #30363d;border-radius:10px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,.6);padding:.5rem .85rem;display:flex;flex-direction:column;gap:.42rem;max-width:96vw;overflow-x:auto}
-[data-theme="dim"] .fs-tb{background:rgba(30,40,55,.94);border-color:#7080a0}
-.fs-tb .tbtn::after{bottom:auto;top:calc(100% + 7px);transform:translateX(-50%) translateY(-3px)}
-.fs-tb .tbtn:hover::after{transform:translateX(-50%) translateY(0)}
-
-/* hints */
-.fs-hints{position:absolute;top:.55rem;left:50%;transform:translateX(-50%);z-index:12;display:flex;align-items:center;gap:.55rem;background:rgba(0,0,0,.65);border:1px solid rgba(57,208,184,.18);border-radius:8px;padding:.28rem .8rem;backdrop-filter:blur(12px);pointer-events:none;animation:hfade 7s ease forwards}
-@keyframes hfade{0%,65%{opacity:1}100%{opacity:0}}
-.hitem{display:flex;align-items:center;gap:.28rem;font-size:.63rem;color:rgba(200,220,220,.78);font-family:'IBM Plex Mono',monospace;white-space:nowrap}
-.hkey{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:4px;padding:.04rem .32rem;font-size:.6rem;color:rgba(255,255,255,.7);font-weight:600}
-.hsep{color:rgba(255,255,255,.2);font-size:.7rem}
-
-/* ═══ RESPONSIVE ════════════════════════════════════════════ */
-@media(max-width:900px){
-  .page{grid-template-columns:1fr}
-  .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--bdr-s)}
-  .sb-list{display:flex;flex-wrap:wrap;gap:.4rem;padding:0 1rem 1rem}
-  .sb-item{padding:.38rem .72rem;border-radius:8px;border-left:none;border:1px solid var(--bdr)}
-  .sb-ar{display:none}
-  .main{padding:1.25rem 1rem}
-  .info-grid,.img-grid.g3,.img-grid.g2,.img-grid.split{grid-template-columns:1fr!important}
-  .s-hdr{flex-direction:column}
-}
-@media(max-width:640px){
-  /* Topbar: hide breadcrumb text on very small screens */
-  .breadcrumb>span:first-child{display:none}
-  /* Tools panel: collapsible on mobile */
-  .tools-wrap{margin-bottom:1rem}
-  .tb-body{padding:.5rem .75rem}
-  .tb-lbl{min-width:48px;font-size:.55rem}
-  .tbtn{font-size:.65rem;padding:.22rem .42rem}
-  /* Canvas minimum height adapted for mobile */
-  .cvs-wrap{min-height:220px!important}
-  /* Panel header smaller */
-  .panel-hdr{padding:.35rem .6rem}
-  /* View mode buttons row: scroll horizontally */
-  .vbtn-row{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.25rem}
-  /* Modality toggle: scrollable */
-  .mod-toggle-row{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  /* TTS panel: keep away from bottom edge on mobile */
-  .tts-panel{bottom:4rem;right:.75rem;min-width:180px}
-  /* Fullscreen toolbar: larger touch targets */
-  .fs-tb .tbtn{padding:.38rem .6rem;font-size:.72rem}
-  /* Slider touch friendly */
-  input[type=range].tsl{width:72px}
-  /* Tools collapse toggle */
-  .tools-collapse-btn{display:flex}
-}
-@media(max-width:400px){
-  .topbar{padding:0 .75rem}
-  .main{padding:1rem .75rem}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
-
-/* Tools collapse button (mobile only) */
-.tools-collapse-btn{
-  display:none;align-items:center;gap:.35rem;
-  padding:.25rem .6rem;border-radius:5px;border:1px solid var(--bdr);
-  background:var(--bg-o);color:var(--tx3);font-size:.65rem;
-  font-family:'IBM Plex Mono',monospace;cursor:pointer;
-  transition:all .12s;margin-left:auto;
-}
-.tools-collapse-btn:hover{border-color:var(--teal2);color:var(--teal)}
-.tools-body-collapsed .tb-body{display:none}
-.tools-body-collapsed .tools-collapse-btn{color:var(--teal);border-color:var(--teal3)}
-
-/* ═══ TTS MODULE ════════════════════════════════════════════ */
-/* Speak button inline next to terms */
-.tts-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--bdr);background:var(--bg-o);color:var(--tx3);font-size:.65rem;cursor:pointer;transition:all .15s;vertical-align:middle;margin-left:.35rem;flex-shrink:0;line-height:1}
-.tts-btn:hover{border-color:var(--teal2);color:var(--teal);background:var(--teal-s)}
-.tts-btn.speaking{border-color:var(--teal);color:var(--teal);background:var(--teal-g);animation:tts-pulse 1s ease-in-out infinite}
-.tts-btn.error{border-color:rgba(220,80,80,.5);color:#d06060}
-@keyframes tts-pulse{0%,100%{box-shadow:0 0 0 0 rgba(57,208,184,.4)}50%{box-shadow:0 0 0 5px rgba(57,208,184,.0)}}
-
-/* TTS Floating Panel */
-.tts-panel{position:fixed;bottom:1.25rem;right:1.25rem;z-index:calc(var(--z-sticky) + 50);background:var(--bg-s);border:1px solid var(--bdr);border-radius:12px;padding:.7rem .9rem;box-shadow:0 8px 32px rgba(0,0,0,.45);min-width:200px;transition:opacity .2s,transform .2s;backdrop-filter:blur(16px)}
-[data-theme="dim"] .tts-panel{box-shadow:0 8px 32px rgba(0,0,0,.18)}
-.tts-panel.hidden{opacity:0;pointer-events:none;transform:translateY(8px)}
-.tts-panel-title{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:.55rem}
-.tts-row{display:flex;align-items:center;gap:.38rem;margin-bottom:.42rem}
-.tts-lbl{font-size:.65rem;color:var(--tx3);min-width:48px;font-family:'IBM Plex Mono',monospace}
-.tts-seg{display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden}
-.tts-seg button{padding:.2rem .48rem;font-size:.64rem;font-family:'IBM Plex Mono',monospace;border:none;background:var(--bg-o);color:var(--tx3);cursor:pointer;transition:all .1s;border-right:1px solid var(--bdr)}
-.tts-seg button:last-child{border-right:none}
-.tts-seg button:hover{background:var(--bg-r);color:var(--tx)}
-.tts-seg button.active{background:var(--teal-g);color:var(--teal);font-weight:600}
-.tts-now{font-size:.63rem;color:var(--tx3);font-family:'IBM Plex Mono',monospace;margin-top:.35rem;min-height:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
-.tts-now span{color:var(--teal)}
-.tts-close{position:absolute;top:.38rem;right:.5rem;background:none;border:none;color:var(--tx3);font-size:.75rem;cursor:pointer;padding:.1rem .25rem;border-radius:4px;line-height:1}
-.tts-close:hover{color:var(--tx)}
-
-/* TTS toggle button in topbar */
-.tts-toggle{display:flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;transition:all .15s;cursor:pointer}
-.tts-toggle:hover{border-color:var(--teal2);color:var(--teal)}
-.tts-toggle.active{border-color:var(--teal);color:var(--teal);background:var(--teal-s)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeIn .25s ease;}
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <a href="../index.html" class="logo"><div class="logo-mark">OR</div><span class="logo-text">Omni<span>Rad</span></span></a>
-  <nav class="breadcrumb"><span>Atlas</span><span style="opacity:.4">›</span><span id="bc">Liver</span></nav>
-  <div style="display:flex;align-items:center;gap:.3rem;margin-right:auto;margin-left:1rem">
+<header id="topbar">
+  <a href="../index.html" class="logo">
+    <div class="logo-mark">OR</div>
+    <span class="logo-text">OmniRad</span>
+  </a>
+  <div class="topbar-div"></div>
+  <nav class="nav-pills">
     <a href="../index.html" class="nav-pill">Home</a>
+    <a href="atlas.html" class="nav-pill active">Atlas</a>
+    <a href="comparison.html" class="nav-pill">Compare</a>
     <a href="mnemonics.html" class="nav-pill">Mnemonics</a>
     <a href="srs.html" class="nav-pill">My Progress</a>
-  </div>
-  <div style="display:flex;align-items:center;gap:.55rem">
-    <a href="mnemonics.html" style="display:flex;align-items:center;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--bdr);background:var(--bg-r);color:var(--tx2);font-size:.78rem;font-weight:500;text-decoration:none;transition:all .15s" onmouseover="this.style.color='var(--teal)';this.style.borderColor='var(--teal2)'" onmouseout="this.style.color='var(--tx2)';this.style.borderColor='var(--bdr)'">📚 Mnemonics</a><button class="tts-toggle" id="tts-toggle" title="Text-to-Speech">🔊 TTS</button>
-    <button class="theme-btn" id="theme-btn"><span id="t-icon">☾</span><span id="t-lbl">Dim</span></button>
+    <a href="ai-chat.html" class="nav-pill">AI Assistant</a>
+  </nav>
+  <div class="topbar-right">
+    <button id="btn-tts-toggle">🔊 TTS</button>
+    <button id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
-<div class="page">
-  <aside class="sidebar">
-    <div class="sb-label">Upper Abdomen</div>
-    <ul class="sb-list" id="sb-list">
-      <li class="sb-item active" data-id="liver"       tabindex="0"><span class="sb-icon">🫀</span><span class="sb-name">Liver</span><span class="sb-ar">الكبد</span></li>
-      <li class="sb-item"        data-id="spleen"      tabindex="0"><span class="sb-icon">🫘</span><span class="sb-name">Spleen</span><span class="sb-ar">الطحال</span></li>
-      <li class="sb-item"        data-id="kidney"      tabindex="0"><span class="sb-icon">🫙</span><span class="sb-name">Right Kidney</span><span class="sb-ar">الكلية اليمنى</span></li>
-      <li class="sb-item"        data-id="pancreas"    tabindex="0"><span class="sb-icon">🧬</span><span class="sb-name">Pancreas</span><span class="sb-ar">البنكرياس</span></li>
-      <li class="sb-item"        data-id="gallbladder" tabindex="0"><span class="sb-icon">💧</span><span class="sb-name">Gallbladder</span><span class="sb-ar">المرارة</span></li>
-    </ul>
+<div id="sidebar-overlay"></div>
+
+<div id="layout">
+  <aside id="sidebar">
+    <div class="sidebar-search">
+      <input type="text" id="search-input" placeholder="Search structures…" autocomplete="off">
+    </div>
+    <div class="sidebar-list" id="sidebar-list"></div>
   </aside>
-  <main class="main" id="main"></main>
+
+  <main id="main">
+    <div id="welcome-screen">
+      <div class="welcome-inner">
+        <div class="welcome-icon">🫀</div>
+        <h2>Smart Atlas — Full Abdomen</h2>
+        <p>Select an anatomical structure from the sidebar to explore imaging across CT, MRI, Ultrasound, X-Ray, and more — with mnemonics, SRS review, and bilingual TTS.</p>
+        <div class="welcome-stats">
+          <div class="w-stat"><div class="w-stat-num">12</div><div class="w-stat-label">Structures</div></div>
+          <div class="w-stat"><div class="w-stat-num">5+</div><div class="w-stat-label">Modalities</div></div>
+          <div class="w-stat"><div class="w-stat-num">22</div><div class="w-stat-label">Mnemonics</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="structure-view">
+      <div class="struct-header">
+        <div class="struct-breadcrumb">
+          <span>Atlas</span><span>›</span>
+          <span id="bc-cat"></span><span>›</span>
+          <span id="bc-name"></span>
+        </div>
+        <div class="struct-title-row">
+          <div class="struct-title-block">
+            <div class="struct-name-en" id="s-name-en"></div>
+            <div class="struct-name-ar" id="s-name-ar"></div>
+            <div class="struct-name-latin" id="s-name-latin"></div>
+            <div id="s-cat-badge"></div>
+          </div>
+          <div class="struct-actions">
+            <button class="action-btn" id="btn-pronounce">🔊 Pronounce</button>
+            <button class="action-btn teal" onclick="location.href='srs.html'">📊 My Progress</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="info">📋 Overview</button>
+        <button class="tab-btn" data-tab="images">🖼 Images</button>
+        <button class="tab-btn" data-tab="imaging">📡 Imaging Guide</button>
+        <button class="tab-btn" data-tab="mnemonics">🧠 Mnemonics</button>
+        <button class="tab-btn" data-tab="review">🔁 Review</button>
+      </div>
+
+      <!-- Overview -->
+      <div class="tab-panel active" data-panel="info">
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-title">📖 Description</div>
+            <div class="info-description" id="s-desc-en"></div>
+            <div class="info-description" id="s-desc-ar" style="margin-top:10px;direction:rtl;font-size:13px;color:var(--text-muted);"></div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">⚡ Key Facts</div>
+            <ul class="key-facts-list" id="s-facts"></ul>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">🔗 Related Structures</div>
+          <div class="related-grid" id="s-related"></div>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="tab-panel" data-panel="images">
+        <div class="modality-selector" id="mod-selector"></div>
+        <div class="plane-toggle" id="plane-toggle"></div>
+        <div class="image-workspace" id="image-workspace"></div>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:10px;">⚠️ Images: Wikimedia Commons CC0 (Mikael Häggström M.D.) · Values illustrative, not diagnostic.</p>
+      </div>
+
+      <!-- Imaging Guide -->
+      <div class="tab-panel" data-panel="imaging">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:14px;color:var(--text-sec);">Modality-Specific Findings</h3>
+        <div class="imaging-grid" id="s-imaging"></div>
+      </div>
+
+      <!-- Mnemonics -->
+      <div class="tab-panel" data-panel="mnemonics">
+        <div id="s-mnemonics"></div>
+      </div>
+
+      <!-- Review -->
+      <div class="tab-panel" data-panel="review">
+        <div class="srs-box">
+          <div class="srs-prompt">How well did you recall this structure?</div>
+          <div class="srs-buttons">
+            <button class="srs-btn" data-rating="1"><span class="srs-emoji">😰</span><span class="srs-label-en">Forgot</span><span class="srs-label-ar">نسيت</span></button>
+            <button class="srs-btn" data-rating="2"><span class="srs-emoji">😐</span><span class="srs-label-en">Hard</span><span class="srs-label-ar">صعب</span></button>
+            <button class="srs-btn" data-rating="3"><span class="srs-emoji">🙂</span><span class="srs-label-en">Good</span><span class="srs-label-ar">جيد</span></button>
+            <button class="srs-btn" data-rating="4"><span class="srs-emoji">😄</span><span class="srs-label-en">Easy</span><span class="srs-label-ar">سهل</span></button>
+          </div>
+          <div id="srs-feedback"></div>
+        </div>
+        <div id="srs-mastery" style="margin-top:16px;"></div>
+      </div>
+
+      <div class="disclaimer">OmniRad — Educational Use Only · Images: Wikimedia Commons CC0 · Values are illustrative</div>
+    </div>
+  </main>
 </div>
 
-<!-- TTS FLOATING PANEL -->
-<div class="tts-panel hidden" id="tts-panel">
-  <button class="tts-close" id="tts-close" title="Close TTS">✕</button>
-  <div class="tts-panel-title">🔊 Pronunciation</div>
-  <div class="tts-row">
-    <span class="tts-lbl">Language</span>
-    <div class="tts-seg" id="tts-lang-seg">
-      <button data-lang="en" class="active">EN</button>
-      <button data-lang="ar">AR</button>
-    </div>
-  </div>
-  <div class="tts-row">
-    <span class="tts-lbl">Speed</span>
-    <div class="tts-seg" id="tts-speed-seg">
-      <button data-rate="0.7">Slow</button>
-      <button data-rate="1.0" class="active">Normal</button>
-      <button data-rate="1.4">Fast</button>
-    </div>
-  </div>
-  <div class="tts-now" id="tts-now">Click 🔊 on any term</div>
-</div>
-
-
-<div class="fs-ov" id="fs-ov">
-  <div class="fs-top">
-    <div class="fs-left">
-      <span class="fs-title" id="fs-title">Liver · CT · Axial</span>
-      <div class="fs-mods" id="fs-mods"></div>
-    </div>
-    <button class="fs-close" id="fs-close">✕ Close (ESC)</button>
-  </div>
-  <div class="fs-body" id="fs-body">
-    <canvas id="fs-bg"></canvas>
-    <canvas id="fs-dr" style="z-index:2;pointer-events:none;position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
-    <div class="cvs-stat" id="fs-stat">pan | ×1.0</div>
-    <div class="cvs-ol"   id="fs-ol"></div>
-    <div class="fs-tb"    id="fs-tb"></div>
-  </div>
+<div id="tts-panel">
+  <span style="font-size:12px;color:var(--text-muted);">TTS</span>
+  <button class="tts-btn active" data-lang="en">EN</button>
+  <button class="tts-btn" data-lang="ar">AR</button>
+  <div style="width:1px;height:16px;background:var(--border);"></div>
+  <button class="tts-btn" data-speed="0.7">0.7×</button>
+  <button class="tts-btn active" data-speed="1.0">1.0×</button>
+  <button class="tts-btn" data-speed="1.3">1.3×</button>
 </div>
 
 <script>
-'use strict';
-// ═══════════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════════
-const D = {
-  liver:{
-    name:'Liver',ar:'الكبد',sys:'Hepatobiliary',reg:'Upper Abdomen',
-    loc:'Right hypochondriac region, extending to epigastric region',
-    fn:'Metabolic processing, bile production, detoxification, glycogen storage, synthesis of plasma proteins and clotting factors.',
-    note:'Largest solid organ in the body. Divided into right and left lobes by falciform ligament; 8 Couinaud segments.',
-    tags:['Solid Organ','Hepatobiliary','Retroperitoneal: No','Couinaud: 8'],
-    refs:['Gallbladder','Portal Vein','Hepatic Artery','IVC'],
-    mods:{
-      CT: {planes:['Axial','Coronal','Sagittal'],note:'Best assessed in portal venous phase (65–70 s)'},
-      MRI:{planes:['Axial','Coronal','Sagittal'],note:'T1 in-phase/out-phase for fat; T2 for lesion characterization'},
-      US: {planes:['Transverse','Longitudinal','Oblique'],note:'Isoechoic to mildly hyperechoic vs. renal cortex'},
-    }
+// ═══════════════════════════════════════════════════
+// EMBEDDED DATA
+// ═══════════════════════════════════════════════════
+const CATS = [
+  {id:'upper-abdomen',en:'Upper Abdomen',ar:'البطن العلوي'},
+  {id:'urinary',en:'Urinary System',ar:'الجهاز البولي'},
+  {id:'vascular',en:'Vascular',ar:'الأوعية الدموية'},
+  {id:'gi-tract',en:'GI Tract',ar:'الجهاز الهضمي'}
+];
+
+const IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
+
+const STRUCTS = [
+  {
+    id:'liver',cat:'upper-abdomen',
+    en:'Liver',ar:'الكبد',latin:'Hepar',
+    descEn:'The largest solid organ in the body, in the right upper quadrant beneath the diaphragm. Performs over 500 functions including metabolism, detoxification, and bile production.',
+    descAr:'أكبر الأعضاء الصلبة، في الربع العلوي الأيمن. يؤدي أكثر من 500 وظيفة تشمل الأيض وإزالة السموم وإنتاج الصفراء.',
+    facts:['Weight: 1.2–1.5 kg in adults','Divided into 8 Couinaud segments','Dual blood supply: portal vein (75%) + hepatic artery (25%)','Located in RUQ and epigastrium','Covered by Glisson\'s capsule'],
+    imaging:{CT:'Homogeneous parenchyma 50–70 HU on plain CT. Portal venous phase (70 s) optimal. 8 Couinaud segments identifiable by hepatic veins.',MRI:'T1: moderately hyperintense. T2: slightly hypointense vs spleen. Gadolinium shows arterial, portal, and delayed phases.',US:'Homogeneous echogenicity, slightly hyperechoic vs renal cortex. Normal ≤15 cm in midclavicular line.',XR:'Hepatomegaly displaces stomach gas medially. Right hemidiaphragm elevated.'},
+    mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
+    mnemonics:[
+      {title:'Couinaud Segments',en:'"LEFT has LOWER numbers" — Segments 1 (caudate) alone; 2–4 left lobe; 5–8 right lobe.',ar:'"اليسار أرقام أصغر" — القطاع ١ منفرداً؛ ٢–٤ الفص الأيسر؛ ٥–٨ الفص الأيمن.',ref:'Couinaud 1957'},
+      {title:"Riedel's Lobe",en:'"Riedel Reaches Right" — tongue-like downward extension of right lobe, common in women, not pathological.',ar:'"ريدل يمتد يميناً" — امتداد لساني للفص الأيمن، شائع عند النساء، وليس مرضياً.',ref:"Gray's Anatomy 41st ed."}
+    ],
+    related:['gallbladder','portal-vein','ivc'],
+    ttsEn:'Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.',
+    ttsAr:'الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن.'
   },
-  spleen:{
-    name:'Spleen',ar:'الطحال',sys:'Lymphoreticular',reg:'Upper Abdomen',
-    loc:'Left hypochondriac region, posterior to stomach',
-    fn:'Blood filtration, immune surveillance, RBC sequestration, extramedullary haematopoiesis in pathologic states.',
-    note:'Normal length ≤ 12 cm. Accessory spleen (splenule) in ~10% near splenic hilum.',
-    tags:['Solid Organ','Lymphoreticular','Retroperitoneal: No','Length: ≤12 cm'],
-    refs:['Pancreatic Tail','Splenic Artery','Left Kidney','Stomach'],
-    mods:{
-      CT: {planes:['Axial','Coronal'],note:'Homogeneous enhancement; mottled in arterial phase — normal'},
-      MRI:{planes:['Axial','Coronal'],note:'Hypointense T1, markedly hyperintense T2'},
-      US: {planes:['Coronal','Transverse'],note:'Hyperechoic compared to adjacent renal cortex'},
-    }
+  {
+    id:'gallbladder',cat:'upper-abdomen',
+    en:'Gallbladder',ar:'المرارة',latin:'Vesica biliaris',
+    descEn:'A pear-shaped sac on the inferior surface of the liver at the gallbladder fossa. Stores and concentrates bile, releasing it into the duodenum via the cystic and common bile ducts.',
+    descAr:'كيس على شكل كمثرى على السطح السفلي للكبد. يخزّن الصفراء ويُركّزها ثم يُطلقها إلى الاثني عشر عبر القناة الكيسية والصفراوية المشتركة.',
+    facts:['Capacity: 30–50 mL','Normal wall thickness ≤3 mm','Located at gallbladder fossa (IV/V junction)','Cystic duct → common bile duct','Best modality for gallstones: Ultrasound'],
+    imaging:{CT:'Thin-walled fluid-filled structure. Bile: 0–20 HU. Calcified stones: bright; cholesterol stones may be invisible.',MRI:'T2 very high signal (MRCP ideal). Wall barely visible when normal.',US:'Anechoic pear-shaped structure + posterior acoustic enhancement. Wall ≤3 mm. Stones: echogenic foci + posterior shadowing.',XR:'Invisible unless calcified stones or porcelain gallbladder.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+    mnemonics:[
+      {title:"Gallstone Risk — 5 F's",en:'"Fat, Female, Fertile, Forty, Fair" — classic risk factors for cholesterol gallstones. Add a 6th F: Family history.',ar:'"سمينة، أنثى، خصبة، أربعينية، فاتحة البشرة" — عوامل خطر حصى الكولسترول الكلاسيكية.',ref:"Moore's Clinically Oriented Anatomy 8th ed."}
+    ],
+    related:['liver','pancreas','portal-vein'],
+    ttsEn:'Gallbladder. Latin: Vesica biliaris. Bile storage. Gallbladder fossa.',
+    ttsAr:'المرارة. باللاتينية: فيسيكا بيلياريس. تخزين الصفراء. حفرة المرارة.'
   },
-  kidney:{
-    name:'Right Kidney',ar:'الكلية اليمنى',sys:'Urinary',reg:'Retroperitoneal',
-    loc:'Right retroperitoneal space, T12–L3; lower than left kidney',
-    fn:'Blood filtration, urine production, electrolyte balance, acid-base regulation, EPO and renin secretion.',
-    note:'Cortex (nephrons) and medulla (pyramids). Right kidney 1–2 cm lower due to liver.',
-    tags:['Solid Organ','Urinary','Retroperitoneal: Yes','Length: 9–12 cm'],
-    refs:['Renal Artery','Renal Vein','Ureter','Adrenal Gland'],
-    mods:{
-      CT: {planes:['Axial','Coronal','Sagittal'],note:'Corticomedullary phase (25–70 s); nephrographic for masses'},
-      MRI:{planes:['Axial','Coronal'],note:'T2: medullary pyramids hyperintense; T1+C: cortex enhances earlier'},
-      US: {planes:['Longitudinal','Transverse'],note:'Sinus fat hyperechoic; cortex isoechoic to liver; pyramids hypoechoic'},
-    }
+  {
+    id:'pancreas',cat:'upper-abdomen',
+    en:'Pancreas',ar:'البنكرياس',latin:'Pancreas',
+    descEn:'Mixed exocrine/endocrine gland in the retroperitoneum behind the stomach. Head in the duodenal C-curve; tail extends to the splenic hilum. Essential for digestion and glucose homeostasis.',
+    descAr:'غدة مختلطة خلف الصفاق خلف المعدة. الرأس في منحنى الاثني عشر والذيل إلى نقير الطحال. ضرورية للهضم والتحكم في السكر.',
+    facts:['Parts: Head, Neck, Body, Tail + Uncinate process','Retroperitoneal (except tail — intraperitoneal)','Main duct (Wirsung) diameter ≤3 mm','Exocrine: acinar cells → digestive enzymes','Endocrine: Islets of Langerhans → insulin, glucagon'],
+    imaging:{CT:'Pancreatic phase (35–40 s) optimal. Attenuation ~40 HU. Duct ≤3 mm. Fat lobulations common in elderly.',MRI:'T1: high signal (proteinaceous secretions). MRCP shows duct. DWI useful for masses.',US:'Echogenicity ≥ liver. Head anterior to IVC; tail posterior to stomach. Duct ≤3 mm.',XR:'Calcifications of chronic pancreatitis visible on plain film. Organ itself not directly seen.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG},US:{planes:['Transverse','Oblique'],img:IMG}},
+    mnemonics:[
+      {title:'Pancreas Parts — HNBT',en:'"Hang Neatly Before Tail" — Head (duodenal curve), Neck (over portal vein), Body (crosses spine), Tail (to splenic hilum).',ar:'"الرأس ثم العنق والجسم ثم الذيل" — رأس في منحنى الاثني عشر، عنق فوق الوريد البابي، جسم يعبر العمود، ذيل إلى الطحال.',ref:"Netter's Atlas 7th ed."},
+      {title:'Exocrine Enzymes — PALE',en:'"PALE" — Protease, Amylase, Lipase, Elastase. All secreted as inactive zymogens.',ar:'"PALE" — بروتياز، أميلاز، ليباز، إيلاستاز. كلها سلائف زيموجينية غير نشطة.',ref:"Moore's 8th ed."}
+    ],
+    related:['gallbladder','spleen','stomach','portal-vein'],
+    ttsEn:'Pancreas. Greek: all flesh. Retroperitoneal. Head, neck, body, tail.',
+    ttsAr:'البنكرياس. يوناني: كل اللحم. خلف صفاقي. رأس، عنق، جسم، ذيل.'
   },
-  pancreas:{
-    name:'Pancreas',ar:'البنكرياس',sys:'Hepatobiliary / Endocrine',reg:'Retroperitoneal',
-    loc:'Retroperitoneal, oblique at L1–L2 from head (R) to tail (L)',
-    fn:'Exocrine: amylase, lipase. Endocrine: insulin and glucagon (islets of Langerhans).',
-    note:'Head, neck, body, tail. Uncinate process hooks posterior to superior mesenteric vessels.',
-    tags:['Retroperitoneal: Yes','Dual Function','Head/Neck/Body/Tail'],
-    refs:['Common Bile Duct','Duodenum','Splenic Vein','SMA'],
-    mods:{
-      CT: {planes:['Axial','Coronal'],note:'Thin slices (0.5–1 mm), arterial + portal phases'},
-      MRI:{planes:['Axial','Coronal'],note:'MRCP for duct anatomy; T1 fat-sat: normally hyperintense'},
-      US: {planes:['Transverse','Oblique'],note:'Often obscured by bowel gas; isoechoic to slightly hyperechoic'},
-    }
+  {
+    id:'spleen',cat:'upper-abdomen',
+    en:'Spleen',ar:'الطحال',latin:'Lien / Splen',
+    descEn:'The largest lymphoid organ, in the left upper quadrant under ribs 9–11. Filters blood, recycles iron from aged RBCs, and serves as an immunological reservoir for lymphocytes and monocytes.',
+    descAr:'أكبر عضو لمفاوي، في الربع العلوي الأيسر تحت الأضلاع ٩–١١. يرشّح الدم ويُعيد تدوير الحديد ويعمل كخزّان مناعي.',
+    facts:['Normal size: ≤12 cm long-axis','LUQ, posterior to stomach','Hilum on medial surface','Fragile capsule — rupture risk in trauma','Red pulp: filtration | White pulp: immune function'],
+    imaging:{CT:'Homogeneous ~50 HU. Arterial phase: "zebra stripes" (heterogeneous — normal!). Portal phase: homogeneous. Size ≤12 cm.',MRI:'T1: hypointense vs liver. T2: hyperintense vs liver. Heterogeneous arterial phase (normal).',US:'Homogeneous, crescent-shaped. ≤12 cm long-axis. Splenomegaly >12 cm.',XR:'Splenomegaly displaces stomach medially and elevates left hemidiaphragm.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+    mnemonics:[
+      {title:'Spleen Size — 1×3×5×7×9×11',en:'"1×3×5×7×9×11" — Spleen: 1 inch thick, 3 inches wide, 5 inches long. Weighs 7 oz. Under ribs 9, 10, 11.',ar:'"١×٣×٥×٧×٩×١١" — سُمك ١ إنش، عرض ٣، طول ٥. وزنه ٧ أوقية. تحت الأضلاع ٩، ١٠، ١١.',ref:"Gray's Anatomy 41st ed."},
+      {title:'Spleen Functions — FIST',en:'"FIST" — Filtration, Immune response, Storage (platelets/monocytes), haemaTopoiesis (fetal life).',ar:'"FIST" — ترشيح، استجابة مناعية، تخزين (صفائح/وحيدات)، تكوين دم (في الجنين).',ref:"Moore's 8th ed."}
+    ],
+    related:['pancreas','stomach','portal-vein'],
+    ttsEn:'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.',
+    ttsAr:'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'
   },
-  gallbladder:{
-    name:'Gallbladder',ar:'المرارة',sys:'Hepatobiliary',reg:'Upper Abdomen',
-    loc:'Gallbladder fossa, undersurface of right hepatic lobe (segments IV/V)',
-    fn:'Bile concentration and storage; CCK-stimulated contraction releases bile into duodenum via CBD.',
-    note:'Normal wall ≤ 3 mm (fasting). Phrygian cap (folded fundus) in ~4% — normal variant.',
-    tags:['Hollow Organ','Hepatobiliary','Wall: ≤3 mm fasting','Volume: 30–50 mL'],
-    refs:['Common Bile Duct','Liver','Cystic Duct','Duodenum'],
-    mods:{
-      CT: {planes:['Axial','Coronal'],note:'Non-contrast for stones; contrast for wall thickening'},
-      MRI:{planes:['Axial','Coronal'],note:'T2: bile hyperintense; MRCP shows biliary anatomy'},
-      US: {planes:['Transverse','Longitudinal','Oblique'],note:'First-line. Fasting required. Stones: echogenic + posterior acoustic shadow'},
-    }
+  {
+    id:'kidneys',cat:'urinary',
+    en:'Kidneys',ar:'الكليتان',latin:'Renes',
+    descEn:'Paired retroperitoneal organs at T12–L3 flanking the vertebral column. Filter ~180 L/day, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.',
+    descAr:'عضوان مزدوجان خلف صفاقيان عند T12–L3. يرشّحان ١٨٠ لتراً يومياً وينظّمان الشوارد وتوازن الحموضة وضغط الدم.',
+    facts:['Size: 9–12 cm long, 5–6 cm wide','Right kidney slightly lower (displaced by liver)','Cortex + medulla + renal sinus','Blood supply: renal arteries from aorta at L1','Right renal vein short; left renal vein crosses aorta'],
+    imaging:{CT:'Cortex ~30 HU unenhanced. Nephrographic phase (90–100 s): homogeneous enhancement, cortex > medulla. Renal sinus: fat density.',MRI:'T1: cortex slightly hyperintense vs medulla. Corticomedullary differentiation best post-contrast.',US:'Hyperechoic renal sinus centrally. Cortex echogenicity ≤ liver/spleen. Medullary pyramids: hypoechoic triangular structures.',XR:'KUB: renal outlines visible if surrounded by perinephric fat. Right at L1–L3; left at T12–L2.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},'X-Ray':{planes:['AP (KUB)'],img:IMG}},
+    mnemonics:[
+      {title:'Kidney Functions — RAVE',en:'"RAVE" — Renin (BP), Activated vitamin D (calcitriol), Volume regulation, Erythropoietin (RBC production).',ar:'"RAVE" — رينين (ضغط دم)، فيتامين D منشّط، تنظيم حجم، إريثروبويتين (إنتاج كريات حمراء).',ref:"Moore's 8th ed."},
+      {title:'Cortex Echogenicity Rule',en:'"Cortex ≤ liver/spleen on US." If cortex > spleen echogenicity → abnormal (CKD, nephritis).',ar:'"صدى القشرة ≤ الكبد/الطحال في السونار." إذا تجاوز الطحال ← غير طبيعي.',ref:'Radiographics Renal US Guidelines'}
+    ],
+    related:['adrenal-glands','aorta','ivc'],
+    ttsEn:'Kidneys. Latin: Renes. Retroperitoneal. T12 to L3. Filter 180 liters per day.',
+    ttsAr:'الكليتان. باللاتينية: رينيس. خلف صفاقيتان. من T12 إلى L3. ترشحان ١٨٠ لتراً يومياً.'
+  },
+  {
+    id:'adrenal-glands',cat:'urinary',
+    en:'Adrenal Glands',ar:'الغدد الكظرية',latin:'Glandulae suprarenales',
+    descEn:'Small triangular glands atop each kidney. Outer cortex (3 zones) secretes aldosterone, cortisol, and androgens. Inner medulla secretes epinephrine and norepinephrine.',
+    descAr:'غدد صغيرة مثلثة فوق كل كلية. القشرة الخارجية (٣ مناطق) تُفرز ألدوستيرون وكورتيزول وأندروجينات. اللب الداخلي يُفرز الأدرينالين.',
+    facts:['Right: pyramidal, medial to right kidney upper pole','Left: semilunar, anterior to left kidney upper pole','Normal limb thickness ≤10 mm','Cortex zones: glomerulosa, fasciculata, reticularis','Adenoma: <10 HU on unenhanced CT (lipid-rich)'],
+    imaging:{CT:'Inverted V or Y shape. Limb ≤10 mm. Adenomas: <10 HU. Absolute washout >50% at 15 min.',MRI:'Chemical shift (in-phase/opposed-phase): adenomas lose signal on opposed-phase. Pheochromocytoma: bright T2.',US:'Difficult in adults. Best in neonates: hypoechoic cortex + hyperechoic medulla.',XR:'Not visible unless large calcified mass (e.g., old tuberculosis).'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+    mnemonics:[
+      {title:'Cortex Zones — GFR',en:'"GFR" (outer→inner) — Glomerulosa (Aldosterone), Fasciculata (Cortisol), Reticularis (androgens). "The deeper you go, the more sex!"',ar:'"GFR" (خارج ← داخل) — كبيبية (ألدوستيرون)، محزوزة (كورتيزول)، شبكية (أندروجينات). "كلما تعمّقت زادت هرمونات الجنس!"',ref:"Gray's Anatomy 41st ed."},
+      {title:'Salt, Sugar, Sex, Shock',en:'"Salt, Sugar, Sex, Shock" — Aldosterone (salt), Cortisol (sugar), Androgens (sex), Epinephrine (shock response).',ar:'"ملح، سكر، جنس، صدمة" — ألدوستيرون، كورتيزول، أندروجينات، أدرينالين.',ref:"Moore's 8th ed."}
+    ],
+    related:['kidneys','aorta'],
+    ttsEn:'Adrenal glands. Latin: Glandulae suprarenales. Cortex and medulla. Stress hormones.',
+    ttsAr:'الغدد الكظرية. باللاتينية: غلاندولاي سوبرارينالس. القشرة واللب. هرمونات الإجهاد.'
+  },
+  {
+    id:'aorta',cat:'vascular',
+    en:'Abdominal Aorta',ar:'الأبهر البطني',latin:'Aorta abdominalis',
+    descEn:'The continuation of the descending aorta below the diaphragm at T12. Descends anterior to the vertebral column, bifurcating at L4 into the common iliac arteries.',
+    descAr:'امتداد الأبهر النازل أسفل الحجاب الحاجز عند T12. ينزل أمام العمود الفقري ليتفرع عند L4 إلى الشريانين الحرقفيين المشتركين.',
+    facts:['Enters abdomen at T12 through aortic hiatus','Bifurcates at L4 → right and left common iliac arteries','Normal diameter ≤3 cm (AAA if >3 cm)','Major branches: celiac (T12), SMA (L1), renal (L1), IMA (L3)','Lies to the LEFT of IVC'],
+    imaging:{CT:'Round, left of midline. Measure outer-to-outer. Normal ≤3 cm. Atherosclerotic calcifications common in elderly. CTA arterial phase for branches.',MRI:'Flow void on spin echo. Bright on GRE/TOF-MRA. Gold standard for non-radiation vascular imaging.',US:'Pulsatile anechoic tube. Normal <3 cm. AAA screening: males ≥65 with smoking history.',XR:'Calcified wall on lateral X-ray. Aneurysm = widened soft tissue opacity.'},
+    mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},Angio:{planes:['Frontal','Lateral'],img:IMG}},
+    mnemonics:[
+      {title:'Aorta Branches — Mnemonic',en:'"Curious Surgeons Rarely Inject Gut Lumens" — Celiac (T12), SMA (L1), Renals (L1), IMA (L3), Gonadal (L2), Lumbars.',ar:'"الجراحون الفضوليون نادراً ما يحقنون تجاويف الأمعاء" — جذع بطني (T12)، SMA (L1)، كلوية (L1)، IMA (L3)، تناسلية، قطنية.',ref:"Netter's Atlas 7th ed."},
+      {title:'AAA Screening',en:'"One-time scan: Male ≥65 who ever Smoked" — Abdominal aortic aneurysm = aorta >3 cm.',ar:'"فحص واحد: ذكر ≥٦٥ سنة، مدخّن" — تمدد وعائي أبهري = أبهر > ٣ سم.',ref:'USPSTF AAA Screening Guidelines'}
+    ],
+    related:['ivc','portal-vein','kidneys'],
+    ttsEn:'Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.',
+    ttsAr:'الأبهر البطني. باللاتينية: أورطا أبدوميناليس. من T12 إلى L4. الطبيعي أقل من ٣ سم.'
+  },
+  {
+    id:'ivc',cat:'vascular',
+    en:'Inferior Vena Cava',ar:'الوريد الأجوف السفلي',latin:'Vena cava inferior',
+    descEn:'The largest vein in the body, formed by union of the common iliac veins at L5. Ascends to the right of the aorta, passing through the diaphragm at T8 to drain into the right atrium.',
+    descAr:'أكبر وريد في الجسم، يتشكّل من اتحاد الوريدين الحرقفيين عند L5. يصعد يمين الأبهر ويمر عبر الحجاب الحاجز عند T8 ليصبّ في الأذين الأيمن.',
+    facts:['Forms at L5 by union of common iliac veins','Lies to the RIGHT of the aorta','Passes diaphragm at T8 (caval opening)','Tributaries: renal, hepatic, lumbar, gonadal veins','No valves in abdominal IVC'],
+    imaging:{CT:'Right of aorta. Variable caliber with respiration. Hepatic veins enter just below diaphragm. Thrombosis: filling defect.',MRI:'Variable signal. Bright on TOF-MRA. Acute thrombus: T1 bright.',US:'Easily compressible. Collapses on inspiration. Right of aorta. Hepatic veins visible entering IVC.',XR:'Not visible unless calcified or massively dilated.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
+    mnemonics:[
+      {title:'IVC Tributaries — Mnemonic',en:'"I Like Riding Horses Going South" — Iliac, Lumbar, Renal, Hepatic, Gonadal, Suprarenal veins drain into IVC.',ar:'"أحب ركوب الخيل جهة الجنوب" — حرقفية، قطنية، كلوية، كبدية، تناسلية، كظرية تصبّ في الوريد الأجوف السفلي.',ref:"Gray's Anatomy 41st ed."}
+    ],
+    related:['aorta','liver','kidneys'],
+    ttsEn:'Inferior vena cava. Latin: Vena cava inferior. Largest vein. Right of aorta.',
+    ttsAr:'الوريد الأجوف السفلي. باللاتينية: فينا كافا إنفيريور. أكبر وريد. يمين الأبهر.'
+  },
+  {
+    id:'portal-vein',cat:'vascular',
+    en:'Portal Vein',ar:'الوريد البابي',latin:'Vena portae hepatis',
+    descEn:'Formed by SMV + splenic vein behind the pancreatic neck at L2. Carries nutrient-rich blood from the GI tract and spleen to the liver, providing 75% of hepatic blood supply.',
+    descAr:'يتشكّل من الوريد المساريقي العلوي والوريد الطحالي خلف عنق البنكرياس عند L2. يحمل دماً غنياً من الجهاز الهضمي والطحال إلى الكبد (٧٥٪ من إمداده الدموي).',
+    facts:['Formed at L2: SMV + splenic vein','Normal diameter ≤13 mm at porta hepatis','Provides 75% of hepatic blood supply','Normal flow: hepatopetal (towards liver)','Portal HTN: gradient >10 mmHg'],
+    imaging:{CT:'Portal venous phase (70 s) optimal. Round at hepatic hilum. Thrombosis: filling defect in lumen.',MRI:'Flow void or bright on GRE. Acute thrombus: T1 bright. Gadolinium confirms patency.',US:'Doppler: hepatopetal flow (towards liver). Monophasic waveform. Diameter ≤13 mm at hilum.',XR:'Not visible on plain X-ray.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Oblique','Longitudinal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+    mnemonics:[
+      {title:'Portal Vein Formation',en:'"SMV Marries Splenic behind Pancreatic Neck at L2."',ar:'"المساريقي يتزوج الطحالي خلف عنق البنكرياس عند L2."',ref:"Moore's 8th ed."},
+      {title:'Portal HTN Signs — SPADE',en:'"SPADE" — Splenomegaly, Portal vein >13 mm, Ascites, portoDuodenal collaterals, Esophageal varices.',ar:'"SPADE" — ضخامة طحال، وريد بابي >١٣ مم، استسقاء، وصلات عروقية، دوالي مريء.',ref:'Radiographics Portal HTN'}
+    ],
+    related:['liver','spleen','pancreas','ivc'],
+    ttsEn:'Portal vein. Latin: Vena portae hepatis. Formed at L2. Normal under 13 millimeters.',
+    ttsAr:'الوريد البابي. باللاتينية: فينا بورتاي هيباتيس. يتشكّل عند L2. الطبيعي أقل من ١٣ ملم.'
+  },
+  {
+    id:'stomach',cat:'gi-tract',
+    en:'Stomach',ar:'المعدة',latin:'Gaster / Ventriculus',
+    descEn:'A J-shaped muscular organ in the left upper quadrant. Receives food from the esophagus via the gastroesophageal junction; delivers chyme to the duodenum via the pylorus. Secretes HCl, pepsin, and intrinsic factor.',
+    descAr:'عضو عضلي على شكل J في الربع العلوي الأيسر. يستقبل الطعام من المريء ويُرسل الكيموس إلى الاثني عشر عبر البواب. يُفرز HCl والبيبسين والعامل الداخلي.',
+    facts:['Regions: fundus, body (corpus), antrum, pylorus','Capacity: ~1 L (expandable to 4 L)','Normal wall ≤5 mm when distended','Greater curvature: left | Lesser curvature: right','Blood supply: branches of celiac axis'],
+    imaging:{CT:'Wall ≤5 mm distended. Rugae visible. Oral contrast optimal. Air-fluid level common.',MRI:'T2 shows fluid well. T1 post-contrast for wall assessment. Rarely used routinely.',US:'"Target sign" on transverse view. Limited by gas. Pyloric stenosis: muscle >4 mm in infants.',XR:'Gastric air bubble in LUQ on erect film. Free air under diaphragm = perforation!'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Erect PA','Barium Study'],img:IMG},US:{planes:['Longitudinal'],img:IMG}},
+    mnemonics:[
+      {title:'Stomach Parts — FBAP',en:'"Fun Boys Always Perform" — Fundus, Body, Antrum, Pylorus.',ar:'"القاع والجسم والقناة والبواب" — قاع، جسم، قناة معدية، بواب.',ref:"Netter's Atlas 7th ed."},
+      {title:'Gastric Cells',en:'"Chief Makes Pepsin, Parietal Has Acid" — Chief: pepsinogen. Parietal: HCl + intrinsic factor. G-cells: gastrin.',ar:'"الرئيسية تصنع البيبسين، الجدارية لديها الحامض" — خلايا رئيسية: بيبسينوجين. جدارية: HCl + عامل داخلي.',ref:"Moore's 8th ed."}
+    ],
+    related:['pancreas','spleen','portal-vein'],
+    ttsEn:'Stomach. Latin: Gaster. Fundus, body, antrum, pylorus. Left upper quadrant.',
+    ttsAr:'المعدة. باللاتينية: غاستر. القاع، الجسم، القناة المعدية، البواب. الربع العلوي الأيسر.'
+  },
+  {
+    id:'small-intestine',cat:'gi-tract',
+    en:'Small Intestine',ar:'الأمعاء الدقيقة',latin:'Intestinum tenue',
+    descEn:'A coiled tube ~6–7 m: duodenum (25 cm), jejunum (~2.5 m), ileum (~3.5 m). Site of chemical digestion and nutrient absorption. Characterised by plicae circulares and villi.',
+    descAr:'أنبوب ملتوٍ ~٦–٧ أمتار: اثني عشر، صائم، لفائفي. موقع الهضم الكيميائي وامتصاص المواد الغذائية. يتميّز بالطيات الدائرية والزغابات.',
+    facts:['Duodenum: C-shaped, retroperitoneal, surrounds pancreatic head','Jejunum: thick folds, more vascular, LEFT abdomen','Ileum: thin folds, Peyer\'s patches, RIGHT lower quadrant','Total length: 6–7 m','Wall ≤3 mm when distended'],
+    imaging:{CT:'Wall ≤3 mm distended. Jejunum: left with more folds. Ileum: right lower quadrant. CT enterography: oral neutral contrast.',MRI:'MR enterography excellent for Crohn\'s disease. T2 HASTE: fluid bright.',US:'Peristalsis visible in real-time. Target sign on transverse view. Normal <3 mm wall.',XR:'Plicae circulares cross ENTIRE lumen (key vs haustra). Normal diameter <2.5 cm. Obstruction: >3 cm.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Erect AP','Supine AP'],img:IMG},US:{planes:['Transverse','Longitudinal'],img:IMG}},
+    mnemonics:[
+      {title:'Duodenum — 4 Parts',en:'"I Stand Horizontally Down" — Superior (D1), Descending (D2), Horizontal (D3), Ascending (D4). Ampulla of Vater opens into D2.',ar:'"أقف أفقياً للأسفل" — علوي D1، نازل D2، أفقي D3، صاعد D4. حليمة فاتر في D2.',ref:"Gray's Anatomy 41st ed."},
+      {title:'Jejunum vs Ileum',en:'"Jejunum is Juicy (LEFT, thick folds, vascular); Ileum is Inferior (RIGHT, thin folds, Peyer\'s patches)."',ar:'"الصائم ممتلئ يساراً (طيات سميكة، وعائي)؛ اللفائفي في اليمين أسفل (طيات رفيعة، لويحات باير)."',ref:"Netter's Atlas 7th ed."}
+    ],
+    related:['stomach','large-intestine','pancreas'],
+    ttsEn:'Small intestine. Latin: Intestinum tenue. Duodenum, jejunum, ileum. 6 to 7 meters.',
+    ttsAr:'الأمعاء الدقيقة. باللاتينية: إنتيستينوم تينوي. اثني عشر، صائم، لفائفي. ٦ إلى ٧ أمتار.'
+  },
+  {
+    id:'large-intestine',cat:'gi-tract',
+    en:'Large Intestine',ar:'الأمعاء الغليظة',latin:'Intestinum crassum',
+    descEn:'~1.5 m framing the small intestine peripherally. Divided into cecum, ascending, transverse, descending, sigmoid colon, and rectum. Main function: water/electrolyte absorption and fecal formation.',
+    descAr:'~١.٥ متر يُحيط بالأمعاء الدقيقة. مقسّم إلى أعور، قولون صاعد، عرضي، نازل، سيني، ومستقيم. وظيفته الرئيسية: امتصاص الماء وتشكيل البراز.',
+    facts:['Length: ~1.5 m','Features: taeniae coli, haustra, epiploic appendages','Cecum: right iliac fossa, ileocecal valve','Normal caliber: <6 cm transverse, <9 cm cecum','Rectum: 12–15 cm, no taeniae coli'],
+    imaging:{CT:'Peripheral location. Haustra (incomplete folds). Wall ≤3 mm. CT colonography: prone + supine + CO2.',MRI:'Rectal MRI excellent for staging rectal cancer (mesorectal fascia assessment). T2 key sequence.',US:'Limited by gas. Graded compression technique for appendix.',XR:'Haustra = INCOMPLETE folds (cf. plicae circulares). Normal: <6 cm transverse, <9 cm cecum. Toxic megacolon: >6 cm.'},
+    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Supine AP','Erect AP'],img:IMG},US:{planes:['Transverse'],img:IMG}},
+    mnemonics:[
+      {title:'Colon Runs Clockwise',en:'"The Colon Runs Clockwise" — Cecum (RIF) → Ascending (right) → Transverse (across) → Descending (left) → Sigmoid → Rectum.',ar:'"القولون يسير بمحاذاة عقارب الساعة" — أعور (حفرة حرقفية يمنى) ← صاعد ← عرضي ← نازل ← سيني ← مستقيم.',ref:"Moore's 8th ed."},
+      {title:'Haustra vs Plicae — X-Ray',en:'"Plicae goes ALL the way across the lumen; Haustra DOESN\'T." Key for X-ray bowel obstruction!',ar:'"الطيات الدائرية تعبر كامل اللمعة؛ التكميشات لا تعبر." مهم جداً في تشخيص انسداد الأمعاء بالأشعة!',ref:'Radiographics Bowel Obstruction'}
+    ],
+    related:['small-intestine','stomach','aorta'],
+    ttsEn:'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.',
+    ttsAr:'الأمعاء الغليظة. باللاتينية: إنتيستينوم كراسوم. أعور، قولون، مستقيم. متر ونصف.'
   }
-};
+];
 
-const ALL_MODS   = ['CT','MRI','US','NM','PET','RT','Angio','X-Ray','Mammo'];
-const MOD_CLS    = {CT:'b-ct',MRI:'b-mri',US:'b-us',NM:'b-nm',PET:'b-pet',RT:'b-rt',Angio:'b-angio','X-Ray':'b-xray',Mammo:'b-mammo'};
-const WL_PRESETS = [{l:'Soft Tissue',w:400,v:40},{l:'Lung',w:1500,v:-600},{l:'Bone',w:1800,v:400},{l:'Brain',w:80,v:40},{l:'Liver',w:150,v:60},{l:'Abdomen',w:350,v:40},{l:'Mediastinum',w:350,v:50}];
-const SIG_LBL    = ['T1','T2','FLAIR','DWI','ADC','T1+C','STIR'];
-const DOP_LBL    = ['B-Mode','Color Doppler','Power Doppler','Spectral'];
-const SEQ_FX={
-  T1:{br:110,ct:130},T2:{br:85,ct:165},FLAIR:{br:78,ct:190},
-  DWI:{br:92,ct:205},ADC:{br:100,ct:90},'T1+C':{br:122,ct:148},STIR:{br:75,ct:180},
-  'B-Mode':{br:95,ct:110},
-  'Color Doppler':{br:118,ct:128},
-  'Power Doppler':{br:128,ct:118},
-  Spectral:{br:80,ct:165},
-  'Tc-99m':{br:100,ct:140},'Tl-201':{br:95,ct:145},
-  'I-131':{br:88,ct:158},'Ga-67':{br:105,ct:135},'F-18 FDG':{br:92,ct:162},
-  CR:{br:105,ct:110},PR:{br:88,ct:132},SD:{br:100,ct:100},PD:{br:112,ct:88}
-};
-const TRC_LBL    = ['Tc-99m','Tl-201','I-131','Ga-67','F-18 FDG'];
-const PRC_LBL    = ['CR','PR','SD','PD'];
-const OAR_LBL    = ['GTV','CTV','PTV','OAR-Cord','OAR-Parotid'];
-const CTR_COL    = {GTV:'#ff4040',CTV:'#ff8c00',PTV:'#ffd700','OAR-Cord':'#60d0ff','OAR-Parotid':'#c060ff'};
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════════
-let curStruct  = 'liver';
-let curMod     = 'CT';
-let curMod2    = 'MRI';   // split right panel
-let viewMode   = 'normal'; // normal|split
-let activeTool    = 'pan';
-let activePanel   = null;  // idx of currently active panel (null = none)
-let contLbl    = 'GTV';
-let contCol    = '#ff4040';
-let activePlanes = {};     // {modKey: Set of active plane names}
-const PS       = {};       // panelStates[idx]
-
-// ═══════════════════════════════════════════════════════════
-// THEME
-// ═══════════════════════════════════════════════════════════
-const H = document.documentElement;
-document.getElementById('theme-btn').addEventListener('click',()=>{
-  const t = H.dataset.theme==='dark'?'dim':'dark';
-  H.dataset.theme=t;
-  document.getElementById('t-icon').textContent = t==='dark'?'☾':'◑';
-  document.getElementById('t-lbl').textContent  = t==='dark'?'Dim':'Dark';
-  localStorage.setItem('omnirad-theme',t);
-  Object.keys(PS).forEach(i=>drawBg(+i));
-  if(document.getElementById('fs-ov').classList.contains('open')) drawFsBg();
-});
-const saved = localStorage.getItem('omnirad-theme')||'dark';
-H.dataset.theme=saved;
-document.getElementById('t-icon').textContent = saved==='dark'?'☾':'◑';
-document.getElementById('t-lbl').textContent  = saved==='dark'?'Dim':'Dark';
-
-// ═══════════════════════════════════════════════════════════
-// RENDER PAGE
-// ═══════════════════════════════════════════════════════════
-function render(id, anim=true) {
-  const main = document.getElementById('main');
-  document.getElementById('bc').textContent = D[id]?.name||id;
-  Object.keys(PS).forEach(k=>delete PS[k]);
-  const go = () => { main.innerHTML = buildPage(id); bindPage(); bindTb(); requestAnimationFrame(()=>requestAnimationFrame(()=>initPanels())); };
-  if(anim){ main.classList.add('fading'); setTimeout(()=>{ go(); main.classList.remove('fading'); },150); }
-  else go();
-}
-
-function buildPage(id) {
-  const s = D[id];
-  const avail = Object.keys(s.mods);
-  const modBtns = ALL_MODS.map(m=>{
-    const a=avail.includes(m),act=m===curMod?' active':'',dis=!a?' disabled':'';
-    return `<button class="mod-btn${act}"${dis} data-m="${m}">${m}</button>`;
-  }).join('');
-
-  const active1  = getActivePlanes(curMod);
-  let gridCls    = viewMode==='split' ? 'img-grid-split-wrap'
-                 : `img-grid ${active1.length>=3?'g3':active1.length===2?'g2':'g1'}`;
-
-  // Build panels HTML
-  let panelsHTML = '';
-  let planeRowH  = '';
-
-  if(viewMode==='split'){
-    const avail2 = avail.filter(m=>m!==curMod);
-    if(!avail.includes(curMod2)||curMod2===curMod) curMod2=avail2[0]||avail[0];
-    const lp=getActivePlanes(curMod), rp=getActivePlanes(curMod2);
-    const lCls=lp.length>=3?'g3':lp.length===2?'g2':'g1';
-    const rCls=rp.length>=3?'g3':rp.length===2?'g2':'g1';
-    panelsHTML=`
-      <div class="split-col"><div class="img-grid ${lCls}" id="split-left">${buildPanelsHtml(s,curMod,0,false)}</div></div>
-      <div class="split-col"><div class="img-grid ${rCls}" id="split-right">${buildPanelsHtml(s,curMod2,lp.length,false)}</div></div>`;
-    planeRowH = buildSplitPlaneRows(avail);
-  } else {
-    panelsHTML = buildPanelsHtml(s, curMod, 0);
-    planeRowH  = buildPlaneRow(curMod);
-  }
-
-  const splitRow = viewMode==='split' ? buildSplitRow(avail) : '';
-
-  return `
-  <div class="sbar"><span class="sdot"></span><span>Phase 1 · MVP · <strong>Upper Abdomen</strong> · 5 structures · Placeholder images</span></div>
-  <div class="s-hdr">
-    <div>
-      <div class="s-eyebrow">${s.sys} · ${s.reg}</div>
-      <h1 class="s-name">${s.name}</h1>
-      <div class="s-ar">${s.ar}</div>
-      <div class="s-tags">${s.tags.map((t,i)=>`<span class="tag${i===0?' sys':''}">${t}</span>`).join('')}</div>
-    </div>
-    <div class="s-meta">
-      <div class="meta-card"><div class="meta-lbl">Region</div><div class="meta-val">${s.reg}</div></div>
-      <div class="meta-card"><div class="meta-lbl">System</div><div class="meta-val">${s.sys}</div></div>
-    </div>
-  </div>
-  <div class="info-grid">
-    <div class="info-card"><div class="info-lbl">Location</div><div class="info-txt">${s.loc}</div></div>
-    <div class="info-card"><div class="info-lbl">Function</div><div class="info-txt">${s.fn}</div></div>
-    <div class="info-card"><div class="info-lbl">Clinical Note</div><div class="info-txt">${s.note}</div></div>
-  </div>
-  <div class="viewer-wrap">
-    <div class="viewer-hdr">
-      <div class="viewer-title">Multimodal Viewer</div>
-      <div class="view-row">
-        <button class="vbtn${viewMode==='normal'?' active':''}" data-v="normal">⊞ Normal</button>
-        <button class="vbtn" data-v="expand" title="Double-click any panel to expand">⛶ Expand</button>
-        <button class="vbtn${viewMode==='split'?' active':''}" data-v="split">⊟ Split</button>
-      </div>
-    </div>
-    <div class="viewer-body">
-      <div class="mod-row"><span class="mod-lbl">Modality</span>${modBtns}</div>
-      ${planeRowH}
-      ${splitRow}
-      <div class="${gridCls}" id="img-grid">${panelsHTML}</div>
-    </div>
-  </div>
-  <div class="tools-wrap" id="tools-wrap">
-    <div class="tools-hdr">
-      <div class="tools-title">🛠 Image Tools Suite <span class="mod-badge ${MOD_CLS[curMod]||'b-ct'}" id="tb-badge">${curMod}</span></div>
-      <span class="tools-disc">⚠ Educational use only — values are illustrative</span>
-      <button class="tools-collapse-btn" id="tools-collapse-btn" aria-label="Toggle tools panel">▲ Hide</button>
-    </div>
-    <div class="tb-body" id="tb-body"></div>
-  </div>
-  <div class="xref-sec">
-    <div class="sec-title">Related Structures</div>
-    <div class="xref-grid">${s.refs.map(r=>`<button class="xref-btn" onclick="alert('${r} — available in future update')">${r}<span class="xarr">→</span></button>`).join('')}</div>
-  </div>`;
-}
-
-// ── Plane management ────────────────────────────────────
-function planeKey(mod){ return `${curStruct}__${mod}`; }
-
-function getActivePlanes(mod) {
-  const allPlanes = D[curStruct]?.mods[mod]?.planes || [];
-  if(!allPlanes.length) return [];
-  const key = planeKey(mod);
-  if(!activePlanes[key]) {
-    // Default: first plane only
-    activePlanes[key] = new Set([allPlanes[0]]);
-  }
-  // Only return planes that still exist for this mod
-  return allPlanes.filter(p => activePlanes[key].has(p));
-}
-
-function togglePlane(mod, plane) {
-  const key = planeKey(mod);
-  const allPlanes = D[curStruct]?.mods[mod]?.planes || [];
-  if(!activePlanes[key]) activePlanes[key] = new Set([allPlanes[0]]);
-  const s = activePlanes[key];
-  if(s.has(plane)) {
-    // Only allow removal if more than 1 active
-    if(s.size > 1) s.delete(plane);
-  } else {
-    s.add(plane);
-  }
-}
-
-function buildSplitPlaneRows(avail) {
-  // Show plane toggles for both left and right modalities
-  const leftAllPlanes  = D[curStruct]?.mods[curMod]?.planes||[];
-  const rightAllPlanes = D[curStruct]?.mods[curMod2]?.planes||[];
-  const leftActive     = getActivePlanes(curMod);
-  const rightActive    = getActivePlanes(curMod2);
-
-  const leftBtns  = leftAllPlanes.length>1 ? leftAllPlanes.map(p=>
-    `<button class="plane-btn${leftActive.includes(p)?' on':''}" data-plane="${p}" data-planemod="${curMod}">${p}</button>`
-  ).join('') : '';
-
-  const rightBtns = rightAllPlanes.length>1 ? rightAllPlanes.map(p=>
-    `<button class="plane-btn${rightActive.includes(p)?' on':''}" data-plane="${p}" data-planemod="${curMod2}">${p}</button>`
-  ).join('') : '';
-
-  if(!leftBtns && !rightBtns) return '';
-
-  return `<div class="split-plane-rows" id="split-plane-rows">
-    <div class="plane-row" id="plane-row-${curMod}">
-      <span class="plane-lbl" style="color:var(--teal);font-weight:600">${curMod}</span>
-      ${leftBtns||'<span style="font-size:.67rem;color:var(--tx3)">Single plane</span>'}
-    </div>
-    <div class="plane-row" id="plane-row-${curMod2}">
-      <span class="plane-lbl" style="color:var(--teal);font-weight:600">${curMod2}</span>
-      ${rightBtns||'<span style="font-size:.67rem;color:var(--tx3)">Single plane</span>'}
-    </div>
-  </div>`;
-}
-
-function buildPlaneRow(mod) {
-  const allPlanes = D[curStruct]?.mods[mod]?.planes || [];
-  if(allPlanes.length <= 1) return ''; // no toggle needed for single plane
-  const active = getActivePlanes(mod);
-  const btns = allPlanes.map(p =>
-    `<button class="plane-btn${active.includes(p)?' on':''}" data-plane="${p}" data-planemod="${mod}">${p}</button>`
-  ).join('');
-  return `<div class="plane-row" id="plane-row-${mod}">
-    <span class="plane-lbl">Planes</span>${btns}
-  </div>`;
-}
-
-function buildPanelsHtml(s, mod, offset, onlyFirst=false) {
-  const allPlanes = s.mods[mod]?.planes||[];
-  let list;
-  if(onlyFirst) {
-    // Split right panel: always show only first plane of this modality
-    list = [allPlanes[0]].filter(Boolean);
-  } else {
-    list = getActivePlanes(mod);
-  }
-  const note = s.mods[mod]?.note||'';
-  const mc   = MOD_CLS[mod]||'b-ct';
-  if(!list.length) return `<div style="padding:2rem;color:var(--tx3);text-align:center;grid-column:1/-1">No ${mod} images available</div>`;
-  return list.map((p,i)=>{
-    const idx = i+offset;
-    return `<div class="panel">
-      <div class="panel-hdr">
-        <span class="panel-lbl">${p}</span>
-        <div class="panel-right">
-          <span class="mod-badge ${mc}">${mod}</span>
-          <button class="xbtn" data-expand="${idx}" title="Expand · Dbl-click">⤢</button>
-        </div>
-      </div>
-      <div class="cvs-wrap" id="cw-${idx}" data-idx="${idx}" data-mod="${mod}" data-plane="${p}">
-        <canvas id="bg-${idx}"></canvas>
-        <canvas id="dr-${idx}" style="pointer-events:none;z-index:2;position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
-        <div class="cvs-stat" id="st-${idx}">pan | ×1.0</div>
-        <div class="cvs-ol"   id="ol-${idx}"></div>
-      </div>
-    </div>`;
-  }).join('') + `<p class="vnote">📋 ${note}</p>`;
-}
-
-function buildSplitRow(avail) {
-  const btns = ALL_MODS.map(m=>{
-    const a=avail.includes(m)&&m!==curMod,act=m===curMod2?' active':'',dis=(!a)?' disabled':'';
-    return `<button class="smod-btn${act}"${dis} data-sm="${m}">${m}</button>`;
-  }).join('');
-  return `<div class="split-row" id="split-row"><span class="split-lbl">Right panel:</span>${btns}</div>`;
-}
-
-// ═══════════════════════════════════════════════════════════
-// BIND PAGE EVENTS
-// ═══════════════════════════════════════════════════════════
-function bindPage() {
-  // Modality buttons
-  document.querySelectorAll('.mod-btn[data-m]').forEach(b=>b.addEventListener('click',()=>{
-    if(b.disabled) return;
-    curMod = b.dataset.m;
-    document.querySelectorAll('.mod-btn[data-m]').forEach(x=>x.classList.toggle('active',x.dataset.m===curMod));
-    const badge=document.getElementById('tb-badge');
-    if(badge){badge.textContent=curMod;badge.className=`mod-badge ${MOD_CLS[curMod]||'b-ct'}`;}
-    refreshViewer();
-  }));
-
-  // View mode
-  document.querySelectorAll('.vbtn[data-v]').forEach(b=>b.addEventListener('click',()=>{
-    if(b.dataset.v==='expand'){ openFs(curMod); return; }
-    viewMode = b.dataset.v;
-    document.querySelectorAll('.vbtn[data-v]').forEach(x=>x.classList.toggle('active',x.dataset.v===viewMode));
-    refreshViewer();
-  }));
-
-  // Plane toggles
-  bindPlaneToggles();
-
-  // Expand buttons & dblclick
-  document.addEventListener('click', e=>{
-    const xb=e.target.closest('[data-expand]');
-    if(xb){ const cw=document.getElementById(`cw-${xb.dataset.expand}`); openFs(cw?.dataset.mod||curMod); }
-  },{capture:false});
-}
-
-function refreshViewer() {
-  const s=D[curStruct], avail=Object.keys(s.mods);
-  const grid=document.getElementById('img-grid'); if(!grid) return;
-
-  // Clear old panel states
-  Array.from(grid.querySelectorAll('.cvs-wrap')).forEach(w=>delete PS[+w.dataset.idx]);
-
-  if(viewMode==='split'){
-    // Split: each side is a column wrapper
-    if(!avail.includes(curMod2)||curMod2===curMod) curMod2=avail.filter(m=>m!==curMod)[0]||avail[0];
-    const lp=getActivePlanes(curMod), rp=getActivePlanes(curMod2);
-    const lCls=lp.length>=3?'g3':lp.length===2?'g2':'g1';
-    const rCls=rp.length>=3?'g3':rp.length===2?'g2':'g1';
-    // Use a 2-col wrapper grid; each side has its own sub-grid
-    grid.className='img-grid-split-wrap';
-    grid.innerHTML=`
-      <div class="split-col">
-        <div class="img-grid ${lCls}" id="split-left">${buildPanelsHtml(s,curMod,0,false)}</div>
-      </div>
-      <div class="split-col">
-        <div class="img-grid ${rCls}" id="split-right">${buildPanelsHtml(s,curMod2,lp.length,false)}</div>
-      </div>`;
-  } else {
-    const active1=getActivePlanes(curMod);
-    const cls=active1.length>=3?'g3':active1.length===2?'g2':'g1';
-    grid.className=`img-grid ${cls}`;
-    grid.innerHTML=buildPanelsHtml(s,curMod,0);
-  }
-
-  // Plane rows — always rebuild from scratch to avoid duplication
-  document.querySelectorAll('.plane-row,.split-plane-rows').forEach(r=>r.remove());
-  const planeHtml = viewMode==='split' ? buildSplitPlaneRows(avail) : buildPlaneRow(curMod);
-  if(planeHtml){
-    const div=document.createElement('div');
-    div.innerHTML=planeHtml;
-    const el=div.firstElementChild;
-    if(el) grid.parentNode.insertBefore(el,grid);
-  }
-  bindPlaneToggles();
-
-  // Split row
-  const sr=document.getElementById('split-row');
-  if(viewMode==='split' && !sr){
-    const row=document.createElement('div');
-    row.innerHTML=buildSplitRow(avail);
-    const pr=document.querySelector('.split-plane-rows,.plane-row')||grid;
-    grid.parentNode.insertBefore(row.firstElementChild,pr.nextSibling||grid);
-    bindSplitRow();
-  } else if(viewMode!=='split' && sr){
-    sr.remove();
-  } else if(viewMode==='split' && sr){
-    sr.innerHTML=`<span class="split-lbl">Right panel:</span>`+ALL_MODS.map(m=>{
-      const a=avail.includes(m)&&m!==curMod,act=m===curMod2?' active':'',dis=!a?' disabled':'';
-      return`<button class="smod-btn${act}"${dis} data-sm="${m}">${m}</button>`;
-    }).join('');
-    bindSplitRow();
-  }
-
-  bindTb();
-  requestAnimationFrame(()=>requestAnimationFrame(()=>initPanels()));
-}
-
-function bindPlaneToggles(){
-  document.querySelectorAll('.plane-btn[data-plane]').forEach(b=>{
-    // Clone to clear old listeners
-    const nb=b.cloneNode(true);
-    b.replaceWith(nb);
-    nb.addEventListener('click',()=>{
-      const mod=nb.dataset.planemod||curMod;
-      togglePlane(mod, nb.dataset.plane);
-      refreshViewer();
-    });
-  });
-}
-
-function bindSplitRow(){
-  document.querySelectorAll('.smod-btn[data-sm]').forEach(b=>b.addEventListener('click',()=>{
-    if(b.disabled)return;
-    curMod2=b.dataset.sm;
-    refreshViewer();
-  }));
-}
-
-// ═══════════════════════════════════════════════════════════
-// TOOLBAR
-// ═══════════════════════════════════════════════════════════
-function bindTb() {
-  const old=document.getElementById('tb-body'); if(!old) return;
-  // Clone to remove all accumulated listeners
-  const tb=old.cloneNode(false);
-  old.replaceWith(tb);
-  tb.id='tb-body';
-  tb.innerHTML = buildTbHtml(curMod);
-
-  tb.addEventListener('click', e=>{
-    const btn=e.target.closest('.tbtn[data-t]');
-    if(btn){ handleTool(btn.dataset.t,tb); return; }
-    const pb=e.target.closest('.pbtn');
-    if(pb){ handlePreset(pb,tb); }
-  });
-
-  tb.addEventListener('input', e=>{
-    const sl=e.target; if(!sl.classList.contains('tsl')) return;
-    const v=+sl.value;
-    const vm={'sl-w':'sv-w','sl-l':'sv-l','sl-br':'sv-br','sl-ct':'sv-ct','sl-gn':'sv-gn','sl-po':'sv-po'};
-    const sfx={'sl-br':'%','sl-ct':'%','sl-gn':'%','sl-po':'%'};
-    const vEl=tb.querySelector('#'+vm[sl.id]);
-    if(vEl) vEl.textContent=v+(sfx[sl.id]||'');
-    if(sl.id==='sl-w'||sl.id==='sl-l'){
-      const w=+(tb.querySelector('#sl-w')?.value||400), lv=+(tb.querySelector('#sl-l')?.value||40);
-      applyWL(w,lv);
-    } else if(sl.id==='sl-br') applyBC(v,null);
-    else if(sl.id==='sl-ct') applyBC(null,v);
-    else if(sl.id==='sl-gn') applyBC(v,null);
-  });
-}
-
-function handleTool(t, tb) {
-  const acts=['rotate-cw','rotate-ccw','flip-h','flip-v','invert','reset','save','tic'];
-  if(acts.includes(t)){ applyAction(t); return; }
-  setTool(t);
-}
-
-function handlePreset(pb, tb) {
-  if(pb.dataset.ww!==undefined){
-    const w=+pb.dataset.ww, lv=+pb.dataset.wl;
-    tb.querySelectorAll('.pbtn[data-ww]').forEach(b=>b.classList.toggle('active',b===pb));
-    const sw=tb.querySelector('#sl-w'),sl=tb.querySelector('#sl-l');
-    const svw=tb.querySelector('#sv-w'),svl=tb.querySelector('#sv-l');
-    if(sw){sw.value=w;if(svw)svw.textContent=w;}
-    if(sl){sl.value=lv;if(svl)svl.textContent=lv;}
-    applyWL(w,lv); return;
-  }
-  if(pb.dataset.cm!==undefined){
-    pb.closest('.tb-row')?.querySelectorAll('.pbtn[data-cm]').forEach(b=>b.classList.toggle('active',b===pb));
-    setStat(`Colormap: ${pb.dataset.cm}`); return;
-  }
-  if(pb.dataset.sq!==undefined){
-    const lbl=pb.dataset.sq;
-    const grp=pb.closest('.tb-row');
-    const wasActive=pb.classList.contains('active');
-    grp?.querySelectorAll('.pbtn[data-sq]').forEach(b=>b.classList.remove('active'));
-    // Target ACTIVE panel only
-    const ap=getActivePS(); if(!ap) return;
-    const {idx,s}=ap;
-    // Remove lbl annos from active panel only
-    s.annos=s.annos.filter(a=>a.t!=='lbl');
-    if(!wasActive){
-      pb.classList.add('active');
-      const FX=SEQ_FX;
-      const eff=FX[lbl]||{br:100,ct:100};
-      s.br=eff.br; s.ct=eff.ct;
-      s.annos.push({t:'lbl',d:[10,22,lbl]});
-      drawBg(idx); drawAnno(idx);
-      const sbr=document.getElementById('sl-br'),sct=document.getElementById('sl-ct'),sgn=document.getElementById('sl-gn');
-      if(sbr){sbr.value=eff.br;const sv=document.getElementById('sv-br');if(sv)sv.textContent=eff.br+'%';}
-      if(sct){sct.value=eff.ct;const sv=document.getElementById('sv-ct');if(sv)sv.textContent=eff.ct+'%';}
-      if(sgn){sgn.value=eff.br;const sv=document.getElementById('sv-gn');if(sv)sv.textContent=eff.br+'%';}
-    } else {
-      s.br=100; s.ct=100; drawBg(idx); drawAnno(idx);
-      const sbr=document.getElementById('sl-br'),sct=document.getElementById('sl-ct'),sgn=document.getElementById('sl-gn');
-      if(sbr){sbr.value=100;const sv=document.getElementById('sv-br');if(sv)sv.textContent='100%';}
-      if(sct){sct.value=100;const sv=document.getElementById('sv-ct');if(sv)sv.textContent='100%';}
-      if(sgn){sgn.value=100;const sv=document.getElementById('sv-gn');if(sv)sv.textContent='100%';}
-    }
-    return;
-  }
-  if(pb.dataset.oar!==undefined){
-    const lbl=pb.dataset.oar;
-    contLbl=lbl; contCol=CTR_COL[lbl]||'#60d090';
-    pb.closest('.tb-row')?.querySelectorAll('.pbtn[data-oar]').forEach(b=>b.classList.toggle('active',b===pb));
-    setTool('contour'); return;
-  }
-}
-
-function buildTbHtml(mod) {
-  const base=`
-  <div class="tb-row">
-    <span class="tb-lbl">Navigate</span>
-    <button class="tbtn${activeTool==='pan'?' active':''}" data-t="pan" data-tip="Scroll=zoom · Drag=pan">✥ Pan/Zoom</button>
-    <div class="tdiv"></div>
-    <button class="tbtn${activeTool==='measure'?' active':''}"     data-t="measure"     data-tip="2 points → distance (mm*)">📏 Measure</button>
-    <button class="tbtn${activeTool==='angle'?' active':''}"       data-t="angle"       data-tip="3 points → angle (°)">📐 Angle</button>
-    <button class="tbtn${activeTool==='roi-rect'?' active':''}"    data-t="roi-rect"    data-tip="Drag → ROI rectangle + area (mm²*)">⬜ ROI Rect</button>
-    <button class="tbtn${activeTool==='roi-ellipse'?' active':''}" data-t="roi-ellipse" data-tip="Drag → ellipse ROI + A×B (mm*)">⭕ ROI Ellipse</button>
-    <button class="tbtn${activeTool==='annotate'?' active':''}"    data-t="annotate"    data-tip="Click → type free text">🏷 Annotate</button>
-  </div>
-  <div class="tb-row">
-    <span class="tb-lbl">Transform</span>
-    <button class="tbtn" data-t="rotate-cw"  data-tip="Rotate 90° clockwise">↻ Rotate CW</button>
-    <button class="tbtn" data-t="rotate-ccw" data-tip="Rotate 90° counter-clockwise">↺ Rotate CCW</button>
-    <button class="tbtn" data-t="flip-h"     data-tip="Flip horizontal">↔ Flip H</button>
-    <button class="tbtn" data-t="flip-v"     data-tip="Flip vertical">↕ Flip V</button>
-    <button class="tbtn" data-t="invert"     data-tip="Toggle negative">◑ Invert</button>
-    <div class="tdiv"></div>
-    <button class="tbtn danger" data-t="reset" data-tip="Clear all annotations + reset zoom/filters">✕ Reset All</button>
-    <button class="tbtn save"   data-t="save"  data-tip="Download PNG with annotations">📸 Save PNG</button>
-  </div>`;
-
-  let spec='';
-  if(mod==='CT'){
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">CT Tools</span>
-      <button class="tbtn${activeTool==='hu-probe'?' active':''}" data-t="hu-probe" data-tip="Click → Hounsfield Unit* (illustrative)">🔢 HU Probe</button>
-      <button class="tbtn${activeTool==='cobb'?' active':''}"     data-t="cobb"     data-tip="3-click Cobb angle (vertebral curvature)">🦴 Cobb Angle</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">W / L</span>
-      ${WL_PRESETS.map(p=>`<button class="pbtn" data-ww="${p.w}" data-wl="${p.v}">${p.l}</button>`).join('')}
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Manual</span>
-      <div class="sl-row">
-        <div class="sl-item"><span class="sl-lbl">Window</span><input type="range" class="tsl" id="sl-w" min="1" max="4000" value="400"><span class="sl-val" id="sv-w">400</span></div>
-        <div class="sl-item"><span class="sl-lbl">Level</span><input type="range" class="tsl" id="sl-l" min="-1000" max="1000" value="40"><span class="sl-val" id="sv-l">40</span></div>
-      </div>
-    </div>`;
-  } else if(mod==='MRI'){
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">MRI Tools</span>
-      <button class="tbtn${activeTool==='roi-signal'?' active':''}" data-t="roi-signal" data-tip="Drag ROI → mean signal intensity*">📊 ROI Signal</button>
-      <button class="tbtn" data-t="tic" data-tip="Time-Intensity Curve (requires DICOM dynamic series)">📈 TIC</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Sequence</span>
-      ${SIG_LBL.map(l=>`<button class="pbtn" data-sq="${l}" data-tip="Toggle ${l} label overlay">${l}</button>`).join('')}
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Display</span>
-      <div class="sl-row">
-        <div class="sl-item"><span class="sl-lbl">Brightness</span><input type="range" class="tsl" id="sl-br" min="50" max="200" value="100"><span class="sl-val" id="sv-br">100%</span></div>
-        <div class="sl-item"><span class="sl-lbl">Contrast</span><input type="range" class="tsl" id="sl-ct" min="50" max="250" value="100"><span class="sl-val" id="sv-ct">100%</span></div>
-      </div>
-    </div>`;
-  } else if(mod==='US'){
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">US Tools</span>
-      <button class="tbtn${activeTool==='depth'?' active':''}"    data-t="depth"    data-tip="Click → vertical depth scale (cm*)">📏 Depth cm</button>
-      <button class="tbtn${activeTool==='follicle'?' active':''}" data-t="follicle" data-tip="Drag ellipse → A×B + volume (0.523×A×B×C)*">⭕ Follicle Vol</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Mode</span>
-      ${DOP_LBL.map(l=>`<button class="pbtn" data-sq="${l}">${l}</button>`).join('')}
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Display</span>
-      <div class="sl-row">
-        <div class="sl-item"><span class="sl-lbl">Gain</span><input type="range" class="tsl" id="sl-gn" min="50" max="200" value="100"><span class="sl-val" id="sv-gn">100%</span></div>
-      </div>
-    </div>`;
-  } else if(mod==='NM'){
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">NM Tools</span>
-      <button class="tbtn${activeTool==='roi-counts'?' active':''}" data-t="roi-counts" data-tip="Drag ROI → count activity estimate*">🔢 ROI Counts</button>
-      <button class="tbtn${activeTool==='h-line'?' active':''}"     data-t="h-line"     data-tip="Click → horizontal reference line">— H-Line</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Colormap</span>
-      ${['Hot','Rainbow','Grayscale','Spectrum','Cold Metal'].map(c=>`<button class="pbtn" data-cm="${c}">${c}</button>`).join('')}
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Tracer</span>
-      ${TRC_LBL.map(t=>`<button class="pbtn" data-sq="${t}">${t}</button>`).join('')}
-    </div>`;
-  } else if(mod==='PET'){
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">PET Tools</span>
-      <button class="tbtn${activeTool==='suv-probe'?' active':''}" data-t="suv-probe" data-tip="Click → SUVmax* (illustrative)">☢ SUV Probe</button>
-      <button class="tbtn${activeTool==='suv-roi'?' active':''}"   data-t="suv-roi"   data-tip="Drag ellipse → SUVmax/mean/peak*">📊 SUV ROI</button>
-      <button class="tbtn${activeTool==='mtv'?' active':''}"       data-t="mtv"       data-tip="Drag ROI → Metabolic Tumor Volume estimate* (cm³)">🧬 MTV Est.</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Colormap</span>
-      ${['Hot Metal','Rainbow','PET Std','Grayscale'].map(c=>`<button class="pbtn" data-cm="${c}">${c}</button>`).join('')}
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">PERCIST</span>
-      ${PRC_LBL.map(l=>`<button class="pbtn" data-sq="${l}">${l}</button>`).join('')}
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">PET/CT</span>
-      <div class="sl-row">
-        <div class="sl-item"><span class="sl-lbl">Opacity</span><input type="range" class="tsl" id="sl-po" min="0" max="100" value="60"><span class="sl-val" id="sv-po">60%</span></div>
-      </div>
-    </div>`;
-  } else if(mod==='RT'){
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">RT-IGRT</span>
-      <button class="tbtn${activeTool==='isodose'?' active':''}"    data-t="isodose"    data-tip="Click → isodose lines 100/80/50/20% (illustrative)">〰 Isodose</button>
-      <button class="tbtn${activeTool==='field-size'?' active':''}" data-t="field-size" data-tip="Drag → radiation field size (cm×cm)*">⬜ Field Size</button>
-      <button class="tbtn${activeTool==='ssd'?' active':''}"        data-t="ssd"        data-tip="Drag → Source-to-Skin Distance (mm*)">↕ SSD</button>
-      <button class="tbtn${activeTool==='contour'?' active':''}"    data-t="contour"    data-tip="Draw → GTV/CTV/PTV/OAR contour">✏ Contour</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Volumes</span>
-      ${OAR_LBL.map(l=>`<button class="pbtn" data-oar="${l}" style="color:${CTR_COL[l]||'#60d090'};border-color:${CTR_COL[l]||'#60d090'}44">${l}</button>`).join('')}
-    </div>
-    <div class="tb-row"><div class="rt-warn">⚠ RT tools are for anatomical education only — not for clinical RT planning or dose prescription</div></div>`;
-  } else {
-    spec=`
-    <div class="tb-row">
-      <span class="tb-lbl">${mod} Tools</span>
-      <button class="tbtn${activeTool==='ctr'?' active':''}" data-t="ctr" data-tip="Drag → Cardiothoracic Ratio estimate*">❤ CTR</button>
-    </div>
-    <div class="tb-row">
-      <span class="tb-lbl">Display</span>
-      <div class="sl-row">
-        <div class="sl-item"><span class="sl-lbl">Brightness</span><input type="range" class="tsl" id="sl-br" min="50" max="200" value="100"><span class="sl-val" id="sv-br">100%</span></div>
-        <div class="sl-item"><span class="sl-lbl">Contrast</span><input type="range" class="tsl" id="sl-ct" min="50" max="250" value="100"><span class="sl-val" id="sv-ct">100%</span></div>
-      </div>
-    </div>`;
-  }
-  return base+spec;
-}
-
-// ═══════════════════════════════════════════════════════════
-// CANVAS ENGINE
-// ═══════════════════════════════════════════════════════════
-function initPanels() {
-  const tryInit=(attempt=0)=>{
-    let anyFailed=false;
-    document.querySelectorAll('.cvs-wrap').forEach(wrap=>{
-      const idx=+wrap.dataset.idx;
-      if(PS[idx]&&PS[idx].W>10) return; // already initialized
-      const mod=wrap.dataset.mod||curMod;
-      const bgC=document.getElementById(`bg-${idx}`);
-      const drC=document.getElementById(`dr-${idx}`);
-      if(!bgC||!drC){anyFailed=true;return;}
-      const W=wrap.offsetWidth||wrap.clientWidth||0;
-      const Ht=wrap.offsetHeight||wrap.clientHeight||0;
-      if((W<10||Ht<10)&&attempt<4){anyFailed=true;return;}
-      const FW=W||400, FHt=Ht||300;
-      bgC.width=drC.width=FW; bgC.height=drC.height=FHt;
-      PS[idx]={bg:bgC.getContext('2d'),dr:drC.getContext('2d'),W:FW,H:FHt,
-        zoom:1,px:0,py:0,rot:0,fh:1,fv:1,br:100,ct:100,inv:false,
-        annos:[],pts:[],cpts:[],mod,drawing:false,sx:0,sy:0,lx:0,ly:0};
-      drawBg(idx);
-      bindCvs(idx,wrap);
-      // Watch for size changes (orientation change, sidebar collapse, etc.)
-      if(window.ResizeObserver){
-        const ro=new ResizeObserver(()=>{
-          const nW=wrap.offsetWidth, nHt=wrap.offsetHeight;
-          if(nW>10&&nHt>10&&(Math.abs(nW-(PS[idx]?.W||0))>4||Math.abs(nHt-(PS[idx]?.H||0))>4)){
-            delete PS[idx];
-            requestAnimationFrame(()=>initPanels());
-          }
-        });
-        ro.observe(wrap);
-      }
-    });
-    if(anyFailed&&attempt<4) setTimeout(()=>tryInit(attempt+1),80*(attempt+1));
-    else {
-      setTool(activeTool);
-      // Auto-activate first panel if none active
-      const keys=Object.keys(PS);
-      if(keys.length && (activePanel===null || !PS[activePanel])){
-        setActivePanel(+keys[0]);
-      }
-    }
-  };
-  tryInit();
-}
-
-// ── Background draw ───────────────────────────────────────
-function drawBg(idx) {
-  const s=PS[idx]; if(!s) return;
-  const ctx=s.bg, W=s.W, Ht=s.H, mod=s.mod;
-  const dark=document.documentElement.dataset.theme==='dark'; // FIX: use explicit reference
-  ctx.clearRect(0,0,W,Ht);
-  ctx.save();
-  ctx.translate(W/2+s.px, Ht/2+s.py);
-  ctx.scale(s.zoom*s.fh, s.zoom*s.fv);
-  ctx.rotate(s.rot*Math.PI/180);
-  ctx.translate(-W/2,-Ht/2);
-
-  // Background
-  ctx.fillStyle=dark?'#0b0f18':'#1a2535'; ctx.fillRect(0,0,W,Ht);
-
-  // Grid
-  const gc=dark?'rgba(57,208,184,.06)':'rgba(30,160,140,.10)';
-  ctx.strokeStyle=gc; ctx.lineWidth=.8;
-  for(let x=W/6;x<W;x+=W/6){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,Ht);ctx.stroke();}
-  for(let y=Ht/6;y<Ht;y+=Ht/6){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-
-  // Crosshair
-  const xc=dark?'rgba(57,208,184,.18)':'rgba(30,160,140,.30)';
-  ctx.strokeStyle=xc; ctx.lineWidth=.9; ctx.setLineDash([4,4]);
-  ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,Ht);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(0,Ht/2);ctx.lineTo(W,Ht/2);ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Organ circle
-  const r=Math.min(W,Ht)*.30;
-  ctx.beginPath(); ctx.arc(W/2,Ht/2,r,0,Math.PI*2);
-  ctx.fillStyle=dark?'rgba(30,130,115,.10)':'rgba(20,120,105,.20)'; ctx.fill();
-  ctx.strokeStyle=dark?'rgba(57,208,184,.32)':'rgba(30,160,140,.60)'; ctx.lineWidth=1.5; ctx.stroke();
-  ctx.beginPath(); ctx.arc(W/2,Ht/2,r*.52,0,Math.PI*2);
-  ctx.strokeStyle=dark?'rgba(57,208,184,.12)':'rgba(30,160,140,.25)'; ctx.lineWidth=.8; ctx.stroke();
-
-  // W/L effect — brightness/contrast applied via CSS filter shows here as visual hint
-  // Draw a subtle vignette showing the current filter level
-  if(s.ct>120){
-    const grad=ctx.createRadialGradient(W/2,Ht/2,r*.4,W/2,Ht/2,r*1.2);
-    grad.addColorStop(0,'rgba(57,208,184,.04)');
-    grad.addColorStop(1,'rgba(0,0,0,.0)');
-    ctx.fillStyle=grad; ctx.fillRect(0,0,W,Ht);
-  }
-
-  // Labels
-  const tx=dark?'rgba(57,208,184,.65)':'rgba(30,160,140,.90)';
-  ctx.fillStyle=tx; ctx.textAlign='center';
-  ctx.font=`700 ${Math.min(W,Ht)*.042}px IBM Plex Mono,monospace`;
-  ctx.fillText((D[curStruct]?.name||'').toUpperCase(), W/2, Ht/2+r+Math.min(W,Ht)*.072);
-  ctx.font=`700 ${Math.min(W,Ht)*.038}px IBM Plex Mono,monospace`; ctx.textAlign='left';
-  ctx.fillText(mod, W*.032, Ht*.068);
-  ctx.restore();
-
-  // CSS filter for brightness/contrast/invert
-  const bgEl=document.getElementById(`bg-${idx}`);
-  if(bgEl) bgEl.style.filter=`brightness(${s.br}%) contrast(${s.ct}%)${s.inv?' invert(1)':''}`;
-}
-
-// ── Annotations draw ──────────────────────────────────────
-function drawAnno(idx) {
-  const s=PS[idx]; if(!s) return;
-  const ctx=s.dr, W=s.W, Ht=s.H;
-  ctx.clearRect(0,0,W,Ht);
-  ctx.font='500 11px IBM Plex Mono,monospace';
-  const T='rgba(57,208,184,.95)',Y='#f0d060',P='#f06080',G='#60d090';
-  s.annos.forEach(a=>drawA(ctx,a,T,Y,P,G,W,Ht));
-  // Overlay tags
-  const ol=document.getElementById(`ol-${idx}`); if(!ol)return;
-  const mt=s.annos.filter(a=>['measure','ssd','roi-rect','roi-ellipse','follicle','suv-roi','hu-probe','suv-probe','mtv'].includes(a.t)).slice(-4).map(a=>{
-    if(a.t==='measure'||a.t==='ssd'){const d=dist2(a.d);return`<span class="mtag">${a.t==='ssd'?'↕':'📏'} ${d}mm*</span>`;}
-    if(['roi-rect','field-size','roi-counts'].includes(a.t))return`<span class="mtag">⬜ ${Math.round(Math.abs(a.d[2]*a.d[3])*.12)}mm²*</span>`;
-    if(['roi-ellipse','follicle','suv-roi'].includes(a.t))return`<span class="mtag">⭕ A:${Math.round(Math.abs(a.d[2])*.6)} B:${Math.round(Math.abs(a.d[3])*.6)}mm*</span>`;
-    if(a.t==='hu-probe')return`<span class="mtag">🔢 ${a.d[3]}</span>`;
-    if(a.t==='suv-probe')return`<span class="mtag">☢ SUV:${a.d[3]}</span>`;
-    if(a.t==='mtv')return`<span class="mtag">🧬 MTV≈${Math.round(Math.abs(a.d[2]*a.d[3])*.08)}cm³*</span>`;
-    return'';
-  });
-  const lt=s.annos.filter(a=>a.t==='lbl').map(a=>`<span class="mtag lbl">🏷 ${a.d[2]}</span>`);
-  ol.innerHTML=[...mt,...lt].join('');
-}
-function dist2(d){return Math.round(Math.sqrt((d[2]-d[0])**2+(d[3]-d[1])**2)*.35)}
-
-function drawA(ctx,a,T,Y,P,G,W,H){
-  ctx.setLineDash([]);ctx.lineWidth=1.5;
-  if(a.t==='measure'||a.t==='ssd'){
-    const[x1,y1,x2,y2]=a.d,d=dist2(a.d);
-    ctx.strokeStyle=a.t==='ssd'?'#60d0ff':T;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-    ctx.fillStyle=Y;ctx.fillText(`${a.t==='ssd'?'SSD≈':''}${d}mm*`,(x1+x2)/2+4,(y1+y2)/2-5);
-  }else if(a.t==='angle'){
-    const[x1,y1,x2,y2,x3,y3]=a.d;
-    let d=Math.abs((Math.atan2(y3-y2,x3-x2)-Math.atan2(y1-y2,x1-x2))*180/Math.PI);
-    if(d>180)d=360-d;
-    ctx.strokeStyle=P;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);ctx.stroke();
-    ctx.fillStyle=P;ctx.fillText(`${d.toFixed(1)}°`,x2+5,y2-5);
-  }else if(['roi-rect','field-size','roi-counts'].includes(a.t)){
-    const[x,y,w,h]=a.d;ctx.strokeStyle=G;ctx.setLineDash([4,3]);ctx.strokeRect(x,y,w,h);ctx.setLineDash([]);
-    ctx.fillStyle=G;ctx.fillText(`${Math.round(Math.abs(w*h)*.12)}mm²*`,x+3,y-4);
-  }else if(['roi-ellipse','follicle','suv-roi'].includes(a.t)){
-    const[cx,cy,rx,ry]=a.d;ctx.strokeStyle=G;ctx.setLineDash([4,3]);
-    ctx.beginPath();ctx.ellipse(cx,cy,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
-    ctx.fillStyle=G;ctx.fillText(`A:${Math.round(Math.abs(rx)*.6)} B:${Math.round(Math.abs(ry)*.6)}mm*`,cx+Math.abs(rx)+4,cy);
-  }else if(a.t==='hu-probe'||a.t==='suv-probe'){
-    const[x,y,,lb]=a.d;ctx.fillStyle=Y;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();ctx.fillText(lb,x+8,y-5);
-  }else if(a.t==='mtv'){
-    const[x,y,w,h]=a.d;ctx.strokeStyle='#ff6060';ctx.lineWidth=2;ctx.setLineDash([3,3]);ctx.strokeRect(x,y,w,h);ctx.setLineDash([]);
-    ctx.fillStyle='#ff6060';ctx.fillText(`MTV≈${Math.round(Math.abs(w*h)*.08)}cm³*`,x+3,y-4);
-  }else if(a.t==='h-line'){
-    ctx.strokeStyle=Y;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(0,a.d[0]);ctx.lineTo(W,a.d[0]);ctx.stroke();ctx.setLineDash([]);
-  }else if(a.t==='depth'){
-    const xpos=a.d[0];
-    const canH=H||300;
-    // Draw depth scale on left side of clicked position
-    for(let i=0;i<=10;i++){
-      const dy=canH*i/10;
-      const isMaj=i%5===0;
-      ctx.strokeStyle=isMaj?'rgba(57,208,184,.85)':'rgba(57,208,184,.35)';
-      ctx.lineWidth=isMaj?1.8:.7;
-      ctx.beginPath();ctx.moveTo(xpos,dy);ctx.lineTo(xpos+(isMaj?16:8),dy);ctx.stroke();
-      if(isMaj){
-        ctx.fillStyle='rgba(57,208,184,.9)';
-        ctx.font='600 10px IBM Plex Mono,monospace';
-        ctx.fillText(`${i}cm*`,xpos+18,dy+4);
-      }
-    }
-    ctx.lineWidth=1.5;
-    // Vertical line
-    ctx.strokeStyle='rgba(57,208,184,.35)';
-    ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(xpos,0);ctx.lineTo(xpos,canH);ctx.stroke();
-  }else if(a.t==='isodose'){
-    const[cx,cy]=a.d;[{r:28,p:'100%',c:'#ff4040'},{r:52,p:'80%',c:'#ff8c00'},{r:72,p:'50%',c:'#ffd700'},{r:94,p:'20%',c:'#40c0ff'}].forEach(lv=>{ctx.strokeStyle=lv.c;ctx.lineWidth=1.8;ctx.setLineDash([5,3]);ctx.beginPath();ctx.arc(cx,cy,lv.r,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=lv.c;ctx.fillText(lv.p,cx+lv.r+4,cy);});ctx.lineWidth=1.5;
-  }else if(a.t==='contour'){
-    const[pts,lb,col]=a.d;if(pts.length<2)return;ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);pts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.stroke();ctx.fillStyle=col+'28';ctx.fill();ctx.fillStyle=col;ctx.fillText(lb,pts[0][0]+4,pts[0][1]-6);
-  }else if(a.t==='annotate'){
-    const[x,y,tx]=a.d;ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x-2,y-14,ctx.measureText(tx).width+8,18);ctx.fillStyle=T;ctx.fillText(tx,x+2,y);
-  }else if(a.t==='lbl'){
-    // Draw sequence label as fixed-size overlay — top-left corner
-    const[,, text]=a.d;
-    const fs=16; // fixed 16px — readable on any canvas size
-    ctx.font=`700 ${fs}px IBM Plex Mono,monospace`;
-    const tw=ctx.measureText(text).width;
-    const lx=10, ly=28; // always top-left
-    ctx.fillStyle='rgba(0,0,0,.80)';
-    ctx.fillRect(lx-4,ly-fs-2,tw+12,fs+8);
-    ctx.fillStyle='#f0d060';
-    ctx.fillText(text,lx+2,ly);
-    ctx.strokeStyle='rgba(240,208,96,.55)';
-    ctx.lineWidth=1; ctx.setLineDash([]);
-    ctx.strokeRect(lx-4,ly-fs-2,tw+12,fs+8);
-  }
-}
-
-// ── Canvas event binding ──────────────────────────────────
-function bindCvs(idx, wrap) {
-  const s=PS[idx];
-  function pos(e){const r=wrap.getBoundingClientRect();return[(e.clientX-r.left)*s.W/r.width,(e.clientY-r.top)*s.H/r.height];}
-  wrap.addEventListener('wheel',e=>{e.preventDefault();s.zoom=Math.max(.3,Math.min(12,s.zoom*(e.deltaY>0?.9:1.1)));drawBg(idx);stat(idx);},{passive:false});
-  wrap.addEventListener('dblclick',()=>openFs(s.mod));
-  wrap.addEventListener('pointerdown',e=>{
-    // Activate this panel on any click
-    setActivePanel(idx);
-    wrap.setPointerCapture(e.pointerId);
-    const[x,y]=pos(e),t=activeTool;
-    s.drawing=true;s.sx=x;s.sy=y;s.lx=e.clientX;s.ly=e.clientY;
-    if(t==='angle'){s.pts.push([x,y]);if(s.pts.length===3){s.annos.push({t:'angle',d:[...s.pts[0],...s.pts[1],...s.pts[2]]});s.pts=[];drawAnno(idx);}else stat(idx,`Angle: click ${s.pts.length}/3`);s.drawing=false;return;}
-    if(t==='hu-probe'){s.annos.push({t:'hu-probe',d:[x,y,null,`HU:${Math.round(Math.random()*350-80)}*`]});drawAnno(idx);s.drawing=false;return;}
-    if(t==='suv-probe'){s.annos.push({t:'suv-probe',d:[x,y,null,(Math.random()*12+.5).toFixed(1)]});drawAnno(idx);s.drawing=false;return;}
-    if(t==='h-line'){s.annos.push({t:'h-line',d:[y]});drawAnno(idx);s.drawing=false;return;}
-    if(t==='depth'){s.annos.push({t:'depth',d:[x]});drawAnno(idx);s.drawing=false;return;}
-    if(t==='isodose'){s.annos.push({t:'isodose',d:[x,y]});drawAnno(idx);s.drawing=false;return;}
-    if(t==='annotate'){const tx=prompt('Annotation:');if(tx)s.annos.push({t:'annotate',d:[x,y,tx]});drawAnno(idx);s.drawing=false;return;}
-    if(t==='contour'){s.cpts=[[x,y]];}
-  });
-  wrap.addEventListener('pointermove',e=>{
-    if(!s.drawing)return;const[x,y]=pos(e),t=activeTool;
-    if(t==='pan'){s.px+=e.clientX-s.lx;s.py+=e.clientY-s.ly;s.lx=e.clientX;s.ly=e.clientY;drawBg(idx);return;}
-    if(t==='contour'){s.cpts.push([x,y]);drawAnno(idx);const ctx=s.dr;ctx.strokeStyle=contCol;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s.cpts[0][0],s.cpts[0][1]);s.cpts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.stroke();return;}
-    const ctx=s.dr,w=x-s.sx,h=y-s.sy;drawAnno(idx);ctx.strokeStyle='rgba(57,208,184,.75)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
-    if(['roi-ellipse','follicle','suv-roi'].includes(t)){ctx.beginPath();ctx.ellipse(s.sx+w/2,s.sy+h/2,Math.abs(w/2),Math.abs(h/2),0,0,Math.PI*2);ctx.stroke();}
-    else if(t==='ssd'||t==='measure'){ctx.beginPath();ctx.moveTo(s.sx,s.sy);ctx.lineTo(x,y);ctx.stroke();}
-    else{ctx.strokeRect(s.sx,s.sy,w,h);}
-    ctx.setLineDash([]);
-  });
-  wrap.addEventListener('pointerup',e=>{
-    if(!s.drawing)return;s.drawing=false;
-    const[x,y]=pos(e),t=activeTool,w=x-s.sx,h=y-s.sy,mn=6;
-    if(t==='contour'){if(s.cpts.length>3)s.annos.push({t:'contour',d:[s.cpts,contLbl,contCol]});s.cpts=[];drawAnno(idx);return;}
-    if(t==='pan')return;
-    if(['measure','ssd'].includes(t)&&(Math.abs(w)>mn||Math.abs(h)>mn))s.annos.push({t:t,d:[s.sx,s.sy,x,y]});
-    else if(['roi-rect','field-size','roi-counts'].includes(t)&&Math.abs(w)>mn&&Math.abs(h)>mn)s.annos.push({t:'roi-rect',d:[s.sx,s.sy,w,h]});
-    else if(t==='mtv'&&Math.abs(w)>mn&&Math.abs(h)>mn)s.annos.push({t:'mtv',d:[s.sx,s.sy,w,h]});
-    else if(['roi-ellipse','follicle','suv-roi'].includes(t)&&Math.abs(w)>mn&&Math.abs(h)>mn)s.annos.push({t:'roi-ellipse',d:[s.sx+w/2,s.sy+h/2,w/2,h/2]});
-    else if(t==='roi-signal'&&Math.abs(w)>mn&&Math.abs(h)>mn){const sg=Math.round(Math.random()*500+80);s.annos.push({t:'roi-rect',d:[s.sx,s.sy,w,h]});s.annos.push({t:'annotate',d:[s.sx,s.sy+h+14,`SI≈${sg}*`]});}
-    else if(t==='ctr'&&Math.abs(w)>mn){const ctr=(Math.abs(w)/s.W*1.85).toFixed(2);s.annos.push({t:'ssd',d:[s.sx,s.sy,x,y]});s.annos.push({t:'annotate',d:[s.sx,s.sy-10,`CTR≈${ctr}*`]});}
-    drawAnno(idx);stat(idx);
-  });
-}
-
-// ── Tool / action helpers ─────────────────────────────────
-function setActivePanel(idx) {
-  if(activePanel === idx) return;
-  activePanel = idx;
-  // Update visual indicator on all panels
-  document.querySelectorAll('.panel').forEach(p=>{
-    const cw=p.querySelector('.cvs-wrap');
-    const isActive=cw&&+cw.dataset.idx===idx;
-    p.classList.toggle('panel-active', isActive);
-    // Show/hide ACTIVE badge
-    let badge=p.querySelector('.panel-active-badge');
-    if(isActive){
-      if(!badge){badge=document.createElement('div');badge.className='panel-active-badge';badge.textContent='ACTIVE';p.querySelector('.cvs-wrap')?.appendChild(badge);}
-    } else {
-      badge?.remove();
-    }
-  });
-  // Update toolbar label
-  const s=PS[idx];
-  if(s){
-    const badge=document.getElementById('tb-badge');
-    if(badge){badge.textContent=s.mod;badge.className=`mod-badge ${MOD_CLS[s.mod]||'b-ct'}`;}
-    stat(idx,`active | ×${s.zoom.toFixed(1)}`);
-  }
-}
-
-function getActivePS() {
-  // Return PS of active panel, or first panel if none active
-  if(activePanel!==null && PS[activePanel]) return {idx:activePanel, s:PS[activePanel]};
-  const keys=Object.keys(PS);
-  if(!keys.length) return null;
-  const idx=+keys[0];
-  return {idx, s:PS[idx]};
-}
-
-function setTool(t){
-  activeTool=t;
-  document.querySelectorAll('.tbtn[data-t]').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
-  const cur={pan:'grab',measure:'crosshair',angle:'crosshair','roi-rect':'crosshair','roi-ellipse':'crosshair',annotate:'text','hu-probe':'cell','suv-probe':'cell','roi-signal':'crosshair',isodose:'copy',contour:'cell','h-line':'row-resize',depth:'col-resize',ctr:'crosshair','field-size':'crosshair',ssd:'ns-resize',mtv:'crosshair','suv-roi':'crosshair',follicle:'crosshair','roi-counts':'crosshair',cobb:'crosshair'}[t]||'crosshair';
-  document.querySelectorAll('.cvs-wrap').forEach(v=>v.style.cursor=cur);
-  document.getElementById('fs-body')&&(document.getElementById('fs-body').style.cursor=cur);
-  const ap=getActivePS();
-  if(ap) stat(ap.idx, t);
-}
-
-function applyAction(t){
-  // Apply to ACTIVE panel only (except Reset All which prompts)
-  if(t==='tic'){setStat('TIC: requires dynamic contrast DICOM series');return;}
-  const ap=getActivePS();
-  if(!ap) return;
-  const {idx,s}=ap;
-  if(t==='rotate-cw')  s.rot=(s.rot+90)%360;
-  if(t==='rotate-ccw') s.rot=(s.rot-90+360)%360;
-  if(t==='flip-h')     s.fh*=-1;
-  if(t==='flip-v')     s.fv*=-1;
-  if(t==='invert')     s.inv=!s.inv;
-  if(t==='reset'){
-    Object.assign(s,{zoom:1,px:0,py:0,rot:0,fh:1,fv:1,br:100,ct:100,inv:false,annos:[],pts:[]});
-    drawAnno(idx);
-    // Reset sliders to match
-    ['sl-w','sl-l','sl-br','sl-ct','sl-gn'].forEach(id=>{
-      const el=document.getElementById(id);
-      const dflt={'sl-w':400,'sl-l':40,'sl-br':100,'sl-ct':100,'sl-gn':100}[id]||100;
-      if(el){el.value=dflt;el.dispatchEvent(new Event('input'));}
-    });
-  }
-  if(t==='save') savePng(idx);
-  drawBg(idx);
-  stat(idx,t);
-}
-
-function applyWL(w,lv){
-  const br=Math.min(180,Math.max(60,100+lv/5));
-  const ct=Math.min(250,Math.max(60,100+Math.round((500-Math.min(w,500))/5)));
-  const ap=getActivePS(); if(!ap)return;
-  ap.s.br=br; ap.s.ct=ct; drawBg(ap.idx); stat(ap.idx,`W:${w} L:${lv}`);
-}
-function applyBC(br,ct){
-  const ap=getActivePS(); if(!ap)return;
-  if(br!==null) ap.s.br=br;
-  if(ct!==null) ap.s.ct=ct;
-  drawBg(ap.idx);
-}
-
-function stat(idx,msg){const el=document.getElementById(`st-${idx}`);if(el)el.textContent=msg||`${activeTool} | ×${PS[idx]?.zoom?.toFixed(1)||1}`;}
-function setStat(msg){const ap=getActivePS();if(ap)stat(ap.idx,msg);}
-
-function savePng(idx){
-  const s=PS[idx];if(!s)return;
-  const m=document.createElement('canvas');m.width=s.W;m.height=s.H;
-  const c=m.getContext('2d');c.drawImage(s.bg.canvas,0,0);c.drawImage(s.dr.canvas,0,0);
-  c.fillStyle='rgba(57,208,184,.5)';c.font='10px IBM Plex Mono';c.fillText('OmniRad — Educational Only',5,s.H-6);
-  const a=document.createElement('a');a.download=`omnirad-${curStruct}-${PS[idx].mod}-p${idx}.png`;a.href=m.toDataURL();a.click();
-}
-
-// ═══════════════════════════════════════════════════════════
-// FULLSCREEN
-// ═══════════════════════════════════════════════════════════
-const FS={bg:null,dr:null,W:0,H:0,zoom:1,px:0,py:0,rot:0,fh:1,fv:1,br:100,ct:100,inv:false,annos:[],pts:[],cpts:[],mod:'CT',drawing:false,sx:0,sy:0,lx:0,ly:0,bound:false};
-
-function openFs(mod) {
-  FS.mod=mod||curMod;
-  const ov=document.getElementById('fs-ov');
-  ov.classList.add('open');
-  document.body.style.overflow='hidden';
-
-  // Title
-  document.getElementById('fs-title').textContent=`${D[curStruct]?.name||''} · ${FS.mod}`;
-
-  // Modality buttons
-  const mr=document.getElementById('fs-mods');
-  const avail=Object.keys(D[curStruct]?.mods||{});
-  mr.innerHTML=ALL_MODS.map(m=>{
-    const a=avail.includes(m),act=m===FS.mod?' active':'',dis=!a?' disabled':'';
-    return`<button class="mod-btn${act}"${dis} style="font-size:.67rem;padding:.22rem .6rem;" data-fsm="${m}">${m}</button>`;
-  }).join('');
-  mr.querySelectorAll('[data-fsm]').forEach(b=>b.addEventListener('click',()=>{
-    if(b.disabled)return;
-    FS.mod=b.dataset.fsm;
-    mr.querySelectorAll('[data-fsm]').forEach(x=>x.classList.toggle('active',x.dataset.fsm===FS.mod));
-    document.getElementById('fs-title').textContent=`${D[curStruct]?.name||''} · ${FS.mod}`;
-    buildFsTb(); initFsCvs();
-  }));
-
-  // Build toolbar first, then init canvas
-  buildFsTb();
-  // Use requestAnimationFrame to ensure overlay is visible before measuring
-  requestAnimationFrame(()=>requestAnimationFrame(()=>initFsCvs()));
-}
-
-function initFsCvs(){
-  const body=document.getElementById('fs-body');if(!body)return;
-  const bgC=document.getElementById('fs-bg');
-  const drC=document.getElementById('fs-dr');
-  if(!bgC||!drC)return;
-  // fs-body uses flex:1 — get actual rendered size
-  const W=body.clientWidth||window.innerWidth;
-  const Ht=body.clientHeight||window.innerHeight-56;
-  if(W<10||Ht<10){
-    // Not rendered yet — retry
-    requestAnimationFrame(()=>initFsCvs());
-    return;
-  }
-  bgC.width=drC.width=W; bgC.height=drC.height=Ht;
-  // Preserve annotations if reinitializing (modality change)
-  const prevAnnos=FS.annos||[];
-  Object.assign(FS,{bg:bgC.getContext('2d'),dr:drC.getContext('2d'),W,H:Ht,
-    zoom:1,px:0,py:0,rot:0,fh:1,fv:1,br:100,ct:100,inv:false,
-    annos:[],pts:[],cpts:[],drawing:false});
-  drawFsBg(); drawFsAnno();
-  if(!FS.bound){bindFsCvs();FS.bound=true;}
-
-  // Show hints
-  const old=body.querySelector('.fs-hints');if(old)old.remove();
-  const hints=document.createElement('div');hints.className='fs-hints';
-  hints.innerHTML=`<span class="hitem"><span class="hkey">ESC</span>Close fullscreen</span><span class="hsep">·</span><span class="hitem"><span class="hkey">Scroll</span>Zoom</span><span class="hsep">·</span><span class="hitem"><span class="hkey">Drag</span>Pan</span><span class="hsep">·</span><span class="hitem"><span class="hkey">Dbl-click</span>Reset zoom</span><span class="hsep">·</span><span class="hitem">Hover tools for tips</span>`;
-  body.appendChild(hints);
-}
-
-function drawFsBg(){
-  const s=FS,ctx=s.bg;if(!ctx||!s.W||!s.H)return;
-  const{W,H,mod}=s,dark=H_th();
-  ctx.clearRect(0,0,W,H);ctx.save();
-  ctx.translate(W/2+s.px,H/2+s.py);ctx.scale(s.zoom*s.fh,s.zoom*s.fv);ctx.rotate(s.rot*Math.PI/180);ctx.translate(-W/2,-H/2);
-  ctx.fillStyle=dark?'#060a12':'#1a2535';ctx.fillRect(0,0,W,H);
-  const gc=dark?'rgba(57,208,184,.06)':'rgba(30,160,140,.10)';
-  ctx.strokeStyle=gc;ctx.lineWidth=1;
-  for(let x=W/8;x<W;x+=W/8){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=H/8;y<H;y+=H/8){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  ctx.strokeStyle=dark?'rgba(57,208,184,.20)':'rgba(30,160,140,.32)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
-  ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);
-  const r=Math.min(W,H)*.32;
-  ctx.beginPath();ctx.arc(W/2,H/2,r,0,Math.PI*2);
-  ctx.fillStyle=dark?'rgba(30,130,115,.10)':'rgba(20,120,105,.20)';ctx.fill();
-  ctx.strokeStyle=dark?'rgba(57,208,184,.36)':'rgba(30,160,140,.62)';ctx.lineWidth=2;ctx.stroke();
-  ctx.beginPath();ctx.arc(W/2,H/2,r*.52,0,Math.PI*2);
-  ctx.strokeStyle=dark?'rgba(57,208,184,.14)':'rgba(30,160,140,.28)';ctx.lineWidth=1;ctx.stroke();
-  const tx=dark?'rgba(57,208,184,.70)':'rgba(30,160,140,.92)';
-  ctx.fillStyle=tx;ctx.textAlign='center';
-  ctx.font=`700 ${Math.min(W,H)*.038}px IBM Plex Mono,monospace`;
-  ctx.fillText((D[curStruct]?.name||'').toUpperCase(),W/2,H/2+r+Math.min(W,H)*.065);
-  ctx.font=`700 ${Math.min(W,H)*.032}px IBM Plex Mono,monospace`;ctx.textAlign='left';
-  ctx.fillText(mod,W*.022,H*.056);
-  ctx.restore();
-  const el=document.getElementById('fs-bg');
-  if(el)el.style.filter=`brightness(${s.br}%) contrast(${s.ct}%)${s.inv?' invert(1)':''}`;
-}
-function H_th(){return document.documentElement.dataset.theme==='dark';}
-
-function drawFsAnno(){
-  const s=FS,ctx=s.dr;if(!ctx||!s.W||!s.H)return;
-  ctx.clearRect(0,0,s.W,s.H);
-  ctx.font='500 12px IBM Plex Mono,monospace';
-  const T='rgba(57,208,184,.95)',Y='#f0d060',P='#f06080',G='#60d090';
-  s.annos.forEach(a=>drawA(ctx,a,T,Y,P,G,s.W,s.H));
-  const ol=document.getElementById('fs-ol');if(!ol)return;
-  const mt=s.annos.filter(a=>['measure','ssd','roi-rect','roi-ellipse','follicle','suv-roi','hu-probe','suv-probe','mtv'].includes(a.t)).slice(-4).map(a=>{
-    if(a.t==='measure'||a.t==='ssd'){const d=dist2(a.d);return`<span class="mtag">${a.t==='ssd'?'↕':'📏'} ${d}mm*</span>`;}
-    if(['roi-rect','field-size','roi-counts'].includes(a.t))return`<span class="mtag">⬜ ${Math.round(Math.abs(a.d[2]*a.d[3])*.12)}mm²*</span>`;
-    if(['roi-ellipse','follicle','suv-roi'].includes(a.t))return`<span class="mtag">⭕ A:${Math.round(Math.abs(a.d[2])*.6)} B:${Math.round(Math.abs(a.d[3])*.6)}mm*</span>`;
-    if(a.t==='hu-probe')return`<span class="mtag">🔢 ${a.d[3]}</span>`;
-    if(a.t==='suv-probe')return`<span class="mtag">☢ SUV:${a.d[3]}</span>`;
-    if(a.t==='mtv')return`<span class="mtag">🧬 MTV≈${Math.round(Math.abs(a.d[2]*a.d[3])*.08)}cm³*</span>`;
-    return'';
-  });
-  ol.innerHTML=mt.join('');
-}
-
-function bindFsCvs(){
-  const body=document.getElementById('fs-body');if(!body)return;
-  const s=FS;
-  function pos(e){return[(e.clientX-body.getBoundingClientRect().left)*s.W/body.clientWidth,(e.clientY-body.getBoundingClientRect().top)*s.H/body.clientHeight];}
-  body.addEventListener('wheel',e=>{e.preventDefault();s.zoom=Math.max(.3,Math.min(12,s.zoom*(e.deltaY>0?.9:1.1)));drawFsBg();const st=document.getElementById('fs-stat');if(st)st.textContent=`${activeTool} | ×${s.zoom.toFixed(1)}`;},{passive:false});
-  body.addEventListener('dblclick',()=>{s.zoom=1;s.px=0;s.py=0;drawFsBg();const st=document.getElementById('fs-stat');if(st)st.textContent='pan | ×1.0';});
-  body.addEventListener('pointerdown',e=>{
-    if(e.target.closest('.fs-tb,.fs-hints,.cvs-stat,.cvs-ol'))return;
-    body.setPointerCapture(e.pointerId);
-    const[x,y]=pos(e),t=activeTool;
-    s.drawing=true;s.sx=x;s.sy=y;s.lx=e.clientX;s.ly=e.clientY;
-    if(t==='angle'){s.pts.push([x,y]);if(s.pts.length===3){s.annos.push({t:'angle',d:[...s.pts[0],...s.pts[1],...s.pts[2]]});s.pts=[];drawFsAnno();}s.drawing=false;return;}
-    if(t==='hu-probe'){s.annos.push({t:'hu-probe',d:[x,y,null,`HU:${Math.round(Math.random()*350-80)}*`]});drawFsAnno();s.drawing=false;return;}
-    if(t==='suv-probe'){s.annos.push({t:'suv-probe',d:[x,y,null,(Math.random()*12+.5).toFixed(1)]});drawFsAnno();s.drawing=false;return;}
-    if(t==='h-line'){s.annos.push({t:'h-line',d:[y]});drawFsAnno();s.drawing=false;return;}
-    if(t==='depth'){s.annos.push({t:'depth',d:[x]});drawFsAnno();s.drawing=false;return;}
-    if(t==='isodose'){s.annos.push({t:'isodose',d:[x,y]});drawFsAnno();s.drawing=false;return;}
-    if(t==='annotate'){const tx=prompt('Annotation:');if(tx)s.annos.push({t:'annotate',d:[x,y,tx]});drawFsAnno();s.drawing=false;return;}
-    if(t==='contour'){s.cpts=[[x,y]];}
-  });
-  body.addEventListener('pointermove',e=>{
-    if(!s.drawing)return;const[x,y]=pos(e),t=activeTool;
-    if(t==='pan'){s.px+=e.clientX-s.lx;s.py+=e.clientY-s.ly;s.lx=e.clientX;s.ly=e.clientY;drawFsBg();return;}
-    if(t==='contour'){s.cpts.push([x,y]);drawFsAnno();const ctx=s.dr;ctx.strokeStyle=contCol;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s.cpts[0][0],s.cpts[0][1]);s.cpts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.stroke();return;}
-    const ctx=s.dr,w=x-s.sx,h=y-s.sy;drawFsAnno();ctx.strokeStyle='rgba(57,208,184,.75)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
-    if(['roi-ellipse','follicle','suv-roi'].includes(t)){ctx.beginPath();ctx.ellipse(s.sx+w/2,s.sy+h/2,Math.abs(w/2),Math.abs(h/2),0,0,Math.PI*2);ctx.stroke();}
-    else if(['ssd','measure'].includes(t)){ctx.beginPath();ctx.moveTo(s.sx,s.sy);ctx.lineTo(x,y);ctx.stroke();}
-    else{ctx.strokeRect(s.sx,s.sy,w,h);}
-    ctx.setLineDash([]);
-  });
-  body.addEventListener('pointerup',e=>{
-    if(!s.drawing)return;s.drawing=false;
-    const[x,y]=pos(e),t=activeTool,w=x-s.sx,h=y-s.sy,mn=6;
-    if(t==='contour'){if(s.cpts.length>3)s.annos.push({t:'contour',d:[s.cpts,contLbl,contCol]});s.cpts=[];drawFsAnno();return;}
-    if(t==='pan')return;
-    if(['measure','ssd'].includes(t)&&(Math.abs(w)>mn||Math.abs(h)>mn))s.annos.push({t:t,d:[s.sx,s.sy,x,y]});
-    else if(['roi-rect','field-size','roi-counts'].includes(t)&&Math.abs(w)>mn&&Math.abs(h)>mn)s.annos.push({t:'roi-rect',d:[s.sx,s.sy,w,h]});
-    else if(t==='mtv'&&Math.abs(w)>mn&&Math.abs(h)>mn)s.annos.push({t:'mtv',d:[s.sx,s.sy,w,h]});
-    else if(['roi-ellipse','follicle','suv-roi'].includes(t)&&Math.abs(w)>mn&&Math.abs(h)>mn)s.annos.push({t:'roi-ellipse',d:[s.sx+w/2,s.sy+h/2,w/2,h/2]});
-    else if(t==='roi-signal'&&Math.abs(w)>mn&&Math.abs(h)>mn){const sg=Math.round(Math.random()*500+80);s.annos.push({t:'roi-rect',d:[s.sx,s.sy,w,h]});s.annos.push({t:'annotate',d:[s.sx,s.sy+h+14,`SI≈${sg}*`]});}
-    else if(t==='ctr'&&Math.abs(w)>mn){const ctr=(Math.abs(w)/s.W*1.85).toFixed(2);s.annos.push({t:'ssd',d:[s.sx,s.sy,x,y]});s.annos.push({t:'annotate',d:[s.sx,s.sy-10,`CTR≈${ctr}*`]});}
-    drawFsAnno();const st=document.getElementById('fs-stat');if(st)st.textContent=`${t} | ×${s.zoom.toFixed(1)}`;
-  });
-}
-
-function buildFsTb(){
-  const old=document.getElementById('fs-tb');if(!old)return;
-  // Replace element to clear all listeners
-  const tb=old.cloneNode(false);
-  old.replaceWith(tb);
-  tb.id='fs-tb';
-  tb.innerHTML=buildTbHtml(FS.mod);
-  tb.addEventListener('click',e=>{
-    const btn=e.target.closest('.tbtn[data-t]');
-    if(btn){ const t=btn.dataset.t; if(['rotate-cw','rotate-ccw','flip-h','flip-v','invert','reset','save','tic'].includes(t)){applyFsAction(t);}else{setTool(t);} }
-    const pb=e.target.closest('.pbtn');
-    if(pb){
-      if(pb.dataset.ww!==undefined){
-        const w=+pb.dataset.ww,lv=+pb.dataset.wl;
-        tb.querySelectorAll('.pbtn[data-ww]').forEach(b=>b.classList.toggle('active',b===pb));
-        const sw=tb.querySelector('#sl-w'),sl=tb.querySelector('#sl-l');
-        if(sw){sw.value=w;const sv=tb.querySelector('#sv-w');if(sv)sv.textContent=w;}
-        if(sl){sl.value=lv;const sv=tb.querySelector('#sv-l');if(sv)sv.textContent=lv;}
-        const br=Math.min(180,Math.max(60,100+lv/5)),ct=Math.min(250,Math.max(60,100+Math.round((500-Math.min(w,500))/5)));
-        FS.br=br;FS.ct=ct;drawFsBg();
-      } else if(pb.dataset.cm!==undefined){
-        pb.closest('.tb-row')?.querySelectorAll('.pbtn[data-cm]').forEach(b=>b.classList.toggle('active',b===pb));
-      } else if(pb.dataset.sq!==undefined){
-        const lbl=pb.dataset.sq,grp=pb.closest('.tb-row'),was=pb.classList.contains('active');
-        grp?.querySelectorAll('.pbtn[data-sq]').forEach(b=>b.classList.remove('active'));
-        // Clear all lbl annos
-        FS.annos=FS.annos.filter(a=>a.t!=='lbl');
-        if(!was){
-          pb.classList.add('active');
-          const FX=SEQ_FX;
-          const eff=FX[lbl]||{br:100,ct:100};
-          FS.br=eff.br;FS.ct=eff.ct;
-          FS.annos.push({t:'lbl',d:[10,22,lbl]});
-          // Update sliders
-          const sbr=tb.querySelector('#sl-br'),sct=tb.querySelector('#sl-ct'),sgn=tb.querySelector('#sl-gn');
-          if(sbr){sbr.value=eff.br;const sv=tb.querySelector('#sv-br');if(sv)sv.textContent=eff.br+'%';}
-          if(sct){sct.value=eff.ct;const sv=tb.querySelector('#sv-ct');if(sv)sv.textContent=eff.ct+'%';}
-          if(sgn){sgn.value=eff.br;const sv=tb.querySelector('#sv-gn');if(sv)sv.textContent=eff.br+'%';}
-        } else {
-          FS.br=100;FS.ct=100;
-          const sbr=tb.querySelector('#sl-br'),sct=tb.querySelector('#sl-ct');
-          if(sbr){sbr.value=100;const sv=tb.querySelector('#sv-br');if(sv)sv.textContent='100%';}
-          if(sct){sct.value=100;const sv=tb.querySelector('#sv-ct');if(sv)sv.textContent='100%';}
-        }
-        drawFsBg();drawFsAnno();
-      } else if(pb.dataset.oar!==undefined){
-        const lbl=pb.dataset.oar;contLbl=lbl;contCol=CTR_COL[lbl]||'#60d090';
-        pb.closest('.tb-row')?.querySelectorAll('.pbtn[data-oar]').forEach(b=>b.classList.toggle('active',b===pb));
-        setTool('contour');
-      }
-    }
-  },{capture:false});
-  tb.addEventListener('input',e=>{
-    const sl=e.target;if(!sl.classList.contains('tsl'))return;
-    const v=+sl.value,vm={'sl-w':'sv-w','sl-l':'sv-l','sl-br':'sv-br','sl-ct':'sv-ct','sl-gn':'sv-gn','sl-po':'sv-po'},sfx={'sl-br':'%','sl-ct':'%','sl-gn':'%','sl-po':'%'};
-    const vEl=tb.querySelector('#'+vm[sl.id]);if(vEl)vEl.textContent=v+(sfx[sl.id]||'');
-    if(sl.id==='sl-w'||sl.id==='sl-l'){const w=+(tb.querySelector('#sl-w')?.value||400),lv=+(tb.querySelector('#sl-l')?.value||40);const br=Math.min(180,Math.max(60,100+lv/5)),ct=Math.min(250,Math.max(60,100+Math.round((500-Math.min(w,500))/5)));FS.br=br;FS.ct=ct;drawFsBg();}
-    else if(sl.id==='sl-br'){FS.br=v;drawFsBg();}else if(sl.id==='sl-ct'){FS.ct=v;drawFsBg();}else if(sl.id==='sl-gn'){FS.br=v;drawFsBg();}
-  });
-}
-
-function applyFsAction(t){
-  if(t==='rotate-cw') FS.rot=(FS.rot+90)%360;
-  if(t==='rotate-ccw')FS.rot=(FS.rot-90+360)%360;
-  if(t==='flip-h')    FS.fh*=-1;
-  if(t==='flip-v')    FS.fv*=-1;
-  if(t==='invert')    FS.inv=!FS.inv;
-  if(t==='reset')     {Object.assign(FS,{zoom:1,px:0,py:0,rot:0,fh:1,fv:1,br:100,ct:100,inv:false,annos:[],pts:[]});drawFsAnno();}
-  if(t==='save'){const m=document.createElement('canvas');m.width=FS.W;m.height=FS.H;const c=m.getContext('2d');c.drawImage(FS.bg.canvas,0,0);c.drawImage(FS.dr.canvas,0,0);c.fillStyle='rgba(57,208,184,.5)';c.font='11px IBM Plex Mono';c.fillText('OmniRad — Educational Only',5,FS.H-6);const a=document.createElement('a');a.download=`omnirad-${curStruct}-${FS.mod}-fullscreen.png`;a.href=m.toDataURL();a.click();}
-  drawFsBg();
-}
-
-function closeFs(){
-  document.getElementById('fs-ov').classList.remove('open');
-  document.body.style.overflow='';
-  FS.bound=false; // allow rebinding next time
-}
-
-document.getElementById('fs-close').addEventListener('click',closeFs);
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){const ov=document.getElementById('fs-ov');if(ov.classList.contains('open'))closeFs();}
-});
-window.addEventListener('resize',()=>{
-  const ov=document.getElementById('fs-ov');
-  if(ov.classList.contains('open')) initFsCvs();
-  // Re-init panels on window resize (handles orientation change on mobile)
-  if(!ov.classList.contains('open')){
-    Object.keys(PS).forEach(idx=>{ delete PS[idx]; });
-    requestAnimationFrame(()=>requestAnimationFrame(()=>initPanels()));
-  }
-});
-
-// Tools panel collapse (mobile)
-document.addEventListener('click', e=>{
-  const btn = e.target.closest('#tools-collapse-btn');
-  if(!btn) return;
-  const wrap = document.getElementById('tools-wrap');
-  if(!wrap) return;
-  const collapsed = wrap.classList.toggle('tools-body-collapsed');
-  btn.textContent = collapsed ? '▼ Show Tools' : '▲ Hide';
-});
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+let current = null;
+let currentMod = null;
+let ttsEnabled = false;
+let ttsLang = 'en';
+let ttsSpeed = 1.0;
+
+// ═══════════════════════════════════════════════════
 // SIDEBAR
-// ═══════════════════════════════════════════════════════════
-document.getElementById('sb-list').addEventListener('click',e=>{
-  const item=e.target.closest('.sb-item');if(!item)return;
-  const id=item.dataset.id;if(id===curStruct)return;
-  curStruct=id;curMod='CT';curMod2='MRI';viewMode='normal';
-  activePlanes={}; activePanel=null;
-  document.querySelectorAll('.sb-item').forEach(el=>{el.classList.toggle('active',el.dataset.id===id);});
-  render(id);
-});
-document.getElementById('sb-list').addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.target.closest('.sb-item')?.click();}
-});
-
-
-// ═══════════════════════════════════════════════════════════
-// TTS MODULE — Task #7
-// Web Speech API · EN/AR · Slow/Normal/Fast
-// ═══════════════════════════════════════════════════════════
-const TTS = {
-  enabled : false,
-  lang    : 'en',   // 'en' | 'ar'
-  rate    : 1.0,    // 0.7 | 1.0 | 1.4
-  speaking: false,
-  synth   : window.speechSynthesis || null,
-  current : null,   // active tts-btn element
-};
-
-// ── Lang map ──────────────────────────────────────────────
-const TTS_LANG = { en:'en-US', ar:'ar-SA' };
-
-// ── Speak ─────────────────────────────────────────────────
-function ttsSpeak(text, btn) {
-  if (!TTS.synth) { ttsError(btn, 'TTS not supported'); return; }
-
-  // Stop any current speech
-  TTS.synth.cancel();
-  if (TTS.current && TTS.current !== btn) {
-    TTS.current.classList.remove('speaking');
-    TTS.current.textContent = '🔊';
-  }
-
-  // If same button pressed again → toggle off
-  if (TTS.current === btn && TTS.speaking) {
-    TTS.speaking = false;
-    TTS.current  = null;
-    btn.classList.remove('speaking');
-    btn.textContent = '🔊';
-    ttsNow('');
-    return;
-  }
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang  = TTS_LANG[TTS.lang] || 'en-US';
-  utter.rate  = TTS.rate;
-  utter.pitch = 1;
-
-  // Try to pick best voice
-  const voices = TTS.synth.getVoices();
-  const match  = voices.find(v => v.lang.startsWith(TTS.lang==='ar'?'ar':'en'));
-  if (match) utter.voice = match;
-
-  utter.onstart = () => {
-    TTS.speaking = true;
-    TTS.current  = btn;
-    btn.classList.add('speaking');
-    btn.textContent = '⏹';
-    ttsNow(text);
-  };
-  utter.onend = utter.onerror = () => {
-    TTS.speaking = false;
-    btn.classList.remove('speaking');
-    btn.textContent = '🔊';
-    if (TTS.current === btn) TTS.current = null;
-    if (utter.error) ttsError(btn, utter.error);
-  };
-
-  TTS.synth.speak(utter);
-}
-
-function ttsError(btn, msg) {
-  if (btn) { btn.classList.add('error'); setTimeout(()=>btn.classList.remove('error'),1500); }
-  console.warn('TTS error:', msg);
-}
-
-function ttsNow(text) {
-  const el = document.getElementById('tts-now');
-  if (!el) return;
-  el.textContent = '';
-  if (text) {
-    el.appendChild(document.createTextNode('Speaking: '));
-    const span = document.createElement('span');
-    span.textContent = text;
-    el.appendChild(span);
-  } else {
-    el.textContent = 'Click 🔊 on any term';
-  }
-}
-
-// ── Build speak button ────────────────────────────────────
-function ttsMkBtn(text, arText) {
-  const btn = document.createElement('button');
-  btn.className   = 'tts-btn';
-  btn.textContent = '🔊';
-  btn.title       = `Pronounce: ${text}`;
-  btn.setAttribute('aria-label', `Pronounce ${text}`);
-  btn.addEventListener('click', e => {
-    e.stopPropagation();
-    if (!TTS.enabled) { ttsShowPanel(); }
-    const spk = TTS.lang === 'ar' && arText ? arText : text;
-    ttsSpeak(spk, btn);
-  });
-  return btn;
-}
-
-// ── Inject TTS buttons into current page ──────────────────
-function ttsInjectButtons() {
-  if (!TTS.enabled) return;
-
-  // Structure name (h1.s-name)
-  document.querySelectorAll('.s-name').forEach(el => {
-    if (el.querySelector('.tts-btn')) return;
-    const name = el.textContent.trim();
-    // Get Arabic name from next sibling .s-ar
-    const arEl = el.nextElementSibling;
-    const ar   = arEl && arEl.classList.contains('s-ar') ? arEl.textContent.trim() : '';
-    el.appendChild(ttsMkBtn(name, ar));
-  });
-
-  // Arabic name (.s-ar)
-  document.querySelectorAll('.s-ar').forEach(el => {
-    if (el.querySelector('.tts-btn')) return;
-    const ar = el.textContent.trim();
-    if (!ar) return;
-    el.appendChild(ttsMkBtn(ar, ar));
-  });
-
-  // Info card labels (Location, Function, Clinical Note) — just the label
-  document.querySelectorAll('.info-lbl').forEach(el => {
-    if (el.querySelector('.tts-btn')) return;
-    const lbl = el.textContent.trim();
-    el.appendChild(ttsMkBtn(lbl, ''));
-  });
-
-  // Sidebar structure names
-  document.querySelectorAll('.sb-name').forEach(el => {
-    if (el.querySelector('.tts-btn')) return;
-    const sib = el.nextElementSibling;
-    const ar  = sib && sib.classList.contains('sb-ar') ? sib.textContent.trim() : '';
-    el.appendChild(ttsMkBtn(el.textContent.replace('🔊','').trim(), ar));
+// ═══════════════════════════════════════════════════
+function buildSidebar() {
+  const list = document.getElementById('sidebar-list');
+  list.innerHTML = '';
+  CATS.forEach(cat => {
+    const structs = STRUCTS.filter(s => s.cat === cat.id);
+    const grp = document.createElement('div');
+    grp.className = `cat-group cat-${cat.id}`;
+    grp.innerHTML = `
+      <div class="cat-header" onclick="this.closest('.cat-group').classList.toggle('collapsed')">
+        <span class="cat-dot"></span>
+        <span>${cat.en}</span>
+        <span style="font-size:10px;color:var(--text-muted);direction:rtl;margin-left:auto;margin-right:4px;">${cat.ar}</span>
+        <span class="cat-chevron">▾</span>
+      </div>
+      <div class="cat-items">
+        ${structs.map(s => `
+          <div class="structure-item" id="item-${s.id}" onclick="loadStructure('${s.id}')">
+            <div><div class="str-en">${s.en}</div><div class="str-ar">${s.ar}</div></div>
+          </div>`).join('')}
+      </div>`;
+    list.appendChild(grp);
   });
 }
 
-// ── Show / hide panel ────────────────────────────────────
-function ttsShowPanel() {
-  document.getElementById('tts-panel').classList.remove('hidden');
-  TTS.enabled = true;
-  document.getElementById('tts-toggle').classList.add('active');
-  ttsInjectButtons();
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.structure-item').forEach(el => {
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  if (q) document.querySelectorAll('.cat-group').forEach(g => g.classList.remove('collapsed'));
+});
+
+// ═══════════════════════════════════════════════════
+// LOAD STRUCTURE
+// ═══════════════════════════════════════════════════
+function loadStructure(id) {
+  const s = STRUCTS.find(x => x.id === id);
+  if (!s) return;
+  current = s;
+
+  document.querySelectorAll('.structure-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('item-' + id);
+  if (el) { el.classList.add('active'); el.scrollIntoView({block:'nearest'}); }
+
+  document.getElementById('welcome-screen').style.display = 'none';
+  const sv = document.getElementById('structure-view');
+  sv.style.display = 'flex';
+  sv.style.flexDirection = 'column';
+  sv.classList.remove('fade-in');
+  void sv.offsetWidth;
+  sv.classList.add('fade-in');
+
+  // Header
+  const cat = CATS.find(c => c.id === s.cat);
+  document.getElementById('bc-cat').textContent = cat ? cat.en : '';
+  document.getElementById('bc-name').textContent = s.en;
+  document.getElementById('s-name-en').textContent = s.en;
+  document.getElementById('s-name-ar').textContent = s.ar;
+  document.getElementById('s-name-latin').textContent = s.latin;
+  document.getElementById('s-cat-badge').innerHTML = `<span class="cat-badge ${s.cat}">${cat ? cat.en : ''}</span>`;
+
+  // Overview
+  document.getElementById('s-desc-en').textContent = s.descEn;
+  document.getElementById('s-desc-ar').textContent = s.descAr;
+  document.getElementById('s-facts').innerHTML = s.facts.map(f => `<li>${f}</li>`).join('');
+  document.getElementById('s-related').innerHTML = (s.related || []).map(rid => {
+    const rs = STRUCTS.find(x => x.id === rid);
+    return rs ? `<span class="related-chip" onclick="loadStructure('${rid}')">${rs.en} · ${rs.ar}</span>` : '';
+  }).join('');
+
+  // Imaging guide
+  document.getElementById('s-imaging').innerHTML = Object.entries(s.imaging || {}).map(([mod, txt]) => `
+    <div class="imaging-card">
+      <span class="modality-tag ${mod}">${mod}</span>
+      <p>${txt}</p>
+    </div>`).join('');
+
+  // Mnemonics
+  document.getElementById('s-mnemonics').innerHTML = (s.mnemonics || []).map(m => `
+    <div class="mnemonic-card">
+      <div class="mnemonic-title">🧠 ${m.title}</div>
+      <div class="mnemonic-en">${m.en}</div>
+      <div class="mnemonic-ar">${m.ar}</div>
+      ${m.ref ? `<div class="mnemonic-ref">📚 ${m.ref}</div>` : ''}
+    </div>`).join('');
+
+  // Images
+  buildImageTab(s);
+
+  // SRS
+  renderSRS(id);
+
+  // Activate overview tab
+  activateTab('info');
+
+  if (window.innerWidth < 768) closeSidebar();
+  if (ttsEnabled) speak(s['tts' + (ttsLang === 'ar' ? 'Ar' : 'En')], ttsLang);
 }
-function ttsHidePanel() {
-  document.getElementById('tts-panel').classList.add('hidden');
-  TTS.enabled = false;
-  document.getElementById('tts-toggle').classList.remove('active');
-  if (TTS.synth) TTS.synth.cancel();
+
+// ═══════════════════════════════════════════════════
+// IMAGES TAB
+// ═══════════════════════════════════════════════════
+function buildImageTab(s) {
+  const sel = document.getElementById('mod-selector');
+  sel.innerHTML = '';
+  const mods = Object.keys(s.mods || {});
+  if (!mods.length) return;
+  mods.forEach(mod => {
+    const b = document.createElement('button');
+    b.className = 'mod-btn';
+    b.textContent = mod;
+    b.dataset.mod = mod;
+    b.onclick = () => selectMod(mod, s);
+    sel.appendChild(b);
+  });
+  selectMod(mods[0], s);
 }
 
-// ── Panel controls ────────────────────────────────────────
-document.getElementById('tts-toggle').addEventListener('click', () => {
-  TTS.enabled ? ttsHidePanel() : ttsShowPanel();
-});
-document.getElementById('tts-close').addEventListener('click', ttsHidePanel);
+function selectMod(mod, s) {
+  currentMod = mod;
+  const md = s.mods[mod];
+  if (!md) return;
 
-document.getElementById('tts-lang-seg').addEventListener('click', e => {
-  const btn = e.target.closest('button[data-lang]'); if (!btn) return;
-  TTS.lang = btn.dataset.lang;
-  document.querySelectorAll('#tts-lang-seg button').forEach(b => b.classList.toggle('active', b===btn));
-  if (TTS.synth) TTS.synth.cancel();
-});
+  document.querySelectorAll('.mod-btn').forEach(b => {
+    b.className = 'mod-btn';
+    if (b.dataset.mod === mod) b.classList.add(`mod-active-${mod}`);
+  });
 
-document.getElementById('tts-speed-seg').addEventListener('click', e => {
-  const btn = e.target.closest('button[data-rate]'); if (!btn) return;
-  TTS.rate = parseFloat(btn.dataset.rate);
-  document.querySelectorAll('#tts-speed-seg button').forEach(b => b.classList.toggle('active', b===btn));
-});
+  const pt = document.getElementById('plane-toggle');
+  pt.innerHTML = (md.planes || []).map((p, i) => `
+    <button class="plane-btn${i === 0 ? ' active' : ''}" data-plane="${p}" onclick="togglePlane(this)">${p}</button>`).join('');
 
-// Re-inject buttons after each render (render replaces main innerHTML)
-const _origRender = render;
-// Patch render to re-inject TTS buttons after DOM update
-const _origGo = ()=>{};
-// We hook into the render cycle via MutationObserver on #main
-const _ttsObs = new MutationObserver(() => {
-  if (TTS.enabled) setTimeout(ttsInjectButtons, 200);
-});
-_ttsObs.observe(document.getElementById('main'), { childList: true, subtree: false });
-
-// Pre-load voices (some browsers need this)
-if (window.speechSynthesis) {
-  speechSynthesis.getVoices();
-  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  renderCanvases(s, mod);
 }
 
-// ─── INIT ──────────────────────────────────────────────────
-render('liver',false);
+function togglePlane(btn) {
+  btn.classList.toggle('active');
+  if (current && currentMod) renderCanvases(current, currentMod);
+}
 
-// ─── SRS MODULE — Task #9 ──────────────────────────────────
-// Check for ?s= URL param to open a specific structure from dashboard
-(function(){
-  const p = new URLSearchParams(window.location.search).get('s');
-  if (p && typeof D !== 'undefined' && D[p]) {
-    curStruct = p;
-    render(p, false);
-  }
-})();
+function renderCanvases(s, mod) {
+  const ws = document.getElementById('image-workspace');
+  const planes = [...document.querySelectorAll('.plane-btn.active')].map(b => b.dataset.plane);
+  if (!planes.length) { ws.innerHTML = '<p style="color:var(--text-muted);padding:20px;font-size:13px;">Select at least one plane above.</p>'; return; }
+
+  ws.className = 'image-workspace' + (planes.length === 1 ? ' single' : planes.length >= 3 ? ' triple' : '');
+  ws.innerHTML = '';
+  const imgUrl = s.mods[mod]?.img || '';
+
+  planes.forEach((plane, i) => {
+    const div = document.createElement('div');
+    div.className = 'canvas-panel' + (i === 0 ? ' panel-active' : '');
+    div.innerHTML = `<canvas id="cv-${i}" style="width:100%;height:100%;min-height:260px;display:block;"></canvas>
+      <div class="panel-label">${mod} · ${plane}</div>
+      <div class="panel-active-badge">ACTIVE</div>`;
+    div.onclick = function() {
+      document.querySelectorAll('.canvas-panel').forEach(p => p.classList.remove('panel-active'));
+      this.classList.add('panel-active');
+    };
+    ws.appendChild(div);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const cv = document.getElementById('cv-' + i);
+      if (!cv) return;
+      const w = cv.offsetWidth || 400;
+      const h = cv.offsetHeight || 280;
+      cv.width = w; cv.height = h;
+      const ctx = cv.getContext('2d');
+      if (imgUrl) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => ctx.drawImage(img, 0, 0, w, h);
+        img.onerror = () => drawPlaceholder(ctx, w, h, mod, plane);
+        img.src = imgUrl;
+      } else {
+        drawPlaceholder(ctx, w, h, mod, plane);
+      }
+    }));
+  });
+}
+
+function drawPlaceholder(ctx, w, h, mod, plane) {
+  ctx.fillStyle = '#090d12';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(30,50,70,0.8)';
+  ctx.beginPath();
+  ctx.arc(w/2, h/2, Math.min(w,h)*0.28, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(20,180,160,0.5)';
+  ctx.font = `bold ${Math.floor(Math.min(w,h)*0.07)}px IBM Plex Mono,monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(mod, w/2, h/2 - 8);
+  ctx.fillStyle = 'rgba(160,180,200,0.35)';
+  ctx.font = `${Math.floor(Math.min(w,h)*0.042)}px IBM Plex Sans,sans-serif`;
+  ctx.fillText(plane, w/2, h/2 + h*0.1);
+}
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+});
+
+function activateTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.add('active');
+  document.querySelector(`.tab-panel[data-panel="${tab}"]`)?.classList.add('active');
+  if (tab === 'images' && current && currentMod) setTimeout(() => renderCanvases(current, currentMod), 50);
+}
+
+// ═══════════════════════════════════════════════════
+// SRS (SM-2)
+// ═══════════════════════════════════════════════════
+const SRS_KEY = 'omnirad_srs_v2';
+function getSRS() { try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {}; } catch { return {}; } }
+function saveSRS(d) { localStorage.setItem(SRS_KEY, JSON.stringify(d)); }
+
+function renderSRS(id) {
+  const rec = getSRS()[id];
+  const el = document.getElementById('srs-mastery');
+  if (!rec) { el.innerHTML = '<p style="font-size:13px;color:var(--text-muted);text-align:center;padding:8px;">No review history yet. Rate this structure in the buttons above!</p>'; return; }
+  const lvl = Math.max(0, Math.min(4, Math.floor((rec.ef - 1.2))));
+  const labels = ['New','Learning','Familiar','Proficient','Mastered'];
+  const colors  = ['var(--text-muted)','oklch(0.65 0.12 50)','oklch(0.65 0.12 155)','oklch(0.65 0.14 188)','var(--teal)'];
+  const pct = (lvl / 4) * 100;
+  el.innerHTML = `
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:600;color:${colors[lvl]};">${labels[lvl]}</span>
+        <span style="font-size:12px;color:var(--text-muted);">Reviews: ${rec.n || 0} · Next: ${rec.next ? new Date(rec.next).toLocaleDateString() : 'Today'}</span>
+      </div>
+      <div style="background:var(--bg-panel);border-radius:4px;height:6px;overflow:hidden;">
+        <div style="background:${colors[lvl]};width:${pct}%;height:100%;border-radius:4px;transition:width .5s;"></div>
+      </div>
+    </div>`;
+}
+
+document.querySelectorAll('.srs-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!current) return;
+    const q = parseInt(btn.dataset.rating);
+    const srs = getSRS();
+    const r = srs[current.id] || { ef: 2.5, interval: 1, n: 0 };
+    if (q < 3) { r.n = 0; r.interval = 1; }
+    else {
+      if (r.n === 0) r.interval = 1;
+      else if (r.n === 1) r.interval = 6;
+      else r.interval = Math.round(r.interval * r.ef);
+      r.n++;
+    }
+    r.ef = Math.max(1.3, r.ef + 0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
+    r.next = Date.now() + r.interval * 86400000;
+    srs[current.id] = r;
+    saveSRS(srs);
+    const labels = ['','Forgot 😰','Hard 😐','Good 🙂','Easy 😄'];
+    document.getElementById('srs-feedback').textContent = `Saved: ${labels[q]} — Next review in ${r.interval} day${r.interval > 1 ? 's' : ''}`;
+    renderSRS(current.id);
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// TTS
+// ═══════════════════════════════════════════════════
+function speak(text, lang) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
+  u.rate = ttsSpeed;
+  speechSynthesis.speak(u);
+}
+
+document.getElementById('btn-tts-toggle').addEventListener('click', function() {
+  ttsEnabled = !ttsEnabled;
+  this.classList.toggle('active', ttsEnabled);
+  this.textContent = ttsEnabled ? '🔊 TTS On' : '🔊 TTS';
+  document.getElementById('tts-panel').classList.toggle('visible', ttsEnabled);
+});
+
+document.getElementById('btn-pronounce').addEventListener('click', () => {
+  if (!current) return;
+  speak(current['tts' + (ttsLang === 'ar' ? 'Ar' : 'En')], ttsLang);
+});
+
+document.querySelectorAll('.tts-btn[data-lang]').forEach(b => {
+  b.addEventListener('click', function() {
+    ttsLang = this.dataset.lang;
+    document.querySelectorAll('.tts-btn[data-lang]').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.tts-btn[data-speed]').forEach(b => {
+  b.addEventListener('click', function() {
+    ttsSpeed = parseFloat(this.dataset.speed);
+    document.querySelectorAll('.tts-btn[data-speed]').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// MOBILE SIDEBAR
+// ═══════════════════════════════════════════════════
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('visible');
+});
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+
+// ═══════════════════════════════════════════════════
+// DEEP LINK
+// ═══════════════════════════════════════════════════
+buildSidebar();
+const p = new URLSearchParams(location.search).get('s');
+if (p) loadStructure(p);
 </script>
-<!-- SRS Module — Injection only, zero changes to existing code -->
-<script src="../modules/srs.js"></script>
-<!-- Lexicon Module -->
-<script src="../modules/lexicon.js"></script>
 </body>
 </html>
