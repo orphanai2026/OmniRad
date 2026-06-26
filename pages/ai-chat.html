@@ -1224,8 +1224,12 @@ function renderWelcome() {
   div.className = 'welcome';
   div.id = 'welcomeScreen';
 
-  // Setup guide (shown only when no API key)
-  const setupHTML = !hasKey ? `
+  div.innerHTML = `
+    <div class="welcome-icon">✦</div>
+    <div>
+      <h2>${lang.welcomeTitle}</h2>
+      <p>${lang.welcomeSub}</p>
+    </div>
     <div class="setup-guide">
       <div class="setup-title">${lang.setupTitle}</div>
       <div class="setup-steps">
@@ -1236,28 +1240,18 @@ function renderWelcome() {
           </div>`).join('')}
       </div>
       <div class="setup-note">${lang.setupNote}</div>
-    </div>` : '';
-
-  div.innerHTML = `
-    <div class="welcome-icon">✦</div>
-    <div>
-      <h2>${lang.welcomeTitle}</h2>
-      <p>${lang.welcomeSub}</p>
     </div>
-    ${setupHTML}
-    ${hasKey ? `<div class="starters" id="starters"></div>` : ''}`;
+    <div class="starters" id="starters"></div>`;
   feed.appendChild(div);
 
-  if (hasKey) {
-    const startersEl = div.querySelector('#starters');
-    lang.starters.forEach(s => {
-      const btn = document.createElement('button');
-      btn.className = 'starter-card';
-      btn.innerHTML = `<span class="starter-emoji">${s.emoji}</span><span class="starter-text">${s.text}</span>`;
-      btn.onclick = () => sendMessage(s.text);
-      startersEl.appendChild(btn);
-    });
-  }
+  const startersEl = div.querySelector('#starters');
+  lang.starters.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'starter-card';
+    btn.innerHTML = `<span class="starter-emoji">${s.emoji}</span><span class="starter-text">${s.text}</span>`;
+    btn.onclick = () => sendMessage(s.text);
+    startersEl.appendChild(btn);
+  });
 }
 
 // ── TOPICS SIDEBAR ──
