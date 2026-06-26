@@ -262,7 +262,49 @@ input[type=range].tsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
   .info-grid,.img-grid.g3,.img-grid.g2,.img-grid.split{grid-template-columns:1fr!important}
   .s-hdr{flex-direction:column}
 }
+@media(max-width:640px){
+  /* Topbar: hide breadcrumb text on very small screens */
+  .breadcrumb>span:first-child{display:none}
+  /* Tools panel: collapsible on mobile */
+  .tools-wrap{margin-bottom:1rem}
+  .tb-body{padding:.5rem .75rem}
+  .tb-lbl{min-width:48px;font-size:.55rem}
+  .tbtn{font-size:.65rem;padding:.22rem .42rem}
+  /* Canvas minimum height adapted for mobile */
+  .cvs-wrap{min-height:220px!important}
+  /* Panel header smaller */
+  .panel-hdr{padding:.35rem .6rem}
+  /* View mode buttons row: scroll horizontally */
+  .vbtn-row{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.25rem}
+  /* Modality toggle: scrollable */
+  .mod-toggle-row{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* TTS panel: keep away from bottom edge on mobile */
+  .tts-panel{bottom:4rem;right:.75rem;min-width:180px}
+  /* Fullscreen toolbar: larger touch targets */
+  .fs-tb .tbtn{padding:.38rem .6rem;font-size:.72rem}
+  /* Slider touch friendly */
+  input[type=range].tsl{width:72px}
+  /* Tools collapse toggle */
+  .tools-collapse-btn{display:flex}
+}
+@media(max-width:400px){
+  .topbar{padding:0 .75rem}
+  .logo-dot{display:none}
+  .main{padding:1rem .75rem}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Tools collapse button (mobile only) */
+.tools-collapse-btn{
+  display:none;align-items:center;gap:.35rem;
+  padding:.25rem .6rem;border-radius:5px;border:1px solid var(--bdr);
+  background:var(--bg-o);color:var(--tx3);font-size:.65rem;
+  font-family:'IBM Plex Mono',monospace;cursor:pointer;
+  transition:all .12s;margin-left:auto;
+}
+.tools-collapse-btn:hover{border-color:var(--teal2);color:var(--teal)}
+.tools-body-collapsed .tb-body{display:none}
+.tools-body-collapsed .tools-collapse-btn{color:var(--teal);border-color:var(--teal3)}
 
 /* ═══ TTS MODULE ════════════════════════════════════════════ */
 /* Speak button inline next to terms */
@@ -566,10 +608,11 @@ function buildPage(id) {
       <div class="${gridCls}" id="img-grid">${panelsHTML}</div>
     </div>
   </div>
-  <div class="tools-wrap">
+  <div class="tools-wrap" id="tools-wrap">
     <div class="tools-hdr">
       <div class="tools-title">🛠 Image Tools Suite <span class="mod-badge ${MOD_CLS[curMod]||'b-ct'}" id="tb-badge">${curMod}</span></div>
       <span class="tools-disc">⚠ Educational use only — values are illustrative</span>
+      <button class="tools-collapse-btn" id="tools-collapse-btn" aria-label="Toggle tools panel">▲ Hide</button>
     </div>
     <div class="tb-body" id="tb-body"></div>
   </div>
@@ -1064,6 +1107,17 @@ function initPanels() {
         annos:[],pts:[],cpts:[],mod,drawing:false,sx:0,sy:0,lx:0,ly:0};
       drawBg(idx);
       bindCvs(idx,wrap);
+      // Watch for size changes (orientation change, sidebar collapse, etc.)
+      if(window.ResizeObserver){
+        const ro=new ResizeObserver(()=>{
+          const nW=wrap.offsetWidth, nHt=wrap.offsetHeight;
+          if(nW>10&&nHt>10&&(Math.abs(nW-(PS[idx]?.W||0))>4||Math.abs(nHt-(PS[idx]?.H||0))>4)){
+            delete PS[idx];
+            requestAnimationFrame(()=>initPanels());
+          }
+        });
+        ro.observe(wrap);
+      }
     });
     if(anyFailed&&attempt<4) setTimeout(()=>tryInit(attempt+1),80*(attempt+1));
     else {
@@ -1616,6 +1670,21 @@ document.addEventListener('keydown',e=>{
 window.addEventListener('resize',()=>{
   const ov=document.getElementById('fs-ov');
   if(ov.classList.contains('open')) initFsCvs();
+  // Re-init panels on window resize (handles orientation change on mobile)
+  if(!ov.classList.contains('open')){
+    Object.keys(PS).forEach(idx=>{ delete PS[idx]; });
+    requestAnimationFrame(()=>requestAnimationFrame(()=>initPanels()));
+  }
+});
+
+// Tools panel collapse (mobile)
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('#tools-collapse-btn');
+  if(!btn) return;
+  const wrap = document.getElementById('tools-wrap');
+  if(!wrap) return;
+  const collapsed = wrap.classList.toggle('tools-body-collapsed');
+  btn.textContent = collapsed ? '▼ Show Tools' : '▲ Hide';
 });
 
 // ═══════════════════════════════════════════════════════════
