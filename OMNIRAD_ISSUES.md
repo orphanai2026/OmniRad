@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-26 — Task #8 approved ✅ · Phase 2 approved · Mobile fixes applied*
+*Last updated: 2026-06-26 — Task #9 approved ✅ · SRS Module delivered · Logo standardized*
 
 ---
 
@@ -58,6 +58,7 @@
 | 6 | Build Colorization Toggle | 2026-06-26 | — | DEFERRED — requires TotalSegmentator masks (Phase 2) |
 | 7 | Build TTS Module | 2026-06-26 | Mohammed Saeed Alzahrani | atlas.html · Web Speech API · EN+AR · Slow/Normal/Fast · Floating panel · MutationObserver re-inject |
 | 8 | MVP Test with 5–7 Students | 2026-06-26 | Mohammed Saeed Alzahrani | 5 participants · 80% prefer over Radiopaedia · Mobile fix applied · Decision: proceed to Phase 2 |
+| 9 | Build SRS Module | 2026-06-26 | Mohammed Saeed Alzahrani | modules/srs.js · pages/srs.html · SM-2 algorithm · 4-button rating · Mastery bar · Dashboard · Logo fix |
 
 ---
 
@@ -139,6 +140,10 @@
 | # | المشكلة | المشارك | الأولوية | تُحال إلى |
 |---|---------|---------|---------|-----------|
 | 9 | ⏳ تُملأ بعد الاختبار | — | — | — |
+
+---
+
+| 13 | Logo inconsistency across pages — atlas.html used logo-dot (small dot) while index.html used OR mark + text. Standardized all pages to OR mark + OmniRad text pattern. | Task #9 | All pages | 🟡 Medium | ✅ Resolved | 2026-06-26 |
 
 ---
 

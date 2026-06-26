@@ -3,7 +3,7 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v1.9 |
+| Version | v2.1 |
 | Date | 2026-06-26 |
 | Status | Planning Phase |
 | Owner | Mohammed Saeed Alzahrani |
@@ -507,7 +507,7 @@ OmniRad/
 | 6 | Build Colorization Toggle (trial) | Phase 1 | 🔴 Deferred → Phase 2 |
 | 7 | Build TTS Module | Phase 1 | ✅ Done — 2026-06-26 |
 | 8 | MVP test with 5-7 students | Phase 1 | ✅ Done — 2026-06-26 |
-| 9 | Build SRS Module | Phase 2 | ⏳ |
+| 9 | Build SRS Module | Phase 2 | ✅ Done — 2026-06-26 |
 | 10 | Build Mnemonics Library + Medical Lexicon layer | Phase 2 | ⏳ |
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ⏳ |
 | 12 | Expand content (full Abdomen) | Phase 2 | ⏳ |
@@ -637,6 +637,16 @@ Then: "Do you approve? yes/no/edit"
 ---
 
 # ⑫ Version History
+
+- **v2.1 — 2026-06-26**
+  - Task #9 approved: Build SRS Module ✅
+  - Delivered: modules/srs.js (new) · pages/srs.html (new) · pages/atlas.html (logo fix)
+  - SM-2 algorithm (Anki-compatible) · 4 rating buttons EN+AR (Forgot/Hard/Good/Easy)
+  - Mastery bar + badges (New/Learning/Familiar/Proficient/Mastered)
+  - localStorage under key omnirad_srs · MutationObserver injection pattern
+  - SRS Dashboard (srs.html): KPIs · Due list · All structures · Weakness report
+  - Logo standardized across all pages: OR mark + OmniRad text
+  - Injection timing fixed: rAF×2 + setTimeout(300ms) to match render() cycle
 
 - **v2.0 — 2026-06-26**
   - Task #8 approved: MVP Test with 5–7 Students ✅
