@@ -506,7 +506,7 @@ OmniRad/
 | 5 | Build Image Tools Suite | Phase 1 | ✅ Done — 2026-06-26 |
 | 6 | Build Colorization Toggle (trial) | Phase 1 | 🔴 Deferred → Phase 2 |
 | 7 | Build TTS Module | Phase 1 | ✅ Done — 2026-06-26 |
-| 8 | MVP test with 5-7 students | Phase 1 | 🟡 In Progress — 2026-06-26 |
+| 8 | MVP test with 5-7 students | Phase 1 | ✅ Done — 2026-06-26 |
 | 9 | Build SRS Module | Phase 2 | ⏳ |
 | 10 | Build Mnemonics Library + Medical Lexicon layer | Phase 2 | ⏳ |
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ⏳ |
@@ -637,6 +637,14 @@ Then: "Do you approve? yes/no/edit"
 ---
 
 # ⑫ Version History
+
+- **v2.0 — 2026-06-26**
+  - Task #8 approved: MVP Test with 5–7 Students ✅
+  - Results: 5 participants · Q9 avg 80% (target 70%) · Q10 80% (target 50%)
+  - Critical mobile issue discovered and fixed: hamburger menu (index.html) + Canvas ResizeObserver + tools collapse button (atlas.html)
+  - Decision: 🟡 Proceed to Phase 2 with fixes applied
+  - Repository set to private (GitHub Pages paused — acceptable for Phase 2 dev)
+  - OMNIRAD_ISSUES.md: Issues #10–12 logged from test results
 
 - **v1.9 — 2026-06-26**
   - Architecture review: VIXOM platform analysed for structural ideas

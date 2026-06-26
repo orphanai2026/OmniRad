@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-26 — Task #8 in progress · Clinic module logged*
+*Last updated: 2026-06-26 — Task #8 approved ✅ · Phase 2 approved · Mobile fixes applied*
 
 ---
 
@@ -41,6 +41,9 @@
 | 7 | bindTb() accumulated multiple listeners causing Mode toggle to cancel itself | Task #5 | Task #5 | 🔴 Urgent | ✅ Resolved | 2026-06-26 |
 | 8 | Colorization Toggle — manual polygon approach failed after 5 attempts. Requires TotalSegmentator segmentation masks (pre-processed) for accurate organ boundaries. Cannot be done with hand-drawn coordinates. Defer to Phase 2 when CT images are processed through TotalSegmentator pipeline. | Task #6 | Phase 2 (after Task #12) | 🟡 Medium | 🔴 Deferred | — |
 | 9 | Clinic Module — Case-based clinical simulation workflow: Case Queue → Imaging Request → Structured Report. Inspired by VIXOM architecture. Bridges Atlas (what is it) with clinical thinking (how to reason). High structural value. Build AFTER Task #12 (full content expansion) when enough structures exist to support real cases. Belongs between SRS and AI Assistant in Phase 2 roadmap. Medical Lexicon and Oncology Staging deferred to Phase 4+ as separate scope expansion. | Architecture Review 2026-06-26 | Phase 2.5 (Task #10.5) | 💡 Idea | 🔴 Open | — |
+| 10 | Mobile: Tools panel covers images on small screens (P3 tablet + P5 tablet) — fixed in Task #8b with collapse button (▲ Hide / ▼ Show Tools). Verify on real mobile device after next deploy. | Task #8 Test | Task #8b | 🟡 Medium | ✅ Resolved | 2026-06-26 |
+| 11 | Mobile: Canvas panels do not resize on orientation change — fixed in Task #8b with ResizeObserver + window.resize re-init. | Task #8 Test | Task #8b | 🔴 Urgent | ✅ Resolved | 2026-06-26 |
+| 12 | Mobile: Navigation menu invisible on mobile (hamburger button not prominent enough) — fixed in Task #8b. Retest after GitHub Pages re-enabled. | Task #8 Test | Task #8b | 🔴 Urgent | ✅ Resolved | 2026-06-26 |
 
 ---
 
@@ -54,7 +57,7 @@
 | 5 | Build Image Tools Suite | 2026-06-26 | Mohammed Saeed Alzahrani | atlas.html · Canvas-based tools · Active Panel System · Plane Toggle · Split View · Fullscreen · 7 modalities |
 | 6 | Build Colorization Toggle | 2026-06-26 | — | DEFERRED — requires TotalSegmentator masks (Phase 2) |
 | 7 | Build TTS Module | 2026-06-26 | Mohammed Saeed Alzahrani | atlas.html · Web Speech API · EN+AR · Slow/Normal/Fast · Floating panel · MutationObserver re-inject |
-| 8 | MVP Test with 5–7 Students | 2026-06-26 | ⏳ Pending | survey.html · distribution-guide.html · results template below |
+| 8 | MVP Test with 5–7 Students | 2026-06-26 | Mohammed Saeed Alzahrani | 5 participants · 80% prefer over Radiopaedia · Mobile fix applied · Decision: proceed to Phase 2 |
 
 ---
 
@@ -66,21 +69,21 @@
 
 | المعيار | الهدف | النتيجة الفعلية | الحالة |
 |---------|-------|----------------|--------|
-| عدد المشاركين الذين جربوا ≥ 60 دقيقة | 5–7 | __ / 7 | ⏳ |
-| نسبة "OmniRad أفضل من Radiopaedia" (Q9 ≥ 4) | 70%+ | __%  | ⏳ |
-| نسبة "أريد التجربة مجدداً" (Q10 = yes) | 50%+ | __%  | ⏳ |
-| أخطاء تقنية موقفة (Q7 = major) | 0 | __ حالة | ⏳ |
-| يعمل على الجوال بدون مشاكل | 100% | __%  | ⏳ |
+| عدد المشاركين الذين جربوا ≥ 60 دقيقة | 5–7 | 5 / 7 | ✅ |
+| نسبة "OmniRad أفضل من Radiopaedia" (Q9 ≥ 4) | 70%+ | 80% (4/5) | ✅ |
+| نسبة "أريد التجربة مجدداً" (Q10 = yes) | 50%+ | 80% (4/5) | ✅ |
+| أخطاء تقنية موقفة (Q7 = major) | 0 | 3 حالات | ❌ → مُصلحة |
+| يعمل على الجوال بدون مشاكل | 100% | 0% → مُصلح | ❌ → مُصلح |
 
 ### نتائج كل مشارك
 
 | # | الجهاز | السنة | وقت التجربة | Q9 (أفضل من Radiopaedia) | Q10 (يريد مجدداً) | Q12 (تقييم كلي) | أخطاء؟ |
 |---|--------|-------|-------------|--------------------------|-------------------|-----------------|---------|
-| P1 | — | — | — | — | — | — | — |
-| P2 | — | — | — | — | — | — | — |
-| P3 | — | — | — | — | — | — | — |
-| P4 | — | — | — | — | — | — | — |
-| P5 | — | — | — | — | — | — | — |
+| P1 | تابلت | — | — | 5 | yes | 5 | لا |
+| P2 | جوال | — | — | 5 | yes | 2 | major (قوائم + Atlas) |
+| P3 | تابلت | — | — | 5 | yes | 3 | major (أدوات تغطي + annotation + TTS) |
+| P4 | جوال | — | — | 2 | maybe | 1 | major (لا شيء يفتح) |
+| P5 | تابلت | — | — | 5 | yes | 4 | minor (صندوق أدوات) |
 | P6 | — | — | — | — | — | — | — |
 | P7 | — | — | — | — | — | — | — |
 
@@ -123,11 +126,11 @@
 
 ```
 [ ] ✅ المتابعة إلى Phase 2 — جميع معايير النجاح تحققت
-[ ] 🟡 متابعة مع تعديلات — تحقق معظم المعايير، مشاكل بسيطة
+[x] 🟡 متابعة مع تعديلات — تحقق معظم المعايير، مشاكل بسيطة ← القرار المختار
 [ ] 🔴 إعادة تصميم أولاً — معايير حرجة لم تتحقق
 
-القرار النهائي: ___________________________
-التاريخ: ___________________________
+القرار النهائي: متابعة إلى Phase 2 بعد إصلاح مشاكل الجوال
+التاريخ: 2026-06-26
 الموقّع: Mohammed Saeed Alzahrani
 ```
 
