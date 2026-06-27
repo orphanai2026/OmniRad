@@ -199,9 +199,6 @@ learning methodology.
 6. Embed critical data inline in HTML — never rely on fetch for JSON files
 7. PATCH with str_replace only — never full file rewrites (Rule #12)
 8. setTimeout(80ms) before canvas sizing to ensure DOM layout is complete
-9. COLORIZABLE_MAP: use organ+modality map (not flat array) to support multiple modalities per organ
-10. Colored image label: draw AFTER ctx.restore() to avoid transform inheritance
-11. Image naming convention: {modality_lowercase}_original.png / {modality_lowercase}_colored.png
 ```
 
 ## File Structure
@@ -405,4 +402,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v2.7**
+**End of Document — OmniRad Master Plan v2.8**
