@@ -321,7 +321,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
         <h2>Smart Atlas — Full Abdomen</h2>
         <p>Select an anatomical structure from the sidebar to explore imaging across CT, MRI, Ultrasound, X-Ray, and more — with professional image tools, mnemonics, SRS review, and bilingual TTS.</p>
         <div class="welcome-stats">
-          <div class="w-stat"><div class="w-stat-num">12</div><div class="w-stat-label">Structures</div></div>
+          <div class="w-stat"><div class="w-stat-num">15</div><div class="w-stat-label">Structures</div></div>
           <div class="w-stat"><div class="w-stat-num">5+</div><div class="w-stat-label">Modalities</div></div>
           <div class="w-stat"><div class="w-stat-num">22</div><div class="w-stat-label">Mnemonics</div></div>
         </div>
@@ -572,7 +572,7 @@ const STRUCTS=[
    descAr:'أكبر الأعضاء الصلبة، في الربع العلوي الأيمن. يؤدي أكثر من ٥٠٠ وظيفة تشمل الأيض وإزالة السموم وإنتاج الصفراء.',
    facts:['Weight: 1.2–1.5 kg in adults','Divided into 8 Couinaud segments','Dual blood supply: portal vein (75%) + hepatic artery (25%)','Located in RUQ and epigastrium',"Covered by Glisson's capsule"],
    imaging:{CT:'Homogeneous 50–70 HU on plain CT. Portal venous phase (70 s) optimal. 8 Couinaud segments identifiable.',MRI:'T1: moderately hyperintense. T2: slightly hypointense vs spleen. Gadolinium shows arterial/portal/delayed phases.',US:'Homogeneous echogenicity, slightly hyperechoic vs renal cortex. Normal ≤15 cm midclavicular.',XR:'Hepatomegaly displaces stomach gas medially. Right hemidiaphragm elevated.'},
-   mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
+   mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:'../images/structures/liver/ct_original.png'},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
    mnemonics:[{title:'Couinaud Segments',en:'"LEFT has LOWER numbers" — Segments 1 (caudate) alone; 2–4 left lobe; 5–8 right lobe.',ar:'"اليسار أرقام أصغر" — القطاع ١ منفرداً؛ ٢–٤ الفص الأيسر؛ ٥–٨ الفص الأيمن.',ref:'Couinaud 1957'},{title:"Riedel's Lobe",en:'"Riedel Reaches Right" — tongue-like downward extension of right lobe, common in women.',ar:'"ريدل يمتد يميناً" — امتداد لساني للفص الأيمن، شائع عند النساء.',ref:"Gray's 41st ed."}],
    related:['gallbladder','portal-vein','ivc'],
    ttsEn:'Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.',ttsAr:'الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن.'},
@@ -602,7 +602,7 @@ const STRUCTS=[
    descAr:'أكبر عضو لمفاوي في الربع العلوي الأيسر. يرشّح الدم ويُعيد تدوير الحديد ويعمل كخزّان مناعي.',
    facts:['Normal size: ≤12 cm long-axis','LUQ, posterior to stomach','Hilum on medial surface','Fragile capsule — rupture risk in trauma','Red pulp: filtration | White pulp: immune function'],
    imaging:{CT:'Homogeneous ~50 HU. Arterial phase: "zebra stripes" (normal). Portal phase: homogeneous. Size ≤12 cm.',MRI:'T1: hypointense vs liver. T2: hyperintense vs liver. Arterial phase heterogeneous (normal).',US:'Homogeneous crescent-shaped. ≤12 cm. Splenomegaly >12 cm.',XR:'Splenomegaly displaces stomach medially and elevates left hemidiaphragm.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
+   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/spleen/ct_original.png'},US:{planes:['Longitudinal','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
    mnemonics:[{title:'Size — 1×3×5×7×9×11',en:'"1×3×5×7×9×11" — 1 inch thick, 3 wide, 5 long. Weighs 7 oz. Under ribs 9, 10, 11.',ar:'"١×٣×٥×٧×٩×١١" — سُمك ١ إنش، عرض ٣، طول ٥. تحت الأضلاع ٩، ١٠، ١١.',ref:"Gray's 41st ed."},{title:'Functions — FIST',en:'"FIST" — Filtration, Immune response, Storage (platelets/monocytes), haemaTopoiesis (fetal).',ar:'"FIST" — ترشيح، استجابة مناعية، تخزين، تكوين دم (جنيني).',ref:"Moore's 8th ed."}],
    related:['pancreas','stomach','portal-vein'],
    ttsEn:'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.',ttsAr:'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'},
@@ -685,7 +685,37 @@ const STRUCTS=[
    mods:{CT:{planes:['Axial','Coronal'],img:IMG},'X-Ray':{planes:['Supine AP','Erect AP'],img:IMG},US:{planes:['Transverse'],img:IMG}},
    mnemonics:[{title:'Colon Runs Clockwise',en:'"The Colon Runs Clockwise" — Cecum (RIF) → Ascending → Transverse → Descending → Sigmoid → Rectum.',ar:'"القولون يسير بمحاذاة عقارب الساعة" — أعور ← صاعد ← عرضي ← نازل ← سيني ← مستقيم.',ref:"Moore's 8th ed."},{title:'Haustra vs Plicae',en:'"Plicae goes ALL the way across; Haustra DOESN\'T." Key for X-ray bowel obstruction!',ar:'"الطيات الدائرية تعبر كامل اللمعة؛ التكميشات لا تعبر." مهم جداً لتشخيص الانسداد!',ref:'Radiographics'}],
    related:['small-intestine','stomach','aorta'],
-   ttsEn:'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.',ttsAr:'الأمعاء الغليظة. أعور، قولون، مستقيم. متر ونصف.'}
+   ttsEn:'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.',ttsAr:'الأمعاء الغليظة. أعور، قولون، مستقيم. متر ونصف.'},
+
+  {id:'kidney',cat:'urinary',en:'Kidney',ar:'الكلية',latin:'Ren / Nephros',
+   descEn:'Paired retroperitoneal organs at T12–L3. Filter ~180 L of plasma daily, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.',
+   descAr:'عضوان خلف صفاقيان عند T12–L3. يُرشّحان ~١٨٠ لتراً من البلازما يومياً وينظّمان الشوارد والضغط عبر نظام رينين-أنجيوتنسين.',
+   facts:['Size: ~11×6×3 cm (right slightly lower)','Weight: ~150 g each','Cortex: glomeruli + PCT + DCT | Medulla: loops of Henle + collecting ducts','Right kidney lower (liver displaces left upward)','Blood supply: renal artery (from aorta at L1)'],
+   imaging:{CT:'Cortex: 100–140 HU (nephrographic phase, 90 s). Medulla: lower attenuation. Renal sinus: fat density. Unenhanced for stones.',MRI:'Cortex: T1 brighter than medulla. T2: medulla brighter. Corticomedullary phase best for vascularity. DWI for masses.',US:'Echogenicity: cortex ≤ liver/spleen. Medullary pyramids: hypoechoic. Size ≥ 9 cm. Doppler: RI <0.7.',XR:'KUB: renal outline. Psoas shadow. Calcified stones along ureter course.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/kidney/ct_original.png`},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
+   mnemonics:[{title:'Renal Relations — SLAVE',en:'"SLAVE" — Suprarenal gland, Liver/Spleen, Aorta/IVC, Vertebra T12–L3, Eckhorn (ureter) exits medially.',ar:'"SLAVE" — غدة كظرية، كبد/طحال، أبهر/IVC، فقرات T12–L3، الحالب يخرج إنسياً.',ref:"Moore's 8th ed."},{title:'GFR Formula',en:'"Cockroft-Gault: (140−age) × weight / (72 × Cr). ×0.85 for females."',ar:'"كوكروفت-غولت: (١٤٠−العمر) × الوزن / (٧٢ × الكرياتينين). اضرب ٠.٨٥ للإناث."',ref:"Harrison's 21st ed."}],
+   related:['bladder','aorta','ivc'],
+   ttsEn:'Kidney. Latin: Ren. Retroperitoneal. T12 to L3. Filters 180 liters daily.',ttsAr:'الكلية. باللاتينية: رين. خلف صفاقية. تُرشّح ١٨٠ لتراً يومياً.'},
+
+  {id:'bladder',cat:'urinary',en:'Urinary Bladder',ar:'المثانة البولية',latin:'Vesica urinaria',
+   descEn:'Hollow muscular reservoir in the true pelvis, posterior to the pubic symphysis. Stores 300–500 mL of urine. Detrusor muscle contracts for micturition; internal urethral sphincter maintains continence.',
+   descAr:'خزّان عضلي مجوّف في الحوض الحقيقي خلف ارتفاق العانة. يخزّن ٣٠٠–٥٠٠ مل. العضلة النافصة تنقبض للتبوّل.',
+   facts:['Capacity: 300–500 mL (urge at ~150 mL)','Wall thickness: ≤3 mm when distended, ≤5 mm when collapsed','Trigone: fixed base between 2 ureteric orifices + internal urethral meatus','Blood supply: superior + inferior vesical arteries (internal iliac)','Transitional epithelium (urothelium) lines the lumen'],
+   imaging:{CT:'Thin smooth wall ≤3 mm when full. Perivesical fat planes important. CT cystography for trauma.',MRI:'T2: high signal lumen, dark muscular wall. Best for local tumor staging (invasion of detrusor).',US:'Anechoic lumen. Wall ≤3 mm full. Post-void residual ≤50 mL normal. Calculi: echogenic + shadow.',XR:'Not visible unless calcified stones. Cystogram: contrast fills lumen.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/bladder/ct_original.png`},US:{planes:['Transverse','Longitudinal'],img:IMG},MRI:{planes:['Axial','Sagittal'],img:IMG}},
+   mnemonics:[{title:'Trigone Landmarks',en:'"Two Ureters + One Urethra = Trigone Triangle." The only non-distensible part of the bladder.',ar:'"حالبان + إحليل = مثلث المثانة." الجزء الوحيد غير القابل للتمدد.',ref:"Gray's 41st ed."},{title:'Bladder Cancer Staging',en:'"Ta: surface only; T1: lamina propria; T2: detrusor; T3: perivesical fat; T4: adjacent organs."',ar:'"Ta: السطح فقط؛ T1: الصفيحة؛ T2: النافصة؛ T3: الدهن؛ T4: الأعضاء المجاورة."',ref:'TNM 8th ed.'}],
+   related:['kidney','aorta'],
+   ttsEn:'Urinary bladder. Latin: Vesica urinaria. True pelvis. Stores 300 to 500 milliliters.',ttsAr:'المثانة البولية. باللاتينية: فيسيكا. الحوض الحقيقي. تخزّن ٣٠٠ إلى ٥٠٠ مل.'},
+
+  {id:'bone',cat:'urinary',en:'Pelvic Bone',ar:'عظم الحوض',latin:'Os coxae',
+   descEn:'The bony pelvis is formed by two hip bones (ilium, ischium, pubis) fused at the acetabulum, joined anteriorly at the pubic symphysis and posteriorly to the sacrum at the sacroiliac joints.',
+   descAr:'الحوض العظمي يتكوّن من عظمتَي الورك (الحرقفة، الإسك، العانة) ملتحمتَين عند الحُقّ، ومتّحدتَين أمامياً عند ارتفاق العانة وخلفياً عند المفصل العجزي الحرقفي.',
+   facts:['Hip bone = Ilium (superior) + Ischium (posteroinferior) + Pubis (anteroinferior)','Acetabulum: junction of all 3 at age 16','True pelvis (below pelvic brim) vs False pelvis (above)','Pelvic inlet: sacral promontory → arcuate line → pubic crest','Sciatic notches: greater (piriformis, sciatic nerve) + lesser'],
+   imaging:{CT:'Cortical bone: very high HU (400–1000). Trabecular: 100–400. CT best for fractures, fracture classification.',MRI:'Cortex: T1+T2 dark (no protons). Marrow: T1 bright (yellow fat). Bone marrow edema: T2 STIR bright. Best for stress fractures + avascular necrosis.',US:'Limited — cortex only visible as bright reflector. Joint effusion: hypoechoic around cortex.',XR:'AP pelvis: standard projection. Inlet/outlet views for fracture classification. Pelvic ring integrity assessment.'},
+   mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/bone/ct_original.png`},'X-Ray':{planes:['AP Pelvis','Inlet','Outlet'],img:IMG},MRI:{planes:['Coronal','Axial'],img:IMG}},
+   mnemonics:[{title:'Hip Bone Fusion — IIP',en:'"I Is Puberty" — Ilium, Ischium, Pubis fuse at acetabulum at puberty (~16 years).',ar:'"الثلاثة تلتحم عند البلوغ (١٦ سنة)" — الحرقفة والإسك والعانة.',ref:"Gray's 41st ed."},{title:'Pelvic Floor — LEEL',en:'"LEEL" — Levator ani (puborectalis, pubococcygeus, iliococcygeus), External sphincters.',ar:'"رافع الشرج: عانة-مستقيمية، عانة-عصعصية، حرقفية-عصعصية + العضلات المصرّة الخارجية."',ref:"Netter's 7th ed."}],
+   related:['bladder','aorta'],
+   ttsEn:'Pelvic bone. Latin: Os coxae. Ilium, ischium, pubis. Fused at acetabulum.',ttsAr:'عظم الحوض. باللاتينية: أوس كوكساي. حرقفة وإسك وعانة تلتحم عند الحُقّ.'}
 ];
 
 // ═══════════════════════════════════════════
