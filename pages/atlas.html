@@ -263,6 +263,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 @keyframes tts-pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .tts-speaking{animation:tts-pulse .8s infinite;}
 
+/* COLORIZE TOGGLE */
+#btn-colorize{padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:10px;font-family:var(--font);cursor:pointer;transition:all .15s;display:none;}
+#btn-colorize:hover{background:var(--bg-hover);color:var(--text-primary);}
+#btn-colorize.active{background:oklch(0.20 0.06 155/.4);border-color:oklch(0.65 0.14 155);color:oklch(0.75 0.14 155);}
+
 /* EXPAND FULLSCREEN */
 #expand-overlay{display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column;}
 #expand-overlay.open{display:flex;}
@@ -388,6 +393,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
                 <button class="view-mode-btn active" data-vmode="normal" title="Normal view" onclick="setViewMode('normal')">⊞ Normal</button>
                 <button class="view-mode-btn" data-vmode="split" title="Split 2 planes" onclick="setViewMode('split')">⊟ Split</button>
                 <button class="view-mode-btn" id="btn-expand" title="Expand fullscreen" onclick="toggleExpand()">⛶ Expand</button>
+                <button id="btn-colorize" title="Toggle organ colorization" onclick="toggleColorize()">🎨 Colorize</button>
               </div>
             </div>
             <!-- Canvas area -->
@@ -816,6 +822,17 @@ function selectMod(mod,s){
   else if(mod==='MRI') document.getElementById('tools-mri').style.display='block';
   else if(mod==='US') document.getElementById('tools-us').style.display='block';
 
+  // Show colorize button only for CT + organs with real images
+  const COLORIZABLE=['liver','kidney','spleen','bladder','bone'];
+  const btnC=document.getElementById('btn-colorize');
+  if(mod==='CT' && current && COLORIZABLE.includes(current.id)){
+    btnC.style.display='block';
+    btnC.classList.remove('active');
+    btnC.textContent='🎨 Colorize';
+  } else {
+    btnC.style.display='none';
+  }
+
   // Plane toggle
   const pt=document.getElementById('plane-toggle');
   pt.innerHTML=(md.planes||[]).map((p,i)=>`
@@ -853,7 +870,7 @@ function renderPanels(s,mod){
 
   displayPlanes.forEach((plane,i)=>{
     const imgUrl=s.mods[mod]?.img||'';
-    panelStates.push({imgUrl,rotation:0,flippedH:false,flippedV:false,inverted:false,zoom:1,panX:0,panY:0,annotations:[],mod,plane});
+    panelStates.push({imgUrl,rotation:0,flippedH:false,flippedV:false,inverted:false,zoom:1,panX:0,panY:0,annotations:[],mod,plane,colored:false});
 
     const div=document.createElement('div');
     div.className='canvas-panel'+(i===0?' active-panel':'');
@@ -1176,6 +1193,24 @@ function savePanel(){
   a.download='omnirad-panel.png';
   a.href=cv.toDataURL('image/png');
   a.click();
+}
+
+// ═══════════════════════════════════════════
+// COLORIZE TOGGLE
+// ═══════════════════════════════════════════
+function toggleColorize(){
+  const ps=panelStates[activePanel];
+  if(!ps||!current) return;
+  const COLORIZABLE=['liver','kidney','spleen','bladder','bone'];
+  if(!COLORIZABLE.includes(current.id)) return;
+  ps.colored=!ps.colored;
+  ps.imgUrl=ps.colored
+    ?`../images/structures/${current.id}/ct_colored.png`
+    :`../images/structures/${current.id}/ct_original.png`;
+  const btn=document.getElementById('btn-colorize');
+  btn.classList.toggle('active',ps.colored);
+  btn.textContent=ps.colored?'📷 Original':'🎨 Colorize';
+  sizeAndDraw(activePanel,true);
 }
 
 function applyWindowPreset(preset){
