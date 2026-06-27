@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v2.2 |
-| Date | 2026-06-26 |
-| Status | Planning Phase |
+| Version | v2.8 |
+| Date | 2026-06-27 |
+| Status | ✅ Task #6 Complete — Colorization Toggle Live |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -28,56 +28,51 @@ Work output language  : English (كود، ملفات، تسميات بالإنج
 Technical terms       : Always English (CT, MRI, HTML, JS…)
 ```
 
-## The 8 Mandatory Rules
+## The 11 Mandatory Rules
 
-### Rule #1 — Model Assessment
+### Rule #1 — Model Assessment | تقييم النموذج
 ```
-Start of every response must show:
+EN: Start of every response must show:
+AR: كل رد يبدأ بـ:
+
 [Model: Haiku/Sonnet/Opus]
 [Files Read: <files read>]
 [Task Status: <task state>]
 [Action Required: <one specific action>]
 ```
 
-### Rule #2 — Files First
+### Rule #2 — Files First | الملفات أولاً
 ```
-Before any work:
+EN: Before any work:
 1. Read OMNIRAD_PROJECT.md fully
 2. Read OMNIRAD_ISSUES.md fully
-3. Check task state in conversation table
+3. Check task state in conversation
 4. Announce status to user
-5. Wait for confirmation before starting
+5. Wait for confirmation before start
 ```
 
-### Rule #3 — File Wins
+### Rule #3 — File Wins | الملف يربح دائماً
 ```
-When Claude's memory conflicts with project files:
-→ File wins. Always. No exceptions.
+EN: When Claude's memory conflicts with project files → File wins. Always. No exceptions.
 ```
 
-### Rule #4 — Three Strikes Rule
+### Rule #4 — Three Strikes Rule | قاعدة الثلاث محاولات
 ```
-After 3 failed attempts at same problem:
+EN: After 3 failed attempts at same problem:
 - Stop immediately
 - Admit limitation honestly
-- Suggest alternatives (new chat / split task / different source)
-
-Never burn tokens on repeated futile attempts.
+- Suggest alternatives (new chat / split task / different approach)
 ```
 
-### Rule #5 — Best Solution First
+### Rule #5 — Best Solution First | الحل الأفضل أولاً
 ```
-When facing a technical problem:
-- Present the BEST solution directly
-- NO gradual escalation from "safe" to "actual"
-- Alternatives mentioned below as secondary
-
-If uncertain → ONE clarifying question, then full solution.
+EN: Present the BEST solution directly. No gradual escalation.
+If unclear → ONE clarifying question, then full solution.
 ```
 
-### Rule #6 — Approval Gate
+### Rule #6 — Approval Gate | بوابة الموافقة
 ```
-BEFORE any of these actions:
+EN: BEFORE any of these actions — STOP and request explicit approval:
 ✋ Writing code
 ✋ Editing existing file
 ✋ Creating new file
@@ -85,30 +80,55 @@ BEFORE any of these actions:
 ✋ Web searching
 ✋ Suggesting unrequested feature
 
-Must:
-- Stop
-- Request explicit approval
-- Wait for "yes/approved/go"
-
 Only exception: Explicit user instruction "execute directly"
 ```
 
-### Rule #7 — Concise by Default
+### Rule #7 — Concise by Default | الإيجاز هو الأصل
 ```
-Default response: ≤10 lines
+EN: Default response: ≤10 lines
 Long responses: only when explicitly requested
 NO unsolicited "personal observations"
-NO more than ONE question per response
+Maximum ONE question per response
 ```
 
-### Rule #8 — No Project Creep
+### Rule #8 — No Project Creep | لا توسع خارج النطاق
 ```
-If ideas emerge outside current task scope:
-- Log them in OMNIRAD_ISSUES.md as future tasks
-- Do NOT discuss in current conversation
-- Do NOT execute with current task
-
+EN: Ideas outside current task scope → log in OMNIRAD_ISSUES.md, do NOT execute.
 "ONE CONVERSATION = ONE TASK" — Sacred principle.
+```
+
+### Rule #9 — Protected Code | الكود المعتمد محمي
+```
+EN: Any approved feature or file = fully protected.
+New task touches ONLY what was explicitly requested.
+FORBIDDEN to modify any previously approved file without explicit owner request.
+Golden rule: "Fix correctly, never remove functionality."
+```
+
+### Rule #10 — Zero Assumptions | لا افتراضات
+```
+EN: Never assume any feature, behavior, or detail not documented in project files.
+If it's not in OMNIRAD_PROJECT.md → it does not get built.
+When in doubt → ONE question → wait for answer → then build.
+```
+
+### Rule #11 — First Shot Must Be Right | الأول والأخير
+```
+EN: The first delivered solution must be the final correct solution.
+NO "preliminary version" then improvements — think before writing, not after.
+```
+
+## ⚠️ Rule #12 — PATCH ONLY | تعديل فقط — لا إعادة كتابة (NEW — 2026-06-27)
+```
+EN: When modifying an existing file:
+1. Read the file first with view tool
+2. Identify ONLY the specific lines that need changing
+3. Use str_replace for targeted edits ONLY
+4. NEVER rewrite the entire file unless explicitly requested
+5. If full rewrite is requested → confirm with user first
+
+Violation = feature regression = unacceptable.
+AR: لا تُعيد كتابة الملفات كاملة. استخدم str_replace فقط للسطور المحددة.
 ```
 
 ---
@@ -116,14 +136,12 @@ If ideas emerge outside current task scope:
 # ② Vision & Mission
 
 ## Vision
-
 ```
 To become the world's leading reference for learning 
 multimodal radiologic anatomy.
 ```
 
 ## Mission
-
 ```
 Build an interactive educational platform that enables 
 radiologic sciences students and practitioners to explore 
@@ -131,17 +149,6 @@ the same anatomical structure across any combination of
 modalities (CT, MRI, US, NM, Angio, X-Ray, Mammo, PET) 
 with professional imaging tools and evidence-based 
 learning methodology.
-```
-
-## Core Principles
-
-```
-1. English is foundational (medical specialty language)
-2. Arabic is optional support layer
-3. Scientific accuracy above all
-4. Field validation before building
-5. Phased, incremental release
-6. Transparency about limitations ("educational use only")
 ```
 
 ---
@@ -159,270 +166,11 @@ learning methodology.
 | Arabic weakness in field | Major platforms English-only |
 | AI Assistant for radiology in Arabic | Non-existent |
 
-## Unique Value Propositions (UVPs)
-
-```
-1. Smart Multimodal Comparison
-   Free selection of 2-8 modalities for dynamic comparison
-   
-2. Colorization Toggle
-   Switch between real and colorized images for eye training
-   
-3. AI Assistant (AR/EN) — Scoped
-   Specialized chatbot for radiologic anatomy only
-   
-4. Integrated SRS
-   Long-term retention tracking per structure
-   
-5. Mnemonics Library (AR/EN)
-   Organized library + user contributions
-   
-6. TTS Pronunciation
-   Correct pronunciation of Latin terms
-   
-7. Mobile-First Design
-   For immediate clinical use
-```
-
 ---
 
-# ④ Target Audience
-
-## Primary User
-```
-Radiologic Sciences Students (BSc programs)
-- Studying theoretically, preparing for clinical
-- Suffering from "textbook → reality" gap
-- Accessible via Saudi and Gulf universities
-```
-
-## Secondary User
-```
-Radiology Residents (R1-R2) & Interns
-- Need quick clinical reference
-- English-proficient
-- Limited purchasing power (students)
-```
-
-## Tertiary User
-```
-Practicing Technologists
-- Sonographers, CT/MRI technologists
-- Need normal anatomy reference
-- Prefer simple interfaces
-```
-
-## Geographic Scope
-
-```
-Phase 1: Saudi Arabia + Gulf (Arabic + English)
-Phase 2: All Arab countries
-Phase 3: Global (English + additional languages)
-```
-
----
-
-# ⑤ Core Features
-
-## Foundation Features
-
-### ⑤.1 Smart Atlas
-```
-Page per anatomical structure:
-- Core info (name, location, function)
-- Images in all available modalities
-- Multiple planes (Axial/Sagittal/Coronal)
-- Tags and cross-references
-```
-
-### ⑤.2 Smart Multimodal Comparison Engine ⭐
-```
-Strongest feature — free comparison selection:
-
-[☑ CT] [☐ MRI] [☑ US] [☐ X-Ray] 
-[☐ Angio] [☐ NM] [☐ Mammo] [☐ PET]
-
-Adaptive layout:
-  - 1 modality → fullscreen
-  - 2 modalities → 2 columns
-  - 3-4 → grid
-  - 5+ → side-scroll
-
-+ Sync Mode: scroll in one, others follow
-+ Quick Toggles: preset combinations
-+ Saved Combinations: favorite presets
-```
-
-### ⑤.3 Colorization Toggle ⭐
-```
-Every CT/MRI image has two versions:
-  [Original]    → real grayscale
-  [Educational] → colorized (each organ a color)
-  
-One-click toggle for eye training
-
-Tech:
-  - TotalSegmentator (open source)
-  - Pre-processed (not real-time)
-  - Both versions stored
-```
-
-### ⑤.4 Image Tools Suite ✅ COMPLETED (Task #5)
-```
-Canvas-based professional tools per modality:
-
-BASE TOOLS (all modalities):
-  🔍 Zoom & Pan (independent per panel)
-  📏 Measure (mm*)
-  📐 Angle
-  ⬜ ROI Rectangle + area
-  ⭕ ROI Ellipse + A×B axes
-  🏷 Annotate (free text)
-  ↻ Rotate CW/CCW
-  ↔ Flip H/V
-  ◑ Invert
-  ✕ Reset (active panel)
-  📸 Save PNG
-
-CT SPECIFIC:
-  🔢 HU Probe (illustrative)
-  🦴 Cobb Angle
-  🎚 Window/Level (7 presets + manual sliders)
-
-MRI SPECIFIC:
-  📊 ROI Signal Intensity
-  📈 TIC Curve
-  Sequence labels: T1/T2/FLAIR/DWI/ADC/T1+C/STIR
-
-US SPECIFIC:
-  📏 Depth cm scale
-  ⭕ Follicle Volume (A×B×C)
-  Mode: B-Mode/Color Doppler/Power Doppler/Spectral
-  Gain slider
-
-NM SPECIFIC:
-  🔢 ROI Counts
-  — H-Line (horizontal reference)
-  Colormaps: Hot/Rainbow/Grayscale/Spectrum/Cold Metal
-  Tracers: Tc-99m/Tl-201/I-131/Ga-67/F-18 FDG
-
-PET SPECIFIC:
-  ☢ SUV Probe (illustrative)
-  📊 SUV ROI
-  🧬 MTV Estimate
-  Colormaps: Hot Metal/Rainbow/PET Std/Grayscale
-  PERCIST: CR/PR/SD/PD
-
-RT-IGRT (Educational):
-  〰 Isodose Lines (100/80/50/20%)
-  ⬜ Field Size (cm×cm)
-  ↕ SSD Marker
-  ✏ GTV/CTV/PTV/OAR Contour
-  ⚠ Not for clinical use — educational only
-
-VIEW MODES:
-  ⊞ Normal: 1-3 panels, plane toggle per modality
-  ⛶ Expand: fullscreen with floating toolbar
-  ⊟ Split: 2 modalities side by side
-
-ACTIVE PANEL SYSTEM:
-  - Click panel → becomes Active (teal border)
-  - All tools apply to active panel only
-  - Zoom/Pan always independent per panel
-  - Auto-activates first panel on load
-
-PLANE TOGGLE:
-  - Per-modality plane selector
-  - Default: first plane only
-  - Toggle on/off each plane
-  - Grid auto-adapts: 1→fullscreen, 2→side-by-side, 3→3-col
-
-FOUNDATION: Canvas API — no external libraries
-DISCLAIMER: Values marked * are illustrative (no DICOM)
-```
-
-### ⑤.5 AI Assistant (AR/EN) ⭐
-```
-Specialized scoped chatbot:
-✅ Answers ONLY radiologic anatomy questions
-✅ Bilingual (user selects)
-✅ Knows ONLY OmniRad content (RAG)
-✅ Refuses out-of-scope questions
-
-Tech:
-  - Claude API or OpenAI API
-  - Strict system prompt
-  - Rate limiting (20 questions/day per student)
-  - Cache common questions
-```
-
-### ⑤.6 Mnemonics Library ⭐
-```
-Organized library:
-  - English mnemonics (established)
-  - Arabic mnemonics (locally invented)
-  - Visual: image + story + coloring
-  - User contributions + supervisor review
-```
-
-### ⑤.7 TTS Pronunciation ⭐
-```
-Every Latin term has button:
-  🔊 Hippocampus → correct voice pronunciation
-+ Adjustable speed
-+ Arabic pronunciation also
-
-Tech:
-  - Web Speech API (free, instant)
-  - ElevenLabs API later (professional)
-```
-
-### ⑤.8 Integrated SRS ⭐
-```
-SM-2 algorithm (Anki):
-After each structure, self-assess:
-  [Forgot] [Hard] [Good] [Easy]
-
-System:
-  - Determines next review time
-  - Calculates "Mastery Level"
-  - Reports: strengths/weaknesses, weakest region
-```
-
-## Additional Features (Phase 2+)
-
-```
-⑤.9  Daily Anatomy Challenge
-⑤.10 Case-Based Learning
-⑤.11 Print-Ready PDFs
-⑤.12 Community Discussion (moderated)
-⑤.13 AR Mode (future)
-⑤.14 Voice Anatomy Tour
-⑤.15 Memory Palace
-```
-
-## Supported Modalities (9 + future)
-
-```
-1. Anatomy (Normal/3D)
-2. X-Ray (Plain radiography)
-3. CT (Computed Tomography)
-4. MRI (Magnetic Resonance Imaging)
-5. US (Ultrasound)
-6. NM (Nuclear Medicine + SPECT)
-7. Angio (Angiography: CT, MR, DSA)
-8. Mammo (Mammography)
-9. RT (Radiation Therapy — educational, Task #5)
-+ PET / PET-CT (mixed, Phase 2)
-+ Fluoroscopy (Phase 2)
-```
-
----
-
-# ⑥ Technical Architecture
+# ④ Technical Architecture
 
 ## Architecture Principles
-
 ```
 ✅ Vanilla JavaScript ES2020+ (no frameworks)
 ✅ HTML5 semantic
@@ -432,69 +180,70 @@ System:
 ✅ Self-contained HTML files (file:// works)
 ✅ Web Standards only (no polyfills)
 ✅ Canvas API for image tools
+✅ Data embedded inline in HTML (no fetch for critical data)
 
 ❌ FORBIDDEN: React, Vue, Angular, jQuery
 ❌ FORBIDDEN: Tailwind, Bootstrap, Material UI
 ❌ FORBIDDEN: build tools (webpack, vite, etc.)
 ❌ FORBIDDEN: external CDN for libraries
+❌ FORBIDDEN: crossOrigin='anonymous' on Wikimedia images (causes CORS failure)
 ```
 
-## Deployment Note (learned in Task #2)
+## Critical Lessons Learned
 ```
-- Self-contained HTML (CSS embedded) preferred for local dev
-- Avoids file:// path issues with Arabic/spaces in folder names
-- Separate assets/ folder used when deploying to server/GitHub Pages
-```
-
-## Canvas Architecture (learned in Task #5)
-```
-Critical lessons:
-1. Never use H as variable name (conflicts with document.documentElement)
-2. Use offsetWidth/offsetHeight not getBoundingClientRect for sizing
+1. Never use crossOrigin='anonymous' with Wikimedia CC0 images — causes CORS failure
+2. Use offsetWidth/offsetHeight not getBoundingClientRect for canvas sizing
 3. Clone event targets before re-binding to prevent listener accumulation
 4. Use requestAnimationFrame(()=>rAF(()=>init())) for proper timing
-5. Active Panel State: all tools target activePanel only except zoom/pan
+5. Active Panel State: all tools target activePanel only
+6. Embed critical data inline in HTML — never rely on fetch for JSON files
+7. PATCH with str_replace only — never full file rewrites (Rule #12)
+8. setTimeout(80ms) before canvas sizing to ensure DOM layout is complete
+9. COLORIZABLE_MAP: use organ+modality map (not flat array) to support multiple modalities per organ
+10. Colored image label: draw AFTER ctx.restore() to avoid transform inheritance
+11. Image naming convention: {modality_lowercase}_original.png / {modality_lowercase}_colored.png
 ```
 
 ## File Structure
-
 ```
 OmniRad/
-├── index.html              ← Main page (self-contained for local dev)
-├── assets/
-│   ├── theme.css
-│   ├── fonts/
-│   ├── icons/
-│   └── logo.svg
-├── modules/
-│   ├── atlas.js
-│   ├── comparison.js
-│   ├── colorization.js
-│   ├── image-tools.js
-│   ├── tts.js
-│   ├── srs.js
-│   ├── mnemonics.js
-│   └── ai-chat.js
+├── index.html                  ← Main page ✅
+├── pages/
+│   ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅ + Task #12 ✅
+│   ├── comparison.html         ← Task #4 ✅ + Task #12 ✅ (fully functional)
+│   ├── srs.html                ← Task #9 ✅
+│   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ (embedded data)
+│   ├── ai-chat.html            ← Task #11 ✅
+│   ├── survey.html             ← Task #8 ✅
+│   └── distribution-guide.html ← Task #8 ✅
 ├── data/
-│   ├── structures.json
-│   ├── mnemonics.json
-│   └── relationships.json
-├── images/
-│   └── [structure-id]/
-└── pages/
-    ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅
-    ├── comparison.html         ← Task #4 ✅
-    ├── survey.html             ← Task #8 ✅
-    ├── distribution-guide.html ← Task #8 ✅
-    ├── library.html
-    └── settings.html
+│   ├── structures.json         ← Task #12 ✅ (12 structures, CC0 images)
+│   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
+│   └── lexicon.json            ← Task #12 ✅ (38 terms)
+└── modules/
+    └── srs.js                  ← Task #9 ✅
 ```
 
 ---
 
-# ⑦ Phase Roadmap
+# ⑤ Phase Roadmap
 
-## 📋 Approved Task Schedule (Conversations)
+## ⏸ Strategic Decision — 2026-06-27
+```
+قرار: إيقاف جميع أعمال تطوير المنصة مؤقتاً
+
+السبب: المنصة بدون صور حقيقية = هيكل غير قابل للاختبار الفعلي
+الشرط: استئناف التطوير بعد اكتمال الصور الحقيقية فقط
+
+الأولوية الحالية:
+1. تحميل صور TCIA (CT-ORG + CHAOS)
+2. معالجة MedSAM2 → PNG أصلي + PNG ملوّن
+3. رفع الصور إلى GitHub
+4. استئناف Task #6 (Colorization Toggle)
+5. اختبار حقيقي → تصحيح → Task #13
+```
+
+## 📋 Approved Task Schedule
 
 | # | Task | Phase | Status |
 |---|------|-------|--------|
@@ -504,36 +253,77 @@ OmniRad/
 | 3 | Build Smart Atlas (5 trial structures) | Phase 1 | ✅ Done — 2026-06-25 |
 | 4 | Build Multimodal Comparison Engine | Phase 1 | ✅ Done — 2026-06-25 |
 | 5 | Build Image Tools Suite | Phase 1 | ✅ Done — 2026-06-26 |
-| 6 | Build Colorization Toggle (trial) | Phase 1 | 🔴 Deferred → Phase 2 |
+| 6 | Build Colorization Toggle — TCIA + MedSAM2 Pipeline | Phase 2 | ✅ Done — 2026-06-27 |
 | 7 | Build TTS Module | Phase 1 | ✅ Done — 2026-06-26 |
 | 8 | MVP test with 5-7 students | Phase 1 | ✅ Done — 2026-06-26 |
-| 9 | Build SRS Module | Phase 2 | ✅ Done — 2026-06-26 |
+| 9 | Build SRS (Spaced Repetition System) Module | Phase 2 | ✅ Done — 2026-06-26 |
 | 10 | Build Mnemonics Library + Medical Lexicon layer | Phase 2 | ✅ Done — 2026-06-26 |
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ✅ Done — 2026-06-26 |
-| 12 | Expand content (full Abdomen) | Phase 2 | ⏳ |
-| 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ⏳ |
-| 13 | Extended test with 20-30 students | Phase 2 | ⏳ |
+| 12 | Expand content (full Abdomen) + Bug Fixes | Phase 2 | ✅ Done — 2026-06-27 |
+| 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ✅ Done — 2026-06-27 |
+| 13 | Extended test with 20-30 students | Phase 2 | ⏳ Next |
 | 14 | Build user accounts (Backend) | Phase 3 | ⏳ |
-| 15 | Expand to additional body regions | Phase 3 | ⏳ |
+| 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ⏳ |
 | 16 | Build Daily Challenge + Community | Phase 3 | ⏳ |
 | 17 | Official launch + marketing | Phase 3 | ⏳ |
 
 ---
 
-# ⑧ Success Criteria (KPIs)
+# ⑧ Image Sources Plan — Approved 2026-06-27
 
-## End of Phase 1 (MVP)
+## المبدأ الأساسي
+```
+نفس Pipeline (MedSAM2) على جميع المصادر — لا تكرار عمل أبداً
+DICOM → Python (pydicom) → PNG → MedSAM2 → PNG أصلي + PNG ملوّن
+```
 
+## Approved Pipeline
+```
+Source (TCIA/Visible Human)
+    ↓
+DICOM → PNG  (pydicom + Pillow)
+    ↓
+MedSAM2 Segmentation  (Bounding Box prompt per organ)
+    ↓
+Colored PNG Overlay  (per organ color system)
+    ↓
+GitHub → atlas.html Toggle (Original ↔ Colorized)
+```
+
+## مصادر مرحلة بمرحلة
+
+| المرحلة | المصدر | الأعضاء | التكلفة | المهمة |
+|---------|--------|---------|---------|--------|
+| Phase 2 | TCIA — CT-ORG + CHAOS | بطن كامل (CT+MRI+US) | مجاني CC BY | Task #6 |
+| Phase 3 | Visible Human Project (NLM) | كامل الجسم (CT+MRI) | مجاني حكومي | Task #15 |
+| Phase 4+ | e-Anatomy API / شراكة مستشفى | كامل + سريري | تفاوض | Task #17 |
+
+## Organ Color System (OmniRad)
+```javascript
+ORGAN_COLORS = {
+  liver:     (180, 120, 60),   // بني
+  spleen:    (160,  80, 200),  // بنفسجي
+  kidney:    (220, 140,  40),  // برتقالي
+  pancreas:  (240, 200,  80),  // أصفر
+  aorta:     (220,  60,  60),  // أحمر
+  ivc:       ( 60, 100, 220),  // أزرق
+  stomach:   ( 80, 160, 220),  // أزرق فاتح
+  gallbladder:(100, 180, 100), // أخضر
+}
+```
+
+---
+
+## End of Phase 1 (MVP) — ACHIEVED ✅
 ```
 ✅ 5-7 students try for at least 1 hour
-✅ 70%+ say "better than Radiopaedia for this purpose"
-✅ 50%+ request to try again
-✅ Zero runtime errors
-✅ Works on mobile
+✅ 70%+ say "better than Radiopaedia for this purpose" (actual: 80%)
+✅ 50%+ request to try again (actual: 80%)
+✅ Zero runtime errors (after fixes)
+✅ Works on mobile (after Task #8b fixes)
 ```
 
 ## End of Phase 2
-
 ```
 ✅ 20+ students using weekly
 ✅ Average 15 min/session
@@ -541,197 +331,59 @@ OmniRad/
 ✅ 40%+ retention after two weeks
 ```
 
-## End of Phase 3
-
-```
-✅ 100+ registered users
-✅ 50+ weekly active users
-✅ Recognition from university faculty
-✅ Collaboration requests from other universities
-```
-
 ---
 
-# ⑨ Risks & Mitigations
+# ⑦ Version History
 
-## Technical Risks
+- **v2.8 — 2026-06-27**
+  - Task #6 approved: Colorization Toggle ✅
+  - زر 🎨 Colorize في toolbar — يظهر عند CT/MRI للأعضاء المدعومة فقط
+  - COLORIZABLE_MAP: نظام organ+modality بدلاً من قائمة مسطحة
+  - مسارات CT الحقيقية لجميع الـ 13 عضو (جاهزة للصور المستقبلية)
+  - 5 أعضاء مفعّلة حالياً: liver, spleen, kidney, bladder, bone
+  - spleen MRI مدعوم: mri_original.png + mri_colored.png
+  - Label اسم العضو (EN+AR) يظهر على الصورة الملونة
+  - اصطلاح تسمية الصور: {mod}_original.png / {mod}_colored.png
+  - 3 أعضاء جديدة أُضيفت: kidney, bladder, bone (Pelvic)
+  - أُزيل التكرار: kidneys و adrenal-glands حُذفا
+  - العدد الكلي: 13 structure
 
-| Risk | Probability | Mitigation |
-|------|-------------|-----------|
-| TotalSegmentator inaccuracy | Medium | Early testing + manual review |
-| AI gives wrong medical info | High | Strict RAG + disclaimer + rate limit |
-| AI API cost escalation | Medium | Rate limit + caching + freemium |
-| Browser DICOM limitations | Low | Use WebP/JPG after processing |
+- **v2.7 — 2026-06-27**
+  - قرار استراتيجي: إيقاف التطوير مؤقتاً حتى اكتمال الصور الحقيقية
+  - السبب: لا يمكن اختبار المنصة أو تقييمها بدون صور طبية حقيقية
+  - الأولوية: TCIA → MedSAM2 → PNG → استئناف التطوير
+  - المحادثة القادمة: دليل معالجة الصور (TCIA + MedSAM2 Pipeline)
 
-## Content Risks
+- **v2.6 — 2026-06-27**
+  - Task #12.5 approved: Clinic Module (Case Queue → Imaging Request → Structured Report) ✅
+  - Task #6 status updated: Blocked → يتطلب TCIA + MedSAM2 pipeline أولاً
+  - Task #15 updated: Visible Human Project مذكور صراحةً
+  - قسم ⑧ مضاف: Image Sources Plan — خطة مصادر الصور المعتمدة
+  - MedSAM2 Pipeline موثّق: TCIA (Phase 2) → Visible Human (Phase 3) → e-Anatomy/شراكة (Phase 4+)
+  - Organ Color System موثّق لـ OmniRad
 
-| Risk | Probability | Mitigation |
-|------|-------------|-----------|
-| Medical inaccuracy | High | Radiologist review + disclaimer |
-| Image copyright | Medium | Only CC-licensed sources |
-| Wrong mnemonics | Medium | Pre-publication review |
+- **v2.5 — 2026-06-27**
+  - Task #12 approved: Expand Content (Full Abdomen) + Bug Fixes ✅
+  - Delivered: atlas.html (12 structures, Canvas CORS fixed, Expand/Split added) · mnemonics.html (22 embedded mnemonics, no fetch) · comparison.html (Canvas rendering, all buttons functional, PET added) · data/structures.json · data/mnemonics.json · data/lexicon.json
+  - Rule #12 added: PATCH ONLY — no full file rewrites, use str_replace for targeted edits
+  - Critical lesson: crossOrigin='anonymous' breaks Wikimedia CC0 image loading — never use
+  - Critical lesson: embed critical data inline in HTML — never rely on fetch for JSON files
 
----
-
-# ⑩ What We Will NOT Do (No-Goes)
-
-```
-❌ Build mobile app (web-only through Phase 1-3)
-❌ Real-time DICOM from PACS
-❌ AI image generation
-❌ Diagnostic tools (education only)
-❌ Multi-user real-time collaboration (Phase 4+)
-❌ Video tutorials (Phase 4+)
-❌ RT dose calculation (educational tools only, no clinical use)
-❌ Open forum without moderation
-❌ Publish patient images
-❌ Social features before Phase 3
-❌ Multiple themes (one professional theme only)
-❌ Excessive gamification before Phase 2
-❌ Translation to 5 languages (Arabic/English only initially)
-❌ Complex backend (Phase 1 client-side only)
-❌ Train AI models ourselves (use APIs)
-```
-
----
-
-# ⑪ Conversation & Approval Rules
-
-## Structure of Each Task Conversation
-
-```
-1. Start:
-   - Read OMNIRAD_PROJECT.md and OMNIRAD_ISSUES.md
-   - Announce task status
-   - Estimate model needed
-   - Request start confirmation
-
-2. During work:
-   - Approval Gate before every action
-   - Stay within task scope
-   - Log side ideas in OMNIRAD_ISSUES.md
-   - Concise responses by default
-
-3. Completion:
-   - Present task result
-   - Apply delivery protocol
-   - Request explicit approval "approved ✅"
-   - After approval: update governance files
-   - Provide next task message
-```
-
-## Delivery Protocol
-
-```
-At end of each task before requesting approval:
-
-① 🗂️  File table (what's delivered)
-② 📋  Execution instructions (step by step)
-③ ✅  Quality checklist
-④ 👀  What user needs to verify visually
-⑤ 🎯  What's the next task after approval
-
-Then: "Do you approve? yes/no/edit"
-```
-
----
-
-# ⑫ Version History
+- **v2.4 — 2026-06-26**
+  - Rules expanded from 8 → 11 mandatory rules
+  - Rule #9: Protected Code · Rule #10: Zero Assumptions · Rule #11: First Shot Must Be Right
 
 - **v2.3 — 2026-06-26**
   - Task #11 approved: Build AI Assistant (AR/EN) ✅
-  - Delivered: pages/ai-chat.html (new) · index.html (AI Assistant nav link added)
-  - Claude Haiku 4.5 · direct browser fetch · strict radiologic anatomy system prompt
-  - AR/EN bilingual · RTL full support · language toggle
-  - Daily limit: 20 questions/day · localStorage counter · auto-reset midnight
-  - Cache: exact-match questions cached 24h in localStorage
-  - Setup guide: 4-step instructions always visible on welcome screen (AR/EN)
-  - Quick Topics sidebar: 8 topics · Starter cards: 4 per language
-  - API Key: user-managed · stored in localStorage · masked input · validation indicator
-  - Refused out-of-scope questions styled with 🚫 indicator
 
 - **v2.2 — 2026-06-26**
   - Task #10 approved: Build Mnemonics Library + Medical Lexicon layer ✅
-  - Delivered: pages/mnemonics.html (new) · modules/lexicon.js (new) · data/mnemonics.json (new) · data/lexicon.json (new) · pages/atlas.html (nav fix) · pages/comparison.html (logo fix) · index.html (nav links fix)
-  - Mnemonics Library: 12 entries EN+AR · Gray's/Moore's/Netter's referenced · search + filter + TTS (♀♂ US voices)
-  - Medical Lexicon: 18 terms · inline tooltips in atlas · Latin/Greek etymology · IPA · click-to-open · related terms navigation
-  - TTS: American English male + female voice selection · rate 0.82 · auto voice detection
-  - Atlas topbar: Home + Mnemonics + My Progress nav pills added
-  - Comparison logo: OR mark standardized
-  - index.html: Mnemonics + My Progress nav links fixed (were href="#")
 
 - **v2.1 — 2026-06-26**
   - Task #9 approved: Build SRS Module ✅
-  - Delivered: modules/srs.js (new) · pages/srs.html (new) · pages/atlas.html (logo fix)
-  - SM-2 algorithm (Anki-compatible) · 4 rating buttons EN+AR (Forgot/Hard/Good/Easy)
-  - Mastery bar + badges (New/Learning/Familiar/Proficient/Mastered)
-  - localStorage under key omnirad_srs · MutationObserver injection pattern
-  - SRS Dashboard (srs.html): KPIs · Due list · All structures · Weakness report
-  - Logo standardized across all pages: OR mark + OmniRad text
-  - Injection timing fixed: rAF×2 + setTimeout(300ms) to match render() cycle
 
 - **v2.0 — 2026-06-26**
   - Task #8 approved: MVP Test with 5–7 Students ✅
-  - Results: 5 participants · Q9 avg 80% (target 70%) · Q10 80% (target 50%)
-  - Critical mobile issue discovered and fixed: hamburger menu (index.html) + Canvas ResizeObserver + tools collapse button (atlas.html)
-  - Decision: 🟡 Proceed to Phase 2 with fixes applied
-  - Repository set to private (GitHub Pages paused — acceptable for Phase 2 dev)
-  - OMNIRAD_ISSUES.md: Issues #10–12 logged from test results
-
-- **v1.9 — 2026-06-26**
-  - Architecture review: VIXOM platform analysed for structural ideas
-  - Clinic Module (Case Queue → Imaging Request → Structured Report) approved as Task #12.5 — Phase 2.5
-  - Medical Lexicon merged into Task #10 (Mnemonics Library) as an additional layer — not a separate task
-  - Oncology Staging deferred to Phase 4+ (out of Phase 1–3 scope)
-  - OMNIRAD_ISSUES.md: Issue #9 logged for Clinic Module
-
-- **v1.8 — 2026-06-26**
-  - Task #8 in progress: MVP Test with 5–7 Students
-  - Delivered: pages/survey.html · pages/distribution-guide.html
-  - survey.html: 20 questions · 4 sections · localStorage · JSON+CSV export · Dark theme
-  - distribution-guide.html: 7 steps · 5 timed tasks · KPI table · direct CTA to survey
-  - OMNIRAD_ISSUES.md: results template added (§ Task #8 Results)
-
-- **v1.7 — 2026-06-26**
-  - Task #7 approved: Build TTS Module
-  - Delivered: pages/atlas.html (integrated into Task #5 file)
-  - Web Speech API: EN (en-US) + AR (ar-SA) · No external dependencies
-  - 🔊 buttons injected next to: structure name (EN+AR), info card labels, sidebar names
-  - Floating panel (bottom-right): Language toggle (EN/AR) + Speed (Slow/Normal/Fast)
-  - Toggle button in topbar · MutationObserver re-injects on every render
-  - Speaking animation (tts-pulse) · Stop on second press · Error state handling
-
-- **v1.6 — 2026-06-26**
-  - Task #6 deferred: Colorization Toggle requires TotalSegmentator segmentation masks
-  - Manual polygon/SVG approach attempted — technically infeasible without pre-processed masks
-  - Issue #8 logged · atlas.html restored to clean Task #5 state
-  - Proceeding to Task #7 — TTS Module
-
-- **v1.5 — 2026-06-26**
-  - Task #5 approved: Build Image Tools Suite
-  - Delivered: pages/atlas.html (self-contained, CSS+JS embedded)
-  - Canvas-based tools: Base + CT + MRI + US + NM + PET + RT-IGRT (7 modalities)
-  - Active Panel System: tools target active panel only, zoom/pan always independent
-  - Plane Toggle: per-modality, default first plane, auto-grid layout
-  - View Modes: Normal (plane toggle) · Expand (fullscreen + floating toolbar) · Split (2 modalities)
-  - Fullscreen: keyboard hints · ESC to close · modality switcher in header
-  - Tooltips on all tool buttons
-  - Uploaded to GitHub: orphanai2026/OmniRad
-
-- **v1.4 — 2026-06-25**
-  - Task #4 approved: Build Multimodal Comparison Engine
-
-- **v1.3 — 2026-06-25**
-  - Task #3 approved: Build Smart Atlas (5 trial structures)
-
-- **v1.2 — 2026-06-25**
-  - Task #2 approved: Build main page + base layout
-
-- **v1.1 — 2026-06-25**
-  - Task #1 approved: Visual Mockups
-
-- **v1.0 — 2026-06-25**
-  - First release of OMNIRAD_PROJECT.md
 
 ---
 
@@ -746,11 +398,11 @@ Read governance files:
 - OMNIRAD_PROJECT.md
 - OMNIRAD_ISSUES.md
 
-Comply with the 8 collaboration rules.
+Comply with the 12 collaboration rules.
 Start with: [Model] [Files Read] [Task Status] [Action Required]
 Then request my approval."
 ```
 
 ---
 
-**End of Document — OmniRad Master Plan v1.8**
+**End of Document — OmniRad Master Plan v2.7**
