@@ -832,10 +832,16 @@ function selectMod(mod,s){
   else if(mod==='MRI') document.getElementById('tools-mri').style.display='block';
   else if(mod==='US') document.getElementById('tools-us').style.display='block';
 
-  // Show colorize button only for CT + organs with confirmed real images
-  const COLORIZABLE=['liver','spleen','kidney','bladder','bone'];
+  // Show colorize button only when organ+modality has confirmed colored image
+  const COLORIZABLE_MAP={
+    liver:   ['CT'],
+    spleen:  ['CT','MRI'],
+    kidney:  ['CT'],
+    bladder: ['CT'],
+    bone:    ['CT']
+  };
   const btnC=document.getElementById('btn-colorize');
-  if(mod==='CT' && current && COLORIZABLE.includes(current.id)){
+  if(current && COLORIZABLE_MAP[current.id] && COLORIZABLE_MAP[current.id].includes(mod)){
     btnC.style.display='block';
     btnC.classList.remove('active');
     btnC.textContent='🎨 Colorize';
@@ -1210,13 +1216,20 @@ function savePanel(){
 // ═══════════════════════════════════════════
 function toggleColorize(){
   const ps=panelStates[activePanel];
-  if(!ps||!current) return;
-  const COLORIZABLE=['liver','spleen','kidney','bladder','bone'];
-  if(!COLORIZABLE.includes(current.id)) return;
+  if(!ps||!current||!currentMod) return;
+  const COLORIZABLE_MAP={
+    liver:   ['CT'],
+    spleen:  ['CT','MRI'],
+    kidney:  ['CT'],
+    bladder: ['CT'],
+    bone:    ['CT']
+  };
+  if(!COLORIZABLE_MAP[current.id]||!COLORIZABLE_MAP[current.id].includes(currentMod)) return;
+  const modPrefix=currentMod.toLowerCase().replace('-','');
   ps.colored=!ps.colored;
   ps.imgUrl=ps.colored
-    ?`../images/structures/${current.id}/ct_colored.png`
-    :`../images/structures/${current.id}/ct_original.png`;
+    ?`../images/structures/${current.id}/${modPrefix}_colored.png`
+    :`../images/structures/${current.id}/${modPrefix}_original.png`;
   const btn=document.getElementById('btn-colorize');
   btn.classList.toggle('active',ps.colored);
   btn.textContent=ps.colored?'📷 Original':'🎨 Colorize';
