@@ -321,7 +321,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
         <h2>Smart Atlas — Full Abdomen</h2>
         <p>Select an anatomical structure from the sidebar to explore imaging across CT, MRI, Ultrasound, X-Ray, and more — with professional image tools, mnemonics, SRS review, and bilingual TTS.</p>
         <div class="welcome-stats">
-          <div class="w-stat"><div class="w-stat-num">15</div><div class="w-stat-label">Structures</div></div>
+          <div class="w-stat"><div class="w-stat-num">13</div><div class="w-stat-label">Structures</div></div>
           <div class="w-stat"><div class="w-stat-num">5+</div><div class="w-stat-label">Modalities</div></div>
           <div class="w-stat"><div class="w-stat-num">22</div><div class="w-stat-label">Mnemonics</div></div>
         </div>
@@ -607,26 +607,6 @@ const STRUCTS=[
    related:['pancreas','stomach','portal-vein'],
    ttsEn:'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.',ttsAr:'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'},
 
-  {id:'kidneys',cat:'urinary',en:'Kidneys',ar:'الكليتان',latin:'Renes',
-   descEn:'Paired retroperitoneal organs at T12–L3. Filter ~180 L/day, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.',
-   descAr:'عضوان مزدوجان خلف صفاقيان عند T12–L3. يرشّحان ١٨٠ لتراً يومياً وينظّمان الشوارد وضغط الدم.',
-   facts:['Size: 9–12 cm long, 5–6 cm wide','Right kidney slightly lower (liver)','Cortex + medulla + renal sinus','Blood supply: renal arteries from aorta at L1','Left renal vein crosses the aorta'],
-   imaging:{CT:'Cortex ~30 HU unenhanced. Nephrographic phase (90–100 s): cortex > medulla. Renal sinus: fat density.',MRI:'T1: cortex slightly hyperintense vs medulla. Corticomedullary differentiation best post-contrast.',US:'Hyperechoic sinus centrally. Cortex ≤ liver/spleen echogenicity. Medullary pyramids: hypoechoic triangles.',XR:'KUB: renal outlines visible if perinephric fat present. Right at L1–L3; left at T12–L2.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},'X-Ray':{planes:['AP (KUB)'],img:IMG}},
-   mnemonics:[{title:'Functions — RAVE',en:'"RAVE" — Renin, Activated vitamin D, Volume regulation, Erythropoietin.',ar:'"RAVE" — رينين، فيتامين D منشّط، تنظيم حجم، إريثروبويتين.',ref:"Moore's 8th ed."},{title:'Cortex Rule',en:'"Cortex echogenicity ≤ liver/spleen on US." If cortex > spleen → abnormal (CKD).',ar:'"صدى القشرة ≤ الكبد/الطحال. إذا تجاوز ← غير طبيعي."',ref:'Radiographics'}],
-   related:['adrenal-glands','aorta','ivc'],
-   ttsEn:'Kidneys. Latin: Renes. Retroperitoneal. T12 to L3. Filter 180 liters per day.',ttsAr:'الكليتان. باللاتينية: رينيس. خلف صفاقيتان. من T12 إلى L3.'},
-
-  {id:'adrenal-glands',cat:'urinary',en:'Adrenal Glands',ar:'الغدد الكظرية',latin:'Glandulae suprarenales',
-   descEn:'Small triangular glands atop each kidney. Outer cortex (3 zones) secretes aldosterone, cortisol, androgens. Inner medulla secretes epinephrine and norepinephrine.',
-   descAr:'غدد صغيرة مثلثة فوق كل كلية. القشرة (٣ مناطق) تُفرز ألدوستيرون وكورتيزول وأندروجينات. اللب يُفرز الأدرينالين.',
-   facts:['Right: pyramidal, medial to right kidney upper pole','Left: semilunar, anterior to left kidney upper pole','Normal limb thickness ≤10 mm','Cortex zones: GFR (Glomerulosa, Fasciculata, Reticularis)','Adenoma: <10 HU on unenhanced CT'],
-   imaging:{CT:'Inverted V or Y shape. Limb ≤10 mm. Adenomas: <10 HU. Absolute washout >50% at 15 min.',MRI:'Chemical shift: adenomas lose signal on opposed-phase. Pheochromocytoma: bright T2.',US:'Difficult in adults. Best in neonates: hypoechoic cortex + hyperechoic medulla.',XR:'Not visible unless large calcified mass.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-   mnemonics:[{title:'Zones — GFR',en:'"GFR" (outer→inner): Glomerulosa (Aldosterone), Fasciculata (Cortisol), Reticularis (androgens).',ar:'"GFR" من الخارج للداخل: كبيبية (ألدوستيرون)، محزوزة (كورتيزول)، شبكية (أندروجينات).',ref:"Gray's 41st ed."},{title:'Salt Sugar Sex Shock',en:'"Salt, Sugar, Sex, Shock" — Aldosterone, Cortisol, Androgens, Epinephrine.',ar:'"ملح، سكر، جنس، صدمة" — ألدوستيرون، كورتيزول، أندروجينات، أدرينالين.',ref:"Moore's 8th ed."}],
-   related:['kidneys','aorta'],
-   ttsEn:'Adrenal glands. Latin: Glandulae suprarenales. Cortex and medulla.',ttsAr:'الغدد الكظرية. القشرة واللب. هرمونات الإجهاد.'},
-
   {id:'aorta',cat:'vascular',en:'Abdominal Aorta',ar:'الأبهر البطني',latin:'Aorta abdominalis',
    descEn:'Continuation of the descending aorta below the diaphragm at T12. Bifurcates at L4 into common iliac arteries. Major branches supply all abdominal organs.',
    descAr:'امتداد الأبهر النازل أسفل الحجاب الحاجز عند T12. يتفرع عند L4 إلى الشريانين الحرقفيين.',
@@ -634,7 +614,7 @@ const STRUCTS=[
    imaging:{CT:'Round, left of midline. Measure outer-to-outer. Normal ≤3 cm. CTA arterial phase for branches.',MRI:'Flow void on SE. Bright on GRE/MRA. Gold standard for non-radiation vascular imaging.',US:'Pulsatile anechoic tube. Normal <3 cm. AAA screening: males ≥65 with smoking history.',XR:'Calcified wall on lateral X-ray. Aneurysm = widened soft tissue opacity.'},
    mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},Angio:{planes:['Frontal','Lateral'],img:IMG}},
    mnemonics:[{title:'Branches Mnemonic',en:'"Curious Surgeons Rarely Inject Gut Lumens" — Celiac (T12), SMA (L1), Renals (L1), IMA (L3), Gonadal (L2), Lumbars.',ar:'"الجراحون الفضوليون نادراً ما يحقنون تجاويف الأمعاء" — جذع بطني، SMA، كلوية، IMA، تناسلية، قطنية.',ref:"Netter's 7th ed."},{title:'AAA Screening',en:'"One-time US: Male ≥65 who ever Smoked" — AAA = aorta >3 cm.',ar:'"فحص واحد: ذكر ≥٦٥ سنة مدخّن" — تمدد = أبهر > ٣ سم.',ref:'USPSTF'}],
-   related:['ivc','portal-vein','kidneys'],
+   related:['ivc','portal-vein','kidney'],
    ttsEn:'Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.',ttsAr:'الأبهر البطني. من T12 إلى L4. الطبيعي أقل من ٣ سم.'},
 
   {id:'ivc',cat:'vascular',en:'Inferior Vena Cava',ar:'الوريد الأجوف السفلي',latin:'Vena cava inferior',
@@ -644,7 +624,7 @@ const STRUCTS=[
    imaging:{CT:'Right of aorta. Variable caliber with respiration. Hepatic veins enter below diaphragm. Thrombosis: filling defect.',MRI:'Variable signal. Bright on TOF. Acute thrombus: T1 bright.',US:'Easily compressible. Collapses on inspiration. Hepatic veins visible entering IVC.',XR:'Not visible unless calcified or massively dilated.'},
    mods:{CT:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
    mnemonics:[{title:'Tributaries — ILRHGS',en:'"I Like Riding Horses Going South" — Iliac, Lumbar, Renal, Hepatic, Gonadal, Suprarenal.',ar:'"أحب ركوب الخيل جهة الجنوب" — حرقفية، قطنية، كلوية، كبدية، تناسلية، كظرية.',ref:"Gray's 41st ed."}],
-   related:['aorta','liver','kidneys'],
+   related:['aorta','liver','kidney'],
    ttsEn:'Inferior vena cava. Largest vein. Right of aorta. T8 to L5.',ttsAr:'الوريد الأجوف السفلي. أكبر وريد. يمين الأبهر.'},
 
   {id:'portal-vein',cat:'vascular',en:'Portal Vein',ar:'الوريد البابي',latin:'Vena portae hepatis',
