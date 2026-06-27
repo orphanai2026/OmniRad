@@ -861,35 +861,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 </section>
 
 <script>
-(function(){
-  var link = document.getElementById('aboutNavLink');
-  var sec  = document.getElementById('about');
-  var main = document.querySelector('main.page-body');
-  if(!link||!sec||!main) return;
-  link.addEventListener('click', function(e){
-    e.preventDefault();
-    var isOpen = sec.style.display !== 'none';
-    if(isOpen){
-      sec.style.display = 'none';
-      main.style.display = '';
-      link.style.color = '';
-      link.style.background = '';
-      window.scrollTo({top:0,behavior:'smooth'});
-    } else {
-      main.style.display = 'none';
-      sec.style.display = 'block';
-      link.style.color = 'var(--accent)';
-      link.style.background = 'var(--accent-subtle)';
-      sec.scrollIntoView({behavior:'smooth'});
-    }
-  });
-  var mobileLink = document.querySelector('.mobile-menu a[href="#about"]');
-  if(mobileLink) mobileLink.addEventListener('click', function(e){
-    e.preventDefault();
-    link.click();
-  });
-})();
-</script>
+  // Hamburger menu
   const hBtn = document.getElementById('hamburgerBtn');
   const mMenu = document.getElementById('mobileMenu');
   hBtn.addEventListener('click', () => {
@@ -898,12 +870,10 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     hBtn.setAttribute('aria-expanded', open);
     mMenu.setAttribute('aria-hidden', !open);
   });
-  // Close on link click
   mMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     mMenu.classList.remove('open');
     hBtn.classList.remove('open');
   }));
-  // Close on outside click
   document.addEventListener('click', e => {
     if (!hBtn.contains(e.target) && !mMenu.contains(e.target)) {
       mMenu.classList.remove('open');
@@ -911,7 +881,9 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     }
   });
 
+  // Theme toggle
   const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
   const ICONS  = { dark: '☀', dim: '☾' };
   const LABELS = { dark: 'Switch to dim mode', dim: 'Switch to dark mode' };
   const saved = localStorage.getItem('omnirad-theme') || 'dark';
@@ -925,6 +897,36 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     btn.setAttribute('aria-label', LABELS[next]);
     localStorage.setItem('omnirad-theme', next);
   });
+
+  // About tab toggle
+  (function(){
+    var link = document.getElementById('aboutNavLink');
+    var sec  = document.getElementById('about');
+    var main = document.querySelector('main.page-body');
+    if(!link||!sec||!main) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      var isOpen = sec.style.display !== 'none';
+      if(isOpen){
+        sec.style.display = 'none';
+        main.style.display = '';
+        link.style.color = '';
+        link.style.background = '';
+        window.scrollTo({top:0,behavior:'smooth'});
+      } else {
+        main.style.display = 'none';
+        sec.style.display = 'block';
+        link.style.color = 'var(--accent)';
+        link.style.background = 'var(--accent-subtle)';
+        window.scrollTo({top:0,behavior:'smooth'});
+      }
+    });
+    var mobileAboutLink = document.querySelector('.mobile-menu a[href="#about"]');
+    if(mobileAboutLink) mobileAboutLink.addEventListener('click', function(e){
+      e.preventDefault();
+      link.click();
+    });
+  })();
 </script>
 
 </body>
