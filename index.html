@@ -349,6 +349,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     <li><a href="pages/srs.html">My Progress</a></li>
     <li><a href="pages/clinic.html">🏥 Clinic</a></li>
     <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
+    <li><a href="#about" id="aboutNavLink">حول المنصة</a></li>
   </ul>
   <div class="nav-end">
     <span class="edu-badge">⚕ Educational use only</span>
@@ -368,6 +369,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     <li><a href="pages/srs.html">My Progress</a></li>
     <li><a href="pages/clinic.html">🏥 Clinic</a></li>
     <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
+    <li><a href="#about">حول المنصة</a></li>
   </ul>
 </div>
 
@@ -514,8 +516,380 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
   <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
 </footer>
 
+<!-- ═══════════════════════════════════════════════
+     ABOUT SECTION — OmniRad Platform
+     ═══════════════════════════════════════════════ -->
+<section id="about" style="display:none;">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600&display=swap');
+.ab-wrap{font-family:'IBM Plex Sans',sans-serif;background:#0b0e14;color:#e8edf5;overflow:hidden;position:relative;}
+.ab-ar{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',sans-serif;direction:rtl;text-align:right;}
+.ab-ambient{position:absolute;pointer-events:none;z-index:0;top:0;left:0;right:0;height:680px;overflow:hidden;}
+.ab-scanlines{position:absolute;inset:0;background-image:linear-gradient(rgba(45,212,200,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(45,212,200,.013) 1px,transparent 1px);background-size:60px 60px;}
+.ab-r{position:absolute;border-radius:50%;}
+.ab-r1{width:560px;height:560px;top:-210px;left:-120px;border:1px solid rgba(45,212,200,.05);}
+.ab-r2{width:360px;height:360px;top:-80px;left:25px;border:1px solid rgba(45,212,200,.08);}
+.ab-r3{width:820px;height:820px;top:-400px;right:-260px;border:1px solid rgba(45,212,200,.03);}
+.ab-dot{position:absolute;width:3px;height:3px;border-radius:50%;background:#2dd4c8;}
+.ab-hero{position:relative;z-index:1;padding:3.5rem 3rem 0;}
+.ab-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:3.5rem;}
+.ab-logo-unit{display:flex;align-items:center;gap:12px;}
+.ab-or-box{width:42px;height:42px;background:#2dd4c8;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ab-or-text{font-family:'IBM Plex Sans',sans-serif;font-size:.85rem;font-weight:600;color:#0b0e14;letter-spacing:-.01em;}
+.ab-brand-name{font-family:'IBM Plex Sans',sans-serif;font-size:1.35rem;font-weight:400;color:#ffffff;letter-spacing:-.01em;}
+.ab-brand-sub{font-size:.6rem;font-family:'IBM Plex Mono',monospace;color:#3d4558;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+.ab-npills{display:flex;gap:6px;}
+.ab-npill{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(255,255,255,.12);border-radius:2px;color:#8a94aa;}
+.ab-npill.on{border-color:#2dd4c8;color:#2dd4c8;background:rgba(45,212,200,.08);}
+.ab-hcontent{display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start;padding-bottom:3rem;}
+.ab-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(45,212,200,.7);margin-bottom:1.2rem;display:flex;align-items:center;gap:.75rem;}
+.ab-eyebrow::before{content:'';display:block;width:24px;height:1px;background:#2dd4c8;}
+.ab-hl-en{font-size:2.7rem;font-weight:200;line-height:1.1;letter-spacing:-.04em;color:#e8edf5;margin-bottom:.65rem;}
+.ab-hl-en .ab-acc{font-weight:500;color:#2dd4c8;font-style:italic;}
+.ab-hl-en .ab-dim{color:#8a94aa;}
+.ab-hl-ar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:1.3rem;font-weight:300;line-height:1.6;color:#8a94aa;direction:rtl;text-align:right;margin-bottom:2rem;border-right:2px solid rgba(45,212,200,.18);padding-right:.8rem;}
+.ab-mod-row{display:flex;flex-wrap:wrap;gap:0;}
+.ab-mod{font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:400;letter-spacing:.05em;color:#3d4558;padding:5px 12px;border:1px solid rgba(255,255,255,.07);border-right:none;cursor:default;}
+.ab-mod:last-child{border-right:1px solid rgba(255,255,255,.07);}
+.ab-mod.lit{color:#2dd4c8;border-color:rgba(45,212,200,.28);background:rgba(45,212,200,.08);}
+.ab-mod:hover{color:#2dd4c8;background:rgba(45,212,200,.08);}
+.ab-art{display:flex;align-items:center;justify-content:center;padding-top:.5rem;}
+.ab-sband{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);}
+.ab-sc{padding:1.6rem 1.75rem;border-right:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;}
+.ab-sc:last-child{border-right:none;}
+.ab-sc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#2dd4c8,transparent);opacity:0;transition:opacity .3s;}
+.ab-sc:hover::before{opacity:1;}
+.ab-snum{font-family:'IBM Plex Mono',monospace;font-size:2.1rem;font-weight:300;color:#2dd4c8;letter-spacing:-.05em;line-height:1;margin-bottom:.35rem;}
+.ab-sen{font-size:.73rem;color:#8a94aa;margin-bottom:.18rem;}
+.ab-sar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.7rem;color:#3d4558;direction:rtl;text-align:right;}
+.ab-sec{position:relative;z-index:1;padding:2.75rem 3rem;border-bottom:1px solid rgba(255,255,255,.07);}
+.ab-sechd{display:grid;grid-template-columns:1fr 1fr;align-items:center;margin-bottom:2rem;padding-bottom:.9rem;border-bottom:1px solid rgba(255,255,255,.07);}
+.ab-secen{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(45,212,200,.7);}
+.ab-secar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.73rem;color:#3d4558;direction:rtl;text-align:right;}
+.ab-vmgrid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 2.5rem;}
+.ab-vmsep{background:rgba(255,255,255,.12);}
+.ab-vmtag{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#2dd4c8;margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem;}
+.ab-vmtag::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.12);}
+.ab-vmen{font-size:.93rem;font-weight:300;line-height:1.8;color:#e8edf5;margin-bottom:1.1rem;}
+.ab-vmar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.9rem;font-weight:300;line-height:1.9;color:#8a94aa;direction:rtl;text-align:right;padding:.8rem;background:rgba(45,212,200,.03);border:1px solid rgba(255,255,255,.07);border-radius:2px;}
+.ab-fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);}
+.ab-fc{background:#0f1319;padding:1.5rem 1.35rem;position:relative;transition:background .15s;}
+.ab-fc:hover{background:#141820;}
+.ab-fc.wide{grid-column:span 2;}
+.ab-fcbadge{position:absolute;top:.9rem;right:.9rem;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border:1px solid rgba(45,212,200,.22);border-radius:2px;color:#2dd4c8;background:rgba(45,212,200,.08);}
+.ab-fcnum{font-family:'IBM Plex Mono',monospace;font-size:.56rem;color:#3d4558;letter-spacing:.1em;margin-bottom:.75rem;}
+.ab-fcicon{width:30px;height:30px;margin-bottom:.75rem;}
+.ab-fcicon svg{width:100%;height:100%;}
+.ab-fcent{font-size:.9rem;font-weight:500;color:#e8edf5;line-height:1.2;}
+.ab-fcart{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.8rem;font-weight:400;color:#2dd4c8;direction:rtl;text-align:right;margin-top:.12rem;margin-bottom:.6rem;opacity:.85;}
+.ab-fcdescs{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:.1rem;}
+.ab-fcend{font-size:.74rem;line-height:1.6;color:#8a94aa;}
+.ab-fcard{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.74rem;line-height:1.7;color:#3d4558;direction:rtl;text-align:right;}
+.ab-fwi{display:grid;grid-template-columns:1fr 1px 1fr;gap:1.2rem;margin-top:.6rem;}
+.ab-fwsep{background:rgba(255,255,255,.12);}
+.ab-fwlbl{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#3d4558;margin-bottom:.45rem;}
+.ab-rmphases{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);}
+.ab-rmp{background:#0f1319;padding:1.5rem 1.35rem;position:relative;}
+.ab-rmdot{position:absolute;top:-7px;left:1.35rem;width:13px;height:13px;border-radius:2px;display:flex;align-items:center;justify-content:center;}
+.ab-rmdot-in{width:5px;height:5px;border-radius:1px;}
+.ab-live-bg{background:rgba(45,200,120,.22);}.ab-live-bg .ab-rmdot-in{background:#2dc878;}
+.ab-next-bg{background:rgba(45,212,200,.18);}.ab-next-bg .ab-rmdot-in{background:#2dd4c8;}
+.ab-fut-bg{background:rgba(130,100,220,.18);}.ab-fut-bg .ab-rmdot-in{background:#8264dc;}
+.ab-rmpt{margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid rgba(255,255,255,.07);}
+.ab-rmpten{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;}
+.ab-rmptar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.7rem;color:#3d4558;direction:rtl;text-align:right;margin-top:.18rem;}
+.ab-live-c{color:#2dc878;}.ab-next-c{color:#2dd4c8;}.ab-fut-c{color:#8264dc;}
+.ab-rmi{padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ab-rmi:last-child{border-bottom:none;padding-bottom:0;}
+.ab-rmrow{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.12rem;}
+.ab-rmb{width:4px;height:4px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.ab-lb{background:#2dc878;}.ab-nb{background:#2dd4c8;}.ab-fb{background:#8264dc;}
+.ab-rmen{font-size:.76rem;color:#e8edf5;line-height:1.4;}
+.ab-rmar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.71rem;color:#3d4558;direction:rtl;text-align:right;padding-right:.54rem;margin-top:.08rem;}
+.ab-closer{position:relative;z-index:1;padding:3.5rem 3rem;text-align:center;overflow:hidden;}
+.ab-cglow{position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 50% 50%,rgba(45,212,200,.04) 0%,transparent 70%);pointer-events:none;}
+.ab-cen{font-size:1.5rem;font-weight:200;line-height:1.45;letter-spacing:-.025em;color:#e8edf5;max-width:460px;margin:0 auto .5rem;}
+.ab-cen strong{color:#2dd4c8;font-weight:400;}
+.ab-car{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:1rem;font-weight:300;color:#8a94aa;direction:rtl;margin-bottom:2.25rem;line-height:1.7;}
+.ab-cmeta{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#3d4558;display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;}
+.ab-csep{display:block;width:1px;height:10px;background:rgba(255,255,255,.12);}
+@media(max-width:900px){
+  .ab-hcontent{grid-template-columns:1fr;}
+  .ab-art{display:none;}
+  .ab-sband{grid-template-columns:repeat(2,1fr);}
+  .ab-vmgrid{grid-template-columns:1fr;}
+  .ab-vmsep{display:none;}
+  .ab-fgrid{grid-template-columns:1fr 1fr;}
+  .ab-fc.wide{grid-column:span 2;}
+  .ab-rmphases{grid-template-columns:1fr;}
+  .ab-fcdescs{grid-template-columns:1fr;}
+  .ab-fwi{grid-template-columns:1fr;}
+  .ab-fwsep{display:none;}
+}
+@media(max-width:560px){
+  .ab-hero{padding:2rem 1.25rem 0;}
+  .ab-sec{padding:2rem 1.25rem;}
+  .ab-sband{grid-template-columns:repeat(2,1fr);}
+  .ab-sc{padding:1.2rem 1rem;}
+  .ab-fgrid{grid-template-columns:1fr;}
+  .ab-fc.wide{grid-column:span 1;}
+  .ab-hcontent{padding-bottom:2rem;}
+  .ab-closer{padding:2.5rem 1.25rem;}
+  .ab-nav{flex-direction:column;gap:1rem;align-items:flex-start;}
+}
+</style>
+
+<div class="ab-wrap">
+<div class="ab-ambient">
+  <div class="ab-scanlines"></div>
+  <div class="ab-r ab-r1"></div><div class="ab-r ab-r2"></div><div class="ab-r ab-r3"></div>
+  <div class="ab-dot" style="top:110px;left:270px;opacity:.35;"></div>
+  <div class="ab-dot" style="top:310px;left:510px;opacity:.20;"></div>
+  <div class="ab-dot" style="top:75px;right:190px;opacity:.28;"></div>
+</div>
+
+<!-- HERO -->
+<div class="ab-hero">
+  <div class="ab-nav">
+    <div class="ab-logo-unit">
+      <div class="ab-or-box"><span class="ab-or-text">OR</span></div>
+      <div>
+        <div class="ab-brand-name">OmniRad</div>
+        <div class="ab-brand-sub">منصة التشريح الإشعاعي</div>
+      </div>
+    </div>
+    <div class="ab-npills">
+      <div class="ab-npill">v2.8</div>
+      <div class="ab-npill">Phase 2</div>
+      <div class="ab-npill on">About · حول</div>
+    </div>
+  </div>
+  <div class="ab-hcontent">
+    <div>
+      <div class="ab-eyebrow">Multimodal Radiologic Anatomy · منصة التشريح الإشعاعي متعدد الأنماط</div>
+      <div class="ab-hl-en">See anatomy the way<br><span class="ab-acc">radiologists</span> <span class="ab-dim">actually</span><br><span class="ab-acc">see it.</span></div>
+      <div class="ab-hl-ar ab-ar">شاهد التشريح كما يراه أخصائيو الأشعة —<br>بكل نمط تصوير، وبلغتك.</div>
+      <div class="ab-mod-row">
+        <div class="ab-mod lit">CT</div><div class="ab-mod lit">MRI</div><div class="ab-mod lit">US</div>
+        <div class="ab-mod">X-Ray</div><div class="ab-mod">NM</div>
+        <div class="ab-mod">Angio</div><div class="ab-mod">Mammo</div><div class="ab-mod">PET</div>
+      </div>
+    </div>
+    <div class="ab-art">
+      <svg viewBox="0 0 320 320" width="300" height="300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="160" cy="160" r="154" stroke="rgba(45,212,200,0.10)" stroke-width="1"/>
+        <circle cx="160" cy="160" r="144" stroke="rgba(45,212,200,0.06)" stroke-width="1"/>
+        <circle cx="160" cy="160" r="134" stroke="rgba(45,212,200,0.04)" stroke-width="1"/>
+        <g stroke="rgba(45,212,200,0.28)" stroke-width="1.5" stroke-linecap="round">
+          <line x1="160" y1="6" x2="160" y2="18"/><line x1="160" y1="302" x2="160" y2="314"/>
+          <line x1="6" y1="160" x2="18" y2="160"/><line x1="302" y1="160" x2="314" y2="160"/>
+          <line x1="52" y1="34" x2="58" y2="44"/><line x1="262" y1="276" x2="268" y2="286"/>
+          <line x1="34" y1="268" x2="44" y2="262"/><line x1="276" y1="58" x2="286" y2="52"/>
+          <line x1="268" y1="34" x2="262" y2="44"/><line x1="52" y1="276" x2="58" y2="266"/>
+          <line x1="286" y1="268" x2="276" y2="262"/><line x1="44" y1="58" x2="34" y2="52"/>
+        </g>
+        <line x1="160" y1="160" x2="160" y2="20" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
+        <line x1="160" y1="160" x2="20" y2="160" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
+        <line x1="160" y1="160" x2="300" y2="160" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
+        <line x1="160" y1="160" x2="160" y2="300" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
+        <line x1="160" y1="160" x2="20" y2="88" stroke="rgba(45,212,200,0.05)" stroke-width="1"/>
+        <line x1="160" y1="160" x2="300" y2="88" stroke="rgba(45,212,200,0.05)" stroke-width="1"/>
+        <ellipse cx="160" cy="165" rx="90" ry="80" fill="#0f1319" stroke="rgba(45,212,200,0.22)" stroke-width="1"/>
+        <ellipse cx="160" cy="224" rx="15" ry="13" fill="#1a1f2b" stroke="rgba(45,212,200,0.38)" stroke-width="1"/>
+        <ellipse cx="160" cy="224" rx="8" ry="6" fill="rgba(45,212,200,0.10)"/>
+        <text x="160" y="228" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.50)" letter-spacing=".04em">SP</text>
+        <circle cx="152" cy="209" r="7" fill="rgba(220,60,60,0.22)" stroke="rgba(220,80,80,0.55)" stroke-width="1"/>
+        <circle cx="152" cy="209" r="3.5" fill="rgba(220,60,60,0.45)"/>
+        <ellipse cx="169" cy="210" rx="9" ry="7" fill="rgba(60,100,220,0.18)" stroke="rgba(80,120,220,0.45)" stroke-width="1"/>
+        <path d="M96 138 Q118 122 162 124 Q182 127 187 145 Q189 163 183 172 Q172 182 152 182 Q128 182 110 172 Q92 158 96 138Z" fill="rgba(180,110,50,0.28)" stroke="rgba(200,130,70,0.55)" stroke-width="1"/>
+        <text x="146" y="158" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(200,150,80,0.65)" letter-spacing=".04em">LIVER</text>
+        <ellipse cx="208" cy="150" rx="21" ry="18" fill="rgba(140,70,190,0.28)" stroke="rgba(160,90,210,0.50)" stroke-width="1"/>
+        <text x="208" y="154" text-anchor="middle" font-family="monospace" font-size="6" fill="rgba(170,110,220,0.65)" letter-spacing=".03em">SPLEEN</text>
+        <ellipse cx="158" cy="140" rx="18" ry="12" fill="rgba(80,160,220,0.18)" stroke="rgba(100,180,240,0.35)" stroke-width="1"/>
+        <ellipse cx="204" cy="183" rx="12" ry="17" fill="rgba(220,140,40,0.22)" stroke="rgba(240,160,60,0.45)" stroke-width="1"/>
+        <ellipse cx="117" cy="183" rx="12" ry="17" fill="rgba(220,140,40,0.22)" stroke="rgba(240,160,60,0.45)" stroke-width="1"/>
+        <path d="M144 172 Q158 168 176 170 Q184 172 187 178 Q174 181 156 180 Q140 178 144 172Z" fill="rgba(240,200,80,0.18)" stroke="rgba(240,210,100,0.40)" stroke-width="1"/>
+        <line x1="157" y1="155" x2="163" y2="155" stroke="rgba(45,212,200,0.55)" stroke-width=".8"/>
+        <line x1="160" y1="152" x2="160" y2="158" stroke="rgba(45,212,200,0.55)" stroke-width=".8"/>
+        <circle cx="160" cy="155" r="1.5" fill="rgba(45,212,200,0.65)"/>
+        <text x="76" y="258" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.42)" letter-spacing=".06em">HU: +52</text>
+        <text x="76" y="268" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.28)" letter-spacing=".06em">L3 / AXIAL</text>
+        <text x="76" y="278" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.28)" letter-spacing=".06em">W:400 L:40</text>
+        <text x="196" y="268" font-family="monospace" font-size="6" fill="rgba(45,212,200,0.20)" letter-spacing=".04em">OmniRad v2.8</text>
+        <path d="M160 16 A144 144 0 0 1 304 160" stroke="rgba(45,212,200,0.40)" stroke-width="1.5" fill="none" stroke-dasharray="4 6"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="ab-sband">
+  <div class="ab-sc"><div class="ab-snum">8</div><div class="ab-sen">Imaging modalities</div><div class="ab-sar ab-ar">نمط تصوير طبي</div></div>
+  <div class="ab-sc"><div class="ab-snum">13</div><div class="ab-sen">Structures — Phase 2</div><div class="ab-sar ab-ar">بنية تشريحية حالياً</div></div>
+  <div class="ab-sc"><div class="ab-snum">22+</div><div class="ab-sen">Bilingual mnemonics</div><div class="ab-sar ab-ar">مساعدة حفظ ثنائية</div></div>
+  <div class="ab-sc"><div class="ab-snum">AR/EN</div><div class="ab-sen">Full bilingual support</div><div class="ab-sar ab-ar">دعم لغوي ثنائي كامل</div></div>
+</div>
+
+<!-- VISION & MISSION -->
+<div class="ab-sec">
+  <div class="ab-sechd"><div class="ab-secen">01 — Vision &amp; Mission</div><div class="ab-secar ab-ar">الرؤية والرسالة</div></div>
+  <div class="ab-vmgrid">
+    <div>
+      <div class="ab-vmtag">Vision · الرؤية</div>
+      <div class="ab-vmen">To become the world's leading reference for learning multimodal radiologic anatomy — where every student sees the same structure through every imaging lens that matters in clinical practice.</div>
+      <div class="ab-vmar ab-ar">أن نصبح المرجع الأول عالمياً لتعلّم التشريح الإشعاعي متعدد الأنماط، حيث يرى كل طالب نفس البنية التشريحية عبر كل نمط تصوير يحتاجه في الممارسة السريرية.</div>
+    </div>
+    <div class="ab-vmsep"></div>
+    <div>
+      <div class="ab-vmtag">Mission · الرسالة</div>
+      <div class="ab-vmen">Build the platform we needed as students but didn't have — multimodal, bilingual, evidence-based. Spaced repetition that remembers what you forget. An AI that stays on topic. Cases that train clinical reasoning. All in Arabic and English.</div>
+      <div class="ab-vmar ab-ar">بناء المنصة التي احتجناها طلاباً ولم تكن موجودة — متعددة الأنماط، ثنائية اللغة، قائمة على الأدلة. مراجعة ذكية تتذكر ما نسيت، ومساعد لا يخرج عن الموضوع، وحالات تدرّب التفكير السريري — بالعربية والإنجليزية.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="ab-sec">
+  <div class="ab-sechd"><div class="ab-secen">02 — Platform features</div><div class="ab-secar ab-ar">مميزات المنصة</div></div>
+  <div class="ab-fgrid">
+    <div class="ab-fc wide">
+      <div class="ab-fcbadge">Core · الأساس</div>
+      <div class="ab-fcnum">01</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="13" stroke="rgba(45,212,200,0.4)" stroke-width="1"/><circle cx="15" cy="15" r="7" stroke="rgba(45,212,200,0.22)" stroke-width="1"/><circle cx="15" cy="15" r="2.5" fill="rgba(45,212,200,0.7)"/><line x1="15" y1="2" x2="15" y2="7" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="15" y1="23" x2="15" y2="28" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="2" y1="15" x2="7" y2="15" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="23" y1="15" x2="28" y2="15" stroke="rgba(45,212,200,0.5)" stroke-width="1"/></svg></div>
+      <div class="ab-fcent">Smart Atlas — 13 structures</div>
+      <div class="ab-fcart ab-ar">الأطلس الذكي — ١٣ بنية تشريحية</div>
+      <div class="ab-fwi">
+        <div><div class="ab-fwlbl">English</div><div class="ab-fcend">The core of OmniRad. 13 abdominal structures across every modality with professional tools: zoom, pan, invert, rotate, split-view, fullscreen, and bilingual TTS narration. No registration required.</div></div>
+        <div class="ab-fwsep"></div>
+        <div><div class="ab-fwlbl" style="direction:rtl;text-align:right;">العربية</div><div class="ab-fcard ab-ar">قلب OmniRad. ١٣ بنية بطنية عبر جميع أنماط التصوير مع أدوات احترافية: تكبير، تحريك، عكس، تدوير، عرض مزدوج، شاشة كاملة، وقراءة صوتية ثنائية اللغة.</div></div>
+      </div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">02</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="rgba(220,60,60,0.55)" stroke-width="1" fill="rgba(220,60,60,0.10)"/><rect x="17" y="2" width="11" height="11" rx="2" stroke="rgba(60,100,220,0.55)" stroke-width="1" fill="rgba(60,100,220,0.10)"/><rect x="2" y="17" width="11" height="11" rx="2" stroke="rgba(140,70,190,0.55)" stroke-width="1" fill="rgba(140,70,190,0.10)"/><rect x="17" y="17" width="11" height="11" rx="2" stroke="rgba(45,212,200,0.40)" stroke-width="1" fill="rgba(45,212,200,0.07)"/></svg></div>
+      <div class="ab-fcent">Comparison Engine</div><div class="ab-fcart ab-ar">محرك المقارنة</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">4 modalities, same structure, synchronized pan and zoom.</div><div class="ab-fcard ab-ar">٤ أنماط، نفس البنية، تزامن كامل في الأدوات.</div></div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">03</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><ellipse cx="15" cy="17" rx="10" ry="9" stroke="rgba(45,212,200,0.28)" stroke-width="1"/><ellipse cx="15" cy="17" rx="6" ry="5" fill="rgba(180,110,50,0.45)" stroke="rgba(200,130,70,0.60)" stroke-width="1"/><ellipse cx="21" cy="14" rx="4" ry="3.5" fill="rgba(140,70,190,0.38)" stroke="rgba(160,90,210,0.55)" stroke-width="1"/></svg></div>
+      <div class="ab-fcent">Organ Colorization</div><div class="ab-fcart ab-ar">تلوين الأعضاء</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">MedSAM2 CT and MRI masks. One tap reveals organ boundaries.</div><div class="ab-fcard ab-ar">أقنعة MedSAM2. نقرة واحدة تكشف حدود الأعضاء بدقة.</div></div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">04</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="21" width="5" height="7" rx="1" fill="rgba(45,212,200,0.50)"/><rect x="9" y="15" width="5" height="13" rx="1" fill="rgba(45,212,200,0.35)"/><rect x="16" y="9" width="5" height="19" rx="1" fill="rgba(45,212,200,0.22)"/><rect x="23" y="3" width="5" height="25" rx="1" fill="rgba(45,212,200,0.12)"/><path d="M2 19 L8 13 L16 8 L28 3" stroke="rgba(45,212,200,0.5)" stroke-width="1" fill="none"/></svg></div>
+      <div class="ab-fcent">Spaced Repetition — SM-2</div><div class="ab-fcart ab-ar">التكرار المتباعد — SM-2</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">Evidence-based scheduling per structure and modality.</div><div class="ab-fcard ab-ar">جدولة قائمة على الأدلة لكل بنية ونمط تصوير.</div></div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">05</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="11" r="6" stroke="rgba(45,212,200,0.38)" stroke-width="1"/><path d="M6 28 Q6 21 15 21 Q24 21 24 28" stroke="rgba(45,212,200,0.28)" stroke-width="1" fill="none"/><circle cx="22" cy="21" r="5" fill="rgba(45,212,200,0.10)" stroke="rgba(45,212,200,0.48)" stroke-width="1"/><text x="22" y="24.5" text-anchor="middle" font-size="6" fill="rgba(45,212,200,0.80)" font-family="monospace">AI</text></svg></div>
+      <div class="ab-fcent">AI Assistant</div><div class="ab-fcart ab-ar">المساعد الذكي</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">Claude-powered, radiology-scoped. Arabic and English.</div><div class="ab-fcard ab-ar">مدعوم بـ Claude، مقيّد بالأشعة، عربي وإنجليزي.</div></div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">06</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="4" width="26" height="17" rx="2" stroke="rgba(45,212,200,0.32)" stroke-width="1"/><line x1="2" y1="11" x2="28" y2="11" stroke="rgba(45,212,200,0.18)" stroke-width="1"/><rect x="6" y="7" width="9" height="2" rx="1" fill="rgba(45,212,200,0.30)"/><rect x="6" y="14" width="17" height="1.5" rx=".75" fill="rgba(45,212,200,0.18)"/></svg></div>
+      <div class="ab-fcent">Clinic Simulator</div><div class="ab-fcart ab-ar">محاكي العيادة</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">Patient queue, imaging request, structured report — 6 cases.</div><div class="ab-fcard ab-ar">طابور مرضى، طلب تصوير، تقرير منظّم — ٦ حالات.</div></div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">07</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="2" width="26" height="26" rx="2" stroke="rgba(45,212,200,0.28)" stroke-width="1" fill="none"/><line x1="2" y1="10" x2="28" y2="10" stroke="rgba(45,212,200,0.15)" stroke-width="1"/><text x="15" y="8.5" text-anchor="middle" font-size="5" fill="rgba(45,212,200,0.42)" font-family="monospace">MNEMONIC</text><text x="15" y="22" text-anchor="middle" font-size="8" fill="rgba(45,212,200,0.62)" font-family="sans-serif" font-style="italic">SALT</text></svg></div>
+      <div class="ab-fcent">Mnemonics + Lexicon</div><div class="ab-fcart ab-ar">المساعدات الذاكرية والمعجم</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">22 bilingual mnemonics with TTS. 38 terms with inline tooltips.</div><div class="ab-fcard ab-ar">٢٢ مساعدة ثنائية مع صوت. ٣٨ مصطلحاً مضمّناً في الأطلس.</div></div>
+    </div>
+    <div class="ab-fc">
+      <div class="ab-fcnum">08</div>
+      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="12" stroke="rgba(45,212,200,0.22)" stroke-width="1" fill="none"/><path d="M9 15 C9 11.5 11.7 9 15 9 C18.3 9 21 11.5 21 15" stroke="rgba(45,212,200,0.45)" stroke-width="1" fill="none"/><circle cx="15" cy="15" r="2.5" fill="rgba(45,212,200,0.18)" stroke="rgba(45,212,200,0.60)" stroke-width="1"/><line x1="15" y1="15" x2="22" y2="8" stroke="rgba(45,212,200,0.42)" stroke-width="1"/></svg></div>
+      <div class="ab-fcent">Image Tools Suite</div><div class="ab-fcart ab-ar">أدوات معالجة الصور</div>
+      <div class="ab-fcdescs"><div class="ab-fcend">Window/level, colormap, zoom, pan, invert, rotate — Canvas API.</div><div class="ab-fcard ab-ar">نافذة/مستوى، تكبير، تحريك، عكس، تدوير — Canvas API.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="ab-sec">
+  <div class="ab-sechd"><div class="ab-secen">03 — Roadmap</div><div class="ab-secar ab-ar">خارطة الطريق</div></div>
+  <div class="ab-rmphases">
+    <div class="ab-rmp">
+      <div class="ab-rmdot ab-live-bg"><div class="ab-rmdot-in"></div></div>
+      <div class="ab-rmpt"><div class="ab-rmpten ab-live-c">Phase 2 · Live now</div><div class="ab-rmptar ab-ar">المرحلة ٢ · متاح الآن</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Smart Atlas — 13 structures</div></div><div class="ab-rmar ab-ar">أطلس ذكي — ١٣ بنية تشريحية</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">8-modality comparison engine</div></div><div class="ab-rmar ab-ar">محرك مقارنة ٨ أنماط تصوير</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Organ colorization — CT and MRI</div></div><div class="ab-rmar ab-ar">تلوين أعضاء CT وMRI</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">SRS Module — SM-2 algorithm</div></div><div class="ab-rmar ab-ar">نظام المراجعة المتباعدة SM-2</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">AI Assistant — Arabic and English</div></div><div class="ab-rmar ab-ar">مساعد ذكي عربي وإنجليزي</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Clinic Simulator — 6 cases</div></div><div class="ab-rmar ab-ar">محاكي سريري — ٦ حالات</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Mnemonics, Lexicon, TTS</div></div><div class="ab-rmar ab-ar">مساعدات حفظ، معجم، صوت</div></div>
+    </div>
+    <div class="ab-rmp">
+      <div class="ab-rmdot ab-next-bg"><div class="ab-rmdot-in"></div></div>
+      <div class="ab-rmpt"><div class="ab-rmpten ab-next-c">Phase 3 · Coming</div><div class="ab-rmptar ab-ar">المرحلة ٣ · قادم قريباً</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Full-body — Visible Human Project</div></div><div class="ab-rmar ab-ar">محتوى كامل الجسم</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">User accounts and progress sync</div></div><div class="ab-rmar ab-ar">حسابات ومزامنة التقدم</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Daily challenge system</div></div><div class="ab-rmar ab-ar">نظام التحديات اليومية</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Community leaderboard</div></div><div class="ab-rmar ab-ar">لوحة الترتيب المجتمعي</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Oncology staging module</div></div><div class="ab-rmar ab-ar">وحدة التصنيف الأورامي</div></div>
+    </div>
+    <div class="ab-rmp">
+      <div class="ab-rmdot ab-fut-bg"><div class="ab-rmdot-in"></div></div>
+      <div class="ab-rmpt"><div class="ab-rmpten ab-fut-c">Phase 4 · Future</div><div class="ab-rmptar ab-ar">المرحلة ٤ · المستقبل</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">e-Anatomy API partnership</div></div><div class="ab-rmar ab-ar">شراكة e-Anatomy API</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Hospital imaging partnerships</div></div><div class="ab-rmar ab-ar">شراكات مع المستشفيات</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Mobile app — iOS and Android</div></div><div class="ab-rmar ab-ar">تطبيق جوال iOS وAndroid</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Certification track</div></div><div class="ab-rmar ab-ar">مسار الشهادات المعتمدة</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Official launch and marketing</div></div><div class="ab-rmar ab-ar">الإطلاق الرسمي والتسويق</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLOSER -->
+<div class="ab-closer">
+  <div class="ab-cglow"></div>
+  <div class="ab-cen">Built by a student.<br>For students who want to see anatomy<br>the way <strong>it actually looks.</strong></div>
+  <div class="ab-car ab-ar">بُني من طالب، لطلاب يريدون رؤية التشريح<br>كما هو فعلاً — بكل وضوح، وبلغتهم.</div>
+  <div class="ab-cmeta">
+    <span>Mohammed Saeed Alzahrani</span><span class="ab-csep"></span>
+    <span>Radiologic Sciences</span><span class="ab-csep"></span>
+    <span>orphanai2026.github.io/OmniRad</span><span class="ab-csep"></span>
+    <span>v2.8 · 2026</span>
+  </div>
+</div>
+</div>
+</section>
+
 <script>
-  // Hamburger menu
+(function(){
+  var link = document.getElementById('aboutNavLink');
+  var sec  = document.getElementById('about');
+  var main = document.querySelector('main.page-body');
+  if(!link||!sec||!main) return;
+  link.addEventListener('click', function(e){
+    e.preventDefault();
+    var isOpen = sec.style.display !== 'none';
+    if(isOpen){
+      sec.style.display = 'none';
+      main.style.display = '';
+      link.style.color = '';
+      link.style.background = '';
+      window.scrollTo({top:0,behavior:'smooth'});
+    } else {
+      main.style.display = 'none';
+      sec.style.display = 'block';
+      link.style.color = 'var(--accent)';
+      link.style.background = 'var(--accent-subtle)';
+      sec.scrollIntoView({behavior:'smooth'});
+    }
+  });
+  var mobileLink = document.querySelector('.mobile-menu a[href="#about"]');
+  if(mobileLink) mobileLink.addEventListener('click', function(e){
+    e.preventDefault();
+    link.click();
+  });
+})();
+</script>
   const hBtn = document.getElementById('hamburgerBtn');
   const mMenu = document.getElementById('mobileMenu');
   hBtn.addEventListener('click', () => {
