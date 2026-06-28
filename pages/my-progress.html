@@ -173,6 +173,76 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+  /* ── Avatar Picker ── */
+  .avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  @media (max-width: 600px) { .avatar-grid { grid-template-columns: repeat(4, 1fr); } }
+  .avatar-opt {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    transition: all 0.15s;
+  }
+  .avatar-opt:hover  { border-color: var(--accent); transform: scale(1.08); }
+  .avatar-opt.chosen { border-color: var(--accent); background: var(--accent-dim); box-shadow: 0 0 0 3px var(--accent-dim); }
+
+  /* ── Account Settings Fields ── */
+  .settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .settings-field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
+  .settings-field input {
+    padding: 9px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .settings-field input:focus { border-color: var(--accent); }
+  .save-btn {
+    padding: 8px 18px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .save-btn:hover    { opacity: 0.85; }
+  .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .settings-msg {
+    font-size: 12px;
+    margin-top: 6px;
+    min-height: 16px;
+  }
+  .settings-msg.ok  { color: var(--success); }
+  .settings-msg.err { color: var(--danger); }
     padding: 14px 0;
     border-bottom: 1px solid var(--border);
   }
@@ -301,16 +371,62 @@
   <!-- Profile -->
   <div class="section">
     <div class="section-title" data-en="Account" data-ar="الحساب">Account</div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;">
-      <div style="width:52px;height:52px;border-radius:50%;background:var(--accent-dim);display:grid;place-items:center;font-size:20px;font-weight:700;color:var(--accent);flex-shrink:0;" id="profileAvatar">?</div>
-      <div style="flex:1;min-width:180px;">
-        <div style="font-size:15px;font-weight:600;color:var(--text);" id="profileName">—</div>
-        <div style="font-size:12px;color:var(--text-dim);margin-top:3px;" id="profileEmail">—</div>
-        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">
-          <span data-en="Joined" data-ar="انضم">Joined</span>: <span id="profileJoined">—</span>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
+
+      <!-- Profile Header -->
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <div id="profileAvatar" style="width:56px;height:56px;border-radius:50%;background:var(--accent-dim);display:grid;place-items:center;font-size:26px;flex-shrink:0;cursor:pointer;border:2px solid var(--accent);transition:transform 0.15s;" onclick="toggleAvatarPicker()" title="Change avatar">?</div>
+        <div style="flex:1;min-width:160px;">
+          <div style="font-size:16px;font-weight:600;color:var(--text);" id="profileName">—</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:2px;" id="profileEmail">—</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">
+            <span data-en="Joined" data-ar="انضم">Joined</span>: <span id="profileJoined">—</span>
+          </div>
         </div>
+        <button class="btn-sm" onclick="handleSignOut()" style="color:var(--danger,oklch(0.65 0.20 25));border-color:var(--danger,oklch(0.65 0.20 25));" data-en="Sign Out" data-ar="خروج">Sign Out</button>
       </div>
-      <button class="btn-sm" onclick="handleSignOut()" style="color:var(--danger,oklch(0.65 0.20 25));border-color:var(--danger,oklch(0.65 0.20 25));" data-en="Sign Out" data-ar="خروج">Sign Out</button>
+
+      <!-- Avatar Picker -->
+      <div id="avatarPicker" style="display:none;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px;" data-en="Choose Your Avatar" data-ar="اختر أيقونتك">Choose Your Avatar</div>
+        <div class="avatar-grid" id="avatarGrid"></div>
+        <div class="settings-msg" id="avatarMsg"></div>
+      </div>
+
+      <!-- Change Display Name -->
+      <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;" data-en="Display Name" data-ar="الاسم">Display Name</div>
+        <div class="settings-field">
+          <label data-en="New Name" data-ar="الاسم الجديد">New Name</label>
+          <input type="text" id="inputName" placeholder="Mohammed Saeed">
+        </div>
+        <button class="save-btn" onclick="saveName()" data-en="Save Name" data-ar="حفظ">Save Name</button>
+        <div class="settings-msg" id="nameMsg"></div>
+      </div>
+
+      <!-- Change Password -->
+      <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;" data-en="Change Password" data-ar="تغيير كلمة المرور">Change Password</div>
+        <div class="settings-field">
+          <label data-en="New Password" data-ar="كلمة المرور الجديدة">New Password</label>
+          <input type="password" id="inputPassword" placeholder="••••••••">
+        </div>
+        <div class="settings-field">
+          <label data-en="Confirm Password" data-ar="تأكيد كلمة المرور">Confirm Password</label>
+          <input type="password" id="inputPasswordConfirm" placeholder="••••••••">
+        </div>
+        <button class="save-btn" onclick="savePassword()" data-en="Change Password" data-ar="تغيير">Change Password</button>
+        <div class="settings-msg" id="passMsg"></div>
+      </div>
+
+      <!-- Reset Password -->
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;" data-en="Forgot Password?" data-ar="نسيت كلمة المرور؟">Forgot Password?</div>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;" data-en="Send a reset link to your email." data-ar="أرسل رابط إعادة تعيين إلى بريدك.">Send a reset link to your email.</p>
+        <button class="save-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);" onclick="sendResetEmail()" data-en="Send Reset Email" data-ar="إرسال رابط الاسترداد">Send Reset Email</button>
+        <div class="settings-msg" id="resetMsg"></div>
+      </div>
+
     </div>
   </div>
 
@@ -353,6 +469,139 @@
 <script>
   let currentLang = localStorage.getItem('omnirad_lang') || 'en';
   let currentPrefs = { language: currentLang, theme: 'dark' };
+
+  // ── Radiology Avatars ────────────────────────────────────────────────────
+  const AVATARS = [
+    { id:'xray',   emoji:'🩻', label:'X-Ray'       },
+    { id:'brain',  emoji:'🧠', label:'Brain MRI'   },
+    { id:'heart',  emoji:'🫀', label:'Echo'         },
+    { id:'lung',   emoji:'🫁', label:'Chest CT'     },
+    { id:'atom',   emoji:'⚛️', label:'Nuclear Med'  },
+    { id:'scope',  emoji:'🔬', label:'Pathology'    },
+    { id:'dna',    emoji:'🧬', label:'Genetics'     },
+    { id:'pill',   emoji:'💊', label:'Pharmacy'     },
+    { id:'syringe',emoji:'💉', label:'Intervention' },
+    { id:'bone',   emoji:'🦴', label:'MSK'          },
+    { id:'eye',    emoji:'👁️', label:'Neuro-Ophth'  },
+    { id:'rad',    emoji:'☢️', label:'Radiation'    },
+    { id:'wave',   emoji:'〰️', label:'Ultrasound'   },
+    { id:'magnet', emoji:'🧲', label:'MRI'          },
+    { id:'star',   emoji:'⭐', label:'Radiology'    },
+    { id:'shield', emoji:'🛡️', label:'Radiation Safety' },
+  ];
+
+  let selectedAvatar = localStorage.getItem('omnirad_avatar') || null;
+
+  function buildAvatarGrid() {
+    const grid = document.getElementById('avatarGrid');
+    grid.innerHTML = AVATARS.map(a => `
+      <div class="avatar-opt ${selectedAvatar === a.id ? 'chosen' : ''}"
+           onclick="selectAvatar('${a.id}','${a.emoji}')"
+           title="${a.label}">${a.emoji}</div>
+    `).join('');
+  }
+
+  function toggleAvatarPicker() {
+    const picker = document.getElementById('avatarPicker');
+    const isOpen = picker.style.display !== 'none';
+    picker.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) buildAvatarGrid();
+  }
+
+  async function selectAvatar(id, emoji) {
+    selectedAvatar = id;
+    localStorage.setItem('omnirad_avatar', id);
+    document.getElementById('profileAvatar').textContent = emoji;
+    // تحديث الـ chosen class
+    document.querySelectorAll('.avatar-opt').forEach(el => el.classList.remove('chosen'));
+    event.currentTarget.classList.add('chosen');
+    // حفظ في preferences
+    try {
+      currentPrefs.avatar = id;
+      await OmniRadDB.savePreferences(currentPrefs);
+      showMsg('avatarMsg', currentLang === 'ar' ? '✅ تم الحفظ' : '✅ Saved', 'ok');
+    } catch(_) {
+      showMsg('avatarMsg', currentLang === 'ar' ? '⚠️ حُفظ محلياً فقط' : '⚠️ Saved locally only', 'ok');
+    }
+  }
+
+  function getAvatarEmoji(id) {
+    return AVATARS.find(a => a.id === id)?.emoji || null;
+  }
+
+  // ── Show Message Helper ──────────────────────────────────────────────────
+  function showMsg(elId, text, type) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.textContent = text;
+    el.className = `settings-msg ${type}`;
+    setTimeout(() => { el.textContent = ''; el.className = 'settings-msg'; }, 3000);
+  }
+
+  // ── Save Display Name ────────────────────────────────────────────────────
+  async function saveName() {
+    const newName = document.getElementById('inputName').value.trim();
+    if (!newName) { showMsg('nameMsg', currentLang==='ar'?'أدخل الاسم':'Enter a name','err'); return; }
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    try {
+      await sbFetch('/auth/v1/user', {
+        method: 'PUT',
+        body: JSON.stringify({ data: { full_name: newName } })
+      });
+      // تحديث localStorage
+      const u = sbGetUser();
+      if (u) { u.user_metadata = { ...u.user_metadata, full_name: newName }; sbSetUser(u); }
+      document.getElementById('profileName').textContent = newName;
+      document.getElementById('userName').textContent    = newName.split(' ')[0];
+      showMsg('nameMsg', currentLang==='ar'?'✅ تم تغيير الاسم':'✅ Name updated','ok');
+    } catch(e) {
+      showMsg('nameMsg', e.message || 'Error','err');
+    }
+    btn.disabled = false;
+  }
+
+  // ── Change Password ──────────────────────────────────────────────────────
+  async function savePassword() {
+    const p1 = document.getElementById('inputPassword').value;
+    const p2 = document.getElementById('inputPasswordConfirm').value;
+    if (!p1) { showMsg('passMsg', currentLang==='ar'?'أدخل كلمة المرور':'Enter password','err'); return; }
+    if (p1 !== p2) { showMsg('passMsg', currentLang==='ar'?'كلمتا المرور لا تتطابقان':'Passwords do not match','err'); return; }
+    if (p1.length < 6) { showMsg('passMsg', currentLang==='ar'?'يجب أن تكون 6 أحرف على الأقل':'Minimum 6 characters','err'); return; }
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    try {
+      await sbFetch('/auth/v1/user', {
+        method: 'PUT',
+        body: JSON.stringify({ password: p1 })
+      });
+      document.getElementById('inputPassword').value = '';
+      document.getElementById('inputPasswordConfirm').value = '';
+      showMsg('passMsg', currentLang==='ar'?'✅ تم تغيير كلمة المرور':'✅ Password changed','ok');
+    } catch(e) {
+      showMsg('passMsg', e.message || 'Error','err');
+    }
+    btn.disabled = false;
+  }
+
+  // ── Send Reset Email ─────────────────────────────────────────────────────
+  async function sendResetEmail() {
+    const user = OmniRadAuth.getUser();
+    const email = user?.email;
+    if (!email) { showMsg('resetMsg','No email found','err'); return; }
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    try {
+      await sbFetch('/auth/v1/recover', {
+        method: 'POST',
+        body: JSON.stringify({ email })
+      });
+      showMsg('resetMsg', currentLang==='ar'?`✅ أُرسل رابط الاسترداد إلى ${email}`:`✅ Reset link sent to ${email}`,'ok');
+    } catch(e) {
+      showMsg('resetMsg', e.message || 'Error','err');
+    }
+    btn.disabled = false;
+  }
 
   // ── Language ──────────────────────────────────────────────────────────────
   function applyLang() {
@@ -458,7 +707,15 @@
     const profileAvatar = document.getElementById('profileAvatar');
     if (profileName)   profileName.textContent  = name;
     if (profileEmail)  profileEmail.textContent  = user.email || '—';
-    if (profileAvatar) profileAvatar.textContent = initials;
+    if (profileAvatar) {
+      const savedAvatar = currentPrefs.avatar || localStorage.getItem('omnirad_avatar');
+      const emoji = savedAvatar ? getAvatarEmoji(savedAvatar) : null;
+      profileAvatar.textContent = emoji || initials;
+      if (savedAvatar) { selectedAvatar = savedAvatar; localStorage.setItem('omnirad_avatar', savedAvatar); }
+    }
+    // تعبئة حقل الاسم
+    const inputName = document.getElementById('inputName');
+    if (inputName) inputName.value = name;
     if (profileJoined && user.created_at) {
       profileJoined.textContent = new Date(user.created_at)
         .toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
