@@ -353,6 +353,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     <li><a href="#about" id="aboutNavLink">حول المنصة</a></li>
   </ul>
   <div class="nav-end">
+    <a href="pages/auth.html" class="btn btn-outline" style="padding:6px 14px;font-size:0.8rem;">Sign In</a>
     <span class="edu-badge">⚕ Educational use only</span>
     <button class="theme-toggle" id="themeBtn" aria-label="Switch to dim mode" title="Toggle theme">☀</button>
     <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
@@ -371,6 +372,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     <li><a href="pages/clinic.html">🏥 Clinic</a></li>
     <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
     <li><a href="pages/daily.html">🧠 Daily Challenge</a></li>
+    <li><a href="pages/auth.html">🔐 Sign In</a></li>
     <li><a href="#about">حول المنصة</a></li>
   </ul>
 </div>
@@ -397,7 +399,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
         <div class="stat-item"><span class="stat-num">8</span><span class="stat-lbl">Modalities</span></div>
         <div class="stat-item"><span class="stat-num">AR/EN</span><span class="stat-lbl">Bilingual</span></div>
         <div class="stat-item"><span class="stat-num">SM-2</span><span class="stat-lbl">SRS Algorithm</span></div>
-        <div class="stat-item"><span class="stat-num">Phase 1</span><span class="stat-lbl">MVP Active</span></div>
+        <div class="stat-item"><span class="stat-num">Phase 3</span><span class="stat-lbl">Active Development</span></div>
       </div>
     </div>
 
@@ -488,14 +490,14 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
       <h2>8 imaging modalities in Phase 1–2</h2>
     </div>
     <div class="mod-strip">
-      <a class="mod-pill" style="--mod-color: var(--mod-ct)" href="#"><span class="mod-dot"></span><span class="mod-name">Computed Tomography</span><span class="mod-abbr">CT</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-mri)" href="#"><span class="mod-dot"></span><span class="mod-name">Magnetic Resonance</span><span class="mod-abbr">MRI</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-us)" href="#"><span class="mod-dot"></span><span class="mod-name">Ultrasound</span><span class="mod-abbr">US</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-xray)" href="#"><span class="mod-dot"></span><span class="mod-name">Plain Radiography</span><span class="mod-abbr">X-Ray</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-nm)" href="#"><span class="mod-dot"></span><span class="mod-name">Nuclear Medicine</span><span class="mod-abbr">NM / SPECT</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-angio)" href="#"><span class="mod-dot"></span><span class="mod-name">Angiography</span><span class="mod-abbr">Angio</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-mammo)" href="#"><span class="mod-dot"></span><span class="mod-name">Mammography</span><span class="mod-abbr">Mammo</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-pet)" href="#"><span class="mod-dot"></span><span class="mod-name">PET / PET-CT</span><span class="mod-abbr">Phase 2</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-ct)" href="pages/atlas.html?modality=ct"><span class="mod-dot"></span><span class="mod-name">Computed Tomography</span><span class="mod-abbr">CT</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-mri)" href="pages/atlas.html?modality=mri"><span class="mod-dot"></span><span class="mod-name">Magnetic Resonance</span><span class="mod-abbr">MRI</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-us)" href="pages/atlas.html?modality=us"><span class="mod-dot"></span><span class="mod-name">Ultrasound</span><span class="mod-abbr">US</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-xray)" href="pages/atlas.html?modality=xray"><span class="mod-dot"></span><span class="mod-name">Plain Radiography</span><span class="mod-abbr">X-Ray</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-nm)" href="pages/atlas.html?modality=nm"><span class="mod-dot"></span><span class="mod-name">Nuclear Medicine</span><span class="mod-abbr">NM / SPECT</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-angio)" href="pages/atlas.html?modality=angio"><span class="mod-dot"></span><span class="mod-name">Angiography</span><span class="mod-abbr">Angio</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-mammo)" href="pages/atlas.html?modality=mammo"><span class="mod-dot"></span><span class="mod-name">Mammography</span><span class="mod-abbr">Mammo</span></a>
+      <a class="mod-pill" style="--mod-color: var(--mod-pet)" href="pages/atlas.html?modality=pet"><span class="mod-dot"></span><span class="mod-name">PET / PET-CT</span><span class="mod-abbr">Phase 2</span></a>
     </div>
   </section>
 
@@ -513,7 +515,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 <footer>
   <a href="index.html" class="footer-logo">
     <div class="footer-logo-mark">OR</div>
-    <span class="footer-name">OmniRad — v0.1</span>
+    <span class="footer-name">OmniRad — v3.4</span>
   </a>
   <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
 </footer>
@@ -661,8 +663,8 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
       </div>
     </div>
     <div class="ab-npills">
-      <div class="ab-npill">v2.8</div>
-      <div class="ab-npill">Phase 2</div>
+      <div class="ab-npill">v3.4</div>
+      <div class="ab-npill">Phase 3</div>
       <div class="ab-npill on">About · حول</div>
     </div>
   </div>
@@ -717,7 +719,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
         <text x="76" y="258" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.42)" letter-spacing=".06em">HU: +52</text>
         <text x="76" y="268" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.28)" letter-spacing=".06em">L3 / AXIAL</text>
         <text x="76" y="278" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.28)" letter-spacing=".06em">W:400 L:40</text>
-        <text x="196" y="268" font-family="monospace" font-size="6" fill="rgba(45,212,200,0.20)" letter-spacing=".04em">OmniRad v2.8</text>
+        <text x="196" y="268" font-family="monospace" font-size="6" fill="rgba(45,212,200,0.20)" letter-spacing=".04em">OmniRad v3.4</text>
         <path d="M160 16 A144 144 0 0 1 304 160" stroke="rgba(45,212,200,0.40)" stroke-width="1.5" fill="none" stroke-dasharray="4 6"/>
       </svg>
     </div>
@@ -727,7 +729,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 <!-- STATS -->
 <div class="ab-sband">
   <div class="ab-sc"><div class="ab-snum">8</div><div class="ab-sen">Imaging modalities</div><div class="ab-sar ab-ar">نمط تصوير طبي</div></div>
-  <div class="ab-sc"><div class="ab-snum">13</div><div class="ab-sen">Structures — Phase 2</div><div class="ab-sar ab-ar">بنية تشريحية حالياً</div></div>
+  <div class="ab-sc"><div class="ab-snum">17</div><div class="ab-sen">Structures — Phase 3</div><div class="ab-sar ab-ar">بنية تشريحية حالياً</div></div>
   <div class="ab-sc"><div class="ab-snum">22+</div><div class="ab-sen">Bilingual mnemonics</div><div class="ab-sar ab-ar">مساعدة حفظ ثنائية</div></div>
   <div class="ab-sc"><div class="ab-snum">AR/EN</div><div class="ab-sen">Full bilingual support</div><div class="ab-sar ab-ar">دعم لغوي ثنائي كامل</div></div>
 </div>
@@ -758,12 +760,12 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
       <div class="ab-fcbadge">Core · الأساس</div>
       <div class="ab-fcnum">01</div>
       <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="13" stroke="rgba(45,212,200,0.4)" stroke-width="1"/><circle cx="15" cy="15" r="7" stroke="rgba(45,212,200,0.22)" stroke-width="1"/><circle cx="15" cy="15" r="2.5" fill="rgba(45,212,200,0.7)"/><line x1="15" y1="2" x2="15" y2="7" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="15" y1="23" x2="15" y2="28" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="2" y1="15" x2="7" y2="15" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="23" y1="15" x2="28" y2="15" stroke="rgba(45,212,200,0.5)" stroke-width="1"/></svg></div>
-      <div class="ab-fcent">Smart Atlas — 13 structures</div>
-      <div class="ab-fcart ab-ar">الأطلس الذكي — ١٣ بنية تشريحية</div>
+      <div class="ab-fcent">Smart Atlas — 17 structures</div>
+      <div class="ab-fcart ab-ar">الأطلس الذكي — ١٧ بنية تشريحية</div>
       <div class="ab-fwi">
-        <div><div class="ab-fwlbl">English</div><div class="ab-fcend">The core of OmniRad. 13 abdominal structures across every modality with professional tools: zoom, pan, invert, rotate, split-view, fullscreen, and bilingual TTS narration. No registration required.</div></div>
+        <div><div class="ab-fwlbl">English</div><div class="ab-fcend">The core of OmniRad. 17 structures across abdomen, brain, neck, and thorax — covering every modality with professional tools: zoom, pan, invert, rotate, split-view, fullscreen, and bilingual TTS narration. No registration required.</div></div>
         <div class="ab-fwsep"></div>
-        <div><div class="ab-fwlbl" style="direction:rtl;text-align:right;">العربية</div><div class="ab-fcard ab-ar">قلب OmniRad. ١٣ بنية بطنية عبر جميع أنماط التصوير مع أدوات احترافية: تكبير، تحريك، عكس، تدوير، عرض مزدوج، شاشة كاملة، وقراءة صوتية ثنائية اللغة.</div></div>
+        <div><div class="ab-fwlbl" style="direction:rtl;text-align:right;">العربية</div><div class="ab-fcard ab-ar">قلب OmniRad. ١٧ بنية في البطن والدماغ والرقبة والصدر — تغطي جميع أنماط التصوير مع أدوات احترافية: تكبير، تحريك، عكس، تدوير، عرض مزدوج، شاشة كاملة، وقراءة صوتية ثنائية اللغة.</div></div>
       </div>
     </div>
     <div class="ab-fc">
@@ -856,7 +858,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     <span>Mohammed Saeed Alzahrani</span><span class="ab-csep"></span>
     <span>Radiologic Sciences</span><span class="ab-csep"></span>
     <span>orphanai2026.github.io/OmniRad</span><span class="ab-csep"></span>
-    <span>v2.8 · 2026</span>
+    <span>v3.4 · 2026</span>
   </div>
 </div>
 </div>
