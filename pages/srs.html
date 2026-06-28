@@ -216,8 +216,19 @@ a { color:inherit; text-decoration:none; }
 <!-- ═══ TOPBAR ═══════════════════════════════════════════ -->
 <header class="topbar">
   <a href="../index.html" class="logo"><div class="logo-mark">OR</div><span class="logo-text">Omni<span>Rad</span></span></a>
+  <nav class="srs-nav" style="display:flex;gap:6px;flex-wrap:wrap;flex:1;justify-content:center;margin:0 16px;">
+    <a href="../index.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">Home</a>
+    <a href="atlas.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">Atlas</a>
+    <a href="comparison.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">Compare</a>
+    <a href="mnemonics.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">Mnemonics</a>
+    <a href="srs.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--accent);background:var(--surface-2);font-weight:500;">My Progress</a>
+    <a href="clinic.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">🏥 Clinic</a>
+    <a href="ai-chat.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">✦ AI</a>
+    <a href="daily.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">🧠 Daily</a>
+    <a href="auth.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);transition:color 0.15s,background 0.15s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--surface-2)'" onmouseout="this.style.color='var(--text-dim)';this.style.background=''">🔐 Sign In</a>
+  </nav>
   <div class="topbar-right">
-    <a class="back-btn" href="atlas.html">← Back to Atlas</a>
+    <a class="back-btn" href="atlas.html">← Atlas</a>
     <button class="theme-btn" id="theme-btn">
       <span id="t-icon">☾</span>
       <span id="t-lbl">Dim</span>
