@@ -438,8 +438,12 @@
   async function loadData() {
     const overlay = document.getElementById('loadingOverlay');
 
-    // Check auth
-    const user = await OmniRadAuth.getSession();
+    // Check auth — getUser() فوري من localStorage، لا يحتاج network
+    let user = OmniRadAuth.getUser();
+    if (!user) {
+      // fallback: جرّب network
+      try { user = await OmniRadAuth.getSession(); } catch (_) {}
+    }
     if (!user) { window.location.href = 'auth.html'; return; }
 
     // Show user info — full name + email + join date
@@ -448,17 +452,20 @@
     document.getElementById('userAvatar').textContent = initials;
     document.getElementById('userName').textContent   = name.split(' ')[0];
 
-    // Show full profile under stats if element exists
-    const profileName  = document.getElementById('profileName');
-    const profileEmail = document.getElementById('profileEmail');
+    const profileName   = document.getElementById('profileName');
+    const profileEmail  = document.getElementById('profileEmail');
     const profileJoined = document.getElementById('profileJoined');
+    const profileAvatar = document.getElementById('profileAvatar');
     if (profileName)   profileName.textContent  = name;
     if (profileEmail)  profileEmail.textContent  = user.email || '—';
-    if (profileJoined && user.created_at) {
-      profileJoined.textContent = new Date(user.created_at).toLocaleDateString('en-GB', {year:'numeric',month:'long',day:'numeric'});
-    }
-    const profileAvatar = document.getElementById('profileAvatar');
     if (profileAvatar) profileAvatar.textContent = initials;
+    if (profileJoined && user.created_at) {
+      profileJoined.textContent = new Date(user.created_at)
+        .toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+    }
+
+    // إخفاء الـ overlay مباشرة بعد عرض بيانات المستخدم
+    overlay.style.display = 'none';
 
     // Load preferences
     try {
@@ -467,10 +474,11 @@
       if (prefs.language) {
         currentLang = prefs.language;
         localStorage.setItem('omnirad_lang', currentLang);
+        applyLang();
       }
     } catch (_) {}
 
-    // Load streak (real from Supabase)
+    // Load streak
     try {
       const streak = await OmniRadDB.getMyStreak();
       document.getElementById('statStreak').textContent = streak.current_streak || 0;
@@ -481,14 +489,12 @@
     // Load SRS
     try {
       const cards = await OmniRadDB.getSRSProgress();
-      const now = new Date();
+      const now      = new Date();
       const due      = cards.filter(c => new Date(c.next_review) <= now);
       const mastered = cards.filter(c => c.interval >= 21);
-
       document.getElementById('statDue').textContent      = due.length;
       document.getElementById('statTotal').textContent    = cards.length;
       document.getElementById('statMastered').textContent = mastered.length;
-
       buildReviewTable(due.length > 0 ? due : cards.slice(0, 20));
     } catch (_) {
       document.getElementById('reviewQueue').innerHTML =
@@ -496,7 +502,6 @@
     }
 
     applyLang();
-    overlay.style.display = 'none';
   }
 
   loadData();
