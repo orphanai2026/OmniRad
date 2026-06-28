@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v3.2 |
+| Version | v3.5 |
 | Date | 2026-06-28 |
-| Status | ✅ Phase 2 Complete — Ready for Phase 3 |
+| Status | 🚀 Phase 3 In Progress — Task #16 Complete |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -239,7 +239,9 @@ OmniRad/
 │   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ (embedded data)
 │   ├── ai-chat.html            ← Task #11 ✅
 │   ├── survey.html             ← Task #8 ✅
-│   └── distribution-guide.html ← Task #8 ✅
+│   ├── distribution-guide.html ← Task #8 ✅
+│   ├── auth.html               ← Task #14 ✅ (Sign In / Sign Up)
+│   └── my-progress.html        ← Task #14 ✅ (Dashboard + SRS Stats)
 ├── data/
 │   ├── structures.json         ← Task #12 ✅ (12 structures, CC0 images)
 │   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
@@ -251,13 +253,17 @@ OmniRad/
 │       ├── spleen/             ← mri_original.png + mri_colored.png ✅
 │       ├── bladder/            ← ct_original.png + ct_colored.png ✅
 │       ├── bone/               ← ct_original.png + ct_colored.png ✅
-│       ├── lung/               ← ⏳ مؤجل (لم تُوجد slice مناسبة)
+│       ├── brain/              ← mri_original.png + mri_t2_original.png + mri_pd_original.png ✅
+│       ├── neck/               ← mri_original.png + mri_t2_original.png ✅
+│       ├── thorax/             ← mri_original.png + mri_t2_original.png ✅ (lung + heart)
+│       ├── lung/               ← ⏳ CT مؤجل (يحتاج Male Data كامل ~15GB)
 │       ├── pancreas/           ← ⏳ Phase 3
 │       ├── stomach/            ← ⏳ Phase 3
 │       ├── gallbladder/        ← ⏳ Phase 3
 │       └── aorta/              ← ⏳ Phase 3
 └── modules/
-    └── srs.js                  ← Task #9 ✅
+    ├── srs.js                  ← Task #9 ✅
+    └── supabase.js             ← Task #14 ✅ (Auth + SRS + Preferences)
 ```
 
 ---
@@ -284,10 +290,11 @@ OmniRad/
 | 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ✅ Done — 2026-06-27 |
 | 13 | Extended test with 20-30 students | Phase 2 | ✅ Done — 2026-06-28 |
 | 13.5 | Image Pipeline — TCIA Download + PNG Conversion + GitHub Upload | Phase 2 | ✅ Done — 2026-06-28 |
-| 14 | Build user accounts (Backend) | Phase 3 | ⏳ |
-| 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ⏳ |
-| 16 | Build Daily Challenge + Community | Phase 3 | ⏳ |
-| 17 | Official launch + marketing | Phase 3 | ⏳ |
+| 14 | Build user accounts (Backend) | Phase 3 | ✅ Done — 2026-06-28 |
+| 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ✅ Done — 2026-06-28 |
+| 16 | UI/UX Unification — Nav, Versions, Modality Pills | Phase 3 | ✅ Done — 2026-06-28 |
+| 17 | Build Daily Challenge + Community | Phase 3 | ⏳ |
+| 18 | Official launch + marketing | Phase 3 | ⏳ |
 
 ---
 
@@ -382,6 +389,37 @@ ORGAN_COLORS = {
 
 # ⑦ Version History
 
+- **v3.5 — 2026-06-28**
+  - Task #16 approved: UI/UX Unification ✅
+  - **index.html إصلاحات:** Phase 1 → Phase 3 · v0.1 → v3.4 → v3.5 · About v2.8 → v3.5 · 13 → 17 structures · 8 modality pills بـ dead `href="#"` → روابط لـ `atlas.html?modality={ct,mri,us,xray,nm,angio,mammo,pet}` · إضافة زر Sign In في nav-end و mobile menu
+  - **توحيد Navigation عبر 9 صفحات** — كل صفحة الآن تحتوي نفس الـ 9 روابط: `Home · Atlas · Compare · Mnemonics · My Progress · 🏥 Clinic · ✦ AI · 🧠 Daily · 🔐 Sign In`
+  - **srs.html:** أضيف nav كامل (لم يكن موجوداً)
+  - **comparison.html:** من 2 رابط → 9 روابط
+  - **my-progress.html:** logo `Ω` → `OR` + nav كامل
+  - **auth.html:** أضيف "← Home" link (card layout مركزي — لا يحتاج nav كامل)
+  - **clinic.html / atlas.html / mnemonics.html / ai-chat.html / daily.html:** nav موحّد بنفس الروابط
+  - 11 commit عبر GitHub API · str_replace patches فقط (Rule #12 مُحترم)
+  - مؤجل لمحادثة منفصلة: توحيد theme systems (`--bg-base` vs `--bg`) · إضافة theme toggle للصفحات الناقصة · ربط modality filter buttons في comparison
+
+- **v3.4 — 2026-06-28**
+  - Task #15 approved: Expand to Additional Body Regions ✅
+  - Visible Human Project Sample Data — no license required (public domain since 2019)
+  - 4 new organs added to atlas.html: Brain · Neck · Lung · Heart
+  - 2 new categories: `thoracic` + `neurological`
+  - Images uploaded to GitHub: brain/ · neck/ · thorax/
+  - atlas.html: 13 → 17 structures · str_replace patches only (Rule #12)
+  - Structures count updated in welcome screen
+
+- **v3.3 — 2026-06-28**
+  - Task #14 approved: Build User Accounts (Backend) ✅
+  - Supabase project created: `omnirad` (lmbdtktjeggischpqnkw · ap-northeast-1)
+  - DB tables: `srs_progress` + `user_preferences` with RLS policies
+  - `modules/supabase.js`: Auth + SRS + Preferences API layer
+  - `pages/auth.html`: Sign In / Create Account — EN/AR bilingual
+  - `pages/my-progress.html`: Dashboard — stats + review queue + preferences
+  - Email confirmation flow configured with GitHub Pages redirect URLs
+  - Phase 3 now in progress
+
 - **v3.2 — 2026-06-28**
   - Rule #13 مضافة: File Quote Only — لا إجابة من الذاكرة أبداً
   - السبب: Claude أجاب من الذاكرة بدلاً من الملف مما سبب تكرار العمل والخلط
@@ -450,4 +488,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v3.2**
+**End of Document — OmniRad Master Plan v3.5**
