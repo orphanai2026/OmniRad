@@ -1349,7 +1349,7 @@ function renderSRS(id){
 }
 
 document.querySelectorAll('.srs-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
+  btn.addEventListener('click',async()=>{
     if(!current) return;
     const q=parseInt(btn.dataset.rating);
     const srs=getSRS();
@@ -1367,6 +1367,23 @@ document.querySelectorAll('.srs-btn').forEach(btn=>{
     const lbl=['','Forgot 😰','Hard 😐','Good 🙂','Easy 😄'];
     document.getElementById('srs-feedback').textContent=`Saved: ${lbl[q]} — Next review in ${r.interval} day${r.interval>1?'s':''}`;
     renderSRS(current.id);
+    // ── Supabase sync (non-blocking) ──
+    try {
+      const user = window.OmniRadAuth?.getUser?.();
+      if (user && window.OmniRadDB?.upsertSRSCard) {
+        const modality = document.querySelector('.panel-mod-badge')?.textContent?.toLowerCase() || 'ct';
+        await OmniRadDB.upsertSRSCard({
+          structure_id: current.id,
+          modality:     modality,
+          ease_factor:  r.ef,
+          interval:     r.interval,
+          repetitions:  r.n,
+          next_review:  new Date(r.next).toISOString(),
+          last_review:  new Date().toISOString(),
+          grade:        q
+        });
+      }
+    } catch(_) {} // localStorage يبقى fallback دائماً
   });
 });
 
