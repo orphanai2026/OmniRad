@@ -333,6 +333,8 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 }
 
 </style>
+<script src="modules/supabase.js"></script>
+<script>OmniRadAuth.guard();</script>
 </head>
 <body>
 
@@ -931,6 +933,7 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
       link.click();
     });
   })();
+  OmniRadAuth.updateNav();
 </script>
 
 </body>
