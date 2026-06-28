@@ -113,20 +113,102 @@ async function sbSavePreferences(prefs) {
   });
 }
 
+// ─── Daily Challenge ──────────────────────────────────────────────────────────
+
+async function sbSubmitDailyScore(score, timeSeconds) {
+  const user = sbGetUser();
+  if (!user) throw new Error('Not authenticated');
+  const today = new Date().toISOString().split('T')[0];
+  const result = await sbFetch('/rest/v1/daily_scores', {
+    method: 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify({
+      user_id:        user.id,
+      challenge_date: today,
+      score:          score,
+      time_seconds:   timeSeconds,
+      answered_at:    new Date().toISOString()
+    })
+  });
+  // تحديث الـ streak تلقائياً بعد الإجابة
+  if (score > 0) await sbUpdateStreak();
+  return result;
+}
+
+async function sbGetMyDailyScore(date) {
+  const today = date || new Date().toISOString().split('T')[0];
+  const rows = await sbFetch(
+    `/rest/v1/daily_scores?challenge_date=eq.${today}&select=*&limit=1`
+  );
+  return rows?.[0] || null;
+}
+
+async function sbGetLeaderboard(limit = 20) {
+  // يقرأ من الـ view العامة — لا يحتاج auth
+  return sbFetch(
+    `/rest/v1/leaderboard?select=display_name,total_score,days_played,current_streak,longest_streak&limit=${limit}`
+  );
+}
+
+// ─── Streaks ──────────────────────────────────────────────────────────────────
+
+async function sbGetMyStreak() {
+  const user = sbGetUser();
+  if (!user) return { current_streak: 0, longest_streak: 0, last_activity: null };
+  const rows = await sbFetch(
+    `/rest/v1/streaks?user_id=eq.${user.id}&select=*&limit=1`
+  );
+  return rows?.[0] || { current_streak: 0, longest_streak: 0, last_activity: null };
+}
+
+async function sbUpdateStreak() {
+  const user = sbGetUser();
+  if (!user) return;
+
+  const today     = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+  const current = await sbGetMyStreak();
+  const last    = current.last_activity;
+
+  // لا تُكرر التحديث في نفس اليوم
+  if (last === today) return current;
+
+  const newStreak  = (last === yesterday) ? (current.current_streak + 1) : 1;
+  const newLongest = Math.max(newStreak, current.longest_streak || 0);
+
+  return sbFetch('/rest/v1/streaks', {
+    method: 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify({
+      user_id:         user.id,
+      current_streak:  newStreak,
+      longest_streak:  newLongest,
+      last_activity:   today,
+      updated_at:      new Date().toISOString()
+    })
+  });
+}
+
 // ─── Export ───────────────────────────────────────────────────────────────────
 
 window.OmniRadAuth = {
-  signUp: sbSignUp,
-  signIn: sbSignIn,
-  signOut: sbSignOut,
+  signUp:     sbSignUp,
+  signIn:     sbSignIn,
+  signOut:    sbSignOut,
   getSession: sbGetSession,
-  getUser: sbGetUser,
-  getToken: sbGetToken
+  getUser:    sbGetUser,
+  getToken:   sbGetToken
 };
 
 window.OmniRadDB = {
-  getSRSProgress: sbGetSRSProgress,
-  upsertSRSCard: sbUpsertSRSCard,
-  getPreferences: sbGetPreferences,
-  savePreferences: sbSavePreferences
+  getSRSProgress:   sbGetSRSProgress,
+  upsertSRSCard:    sbUpsertSRSCard,
+  getPreferences:   sbGetPreferences,
+  savePreferences:  sbSavePreferences,
+  submitDailyScore: sbSubmitDailyScore,
+  getMyDailyScore:  sbGetMyDailyScore,
+  getLeaderboard:   sbGetLeaderboard,
+  getMyStreak:      sbGetMyStreak,
+  updateStreak:     sbUpdateStreak
 };
