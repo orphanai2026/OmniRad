@@ -5,7 +5,7 @@
 |-------|-------|
 | Version | v3.2 |
 | Date | 2026-06-28 |
-| Status | ✅ Image Pipeline Complete — Ready for Task #6 |
+| Status | ✅ Phase 2 Complete — Ready for Phase 3 |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -398,7 +398,7 @@ ORGAN_COLORS = {
   - إنشاء مجلدات images/structures/ على GitHub (10 أعضاء)
   - حذف مجلد OmniRad/pages المكرر من GitHub
   - رفع صور 5 أعضاء: liver · kidney · spleen · bladder · bone
-  - الخطوة التالية: Task #6 ربط الصور بـ atlas.html Colorization Toggle
+  - الخطوة التالية: Phase 3 — Task #14 (User Accounts + Backend)
 
 - **v3.0 — 2026-06-28**
   - Task #13 approved: Extended Test with 20–30 Students ✅
