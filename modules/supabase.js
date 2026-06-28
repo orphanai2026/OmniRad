@@ -8,7 +8,7 @@
  */
 
 const SUPABASE_URL = 'https://lmbdtktjeggischpqnkw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_LBZk8ASNqCwZw4SSnYtPeQ_N2NbHMp'; // ← ضع الـ publishable key هنا
+const SUPABASE_KEY = 'sb_publishable_LBZk8ASNqCwZw4SSnYtPeQ_N2NbHMpl'; // ← ضع الـ publishable key هنا
 
 // ─── Core Request Helper ──────────────────────────────────────────────────────
 
