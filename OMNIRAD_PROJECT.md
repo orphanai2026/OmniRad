@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v2.8 |
-| Date | 2026-06-27 |
-| Status | ✅ Task #6 Complete — Colorization Toggle Live |
+| Version | v3.0 |
+| Date | 2026-06-28 |
+| Status | ✅ Task #13 Complete — Extended Test Materials Ready |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -204,7 +204,7 @@ learning methodology.
 ## File Structure
 ```
 OmniRad/
-├── index.html                  ← Main page ✅
+├── index.html                  ← Main page ✅ + About Tab ✅ (v2.9)
 ├── pages/
 │   ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅ + Task #12 ✅
 │   ├── comparison.html         ← Task #4 ✅ + Task #12 ✅ (fully functional)
@@ -212,7 +212,10 @@ OmniRad/
 │   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ (embedded data)
 │   ├── ai-chat.html            ← Task #11 ✅
 │   ├── survey.html             ← Task #8 ✅
-│   └── distribution-guide.html ← Task #8 ✅
+│   ├── distribution-guide.html ← Task #8 ✅
+│   ├── survey-phase2.html      ← Task #13 ✅
+│   ├── distribution-guide-phase2.html ← Task #13 ✅
+│   └── results-phase2.html     ← Task #13 ✅
 ├── data/
 │   ├── structures.json         ← Task #12 ✅ (12 structures, CC0 images)
 │   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
@@ -258,7 +261,8 @@ OmniRad/
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ✅ Done — 2026-06-26 |
 | 12 | Expand content (full Abdomen) + Bug Fixes | Phase 2 | ✅ Done — 2026-06-27 |
 | 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ✅ Done — 2026-06-27 |
-| 13 | Extended test with 20-30 students | Phase 2 | ⏳ Next |
+| About | About Tab — index.html (Hero + Stats + Vision + Features + Roadmap + Closer) | Phase 2 | ✅ Done — 2026-06-27 |
+| 13 | Extended test with 20-30 students | Phase 2 | ✅ Done — 2026-06-28 |
 | 14 | Build user accounts (Backend) | Phase 3 | ⏳ |
 | 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ⏳ |
 | 16 | Build Daily Challenge + Community | Phase 3 | ⏳ |
@@ -332,6 +336,29 @@ ORGAN_COLORS = {
 
 # ⑦ Version History
 
+- **v3.0 — 2026-06-28**
+  - Task #13 approved: Extended Test with 20–30 Students ✅
+  - Delivered: survey-phase2.html · distribution-guide-phase2.html · results-phase2.html
+  - استبيان Phase 2 يشمل: SRS · Mnemonics · Lexicon · AI Assistant (Clinic مستثناة — ⏳ لم تُبنَ)
+  - أسئلة شرطية: SRS rating / AI detail / tools rating تظهر عند الاستخدام فقط
+  - دليل التوزيع: رسالة واتساب جاهزة (AR+EN) · جدول زمني 14 يوماً · 6 KPIs موثّقة
+  - قالب النتائج: إدخال الأرقام الفعلية · عداد pass/fail تلقائي · قرار المتابعة + توقيع
+  - Google PageSpeed Insights: الأداء 92 · إمكانية الوصول 95 · أفضل الممارسات 100 · SEO 90
+  - Task #14 هي المهمة التالية: Build user accounts (Backend) — Phase 3
+
+- **v2.9 — 2026-06-27**
+  - About Tab approved and live in `index.html`
+  - تاب "حول المنصة" مضاف للـ navbar (desktop + mobile)
+  - Hero: شعار OR حقيقي + رسم CT axial + عنوان شعري ثنائي اللغة + 8 modality chips
+  - Stats band: 4 أرقام بارزة EN/AR
+  - Vision & Mission: عمودان EN|AR مع IBM Plex Sans Arabic
+  - Features matrix: 8 ميزات ثنائية اللغة مع أيقونات SVG
+  - Roadmap: 3 مراحل (Live/Coming/Future) EN+AR
+  - Closer: جملة ختامية بشرية EN+AR
+  - آلية toggle: click يخفي main ويظهر About والعكس
+  - إصلاح: script مدمج واحد بعد خروج JS كنص (bug fix)
+  - ألوان المنصة الحقيقية: `#2dd4c8` teal مطابق للشعار
+
 - **v2.8 — 2026-06-27**
   - Task #6 approved: Colorization Toggle ✅
   - زر 🎨 Colorize في toolbar — يظهر عند CT/MRI للأعضاء المدعومة فقط
@@ -402,4 +429,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v2.8**
+**End of Document — OmniRad Master Plan v3.0**

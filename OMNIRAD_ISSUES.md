@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-27 — ✅ Task #6 Complete · Colorization Toggle Live · 13 Structures*
+*Last updated: 2026-06-28 — ✅ Task #13 Complete · v3.0*
 
 ---
 
@@ -70,7 +70,7 @@
 | 9 | Build SRS Module | 2026-06-26 | Mohammed Saeed Alzahrani | modules/srs.js · pages/srs.html · SM-2 algorithm · 4-button rating · Mastery bar · Dashboard · Logo fix |
 | 11 | Build AI Assistant (AR/EN) | 2026-06-26 | Mohammed Saeed Alzahrani | pages/ai-chat.html · Claude Haiku 4.5 · AR/EN · RTL · 20q/day limit · cache · setup guide · Quick Topics |
 | 10 | Build Mnemonics Library + Medical Lexicon | 2026-06-26 | Mohammed Saeed Alzahrani | pages/mnemonics.html · modules/lexicon.js · data/mnemonics.json · data/lexicon.json · 12 mnemonics EN+AR · 18 lexicon terms · TTS ♀♂ US · inline tooltips in atlas |
-| 6 | Colorization Toggle | 2026-06-27 | Mohammed Saeed Alzahrani | 🎨 Colorize button in toolbar · COLORIZABLE_MAP (organ+modality) · CT paths for all 13 organs · MRI support for spleen · Organ name label (EN+AR) on colored image · Image convention: {mod}_original/colored.png · 3 new structures: kidney, bladder, bone | 2026-06-27 | Mohammed Saeed Alzahrani | 12 structures · 22 mnemonics · 38 lexicon terms · atlas.html rebuilt · mnemonics.html embedded data · comparison.html fully functional · Canvas CORS fixed · Expand/Split/Tools working |
+| 13 | Extended Test with 20–30 Students — survey-phase2.html · distribution-guide-phase2.html · results-phase2.html | 2026-06-28 | Mohammed Saeed Alzahrani | استبيان Phase 2 (SRS+Mnemonics+Lexicon+AI) · دليل توزيع 14 يوماً · قالب نتائج KPIs · Clinic مستثناة (⏳) · PageSpeed: 92/95/100/90 |
 
 ---
 
@@ -120,6 +120,9 @@ DICOM/PNG → MedSAM2 → PNG أصلي + PNG ملوّن → atlas.html Toggle
 |---|-------------|----------|--------|
 | 22 | خطة مصادر الصور معتمدة: TCIA Phase 2 · Visible Human Phase 3 · MedSAM2 Pipeline موحّد | 💡 | ✅ Approved |
 | 23 | Brand Identity + Logo — محادثة مستقلة مطلوبة | 💡 | 🔴 Open |
+
+| 24 | About Tab مضاف لـ index.html — Hero + CT Art + Stats + Vision + Features + Roadmap + Closer — ثنائي اللغة كامل — ألوان المنصة الحقيقية | About Tab | ✅ Resolved | 2026-06-27 |
+| 25 | Task #13 Extended Test materials built and approved: survey-phase2.html · distribution-guide-phase2.html · results-phase2.html · Clinic Module excluded (not yet built) · PageSpeed score: Performance 92 / Accessibility 95 / Best Practices 100 / SEO 90 | Task #13 | ✅ Resolved | 2026-06-28 |
 
 ---
 
