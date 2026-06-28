@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-28 — ✅ Task #17 Complete · v3.6*
+*Last updated: 2026-06-28 — ✅ Issue #34 + #35 Resolved (verified functional, no code change needed) · v3.8*
 
 ---
 
@@ -65,8 +65,8 @@
 | 31 | Modality pills في index.html `href="#"` — لا تنقل لأي مكان | Task #16 audit | Task #16 | 🟡 | ✅ Resolved | 2026-06-28 |
 | 32 | Theme systems مختلفة بين الصفحات (`--bg-base` vs `--bg`) — يحتاج توحيد بـ theme.css مشترك | Task #16 audit | Future | 🟡 | 🔴 Open | — |
 | 33 | Theme toggle ناقص في 7 صفحات (atlas, daily, srs, mnemonics, ai-chat, auth, my-progress) | Task #16 audit | Future | 🟢 | 🔴 Open | — |
-| 34 | comparison.html: أزرار modality filters (CT+MRI, CT+US, All, Clear) بلا onclick — تحتاج ربط وظيفي | Task #16 audit | Future | 🟡 | 🔴 Open | — |
-| 35 | atlas.html: أزرار TTS / Pronounce / Overview / Images / Imaging Guide بلا onclick — تحتاج تحقق وظيفي | Task #16 audit | Future | 🟡 | 🔴 Open | — |
+| 34 | comparison.html: أزرار modality filters (CT+MRI, CT+US, All, Clear) بلا onclick — تحتاج ربط وظيفي | Task #16 audit | Future | 🟡 | ✅ Resolved | 2026-06-28 |
+| 35 | atlas.html: أزرار TTS / Pronounce / Overview / Images / Imaging Guide بلا onclick — تحتاج تحقق وظيفي | Task #16 audit | Future | 🟡 | ✅ Resolved | 2026-06-28 |
 
 ---
 
@@ -92,6 +92,8 @@
 | 15 | Expand to Additional Body Regions | 2026-06-28 | Mohammed Saeed Alzahrani | VHP Sample Data · Brain · Neck · Lung · Heart · 17 structures |
 | 16 | UI/UX Unification — Nav, Versions, Modality Pills | 2026-06-28 | Mohammed Saeed Alzahrani | 11 commits · 10 صفحات · str_replace patches فقط |
 | 17 | Build Daily Challenge + Community | 2026-06-28 | Mohammed Saeed Alzahrani | daily.html · Supabase schema · supabase.js patch · Issue #27 resolved |
+| 18b | Auth Gate — إلزامية تسجيل الدخول | 2026-06-28 | Mohammed Saeed Alzahrani | supabase.js +3 دوال · auth.html redirect · 9 صفحات محمية · Guest Mode مقيّد |
+| 19 | My Progress + SRS Sync + Account Settings | 2026-06-28 | Mohammed Saeed Alzahrani | Avatar Picker 16 أيقونة · تغيير الاسم/كلمة المرور · استعادة كلمة المرور · SRS→Supabase sync · إصلاح nav link في srs.html |
 
 ---
 

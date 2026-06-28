@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v3.6 |
+| Version | v3.8 |
 | Date | 2026-06-28 |
-| Status | 🚀 Phase 3 In Progress — Task #17 Complete |
+| Status | 🚀 Phase 3 In Progress — Task #19 Complete |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -295,7 +295,9 @@ OmniRad/
 | 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ✅ Done — 2026-06-28 |
 | 16 | UI/UX Unification — Nav, Versions, Modality Pills | Phase 3 | ✅ Done — 2026-06-28 |
 | 17 | Build Daily Challenge + Community | Phase 3 | ✅ Done — 2026-06-28 |
-| 18 | Official launch + marketing | Phase 3 | ⏳ |
+| 18b | Auth Gate — إلزامية تسجيل الدخول | Phase 3 | ✅ Done — 2026-06-28 |
+| 19 | My Progress + SRS Sync + Account Settings + Avatar Picker | Phase 3 | ✅ Done — 2026-06-28 |
+| 20 | Official launch + marketing | Phase 3 | ⏳ |
 
 ---
 
@@ -389,6 +391,21 @@ ORGAN_COLORS = {
 ---
 
 # ⑦ Version History
+
+- **v3.8 — 2026-06-28**
+  - Task #19 approved: My Progress + SRS Sync + Account Settings ✅
+  - **pages/my-progress.html:** Avatar Picker (16 أيقونة إشعاعية) · تغيير الاسم · تغيير كلمة المرور · استعادة كلمة المرور · Streak حقيقي من Supabase · إصلاح loadData (getUser أولاً بدون network)
+  - **pages/srs.html:** إصلاح رابط "My Progress" كان يشير لـ srs.html نفسها
+  - **pages/atlas.html:** SRS rating → async + upsertSRSCard إلى Supabase (localStorage يبقى fallback)
+  - str_replace patches فقط (Rule #12 مُحترم)
+
+- **v3.7 — 2026-06-28**
+  - Task #18b approved: Auth Gate — إلزامية تسجيل الدخول ✅
+  - **modules/supabase.js:** +3 دوال: `authGuard` · `signOutAndRedirect` · `updateNav`
+  - **pages/auth.html:** redirect صحيح بعد login → `returnTo` param أو `index.html`
+  - **index.html + 8 صفحات:** guard + updateNav (atlas, comparison, clinic, srs, mnemonics, ai-chat, my-progress, daily)
+  - **pages/daily.html:** Guest Banner محسّن
+  - str_replace patches فقط (Rule #12 مُحترم)
 
 - **v3.6 — 2026-06-28**
   - Task #17 approved: Build Daily Challenge + Community ✅
