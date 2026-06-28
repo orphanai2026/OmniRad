@@ -740,6 +740,8 @@ html[lang="ar"] .setup-guide { text-align: right; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 </style>
+<script src="../modules/supabase.js"></script>
+<script>OmniRadAuth.guard();</script>
 </head>
 <body>
 
@@ -1371,6 +1373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inp.placeholder = T[currentLang].inputPlaceholder;
     inp.addEventListener('input', updateSendBtn);
   }
+  OmniRadAuth.updateNav();
 });
 </script>
 </body>

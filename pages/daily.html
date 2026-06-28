@@ -419,7 +419,8 @@
   <div class="guest-banner" id="guestBanner">
     <div class="guest-text">
       <strong>⚠ Guest Mode</strong> — Your score won't be saved. 
-      <a href="auth.html" style="color:var(--warn)">Sign in</a> to track your streak and appear on the leaderboard.
+      <a href="auth.html" style="color:var(--warn)">Sign in</a> to save your streak and join the leaderboard. | 
+      <a href="auth.html" style="color:var(--warn)">سجّل دخولك</a> لحفظ نتيجتك وstreak.
     </div>
   </div>
 
@@ -1132,6 +1133,7 @@ async function loadLeaderboard() {
     lbBody.innerHTML = '<div class="lb-empty">Could not load leaderboard.</div>';
   }
 }
+OmniRadAuth.updateNav();
 </script>
 </body>
 </html>

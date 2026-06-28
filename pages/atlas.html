@@ -282,6 +282,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 #expand-canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:#050810;}
 #expand-canvas-wrap canvas{max-width:100%;max-height:100%;}
 </style>
+<script src="../modules/supabase.js"></script>
+<script>OmniRadAuth.guard();</script>
 </head>
 <body>
 
@@ -1427,6 +1429,7 @@ window.addEventListener('resize',()=>{
 buildSidebar();
 const p=new URLSearchParams(location.search).get('s');
 if(p) loadStructure(p);
+OmniRadAuth.updateNav();
 </script>
 </body>
 </html>

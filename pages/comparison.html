@@ -730,6 +730,8 @@ select.structure-select:focus {
 }
 [data-tip]:hover::after { opacity: 1; }
 </style>
+<script src="../modules/supabase.js"></script>
+<script>OmniRadAuth.guard();</script>
 </head>
 <body>
 
@@ -1348,6 +1350,7 @@ window.addEventListener('resize',()=>{
 initTheme();
 readURLParams();
 renderGrid();
+OmniRadAuth.updateNav();
 </script>
 </body>
 </html>

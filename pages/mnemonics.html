@@ -117,6 +117,8 @@ html,body{min-height:100%;font-family:var(--font);background:var(--bg-base);colo
   #hamburger{display:flex;}
 }
 </style>
+<script src="../modules/supabase.js"></script>
+<script>OmniRadAuth.guard();</script>
 </head>
 <body>
 
@@ -470,6 +472,7 @@ renderCards(MNEMONICS);
 if('speechSynthesis' in window){
   speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
 }
+OmniRadAuth.updateNav();
 </script>
 </body>
 </html>
