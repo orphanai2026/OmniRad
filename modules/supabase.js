@@ -8,7 +8,7 @@
  */
 
 const SUPABASE_URL = 'https://lmbdtktjeggischpqnkw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_LBZk8ASNqCwZw4SSnYtPeQ_N2NbHMpl'; // ← ضع الـ publishable key هنا
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtYmR0a3RqZWdnaXNjaHBxbmt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MjQ1NTUsImV4cCI6MjA5ODIwMDU1NX0.xr2WO9lJHajYj8Tsysap2FBKmiRSWWvc6PWmnnbObjc'; // ← ضع الـ publishable key هنا
 
 // ─── Core Request Helper ──────────────────────────────────────────────────────
 
