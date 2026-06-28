@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v3.8 |
+| Version | v3.9 |
 | Date | 2026-06-28 |
-| Status | 🚀 Phase 3 In Progress — Task #19 Complete |
+| Status | 🚀 Phase 3 In Progress — Content Sprint Plan Approved |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -390,7 +390,64 @@ ORGAN_COLORS = {
 
 ---
 
+# ⑨ Content Sprint Plan — Approved 2026-06-28
+
+## المبدأ الأساسي
+```
+Sprint واحد لكل Modality — كامل الجسم في كل Sprint
+لا حدود مسبقة للأعضاء — كل عضو يُصوَّر بالوسيلة = يُضاف
+تأجيل Task #20 (الإطلاق) حتى اكتمال Sprint #1 على الأقل
+```
+
+## هيكل كل Sprint
+```
+① صور Original PNG — كل عضو في الجسم
+② صور Colored PNG — MedSAM2 Segmentation
+③ Labels على الصورة: AR + EN فقط
+④ بطاقة البنية: تفاصيل تشريحية AR + EN
+⑤ Tab "Latin": المصطلح اللاتيني + TTS نطق
+⑥ ربط SRS + Mnemonics لكل بنية
+⑦ رفع GitHub + ربط atlas.html + comparison.html
+⑧ اختبار وتحقق قبل الانتقال للـ Sprint التالي
+```
+
+## Labels — التوزيع المعتمد
+```
+على الصورة     : AR + EN فقط (واضح، نظيف)
+بطاقة البنية  : AR + EN + تفاصيل تشريحية
+Tab "Latin"   : المصطلح اللاتيني + TTS
+Medical Lexicon: AR + EN + Latin + تعريف كامل
+```
+
+## جدول Sprints
+
+| Sprint | Modality | الأعضاء | المصدر | الحالة |
+|--------|---------|---------|--------|--------|
+| 1 | CT | كامل الجسم — كل عضو قابل للتصوير بـ CT | TCIA CT-ORG + CHAOS + VHP | ⏳ |
+| 2 | MRI | كامل الجسم — كل عضو قابل للتصوير بـ MRI | CHAOS + Visible Human | ⏳ |
+| 3 | US | كل عضو قابل للتصوير بالموجات فوق الصوتية | مصادر مفتوحة | ⏳ |
+| 4 | X-Ray | كل منطقة قابلة للتصوير الشعاعي | Visible Human | ⏳ |
+| 5 | NM/PET | كل بروتوكول نووي متاح | TCIA | ⏳ |
+| 6 | Angio | كل وعاء دموي رئيسي | TCIA | ⏳ |
+| 7 | Mammo | الثدي — كل الأوضاع | TCIA | ⏳ |
+
+## قاعدة Sprint
+```
+إن كان العضو يُصوَّر بهذه الوسيلة = يُضاف
+لا حدود مسبقة — الجسم كاملاً هو الهدف
+كل Sprint = منتج تعليمي متكامل قابل للاختبار
+```
+
+---
+
 # ⑦ Version History
+
+- **v3.9 — 2026-06-28**
+  - قسم ⑨ مضاف: Content Sprint Plan — خطة المحتوى المعتمدة
+  - 7 Sprints بالـ Modality: CT → MRI → US → X-Ray → NM/PET → Angio → Mammo
+  - كل Sprint = كامل الجسم (لا حدود مسبقة للأعضاء)
+  - Labels معتمدة: AR+EN على الصورة · Latin في Tab منفصل
+  - تأجيل Task #20 (الإطلاق) حتى اكتمال Sprint #1
 
 - **v3.8 — 2026-06-28**
   - Task #19 approved: My Progress + SRS Sync + Account Settings ✅
