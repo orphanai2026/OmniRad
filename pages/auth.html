@@ -314,8 +314,12 @@
 
   // ── Redirect if already logged in ─────────────────────────────────────────
   async function checkSession() {
-    const user = await OmniRadAuth.getSession();
-    if (user) window.location.href = 'my-progress.html';
+    const user = OmniRadAuth.getUser();
+    if (user) {
+      const params = new URLSearchParams(window.location.search);
+      const returnTo = params.get('returnTo');
+      window.location.replace(returnTo ? decodeURIComponent(returnTo) : '../index.html');
+    }
   }
 
   // ── Sign In ───────────────────────────────────────────────────────────────
@@ -333,7 +337,11 @@
     try {
       await OmniRadAuth.signIn(email, password);
       showAlert(currentLang === 'ar' ? 'تم الدخول بنجاح! جاري التوجيه...' : 'Signed in! Redirecting...', 'success');
-      setTimeout(() => window.location.href = 'my-progress.html', 800);
+      setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
+        const returnTo = params.get('returnTo');
+        window.location.replace(returnTo ? decodeURIComponent(returnTo) : '../index.html');
+      }, 800);
     } catch (err) {
       showAlert(currentLang === 'ar' ? 'خطأ في البريد أو كلمة المرور' : err.message);
       setLoading('btnSignIn', false);
