@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — استبيان الاختبار الموسَّع (Phase 2)</title>
+<style>
+  :root {
+    --bg:       oklch(0.14 0.010 240);
+    --surface:  oklch(0.18 0.012 240);
+    --border:   oklch(0.26 0.012 240);
+    --teal:     oklch(0.72 0.14 195);
+    --teal-dim: oklch(0.42 0.12 195);
+    --text:     oklch(0.92 0.005 240);
+    --muted:    oklch(0.60 0.008 240);
+    --accent:   oklch(0.78 0.15 160);
+    --warn:     oklch(0.75 0.18 50);
+    --error:    oklch(0.70 0.20 25);
+    --radius:   10px;
+    --font:     'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--teal);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--bg);
+    flex-shrink: 0;
+  }
+  .logo-text { font-size: 18px; font-weight: 600; color: var(--teal); }
+  .logo-sub  { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, oklch(0.20 0.020 220), oklch(0.16 0.012 240));
+    border-bottom: 1px solid var(--border);
+    padding: 36px 24px 32px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 22px; font-weight: 700; color: var(--teal); margin-bottom: 8px; }
+  .hero p  { color: var(--muted); font-size: 14px; max-width: 520px; margin: 0 auto; }
+  .badge-row {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px;
+  }
+  .badge {
+    background: var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid oklch(0.32 0.012 240);
+  }
+  .badge.active { background: oklch(0.20 0.06 195); color: var(--teal); border-color: var(--teal-dim); }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    padding: 16px 24px 0;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── Form layout ── */
+  .form-wrap {
+    max-width: 680px;
+    margin: 24px auto 0;
+    padding: 0 16px;
+  }
+
+  /* ── Section ── */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .section-head {
+    background: oklch(0.20 0.015 240);
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .icon-a { background: oklch(0.22 0.08 195); }
+  .icon-b { background: oklch(0.22 0.08 160); }
+  .icon-c { background: oklch(0.22 0.08 280); }
+  .icon-d { background: oklch(0.22 0.08 50);  }
+  .icon-e { background: oklch(0.22 0.08 25);  }
+
+  .section-head h2 { font-size: 14px; font-weight: 600; }
+  .section-head .sec-sub { font-size: 12px; color: var(--muted); }
+  .section-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── Question ── */
+  .q { display: flex; flex-direction: column; gap: 8px; }
+  .q-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .q-label .req { color: var(--error); margin-right: 3px; }
+  .q-hint { font-size: 12px; color: var(--muted); }
+
+  /* ── Likert scale ── */
+  .likert {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .likert input[type="radio"] { display: none; }
+  .likert label {
+    flex: 1;
+    min-width: 44px;
+    text-align: center;
+    padding: 10px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .likert input[type="radio"]:checked + label {
+    background: var(--teal-dim);
+    border-color: var(--teal);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .likert label:hover { border-color: var(--teal-dim); color: var(--text); }
+  .likert-anchors {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 0 2px;
+  }
+
+  /* ── Select ── */
+  select {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: var(--font);
+    width: 100%;
+    appearance: none;
+    cursor: pointer;
+    direction: rtl;
+  }
+  select:focus { outline: 2px solid var(--teal-dim); border-color: var(--teal); }
+
+  /* ── Radio cards ── */
+  .radio-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .radio-cards input[type="radio"] { display: none; }
+  .radio-cards label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .radio-cards label::before {
+    content: '';
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .radio-cards input[type="radio"]:checked + label {
+    border-color: var(--teal);
+    color: var(--text);
+    background: oklch(0.20 0.04 195);
+  }
+  .radio-cards input[type="radio"]:checked + label::before {
+    border-color: var(--teal);
+    background: var(--teal);
+  }
+
+  /* ── Checkbox cards ── */
+  .check-cards { display: flex; flex-direction: column; gap: 8px; }
+  .check-cards input[type="checkbox"] { display: none; }
+  .check-cards label {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .check-cards label::before {
+    content: '';
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .check-cards input[type="checkbox"]:checked + label {
+    border-color: var(--accent);
+    color: var(--text);
+    background: oklch(0.20 0.04 160);
+  }
+  .check-cards input[type="checkbox"]:checked + label::before {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  /* ── Textarea ── */
+  textarea {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: var(--font);
+    width: 100%;
+    resize: vertical;
+    min-height: 80px;
+    direction: rtl;
+  }
+  textarea:focus { outline: 2px solid var(--teal-dim); border-color: var(--teal); }
+  textarea::placeholder { color: var(--muted); }
+
+  /* ── Number input ── */
+  .number-row { display: flex; align-items: center; gap: 12px; }
+  .number-row input[type="number"] {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-family: var(--font);
+    width: 120px;
+    text-align: center;
+  }
+  .number-row input[type="number"]:focus { outline: 2px solid var(--teal-dim); }
+  .number-row .unit { font-size: 13px; color: var(--muted); }
+
+  /* ── Feature block ── */
+  .feature-block {
+    background: oklch(0.16 0.010 240);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .feature-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .feature-label .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+
+  /* ── Submit ── */
+  .submit-wrap {
+    text-align: center;
+    padding: 8px 0 0;
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--teal-dim), var(--teal));
+    color: var(--bg);
+    border: none;
+    padding: 14px 48px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: opacity 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-submit:hover { opacity: 0.88; }
+  .btn-submit:active { opacity: 0.75; transform: scale(0.98); }
+
+  /* ── Thank you screen ── */
+  #thankyou {
+    display: none;
+    max-width: 480px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 0 20px;
+  }
+  .ty-icon {
+    width: 64px; height: 64px;
+    background: oklch(0.22 0.08 195);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 20px;
+  }
+  #thankyou h2 { font-size: 22px; color: var(--teal); margin-bottom: 10px; }
+  #thankyou p  { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+  /* ── Validation ── */
+  .field-error {
+    font-size: 12px;
+    color: var(--error);
+    display: none;
+  }
+  .has-error .likert label,
+  .has-error select,
+  .has-error textarea {
+    border-color: var(--error) !important;
+  }
+  .has-error .field-error { display: block; }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .likert { gap: 4px; }
+    .likert label { padding: 8px 4px; font-size: 12px; }
+    .hero h1 { font-size: 18px; }
+    .form-wrap { padding: 0 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-mark">OR</div>
+  <div>
+    <div class="logo-text">OmniRad</div>
+    <div class="logo-sub">Multimodal Radiologic Anatomy Platform</div>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>📋 استبيان الاختبار الموسَّع — Phase 2</h1>
+  <p>شكراً لمشاركتك في تقييم منصة OmniRad. إجاباتك تُشكّل مستقبل المنصة مباشرةً.</p>
+  <div class="badge-row">
+    <span class="badge active">Phase 2</span>
+    <span class="badge">مجهول الهوية</span>
+    <span class="badge">≈ 8 دقائق</span>
+    <span class="badge">اختياري: بعض الأسئلة</span>
+  </div>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="prog-text">القسم أ — بيانات المشارك</span>
+    <span id="prog-num">0 / 5</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<!-- Form -->
+<form class="form-wrap" id="survey" novalidate>
+
+  <!-- ═══ SECTION A — Participant Info ═══ -->
+  <div class="section" data-section="A">
+    <div class="section-head">
+      <div class="section-icon icon-a">أ</div>
+      <div>
+        <h2>بيانات المشارك</h2>
+        <div class="sec-sub">معلومات أساسية لتصنيف النتائج</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="q" id="q-A1">
+        <div class="q-label"><span class="req">*</span>التخصص الدراسي</div>
+        <select name="specialty" required>
+          <option value="">— اختر —</option>
+          <option>علوم الأشعة</option>
+          <option>الطب البشري</option>
+          <option>التقنيات الطبية</option>
+          <option>التمريض</option>
+          <option>أخرى</option>
+        </select>
+        <div class="field-error">يرجى تحديد التخصص</div>
+      </div>
+
+      <div class="q" id="q-A2">
+        <div class="q-label"><span class="req">*</span>المستوى الدراسي</div>
+        <div class="radio-cards">
+          <input type="radio" name="level" id="l1" value="1-2" required>
+          <label for="l1">السنة الأولى أو الثانية</label>
+          <input type="radio" name="level" id="l2" value="3-4">
+          <label for="l2">السنة الثالثة أو الرابعة</label>
+          <input type="radio" name="level" id="l3" value="5+">
+          <label for="l3">السنة الخامسة أو أعلى / متدرّب</label>
+        </div>
+        <div class="field-error">يرجى تحديد المستوى</div>
+      </div>
+
+      <div class="q">
+        <div class="q-label"><span class="req">*</span>الجهاز المستخدم في الاختبار</div>
+        <div class="radio-cards">
+          <input type="radio" name="device" id="d1" value="desktop" required>
+          <label for="d1">🖥 حاسوب مكتبي أو لاب توب</label>
+          <input type="radio" name="device" id="d2" value="tablet">
+          <label for="d2">📱 جهاز لوحي (Tablet)</label>
+          <input type="radio" name="device" id="d3" value="mobile">
+          <label for="d3">📱 هاتف ذكي (Mobile)</label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-label"><span class="req">*</span>المدة الإجمالية التي قضيتها على المنصة</div>
+        <div class="radio-cards">
+          <input type="radio" name="duration" id="dur1" value="<30" required>
+          <label for="dur1">أقل من 30 دقيقة</label>
+          <input type="radio" name="duration" id="dur2" value="30-60">
+          <label for="dur2">من 30 إلى 60 دقيقة</label>
+          <input type="radio" name="duration" id="dur3" value="60-90">
+          <label for="dur3">من 60 إلى 90 دقيقة</label>
+          <input type="radio" name="duration" id="dur4" value=">90">
+          <label for="dur4">أكثر من 90 دقيقة</label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-label"><span class="req">*</span>كم مرة دخلت المنصة خلال أسبوعين؟</div>
+        <div class="radio-cards">
+          <input type="radio" name="sessions" id="s1" value="1" required>
+          <label for="s1">مرة واحدة</label>
+          <input type="radio" name="sessions" id="s2" value="2-3">
+          <label for="s2">2 – 3 مرات</label>
+          <input type="radio" name="sessions" id="s3" value="4-6">
+          <label for="s3">4 – 6 مرات</label>
+          <input type="radio" name="sessions" id="s4" value="7+">
+          <label for="s4">7 مرات أو أكثر (أسبوعياً)</label>
+        </div>
+        <div class="q-hint">KPI: 20+ طالب يستخدمون المنصة أسبوعياً</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SECTION B — Core Features ═══ -->
+  <div class="section" data-section="B">
+    <div class="section-head">
+      <div class="section-icon icon-b">ب</div>
+      <div>
+        <h2>الميزات الأساسية</h2>
+        <div class="sec-sub">Atlas · Comparison · Image Tools</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- Atlas -->
+      <div class="feature-block">
+        <div class="feature-label"><span class="dot"></span>Smart Atlas — أطلس التشريح</div>
+        <div class="q" id="q-B1">
+          <div class="q-label"><span class="req">*</span>سهولة التنقل بين التراكيب التشريحية</div>
+          <div class="likert">
+            <input type="radio" name="atlas_nav" id="an1" value="1" required><label for="an1">1<br><span style="font-size:10px">صعب جداً</span></label>
+            <input type="radio" name="atlas_nav" id="an2" value="2"><label for="an2">2</label>
+            <input type="radio" name="atlas_nav" id="an3" value="3"><label for="an3">3</label>
+            <input type="radio" name="atlas_nav" id="an4" value="4"><label for="an4">4</label>
+            <input type="radio" name="atlas_nav" id="an5" value="5"><label for="an5">5<br><span style="font-size:10px">سهل جداً</span></label>
+          </div>
+          <div class="field-error">يرجى التقييم</div>
+        </div>
+        <div class="q">
+          <div class="q-label"><span class="req">*</span>جودة الصور وتنوع الطبقات (Planes)</div>
+          <div class="likert">
+            <input type="radio" name="atlas_img" id="ai1" value="1" required><label for="ai1">1</label>
+            <input type="radio" name="atlas_img" id="ai2" value="2"><label for="ai2">2</label>
+            <input type="radio" name="atlas_img" id="ai3" value="3"><label for="ai3">3</label>
+            <input type="radio" name="atlas_img" id="ai4" value="4"><label for="ai4">4</label>
+            <input type="radio" name="atlas_img" id="ai5" value="5"><label for="ai5">5</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <div class="feature-block">
+        <div class="feature-label"><span class="dot" style="background:var(--accent)"></span>Multimodal Comparison — المقارنة متعددة الوسائط</div>
+        <div class="q">
+          <div class="q-label"><span class="req">*</span>هل ساعدتك المقارنة على فهم كيف تختلف نفس التركيبة بين الوسائط؟</div>
+          <div class="likert">
+            <input type="radio" name="comp_value" id="cv1" value="1" required><label for="cv1">1<br><span style="font-size:10px">لم تفد</span></label>
+            <input type="radio" name="comp_value" id="cv2" value="2"><label for="cv2">2</label>
+            <input type="radio" name="comp_value" id="cv3" value="3"><label for="cv3">3</label>
+            <input type="radio" name="comp_value" id="cv4" value="4"><label for="cv4">4</label>
+            <input type="radio" name="comp_value" id="cv5" value="5"><label for="cv5">5<br><span style="font-size:10px">مفيدة جداً</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Tools -->
+      <div class="feature-block">
+        <div class="feature-label"><span class="dot" style="background:var(--warn)"></span>Image Tools Suite — أدوات الصور</div>
+        <div class="q">
+          <div class="q-label"><span class="req">*</span>هل استخدمت أدوات الصور (تكبير، قياس، تعديل إضاءة…)؟</div>
+          <div class="radio-cards">
+            <input type="radio" name="tools_used" id="tu1" value="yes_all" required>
+            <label for="tu1">نعم، جربت معظمها</label>
+            <input type="radio" name="tools_used" id="tu2" value="yes_some">
+            <label for="tu2">نعم، جربت بعضها</label>
+            <input type="radio" name="tools_used" id="tu3" value="no">
+            <label for="tu3">لا، لم أستخدمها</label>
+          </div>
+        </div>
+        <div class="q" id="q-tools-rating" style="display:none">
+          <div class="q-label">تقييم أدوات الصور بشكل عام</div>
+          <div class="likert">
+            <input type="radio" name="tools_rating" id="tr1" value="1"><label for="tr1">1</label>
+            <input type="radio" name="tools_rating" id="tr2" value="2"><label for="tr2">2</label>
+            <input type="radio" name="tools_rating" id="tr3" value="3"><label for="tr3">3</label>
+            <input type="radio" name="tools_rating" id="tr4" value="4"><label for="tr4">4</label>
+            <input type="radio" name="tools_rating" id="tr5" value="5"><label for="tr5">5</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SECTION C — Phase 2 Features ═══ -->
+  <div class="section" data-section="C">
+    <div class="section-head">
+      <div class="section-icon icon-c">ج</div>
+      <div>
+        <h2>ميزات Phase 2 الجديدة</h2>
+        <div class="sec-sub">SRS · Mnemonics · Lexicon · AI Assistant</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- SRS -->
+      <div class="feature-block">
+        <div class="feature-label"><span class="dot" style="background:#a78bfa"></span>SRS — نظام المراجعة المتباعدة</div>
+        <div class="q">
+          <div class="q-label"><span class="req">*</span>هل استخدمت نظام المراجعة المتباعدة (SRS / My Progress)؟</div>
+          <div class="radio-cards">
+            <input type="radio" name="srs_used" id="srs1" value="yes" required>
+            <label for="srs1">نعم، استخدمته</label>
+            <input type="radio" name="srs_used" id="srs2" value="no_know">
+            <label for="srs2">لا، لم أكن أعرف بوجوده</label>
+            <input type="radio" name="srs_used" id="srs3" value="no_time">
+            <label for="srs3">لا، لم يكن لديّ وقت</label>
+          </div>
+        </div>
+        <div class="q" id="q-srs-rating" style="display:none">
+          <div class="q-label">هل شعرت أن نظام المراجعة يساعدك على الاحتفاظ بالمعلومات؟</div>
+          <div class="likert">
+            <input type="radio" name="srs_value" id="sv1" value="1"><label for="sv1">1<br><span style="font-size:10px">لم يفد</span></label>
+            <input type="radio" name="srs_value" id="sv2" value="2"><label for="sv2">2</label>
+            <input type="radio" name="srs_value" id="sv3" value="3"><label for="sv3">3</label>
+            <input type="radio" name="srs_value" id="sv4" value="4"><label for="sv4">4</label>
+            <input type="radio" name="srs_value" id="sv5" value="5"><label for="sv5">5<br><span style="font-size:10px">مفيد جداً</span></label>
+          </div>
+          <div class="q-hint">KPI المستهدف: 40%+ يعودون بعد أسبوعين</div>
+        </div>
+      </div>
+
+      <!-- Mnemonics -->
+      <div class="feature-block">
+        <div class="feature-label"><span class="dot" style="background:#34d399"></span>Mnemonics + Medical Lexicon — وسائل التذكر والمعجم</div>
+        <div class="q">
+          <div class="q-label"><span class="req">*</span>هل استخدمت مكتبة وسائل التذكر (Mnemonics)؟</div>
+          <div class="radio-cards">
+            <input type="radio" name="mnem_used" id="mn1" value="yes" required>
+            <label for="mn1">نعم</label>
+            <input type="radio" name="mnem_used" id="mn2" value="no">
+            <label for="mn2">لا</label>
+          </div>
+        </div>
+        <div class="q" id="q-mnem-rate" style="display:none">
+          <div class="q-label">هل ساعدتك وسائل التذكر على تذكر التراكيب التشريحية؟</div>
+          <div class="likert">
+            <input type="radio" name="mnem_value" id="mv1" value="1"><label for="mv1">1</label>
+            <input type="radio" name="mnem_value" id="mv2" value="2"><label for="mv2">2</label>
+            <input type="radio" name="mnem_value" id="mv3" value="3"><label for="mv3">3</label>
+            <input type="radio" name="mnem_value" id="mv4" value="4"><label for="mv4">4</label>
+            <input type="radio" name="mnem_value" id="mv5" value="5"><label for="mv5">5</label>
+          </div>
+        </div>
+        <div class="q">
+          <div class="q-label">هل لاحظت المصطلحات الطبية المشروحة (Medical Lexicon) داخل النصوص؟</div>
+          <div class="radio-cards">
+            <input type="radio" name="lexicon_noticed" id="lex1" value="yes_helpful">
+            <label for="lex1">نعم، وكانت مفيدة</label>
+            <input type="radio" name="lexicon_noticed" id="lex2" value="yes_neutral">
+            <label for="lex2">نعم، لكنها لم تضف كثيراً</label>
+            <input type="radio" name="lexicon_noticed" id="lex3" value="no">
+            <label for="lex3">لم ألاحظها</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Assistant -->
+      <div class="feature-block">
+        <div class="feature-label"><span class="dot" style="background:#f59e0b"></span>AI Assistant — المساعد الذكي</div>
+        <div class="q">
+          <div class="q-label"><span class="req">*</span>هل استخدمت المساعد الذكي (AI Chat)؟</div>
+          <div class="radio-cards">
+            <input type="radio" name="ai_used" id="aiu1" value="yes" required>
+            <label for="aiu1">نعم</label>
+            <input type="radio" name="ai_used" id="aiu2" value="no">
+            <label for="aiu2">لا</label>
+          </div>
+        </div>
+        <div id="q-ai-detail" style="display:none; display:flex; flex-direction:column; gap:14px">
+          <div class="q">
+            <div class="q-label">كم سؤالاً تقريباً طرحته على المساعد؟</div>
+            <div class="number-row">
+              <input type="number" name="ai_questions" min="0" max="100" placeholder="0">
+              <span class="unit">سؤالاً</span>
+            </div>
+          </div>
+          <div class="q">
+            <div class="q-label">من الأسئلة التي طرحتها، كم نسبة الأسئلة التي أجاب عنها بدقة؟</div>
+            <div class="radio-cards">
+              <input type="radio" name="ai_accuracy" id="acc1" value="<50">
+              <label for="acc1">أقل من 50%</label>
+              <input type="radio" name="ai_accuracy" id="acc2" value="50-70">
+              <label for="acc2">50% – 70%</label>
+              <input type="radio" name="ai_accuracy" id="acc3" value="70-90">
+              <label for="acc3">70% – 90%</label>
+              <input type="radio" name="ai_accuracy" id="acc4" value=">90">
+              <label for="acc4">أكثر من 90%</label>
+            </div>
+            <div class="q-hint">KPI المستهدف: 80%+ من الأسئلة مجابة بدقة</div>
+          </div>
+          <div class="q">
+            <div class="q-label">هل استخدمت المساعد بالعربية أم الإنجليزية؟</div>
+            <div class="radio-cards">
+              <input type="radio" name="ai_lang" id="al1" value="ar">
+              <label for="al1">العربية</label>
+              <input type="radio" name="ai_lang" id="al2" value="en">
+              <label for="al2">الإنجليزية</label>
+              <input type="radio" name="ai_lang" id="al3" value="both">
+              <label for="al3">كلتيهما</label>
+            </div>
+          </div>
+          <div class="q">
+            <div class="q-label">تقييم المساعد الذكي بشكل عام</div>
+            <div class="likert">
+              <input type="radio" name="ai_overall" id="ao1" value="1"><label for="ao1">1<br><span style="font-size:10px">ضعيف</span></label>
+              <input type="radio" name="ai_overall" id="ao2" value="2"><label for="ao2">2</label>
+              <input type="radio" name="ai_overall" id="ao3" value="3"><label for="ao3">3</label>
+              <input type="radio" name="ai_overall" id="ao4" value="4"><label for="ao4">4</label>
+              <input type="radio" name="ai_overall" id="ao5" value="5"><label for="ao5">5<br><span style="font-size:10px">ممتاز</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SECTION D — Overall KPIs ═══ -->
+  <div class="section" data-section="D">
+    <div class="section-head">
+      <div class="section-icon icon-d">د</div>
+      <div>
+        <h2>التقييم الشامل</h2>
+        <div class="sec-sub">مؤشرات الأداء الرئيسية</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="q" id="q-D1">
+        <div class="q-label"><span class="req">*</span>بشكل عام، كيف تقيّم OmniRad؟</div>
+        <div class="likert">
+          <input type="radio" name="overall" id="ov1" value="1" required><label for="ov1">1<br><span style="font-size:10px">سيئ</span></label>
+          <input type="radio" name="overall" id="ov2" value="2"><label for="ov2">2</label>
+          <input type="radio" name="overall" id="ov3" value="3"><label for="ov3">3</label>
+          <input type="radio" name="overall" id="ov4" value="4"><label for="ov4">4</label>
+          <input type="radio" name="overall" id="ov5" value="5"><label for="ov5">5<br><span style="font-size:10px">ممتاز</span></label>
+        </div>
+        <div class="field-error">يرجى التقييم</div>
+      </div>
+
+      <div class="q" id="q-D2">
+        <div class="q-label"><span class="req">*</span>مقارنةً بـ Radiopaedia، OmniRad هي…</div>
+        <div class="radio-cards">
+          <input type="radio" name="vs_radiopaedia" id="vr1" value="much_better" required>
+          <label for="vr1">أفضل بكثير لأغراض التعليم</label>
+          <input type="radio" name="vs_radiopaedia" id="vr2" value="better">
+          <label for="vr2">أفضل بشكل عام</label>
+          <input type="radio" name="vs_radiopaedia" id="vr3" value="equal">
+          <label for="vr3">متكافئتان</label>
+          <input type="radio" name="vs_radiopaedia" id="vr4" value="worse">
+          <label for="vr4">Radiopaedia أفضل</label>
+          <input type="radio" name="vs_radiopaedia" id="vr5" value="no_compare">
+          <label for="vr5">لم أستخدم Radiopaedia من قبل</label>
+        </div>
+        <div class="q-hint">KPI المستهدف: 70%+ يختارون OmniRad</div>
+        <div class="field-error">يرجى الإجابة</div>
+      </div>
+
+      <div class="q" id="q-D3">
+        <div class="q-label"><span class="req">*</span>هل ستعود لاستخدام OmniRad مستقبلاً؟</div>
+        <div class="radio-cards">
+          <input type="radio" name="return" id="ret1" value="yes_weekly" required>
+          <label for="ret1">نعم، أسبوعياً على الأقل</label>
+          <input type="radio" name="return" id="ret2" value="yes_sometimes">
+          <label for="ret2">نعم، أحياناً</label>
+          <input type="radio" name="return" id="ret3" value="maybe">
+          <label for="ret3">ربما</label>
+          <input type="radio" name="return" id="ret4" value="no">
+          <label for="ret4">لا</label>
+        </div>
+        <div class="q-hint">KPI المستهدف: 50%+ يريدون العودة</div>
+        <div class="field-error">يرجى الإجابة</div>
+      </div>
+
+      <div class="q">
+        <div class="q-label">هل واجهت أي أخطاء تقنية أوقفت تجربتك؟</div>
+        <div class="radio-cards">
+          <input type="radio" name="errors" id="er1" value="none">
+          <label for="er1">لا، كل شيء عمل بسلاسة</label>
+          <input type="radio" name="errors" id="er2" value="minor">
+          <label for="er2">أخطاء بسيطة لم تؤثر على التجربة</label>
+          <input type="radio" name="errors" id="er3" value="major">
+          <label for="er3">أخطاء كبيرة أوقفت تجربتي</label>
+        </div>
+      </div>
+
+      <div class="q" id="q-error-desc" style="display:none">
+        <div class="q-label">اشرح الخطأ الذي واجهته</div>
+        <textarea name="error_desc" placeholder="ما الذي حدث؟ في أي صفحة؟ ما الجهاز؟"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SECTION E — Open Feedback ═══ -->
+  <div class="section" data-section="E">
+    <div class="section-head">
+      <div class="section-icon icon-e">هـ</div>
+      <div>
+        <h2>ملاحظات مفتوحة</h2>
+        <div class="sec-sub">اختياري — لكنه ثمين</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="q">
+        <div class="q-label">ما الميزة التي أفادتك أكثر في Phase 2؟</div>
+        <div class="check-cards">
+          <input type="checkbox" name="best_feature" id="bf1" value="srs">
+          <label for="bf1">نظام المراجعة المتباعدة (SRS)</label>
+          <input type="checkbox" name="best_feature" id="bf2" value="mnemonics">
+          <label for="bf2">مكتبة وسائل التذكر</label>
+          <input type="checkbox" name="best_feature" id="bf3" value="lexicon">
+          <label for="bf3">المعجم الطبي (Medical Lexicon)</label>
+          <input type="checkbox" name="best_feature" id="bf4" value="ai">
+          <label for="bf4">المساعد الذكي (AI Assistant)</label>
+          <input type="checkbox" name="best_feature" id="bf5" value="atlas">
+          <label for="bf5">أطلس التشريح (Atlas)</label>
+          <input type="checkbox" name="best_feature" id="bf6" value="comparison">
+          <label for="bf6">المقارنة متعددة الوسائط</label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-label">ما الميزة التي تحتاج تحسيناً عاجلاً؟</div>
+        <textarea name="needs_improvement" placeholder="مثال: سرعة تحميل الصور، واجهة المساعد الذكي، عدد التراكيب…"></textarea>
+      </div>
+
+      <div class="q">
+        <div class="q-label">ما الميزة التي تودّ إضافتها لـ OmniRad مستقبلاً؟</div>
+        <textarea name="feature_request" placeholder="اكتب بحرية — كل الأفكار مرحّب بها"></textarea>
+      </div>
+
+      <div class="q">
+        <div class="q-label">أي تعليق إضافي تودّ مشاركته؟</div>
+        <textarea name="open_comment" placeholder="ما شئت…"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-wrap">
+    <button type="submit" class="btn-submit">إرسال الاستبيان ✓</button>
+  </div>
+
+</form>
+
+<!-- Thank You -->
+<div id="thankyou">
+  <div class="ty-icon">✓</div>
+  <h2>شكراً على مشاركتك!</h2>
+  <p>إجاباتك ستُشكّل Phase 3 من OmniRad مباشرةً.<br>
+  يمكنك إغلاق هذه الصفحة الآن.</p>
+</div>
+
+<script>
+// ── Conditional visibility ──
+function show(id){ const el=document.getElementById(id); if(el) el.style.display='flex'; }
+function hide(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+// Tools used → show rating
+document.querySelectorAll('input[name="tools_used"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    if(r.value==='yes_all'||r.value==='yes_some') show('q-tools-rating');
+    else hide('q-tools-rating');
+  });
+});
+
+// SRS used → show rating
+document.querySelectorAll('input[name="srs_used"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    if(r.value==='yes') show('q-srs-rating');
+    else hide('q-srs-rating');
+  });
+});
+
+// Mnemonics used → show rating
+document.querySelectorAll('input[name="mnem_used"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    if(r.value==='yes') show('q-mnem-rate');
+    else hide('q-mnem-rate');
+  });
+});
+
+// AI used → show detail block
+document.querySelectorAll('input[name="ai_used"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    const block = document.getElementById('q-ai-detail');
+    if(block) block.style.display = r.value==='yes' ? 'flex' : 'none';
+  });
+});
+// AI detail block: default hidden
+(function(){ const b=document.getElementById('q-ai-detail'); if(b) b.style.display='none'; })();
+
+// Errors → show description
+document.querySelectorAll('input[name="errors"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    if(r.value==='major'||r.value==='minor') show('q-error-desc');
+    else hide('q-error-desc');
+  });
+});
+
+// ── Progress bar ──
+const sections = ['A','B','C','D','E'];
+const labels   = ['أ — بيانات المشارك','ب — الميزات الأساسية','ج — ميزات Phase 2','د — التقييم الشامل','هـ — ملاحظات مفتوحة'];
+function updateProgress(){
+  const all = document.querySelectorAll('input:required, select:required, textarea:required');
+  let filled=0;
+  all.forEach(el=>{
+    if(el.type==='radio'){
+      if(document.querySelector(`input[name="${el.name}"]:checked`)) filled++;
+    } else if(el.value.trim()) filled++;
+  });
+  // find active section by scroll position
+  let activeIdx=0;
+  sections.forEach((s,i)=>{
+    const sec=document.querySelector(`[data-section="${s}"]`);
+    if(sec && sec.getBoundingClientRect().top < window.innerHeight*0.5) activeIdx=i;
+  });
+  document.getElementById('prog-text').textContent = labels[activeIdx];
+  document.getElementById('prog-num').textContent  = `${activeIdx+1} / ${sections.length}`;
+  const pct = Math.round(((activeIdx+1)/sections.length)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+}
+document.addEventListener('change', updateProgress);
+window.addEventListener('scroll', updateProgress);
+
+// ── Validation & Submit ──
+const REQUIRED_RADIOS = [
+  'specialty','level','device','duration','sessions',
+  'atlas_nav','atlas_img','comp_value','tools_used',
+  'srs_used','mnem_used','ai_used',
+  'overall','vs_radiopaedia','return'
+];
+
+document.getElementById('survey').addEventListener('submit', function(e){
+  e.preventDefault();
+  let valid = true;
+
+  // Select validation
+  const spec = document.querySelector('select[name="specialty"]');
+  const specQ = document.getElementById('q-A1');
+  if(!spec.value){ specQ.classList.add('has-error'); valid=false; }
+  else specQ.classList.remove('has-error');
+
+  // Radio validation
+  const radioRequired = ['level','device','duration','sessions','atlas_nav','atlas_img','comp_value','tools_used','srs_used','mnem_used','ai_used','overall','vs_radiopaedia','return'];
+  radioRequired.forEach(name=>{
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    const firstEl = document.querySelector(`input[name="${name}"]`);
+    if(!firstEl) return;
+    const qWrap = firstEl.closest('.q');
+    if(!checked){ if(qWrap) qWrap.classList.add('has-error'); valid=false; }
+    else if(qWrap) qWrap.classList.remove('has-error');
+  });
+
+  if(!valid){
+    const firstErr = document.querySelector('.has-error');
+    if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Collect data
+  const data = {};
+  new FormData(this).forEach((v,k)=>{ data[k]=v; });
+  console.log('OmniRad Survey Phase 2 Response:', JSON.stringify(data, null, 2));
+
+  // Show thank you
+  document.getElementById('survey').style.display='none';
+  document.querySelector('.hero').style.display='none';
+  document.querySelector('.progress-wrap').style.display='none';
+  document.getElementById('thankyou').style.display='block';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+</script>
+</body>
+</html>

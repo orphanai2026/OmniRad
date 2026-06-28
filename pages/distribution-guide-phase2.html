@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — دليل التوزيع (Phase 2)</title>
+<style>
+  :root {
+    --bg:      oklch(0.14 0.010 240);
+    --surface: oklch(0.18 0.012 240);
+    --border:  oklch(0.26 0.012 240);
+    --teal:    oklch(0.72 0.14 195);
+    --teal-d:  oklch(0.42 0.12 195);
+    --text:    oklch(0.92 0.005 240);
+    --muted:   oklch(0.60 0.008 240);
+    --accent:  oklch(0.78 0.15 160);
+    --warn:    oklch(0.75 0.18 50);
+    --font:    'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.75;
+    padding-bottom: 60px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo-mark {
+    width:34px; height:34px; background:var(--teal);
+    border-radius:7px; display:flex; align-items:center;
+    justify-content:center; font-size:12px; font-weight:700; color:var(--bg);
+  }
+  .logo-text { font-size:17px; font-weight:600; color:var(--teal); }
+  .logo-sub  { font-size:11px; color:var(--muted); }
+
+  /* Hero */
+  .hero {
+    padding: 32px 24px 28px;
+    background: linear-gradient(135deg,oklch(0.20 0.020 220),oklch(0.16 0.012 240));
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .hero h1 { font-size:21px; font-weight:700; color:var(--teal); margin-bottom:8px; }
+  .hero p  { color:var(--muted); font-size:14px; max-width:500px; margin:0 auto; }
+
+  /* Content */
+  .wrap {
+    max-width: 700px;
+    margin: 28px auto 0;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-head {
+    background: oklch(0.20 0.015 240);
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-icon {
+    width:28px; height:28px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center; font-size:15px;
+    flex-shrink:0;
+  }
+  .ci-1 { background: oklch(0.22 0.08 195); }
+  .ci-2 { background: oklch(0.22 0.08 160); }
+  .ci-3 { background: oklch(0.22 0.08 50);  }
+  .ci-4 { background: oklch(0.22 0.08 280); }
+  .ci-5 { background: oklch(0.22 0.08 25);  }
+
+  .card-head h2 { font-size:14px; font-weight:600; }
+  .card-head .sub { font-size:12px; color:var(--muted); }
+  .card-body { padding:20px; }
+
+  /* Steps */
+  .steps { display:flex; flex-direction:column; gap:14px; }
+  .step  {
+    display:flex; gap:12px;
+    padding:14px; border:1px solid var(--border);
+    border-radius:8px; background:oklch(0.16 0.010 240);
+  }
+  .step-num {
+    width:28px; height:28px; border-radius:50%;
+    background:var(--teal-d); color:var(--bg);
+    font-size:13px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step-content { flex:1; }
+  .step-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+  .step-desc  { font-size:13px; color:var(--muted); }
+  .step-code  {
+    margin-top:8px; background:var(--bg);
+    border:1px solid var(--border); border-radius:6px;
+    padding:10px 14px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:var(--teal);
+    direction:ltr; text-align:left;
+    word-break:break-all;
+  }
+
+  /* KPI table */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th {
+    text-align:right; padding:10px 14px;
+    background:oklch(0.20 0.015 240);
+    color:var(--muted); font-weight:500;
+    border-bottom:1px solid var(--border);
+  }
+  td {
+    padding:10px 14px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  tr:last-child td { border-bottom:none; }
+  .kpi-target { color:var(--teal); font-weight:600; }
+  .kpi-how    { color:var(--muted); font-size:12px; }
+
+  /* Message template */
+  .msg-box {
+    background:oklch(0.16 0.010 240);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:16px;
+    font-size:14px;
+    line-height:1.8;
+    position:relative;
+  }
+  .msg-label {
+    font-size:11px; color:var(--muted);
+    margin-bottom:10px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .msg-label::before { content:''; display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); }
+
+  .copy-btn {
+    position:absolute; top:12px; left:12px;
+    background:var(--border); border:none; color:var(--muted);
+    padding:4px 10px; border-radius:5px; font-size:11px;
+    cursor:pointer; font-family:var(--font);
+    transition:all 0.15s;
+  }
+  .copy-btn:hover { background:var(--teal-d); color:var(--text); }
+
+  /* Timeline */
+  .timeline { display:flex; flex-direction:column; gap:0; }
+  .tl-item  {
+    display:flex; gap:16px;
+    padding:0 0 20px 0;
+    position:relative;
+  }
+  .tl-item:last-child { padding-bottom:0; }
+  .tl-left { width:80px; flex-shrink:0; text-align:center; }
+  .tl-day  { font-size:12px; font-weight:700; color:var(--teal); }
+  .tl-date { font-size:11px; color:var(--muted); }
+  .tl-line {
+    width:1px; background:var(--border);
+    flex-grow:1; margin:4px auto;
+  }
+  .tl-dot  {
+    width:10px; height:10px;
+    border-radius:50%; background:var(--teal-d);
+    border:2px solid var(--bg);
+    flex-shrink:0; margin-top:4px;
+  }
+  .tl-content { flex:1; }
+  .tl-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+  .tl-desc  { font-size:13px; color:var(--muted); }
+
+  /* Tag */
+  .tag {
+    display:inline-block;
+    padding:2px 8px; border-radius:4px;
+    font-size:11px; font-weight:600;
+    margin-left:6px;
+  }
+  .tag-req  { background:oklch(0.20 0.08 25);  color:oklch(0.75 0.18 25);  }
+  .tag-opt  { background:oklch(0.20 0.05 240); color:var(--muted); }
+  .tag-kpi  { background:oklch(0.20 0.08 195); color:var(--teal); }
+
+  /* Info row */
+  .info-row {
+    display:flex; gap:12px; flex-wrap:wrap;
+  }
+  .info-chip {
+    flex:1; min-width:140px;
+    background:oklch(0.16 0.010 240);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:14px;
+    text-align:center;
+  }
+  .info-chip .chip-num { font-size:22px; font-weight:700; color:var(--teal); }
+  .info-chip .chip-lbl { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  /* Alert */
+  .alert {
+    padding:14px 16px;
+    border-radius:8px;
+    font-size:13px;
+    border:1px solid;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .alert-warn { background:oklch(0.18 0.05 50); border-color:oklch(0.35 0.12 50); color:var(--warn); }
+  .alert-info { background:oklch(0.18 0.04 195); border-color:oklch(0.30 0.08 195); color:var(--teal); }
+  .alert-icon { flex-shrink:0; font-size:16px; }
+
+  @media(max-width:480px){
+    .info-chip { min-width:100px; }
+    .card-body { padding:14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-mark">OR</div>
+  <div>
+    <div class="logo-text">OmniRad</div>
+    <div class="logo-sub">Multimodal Radiologic Anatomy Platform</div>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>📋 دليل التوزيع — الاختبار الموسَّع (Phase 2)</h1>
+  <p>خطة التوزيع، الجدول الزمني، ومعايير النجاح لاختبار ٢٠–٣٠ طالباً</p>
+</div>
+
+<div class="wrap">
+
+  <!-- Overview chips -->
+  <div class="info-row">
+    <div class="info-chip">
+      <div class="chip-num">20–30</div>
+      <div class="chip-lbl">طالب مستهدَف</div>
+    </div>
+    <div class="info-chip">
+      <div class="chip-num">14</div>
+      <div class="chip-lbl">يوماً مدة الاختبار</div>
+    </div>
+    <div class="info-chip">
+      <div class="chip-num">15+</div>
+      <div class="chip-lbl">دقيقة/جلسة (KPI)</div>
+    </div>
+    <div class="info-chip">
+      <div class="chip-num">40%</div>
+      <div class="chip-lbl">احتفاظ بعد أسبوعين</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Preparation -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-1">①</div>
+      <div>
+        <h2>التحضير قبل التوزيع</h2>
+        <div class="sub">تأكّد من اكتمال هذه الخطوات أولاً</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">تأكيد نشر GitHub Pages</div>
+            <div class="step-desc">تحقق أن الموقع يعمل على الرابط الرسمي قبل الإرسال لأي طالب</div>
+            <div class="step-code">https://orphanai2026.github.io/OmniRad/</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">اختبار الاستبيان شخصياً</div>
+            <div class="step-desc">أكمل survey-phase2.html كاملاً وتأكد من عمل جميع الأسئلة الشرطية (SRS، AI، Errors…)</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">تجميع بيانات الاستجابات</div>
+            <div class="step-desc">أنشئ Google Sheet بسيطاً لتسجيل نتائج الاستبيانات يدوياً من المشاركين</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">تحديد المجموعة المستهدفة</div>
+            <div class="step-desc">طلاب علوم الأشعة / الطب بشكل أساسي، مع تنوع في المستويات (١–٤)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Distribution message -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-2">②</div>
+      <div>
+        <h2>رسالة التوزيع</h2>
+        <div class="sub">نص جاهز للإرسال عبر واتساب أو تيليغرام</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="alert alert-info">
+        <div class="alert-icon">💡</div>
+        <div>يُنصح بالإرسال في مجموعات الدراسة المباشرة، مع متابعة شخصية بعد 3 أيام.</div>
+      </div>
+
+      <div class="msg-box" id="msg-ar">
+        <div class="msg-label">رسالة عربية — WhatsApp / Telegram</div>
+        <button class="copy-btn" onclick="copyMsg('msg-ar-text')">نسخ</button>
+        <div id="msg-ar-text">
+السلام عليكم 👋
+
+أنا طالب في علوم الأشعة وأعمل على مشروع أكاديمي: منصة OmniRad لتعليم التشريح الإشعاعي.
+
+المنصة تشمل:
+• أطلس تشريح تفاعلي (CT / MRI / Ultrasound وغيرها)
+• نظام مراجعة متباعدة (SRS)
+• مكتبة وسائل التذكر
+• مساعد ذكاء اصطناعي للأسئلة الطبية
+
+أحتاج تقييمك الصادق خلال 14 يوماً:
+
+🔗 المنصة:
+https://orphanai2026.github.io/OmniRad/
+
+📋 الاستبيان (بعد التجربة):
+https://orphanai2026.github.io/OmniRad/pages/survey-phase2.html
+
+لا يُشترط وقت محدد — جرّب ما تشاء واملأ الاستبيان متى انتهيت.
+
+شكراً جزيلاً 🙏
+        </div>
+      </div>
+
+      <div class="msg-box" id="msg-en">
+        <div class="msg-label">رسالة إنجليزية — للطلاب غير العرب</div>
+        <button class="copy-btn" onclick="copyMsg('msg-en-text')">Copy</button>
+        <div id="msg-en-text">
+Hi! 👋
+
+I'm a Radiologic Sciences student building OmniRad — an interactive multimodal radiology anatomy platform.
+
+It includes:
+• Interactive anatomy atlas (CT, MRI, Ultrasound & more)
+• Spaced Repetition System (SRS)
+• Mnemonics Library
+• AI Radiology Assistant (AR/EN)
+
+I'd love your honest feedback over 14 days:
+
+🔗 Platform:
+https://orphanai2026.github.io/OmniRad/
+
+📋 Survey (fill after using it):
+https://orphanai2026.github.io/OmniRad/pages/survey-phase2.html
+
+No time commitment required — explore freely and fill the survey whenever you're done.
+
+Thank you! 🙏
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 3: Timeline -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-3">③</div>
+      <div>
+        <h2>الجدول الزمني</h2>
+        <div class="sub">14 يوماً من الإطلاق حتى تجميع النتائج</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-day">اليوم 1</div>
+            <div class="tl-date">الإطلاق</div>
+          </div>
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-title">إرسال الرسالة الأولى <span class="tag tag-req">إلزامي</span></div>
+            <div class="tl-desc">أرسل للمجموعات المستهدفة مع الروابط</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-day">اليوم 3</div>
+            <div class="tl-date"></div>
+          </div>
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-title">متابعة أولى <span class="tag tag-opt">اختياري</span></div>
+            <div class="tl-desc">رسالة قصيرة للتأكد من وصول الرابط وعمل المنصة</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-day">اليوم 7</div>
+            <div class="tl-date">منتصف</div>
+          </div>
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-title">جمع الردود الأولية <span class="tag tag-kpi">KPI</span></div>
+            <div class="tl-desc">يُستهدف 50%+ من المشاركين يكونون قد ملأوا الاستبيان</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-day">اليوم 10</div>
+            <div class="tl-date"></div>
+          </div>
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-title">تذكير نهائي <span class="tag tag-req">إلزامي</span></div>
+            <div class="tl-desc">"آخر 4 أيام للمشاركة" — أرسل تذكيراً للذين لم يستجيبوا</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-day">اليوم 14</div>
+            <div class="tl-date">الإغلاق</div>
+          </div>
+          <div class="tl-dot" style="background:var(--teal)"></div>
+          <div class="tl-content">
+            <div class="tl-title">إغلاق الاستبيان وتجميع النتائج <span class="tag tag-req">إلزامي</span></div>
+            <div class="tl-desc">تجميع جميع الردود وتحليلها في results-phase2.html</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: KPIs -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-4">④</div>
+      <div>
+        <h2>معايير النجاح (KPIs)</h2>
+        <div class="sub">من OMNIRAD_PROJECT.md § ⑥ — Phase 2</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr>
+            <th>المعيار</th>
+            <th>الهدف</th>
+            <th>كيف يُقاس</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>عدد المشاركين الفعليين</td>
+            <td class="kpi-target">20+ طالب</td>
+            <td class="kpi-how">عدد الاستبيانات المكتملة</td>
+          </tr>
+          <tr>
+            <td>معدل الاستخدام الأسبوعي</td>
+            <td class="kpi-target">20+ طالب/أسبوع</td>
+            <td class="kpi-how">سؤال Q: كم مرة دخلت؟ (4+ مرات)</td>
+          </tr>
+          <tr>
+            <td>متوسط مدة الجلسة</td>
+            <td class="kpi-target">15+ دقيقة</td>
+            <td class="kpi-how">سؤال Q: المدة الإجمالية (60-90 دقيقة = 4 جلسات × 15)</td>
+          </tr>
+          <tr>
+            <td>دقة AI Assistant</td>
+            <td class="kpi-target">80%+ من الأسئلة</td>
+            <td class="kpi-how">سؤال Q: نسبة الأسئلة المجابة بدقة</td>
+          </tr>
+          <tr>
+            <td>الاحتفاظ بعد أسبوعين</td>
+            <td class="kpi-target">40%+ يعودون</td>
+            <td class="kpi-how">سؤال Q: كم مرة دخلت؟ (جلستان+ = احتفاظ)</td>
+          </tr>
+          <tr>
+            <td>التفضيل على Radiopaedia</td>
+            <td class="kpi-target">70%+ يختارون OmniRad</td>
+            <td class="kpi-how">سؤال Q: المقارنة بـ Radiopaedia</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Step 5: Decision -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-5">⑤</div>
+      <div>
+        <h2>قرار المتابعة بعد النتائج</h2>
+        <div class="sub">الخيارات المتاحة بعد اليوم 14</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+
+      <div class="step">
+        <div class="step-num" style="background:oklch(0.30 0.14 160)">✓</div>
+        <div class="step-content">
+          <div class="step-title" style="color:var(--accent)">تحقق جميع KPIs → المتابعة إلى Phase 3</div>
+          <div class="step-desc">بناء user accounts (Backend) + توسيع المحتوى إلى مناطق جسم جديدة</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:oklch(0.30 0.12 50)">~</div>
+        <div class="step-content">
+          <div class="step-title" style="color:var(--warn)">تحقق بعض KPIs → تعديل قبل Phase 3</div>
+          <div class="step-desc">تحديد الـ KPIs الفاشلة وفتح Task مخصصة لإصلاحها أولاً</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:oklch(0.28 0.12 25)">✗</div>
+        <div class="step-content">
+          <div class="step-title" style="color:oklch(0.70 0.20 25)">فشل أغلب KPIs → إعادة تقييم</div>
+          <div class="step-desc">مراجعة شاملة للمنصة قبل أي توسعة — التركيز على المشاكل الجوهرية</div>
+        </div>
+      </div>
+
+      <div class="alert alert-warn" style="margin-top:4px">
+        <div class="alert-icon">⚠</div>
+        <div>وثّق القرار النهائي في OMNIRAD_ISSUES.md واحتفظ بلقطة شاشة من جدول النتائج كمرجع.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function copyMsg(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const text = el.innerText.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    // brief feedback
+    const btn = el.parentElement.querySelector('.copy-btn');
+    if(btn){ btn.textContent='✓ تم'; setTimeout(()=>{ btn.textContent='نسخ'; },2000); }
+  });
+}
+</script>
+</body>
+</html>
