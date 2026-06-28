@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v3.0 |
+| Version | v3.2 |
 | Date | 2026-06-28 |
-| Status | ✅ Task #13 Complete — Extended Test Materials Ready |
+| Status | ✅ Image Pipeline Complete — Ready for Task #6 |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -131,6 +131,33 @@ Violation = feature regression = unacceptable.
 AR: لا تُعيد كتابة الملفات كاملة. استخدم str_replace فقط للسطور المحددة.
 ```
 
+## ⚠️ Rule #13 — File Quote Only | الاقتباس الحرفي من الملف (NEW — 2026-06-28)
+```
+EN: Before stating ANY of these — task status, version number, 
+    feature state, or any project fact:
+    1. Read the exact line from the file using view tool
+    2. Quote it verbatim in the response
+    3. NEVER answer from memory or training data
+    4. If unsure → re-read the file → then answer
+
+AR: قبل الإجابة على أي سؤال عن حالة المشروع:
+    ١. اقرأ السطر الحرفي من الملف بأداة view
+    ٢. اقتبسه حرفياً في الرد
+    ٣. لا تُجب أبداً من الذاكرة أو التدريب
+    ٤. عند الشك → أعد قراءة الملف → ثم أجب
+
+EN: Violation = answering from memory = same as hallucination = unacceptable.
+AR: الانتهاك = الإجابة من الذاكرة = هلوسة = غير مقبول.
+
+TRIGGER: Any question containing these words requires file re-read:
+- "what is the status of..."
+- "is Task X complete?"
+- "what's next?"
+- "what version?"
+- "what has been done?"
+- ما تم / ما التالي / هل اكتملت / ما الإصدار
+```
+
 ---
 
 # ② Vision & Mission
@@ -204,7 +231,7 @@ learning methodology.
 ## File Structure
 ```
 OmniRad/
-├── index.html                  ← Main page ✅ + About Tab ✅ (v2.9)
+├── index.html                  ← Main page ✅
 ├── pages/
 │   ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅ + Task #12 ✅
 │   ├── comparison.html         ← Task #4 ✅ + Task #12 ✅ (fully functional)
@@ -212,14 +239,23 @@ OmniRad/
 │   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ (embedded data)
 │   ├── ai-chat.html            ← Task #11 ✅
 │   ├── survey.html             ← Task #8 ✅
-│   ├── distribution-guide.html ← Task #8 ✅
-│   ├── survey-phase2.html      ← Task #13 ✅
-│   ├── distribution-guide-phase2.html ← Task #13 ✅
-│   └── results-phase2.html     ← Task #13 ✅
+│   └── distribution-guide.html ← Task #8 ✅
 ├── data/
 │   ├── structures.json         ← Task #12 ✅ (12 structures, CC0 images)
 │   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
 │   └── lexicon.json            ← Task #12 ✅ (38 terms)
+├── images/
+│   └── structures/             ← NEW ✅ 2026-06-28
+│       ├── liver/              ← ct_original.png + ct_colored.png ✅
+│       ├── kidney/             ← ct_original.png + ct_colored.png ✅
+│       ├── spleen/             ← mri_original.png + mri_colored.png ✅
+│       ├── bladder/            ← ct_original.png + ct_colored.png ✅
+│       ├── bone/               ← ct_original.png + ct_colored.png ✅
+│       ├── lung/               ← ⏳ مؤجل (لم تُوجد slice مناسبة)
+│       ├── pancreas/           ← ⏳ Phase 3
+│       ├── stomach/            ← ⏳ Phase 3
+│       ├── gallbladder/        ← ⏳ Phase 3
+│       └── aorta/              ← ⏳ Phase 3
 └── modules/
     └── srs.js                  ← Task #9 ✅
 ```
@@ -227,21 +263,6 @@ OmniRad/
 ---
 
 # ⑤ Phase Roadmap
-
-## ⏸ Strategic Decision — 2026-06-27
-```
-قرار: إيقاف جميع أعمال تطوير المنصة مؤقتاً
-
-السبب: المنصة بدون صور حقيقية = هيكل غير قابل للاختبار الفعلي
-الشرط: استئناف التطوير بعد اكتمال الصور الحقيقية فقط
-
-الأولوية الحالية:
-1. تحميل صور TCIA (CT-ORG + CHAOS)
-2. معالجة MedSAM2 → PNG أصلي + PNG ملوّن
-3. رفع الصور إلى GitHub
-4. استئناف Task #6 (Colorization Toggle)
-5. اختبار حقيقي → تصحيح → Task #13
-```
 
 ## 📋 Approved Task Schedule
 
@@ -261,8 +282,8 @@ OmniRad/
 | 11 | Build AI Assistant (AR/EN) | Phase 2 | ✅ Done — 2026-06-26 |
 | 12 | Expand content (full Abdomen) + Bug Fixes | Phase 2 | ✅ Done — 2026-06-27 |
 | 12.5 | Build Clinic Module — Case Queue → Imaging Request → Structured Report | Phase 2.5 | ✅ Done — 2026-06-27 |
-| About | About Tab — index.html (Hero + Stats + Vision + Features + Roadmap + Closer) | Phase 2 | ✅ Done — 2026-06-27 |
 | 13 | Extended test with 20-30 students | Phase 2 | ✅ Done — 2026-06-28 |
+| 13.5 | Image Pipeline — TCIA Download + PNG Conversion + GitHub Upload | Phase 2 | ✅ Done — 2026-06-28 |
 | 14 | Build user accounts (Backend) | Phase 3 | ⏳ |
 | 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ⏳ |
 | 16 | Build Daily Challenge + Community | Phase 3 | ⏳ |
@@ -274,28 +295,53 @@ OmniRad/
 
 ## المبدأ الأساسي
 ```
-نفس Pipeline (MedSAM2) على جميع المصادر — لا تكرار عمل أبداً
-DICOM → Python (pydicom) → PNG → MedSAM2 → PNG أصلي + PNG ملوّن
+نفس Pipeline على جميع المصادر — لا تكرار عمل أبداً
+DICOM/NIfTI → Python → PNG أصلي + PNG ملوّن → GitHub → atlas.html Toggle
 ```
 
-## Approved Pipeline
+## Pipeline المُنفَّذ فعلياً — 2026-06-28
 ```
-Source (TCIA/Visible Human)
+CT-ORG (NIfTI .nii.gz)
     ↓
-DICOM → PNG  (pydicom + Pillow)
+nibabel + numpy + Pillow → PNG (convert_to_png.py)
     ↓
-MedSAM2 Segmentation  (Bounding Box prompt per organ)
+280 PNG = 140 original + 140 colored
+
+CHAOS (DICOM)
     ↓
-Colored PNG Overlay  (per organ color system)
+pydicom + Pillow → PNG (convert_chaos_to_png.py)
     ↓
-GitHub → atlas.html Toggle (Original ↔ Colorized)
+~60 PNG = CT + MR T2SPIR
+
+GitHub → images/structures/{organ}/
 ```
+
+## Python Scripts المُنجزة
+```
+convert_to_png.py       ← CT-ORG NIfTI → PNG (في OrganSegmentations/)
+convert_chaos_to_png.py ← CHAOS DICOM → PNG (في Train_Sets/)
+```
+
+## الصور المرفوعة على GitHub — 2026-06-28
+
+| العضو | الملفات | المصدر | الحالة |
+|-------|---------|--------|--------|
+| liver | ct_original.png + ct_colored.png | CT-ORG ct_28 | ✅ |
+| kidney | ct_original.png + ct_colored.png | CT-ORG ct_14 | ✅ |
+| spleen | mri_original.png + mri_colored.png | CHAOS MR T2SPIR_34 | ✅ |
+| bladder | ct_original.png + ct_colored.png | CT-ORG ct_78 | ✅ |
+| bone | ct_original.png + ct_colored.png | CT-ORG ct_24 | ✅ |
+| lung | — | — | ⏳ لم تُوجد slice مناسبة |
+| pancreas | — | — | ⏳ Phase 3 |
+| stomach | — | — | ⏳ Phase 3 |
+| gallbladder | — | — | ⏳ Phase 3 |
+| aorta | — | — | ⏳ Phase 3 |
 
 ## مصادر مرحلة بمرحلة
 
 | المرحلة | المصدر | الأعضاء | التكلفة | المهمة |
 |---------|--------|---------|---------|--------|
-| Phase 2 | TCIA — CT-ORG + CHAOS | بطن كامل (CT+MRI+US) | مجاني CC BY | Task #6 |
+| Phase 2 ✅ | TCIA — CT-ORG + CHAOS | كبد، كلى، طحال، مثانة، عظام | مجاني CC BY | Task #13.5 |
 | Phase 3 | Visible Human Project (NLM) | كامل الجسم (CT+MRI) | مجاني حكومي | Task #15 |
 | Phase 4+ | e-Anatomy API / شراكة مستشفى | كامل + سريري | تفاوض | Task #17 |
 
@@ -336,66 +382,41 @@ ORGAN_COLORS = {
 
 # ⑦ Version History
 
+- **v3.2 — 2026-06-28**
+  - Rule #13 مضافة: File Quote Only — لا إجابة من الذاكرة أبداً
+  - السبب: Claude أجاب من الذاكرة بدلاً من الملف مما سبب تكرار العمل والخلط
+  - الحل الجذري: كل إجابة عن حالة المشروع تستوجب اقتباساً حرفياً من الملف
+  - القواعد الآن: 12 → 13 قاعدة إلزامية
+
+- **v3.1 — 2026-06-28**
+  - Task #13.5 approved: Image Pipeline Complete ✅
+  - تحميل CT-ORG (16.9 GB) عبر IBM Aspera من TCIA
+  - تحميل CHAOS Train Sets (2 GB) من Zenodo
+  - تثبيت Python pipeline: nibabel · numpy · pillow · pydicom
+  - convert_to_png.py: تحويل 280 NIfTI → PNG من CT-ORG
+  - convert_chaos_to_png.py: تحويل DICOM → PNG من CHAOS CT + MR T2SPIR
+  - إنشاء مجلدات images/structures/ على GitHub (10 أعضاء)
+  - حذف مجلد OmniRad/pages المكرر من GitHub
+  - رفع صور 5 أعضاء: liver · kidney · spleen · bladder · bone
+  - الخطوة التالية: Task #6 ربط الصور بـ atlas.html Colorization Toggle
+
 - **v3.0 — 2026-06-28**
   - Task #13 approved: Extended Test with 20–30 Students ✅
-  - Delivered: survey-phase2.html · distribution-guide-phase2.html · results-phase2.html
-  - استبيان Phase 2 يشمل: SRS · Mnemonics · Lexicon · AI Assistant (Clinic مستثناة — ⏳ لم تُبنَ)
-  - أسئلة شرطية: SRS rating / AI detail / tools rating تظهر عند الاستخدام فقط
-  - دليل التوزيع: رسالة واتساب جاهزة (AR+EN) · جدول زمني 14 يوماً · 6 KPIs موثّقة
-  - قالب النتائج: إدخال الأرقام الفعلية · عداد pass/fail تلقائي · قرار المتابعة + توقيع
-  - Google PageSpeed Insights: الأداء 92 · إمكانية الوصول 95 · أفضل الممارسات 100 · SEO 90
-  - Task #14 هي المهمة التالية: Build user accounts (Backend) — Phase 3
-
-- **v2.9 — 2026-06-27**
-  - About Tab approved and live in `index.html`
-  - تاب "حول المنصة" مضاف للـ navbar (desktop + mobile)
-  - Hero: شعار OR حقيقي + رسم CT axial + عنوان شعري ثنائي اللغة + 8 modality chips
-  - Stats band: 4 أرقام بارزة EN/AR
-  - Vision & Mission: عمودان EN|AR مع IBM Plex Sans Arabic
-  - Features matrix: 8 ميزات ثنائية اللغة مع أيقونات SVG
-  - Roadmap: 3 مراحل (Live/Coming/Future) EN+AR
-  - Closer: جملة ختامية بشرية EN+AR
-  - آلية toggle: click يخفي main ويظهر About والعكس
-  - إصلاح: script مدمج واحد بعد خروج JS كنص (bug fix)
-  - ألوان المنصة الحقيقية: `#2dd4c8` teal مطابق للشعار
 
 - **v2.8 — 2026-06-27**
   - Task #6 approved: Colorization Toggle ✅
-  - زر 🎨 Colorize في toolbar — يظهر عند CT/MRI للأعضاء المدعومة فقط
-  - COLORIZABLE_MAP: نظام organ+modality بدلاً من قائمة مسطحة
-  - مسارات CT الحقيقية لجميع الـ 13 عضو (جاهزة للصور المستقبلية)
-  - 5 أعضاء مفعّلة حالياً: liver, spleen, kidney, bladder, bone
-  - spleen MRI مدعوم: mri_original.png + mri_colored.png
-  - Label اسم العضو (EN+AR) يظهر على الصورة الملونة
-  - اصطلاح تسمية الصور: {mod}_original.png / {mod}_colored.png
-  - 3 أعضاء جديدة أُضيفت: kidney, bladder, bone (Pelvic)
-  - أُزيل التكرار: kidneys و adrenal-glands حُذفا
-  - العدد الكلي: 13 structure
 
 - **v2.7 — 2026-06-27**
   - قرار استراتيجي: إيقاف التطوير مؤقتاً حتى اكتمال الصور الحقيقية
-  - السبب: لا يمكن اختبار المنصة أو تقييمها بدون صور طبية حقيقية
-  - الأولوية: TCIA → MedSAM2 → PNG → استئناف التطوير
-  - المحادثة القادمة: دليل معالجة الصور (TCIA + MedSAM2 Pipeline)
 
 - **v2.6 — 2026-06-27**
-  - Task #12.5 approved: Clinic Module (Case Queue → Imaging Request → Structured Report) ✅
-  - Task #6 status updated: Blocked → يتطلب TCIA + MedSAM2 pipeline أولاً
-  - Task #15 updated: Visible Human Project مذكور صراحةً
-  - قسم ⑧ مضاف: Image Sources Plan — خطة مصادر الصور المعتمدة
-  - MedSAM2 Pipeline موثّق: TCIA (Phase 2) → Visible Human (Phase 3) → e-Anatomy/شراكة (Phase 4+)
-  - Organ Color System موثّق لـ OmniRad
+  - Task #12.5 approved: Clinic Module ✅
 
 - **v2.5 — 2026-06-27**
   - Task #12 approved: Expand Content (Full Abdomen) + Bug Fixes ✅
-  - Delivered: atlas.html (12 structures, Canvas CORS fixed, Expand/Split added) · mnemonics.html (22 embedded mnemonics, no fetch) · comparison.html (Canvas rendering, all buttons functional, PET added) · data/structures.json · data/mnemonics.json · data/lexicon.json
-  - Rule #12 added: PATCH ONLY — no full file rewrites, use str_replace for targeted edits
-  - Critical lesson: crossOrigin='anonymous' breaks Wikimedia CC0 image loading — never use
-  - Critical lesson: embed critical data inline in HTML — never rely on fetch for JSON files
 
 - **v2.4 — 2026-06-26**
   - Rules expanded from 8 → 11 mandatory rules
-  - Rule #9: Protected Code · Rule #10: Zero Assumptions · Rule #11: First Shot Must Be Right
 
 - **v2.3 — 2026-06-26**
   - Task #11 approved: Build AI Assistant (AR/EN) ✅
@@ -429,4 +450,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v3.0**
+**End of Document — OmniRad Master Plan v3.2**
