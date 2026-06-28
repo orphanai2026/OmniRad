@@ -212,3 +212,42 @@ window.OmniRadDB = {
   getMyStreak:      sbGetMyStreak,
   updateStreak:     sbUpdateStreak
 };
+
+// ─── Auth Guard ───────────────────────────────────────────────────────────────
+// Usage: call authGuard() at top of every protected page
+async function sbAuthGuard() {
+  const user = sbGetUser();
+  const token = sbGetToken();
+  if (!user || !token) {
+    const base = window.location.pathname.includes('/pages/') ? '../' : '';
+    const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.replace(base + 'pages/auth.html?returnTo=' + returnTo);
+    return false;
+  }
+  return true;
+}
+
+// ─── Sign Out ─────────────────────────────────────────────────────────────────
+async function sbSignOutAndRedirect() {
+  await sbSignOut();
+  const base = window.location.pathname.includes('/pages/') ? '../' : '';
+  window.location.replace(base + 'pages/auth.html');
+}
+
+// ─── Nav Sign Out Button updater ──────────────────────────────────────────────
+function sbUpdateNavAuth() {
+  const user = sbGetUser();
+  const signInLinks = document.querySelectorAll('a[href*="auth.html"]');
+  signInLinks.forEach(link => {
+    if (user) {
+      link.textContent = '🔓 Sign Out';
+      link.removeAttribute('href');
+      link.style.cursor = 'pointer';
+      link.onclick = (e) => { e.preventDefault(); sbSignOutAndRedirect(); };
+    }
+  });
+}
+
+window.OmniRadAuth.guard      = sbAuthGuard;
+window.OmniRadAuth.signOutNav = sbSignOutAndRedirect;
+window.OmniRadAuth.updateNav  = sbUpdateNavAuth;
