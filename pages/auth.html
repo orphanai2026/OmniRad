@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        oklch(0.12 0.01 260);
+    --surface:   oklch(0.17 0.01 260);
+    --border:    oklch(0.25 0.01 260);
+    --text:      oklch(0.92 0.01 260);
+    --text-dim:  oklch(0.60 0.01 260);
+    --accent:    oklch(0.72 0.18 200);
+    --accent-dim:oklch(0.22 0.06 200);
+    --danger:    oklch(0.65 0.20 25);
+    --success:   oklch(0.65 0.18 145);
+    --radius:    10px;
+    --font:      'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
+    --mono:      'IBM Plex Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  /* ── Logo ── */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    justify-content: center;
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-family: var(--mono);
+    font-size: 14px; font-weight: 500;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+  .logo-text { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .logo-sub  { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 32px;
+  }
+  .tab {
+    padding: 9px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    border-radius: 7px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  /* ── Form ── */
+  .form-group { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-bottom: 7px;
+    letter-spacing: 0.3px;
+  }
+  input {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus  { border-color: var(--accent); }
+  input::placeholder { color: var(--text-dim); opacity: 0.5; }
+
+  /* ── Button ── */
+  .btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn:hover   { opacity: 0.85; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── Alert ── */
+  .alert {
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .alert.error   { background: oklch(0.18 0.06 25); border: 1px solid var(--danger); color: var(--danger); }
+  .alert.success { background: oklch(0.18 0.06 145); border: 1px solid var(--success); color: var(--success); }
+  .alert.show    { display: block; }
+
+  /* ── Divider ── */
+  .divider {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 24px 0 0;
+  }
+  .divider a { color: var(--accent); text-decoration: none; }
+  .divider a:hover { text-decoration: underline; }
+
+  /* ── Spinner ── */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid transparent;
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Lang Toggle ── */
+  .lang-toggle {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .lang-toggle:hover { color: var(--text); }
+
+  /* ── RTL support ── */
+  body.ar { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+  body.ar input, body.ar label, body.ar .tab, body.ar .btn { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+</style>
+</head>
+<body>
+
+<button class="lang-toggle" onclick="toggleLang()" id="langBtn">AR</button>
+
+<div>
+  <a class="logo" href="../index.html">
+    <div class="logo-icon">Ω</div>
+    <div>
+      <div class="logo-text">OmniRad</div>
+      <div class="logo-sub">Multimodal Radiology Atlas</div>
+    </div>
+  </a>
+
+  <div class="card">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" id="tabSignIn" onclick="showTab('signin')" data-en="Sign In" data-ar="تسجيل الدخول">Sign In</button>
+      <button class="tab"        id="tabSignUp" onclick="showTab('signup')" data-en="Create Account" data-ar="إنشاء حساب">Create Account</button>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert" id="alert"></div>
+
+    <!-- Sign In Form -->
+    <div id="formSignIn">
+      <div class="form-group">
+        <label data-en="Email" data-ar="البريد الإلكتروني">Email</label>
+        <input type="email" id="siEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label data-en="Password" data-ar="كلمة المرور">Password</label>
+        <input type="password" id="siPassword" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn" id="btnSignIn" onclick="handleSignIn()">
+        <span data-en="Sign In" data-ar="دخول">Sign In</span>
+      </button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div id="formSignUp" style="display:none">
+      <div class="form-group">
+        <label data-en="Full Name" data-ar="الاسم الكامل">Full Name</label>
+        <input type="text" id="suName" placeholder="Mohammed Saeed" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label data-en="Email" data-ar="البريد الإلكتروني">Email</label>
+        <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label data-en="Password" data-ar="كلمة المرور">Password</label>
+        <input type="password" id="suPassword" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <button class="btn" id="btnSignUp" onclick="handleSignUp()">
+        <span data-en="Create Account" data-ar="إنشاء الحساب">Create Account</span>
+      </button>
+    </div>
+
+    <div class="divider">
+      <span data-en="Back to" data-ar="العودة إلى">Back to</span>
+      <a href="../index.html" data-en="OmniRad Home" data-ar="الصفحة الرئيسية">OmniRad Home</a>
+    </div>
+  </div>
+</div>
+
+<script src="../modules/supabase.js"></script>
+<script>
+  // ── Language ──────────────────────────────────────────────────────────────
+  let currentLang = localStorage.getItem('omnirad_lang') || 'en';
+
+  function applyLang() {
+    document.body.classList.toggle('ar', currentLang === 'ar');
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'EN' : 'AR';
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.textContent = currentLang === 'ar' ? el.dataset.ar : el.dataset.en;
+    });
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === 'en' ? 'ar' : 'en';
+    localStorage.setItem('omnirad_lang', currentLang);
+    applyLang();
+  }
+
+  // ── Tabs ──────────────────────────────────────────────────────────────────
+  function showTab(tab) {
+    const isSignIn = tab === 'signin';
+    document.getElementById('formSignIn').style.display = isSignIn ? 'block' : 'none';
+    document.getElementById('formSignUp').style.display = isSignIn ? 'none'  : 'block';
+    document.getElementById('tabSignIn').classList.toggle('active', isSignIn);
+    document.getElementById('tabSignUp').classList.toggle('active', !isSignIn);
+    hideAlert();
+  }
+
+  // ── Alert ─────────────────────────────────────────────────────────────────
+  function showAlert(msg, type = 'error') {
+    const el = document.getElementById('alert');
+    el.textContent = msg;
+    el.className = `alert ${type} show`;
+  }
+  function hideAlert() {
+    document.getElementById('alert').className = 'alert';
+  }
+
+  // ── Loading state ─────────────────────────────────────────────────────────
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    if (loading) {
+      btn.innerHTML = '<div class="spinner"></div>';
+    } else {
+      btn.innerHTML = btn.id === 'btnSignIn'
+        ? `<span data-en="Sign In" data-ar="دخول">${currentLang === 'ar' ? 'دخول' : 'Sign In'}</span>`
+        : `<span data-en="Create Account" data-ar="إنشاء الحساب">${currentLang === 'ar' ? 'إنشاء الحساب' : 'Create Account'}</span>`;
+    }
+  }
+
+  // ── Redirect if already logged in ─────────────────────────────────────────
+  async function checkSession() {
+    const user = await OmniRadAuth.getSession();
+    if (user) window.location.href = 'my-progress.html';
+  }
+
+  // ── Sign In ───────────────────────────────────────────────────────────────
+  async function handleSignIn() {
+    hideAlert();
+    const email    = document.getElementById('siEmail').value.trim();
+    const password = document.getElementById('siPassword').value;
+
+    if (!email || !password) {
+      showAlert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+      return;
+    }
+
+    setLoading('btnSignIn', true);
+    try {
+      await OmniRadAuth.signIn(email, password);
+      showAlert(currentLang === 'ar' ? 'تم الدخول بنجاح! جاري التوجيه...' : 'Signed in! Redirecting...', 'success');
+      setTimeout(() => window.location.href = 'my-progress.html', 800);
+    } catch (err) {
+      showAlert(currentLang === 'ar' ? 'خطأ في البريد أو كلمة المرور' : err.message);
+      setLoading('btnSignIn', false);
+    }
+  }
+
+  // ── Sign Up ───────────────────────────────────────────────────────────────
+  async function handleSignUp() {
+    hideAlert();
+    const name     = document.getElementById('suName').value.trim();
+    const email    = document.getElementById('suEmail').value.trim();
+    const password = document.getElementById('suPassword').value;
+
+    if (!name || !email || !password) {
+      showAlert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+      return;
+    }
+    if (password.length < 6) {
+      showAlert(currentLang === 'ar' ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters');
+      return;
+    }
+
+    setLoading('btnSignUp', true);
+    try {
+      await OmniRadAuth.signUp(email, password, name);
+      showAlert(
+        currentLang === 'ar'
+          ? '✅ تم إنشاء الحساب! تحقق من بريدك لتأكيد الحساب.'
+          : '✅ Account created! Check your email to confirm.',
+        'success'
+      );
+      setLoading('btnSignUp', false);
+    } catch (err) {
+      showAlert(err.message);
+      setLoading('btnSignUp', false);
+    }
+  }
+
+  // ── Keyboard Enter ────────────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const active = document.getElementById('formSignIn').style.display !== 'none';
+    if (active) handleSignIn(); else handleSignUp();
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  applyLang();
+  checkSession();
+</script>
+</body>
+</html>

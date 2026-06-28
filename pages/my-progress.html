@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — My Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        oklch(0.12 0.01 260);
+    --surface:   oklch(0.17 0.01 260);
+    --surface2:  oklch(0.20 0.01 260);
+    --border:    oklch(0.25 0.01 260);
+    --text:      oklch(0.92 0.01 260);
+    --text-dim:  oklch(0.60 0.01 260);
+    --accent:    oklch(0.72 0.18 200);
+    --accent-dim:oklch(0.22 0.06 200);
+    --success:   oklch(0.65 0.18 145);
+    --warn:      oklch(0.72 0.18 80);
+    --danger:    oklch(0.65 0.20 25);
+    --radius:    10px;
+    --font:      'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
+    --mono:      'IBM Plex Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--text);
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 7px;
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--bg);
+  }
+  .logo-text { font-size: 17px; font-weight: 600; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 12px 6px 8px;
+    font-size: 13px;
+  }
+  .user-avatar {
+    width: 24px; height: 24px;
+    background: var(--accent-dim);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 600;
+    color: var(--accent);
+  }
+
+  .btn-sm {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Main ── */
+  main { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+  h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 36px; }
+
+  /* ── Stats Grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stat-label {
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 32px;
+    font-weight: 600;
+    font-family: var(--mono);
+    color: var(--accent);
+  }
+  .stat-sub { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--mono);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Due Table ── */
+  .due-table { width: 100%; border-collapse: collapse; }
+  .due-table th {
+    text-align: left;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .due-table td {
+    padding: 12px;
+    font-size: 13px;
+    border-bottom: 1px solid oklch(0.20 0.01 260);
+  }
+  .due-table tr:last-child td { border-bottom: none; }
+  .due-table tr:hover td { background: var(--surface2); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+  .badge-due     { background: oklch(0.20 0.06 25);  color: var(--danger); }
+  .badge-today   { background: oklch(0.20 0.06 80);  color: var(--warn); }
+  .badge-ok      { background: oklch(0.18 0.05 145); color: var(--success); }
+  .badge-mod     { background: var(--accent-dim); color: var(--accent); }
+
+  /* ── Preferences ── */
+  .pref-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .pref-row:last-child { border-bottom: none; }
+  .pref-label { font-size: 14px; }
+  .pref-desc  { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+  .toggle-group {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .toggle-btn {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-btn.active {
+    background: var(--surface);
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  /* ── Empty State ── */
+  .empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-dim);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; }
+  .empty a { color: var(--accent); text-decoration: none; }
+
+  /* ── Loading ── */
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: grid; place-items: center;
+    z-index: 100;
+  }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RTL ── */
+  body.ar { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+  body.ar .due-table th { text-align: right; }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="../index.html">
+    <div class="logo-icon">Ω</div>
+    <div class="logo-text">OmniRad</div>
+  </a>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="toggleLang()" id="langBtn">AR</button>
+    <div class="user-chip">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <span id="userName">...</span>
+    </div>
+    <button class="btn-sm" onclick="handleSignOut()" data-en="Sign Out" data-ar="خروج">Sign Out</button>
+  </div>
+</nav>
+
+<!-- Main -->
+<main>
+  <h1 data-en="My Progress" data-ar="تقدمي">My Progress</h1>
+  <p class="subtitle" data-en="Track your SRS reviews and learning preferences." data-ar="تتبع مراجعات SRS وإعدادات التعلم الخاصة بك.">Track your SRS reviews and learning preferences.</p>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label" data-en="Due Today" data-ar="مستحق اليوم">Due Today</div>
+      <div class="stat-value" id="statDue">—</div>
+      <div class="stat-sub" data-en="cards to review" data-ar="بطاقات للمراجعة">cards to review</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Total Cards" data-ar="إجمالي البطاقات">Total Cards</div>
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-sub" data-en="structures learned" data-ar="تراكيب مدروسة">structures learned</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Mastered" data-ar="متقن">Mastered</div>
+      <div class="stat-value" id="statMastered">—</div>
+      <div class="stat-sub" data-en="interval ≥ 21 days" data-ar="فترة ≥ 21 يوم">interval ≥ 21 days</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Streak" data-ar="الأيام المتتالية">Streak</div>
+      <div class="stat-value" id="statStreak">—</div>
+      <div class="stat-sub" data-en="days" data-ar="أيام">days</div>
+    </div>
+  </div>
+
+  <!-- Due Cards -->
+  <div class="section">
+    <div class="section-title" data-en="Review Queue" data-ar="قائمة المراجعة">Review Queue</div>
+    <div id="reviewQueue"></div>
+  </div>
+
+  <!-- Preferences -->
+  <div class="section">
+    <div class="section-title" data-en="Preferences" data-ar="التفضيلات">Preferences</div>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:4px 20px;">
+      <div class="pref-row">
+        <div>
+          <div class="pref-label" data-en="Language" data-ar="اللغة">Language</div>
+          <div class="pref-desc" data-en="Interface and content language" data-ar="لغة الواجهة والمحتوى">Interface and content language</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn" id="prefEN" onclick="setPrefLang('en')">EN</button>
+          <button class="toggle-btn" id="prefAR" onclick="setPrefLang('ar')">AR</button>
+        </div>
+      </div>
+      <div class="pref-row">
+        <div>
+          <div class="pref-label" data-en="Quick Links" data-ar="روابط سريعة">Quick Links</div>
+          <div class="pref-desc" data-en="Jump back into studying" data-ar="العودة إلى الدراسة">Jump back into studying</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <a href="atlas.html" class="btn-sm" style="text-decoration:none; color:var(--accent); border-color:var(--accent-dim);" data-en="Atlas" data-ar="الأطلس">Atlas</a>
+          <a href="srs.html"   class="btn-sm" style="text-decoration:none; color:var(--accent); border-color:var(--accent-dim);" data-en="SRS Review" data-ar="مراجعة SRS">SRS Review</a>
+          <a href="clinic.html" class="btn-sm" style="text-decoration:none; color:var(--accent); border-color:var(--accent-dim);" data-en="Clinic" data-ar="العيادة">Clinic</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="../modules/supabase.js"></script>
+<script>
+  let currentLang = localStorage.getItem('omnirad_lang') || 'en';
+  let currentPrefs = { language: currentLang, theme: 'dark' };
+
+  // ── Language ──────────────────────────────────────────────────────────────
+  function applyLang() {
+    document.body.classList.toggle('ar', currentLang === 'ar');
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'EN' : 'AR';
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.textContent = currentLang === 'ar' ? el.dataset.ar : el.dataset.en;
+    });
+    document.getElementById('prefEN').classList.toggle('active', currentLang === 'en');
+    document.getElementById('prefAR').classList.toggle('active', currentLang === 'ar');
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === 'en' ? 'ar' : 'en';
+    localStorage.setItem('omnirad_lang', currentLang);
+    applyLang();
+    setPrefLang(currentLang);
+  }
+
+  async function setPrefLang(lang) {
+    currentLang = lang;
+    currentPrefs.language = lang;
+    localStorage.setItem('omnirad_lang', lang);
+    applyLang();
+    try { await OmniRadDB.savePreferences(currentPrefs); } catch (_) {}
+  }
+
+  // ── Sign Out ──────────────────────────────────────────────────────────────
+  async function handleSignOut() {
+    await OmniRadAuth.signOut();
+    window.location.href = 'auth.html';
+  }
+
+  // ── Build Review Queue Table ──────────────────────────────────────────────
+  function buildReviewTable(cards) {
+    const container = document.getElementById('reviewQueue');
+    if (!cards || cards.length === 0) {
+      container.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🎉</div>
+          <div class="empty-text">
+            ${currentLang === 'ar' ? 'لا توجد بطاقات مستحقة اليوم! ' : 'No cards due today! '}
+            <a href="atlas.html">${currentLang === 'ar' ? 'اذهب للأطلس لإضافة بطاقات' : 'Go to Atlas to add cards'}</a>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const now = new Date();
+    const rows = cards.map(c => {
+      const next   = new Date(c.next_review);
+      const isOver = next <= now;
+      const isToday = next.toDateString() === now.toDateString();
+      const badge  = isOver
+        ? `<span class="badge badge-due">${currentLang === 'ar' ? 'متأخر' : 'OVERDUE'}</span>`
+        : isToday
+          ? `<span class="badge badge-today">${currentLang === 'ar' ? 'اليوم' : 'TODAY'}</span>`
+          : `<span class="badge badge-ok">${next.toLocaleDateString()}</span>`;
+      const modBadge = `<span class="badge badge-mod">${c.modality.toUpperCase()}</span>`;
+      return `<tr>
+        <td>${c.structure_id}</td>
+        <td>${modBadge}</td>
+        <td>${c.interval}d</td>
+        <td>${badge}</td>
+      </tr>`;
+    }).join('');
+
+    container.innerHTML = `
+      <table class="due-table">
+        <thead>
+          <tr>
+            <th data-en="Structure" data-ar="التركيب">${currentLang === 'ar' ? 'التركيب' : 'Structure'}</th>
+            <th data-en="Modality" data-ar="الوسيلة">${currentLang === 'ar' ? 'الوسيلة' : 'Modality'}</th>
+            <th data-en="Interval" data-ar="الفترة">${currentLang === 'ar' ? 'الفترة' : 'Interval'}</th>
+            <th data-en="Status" data-ar="الحالة">${currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  // ── Load Data ─────────────────────────────────────────────────────────────
+  async function loadData() {
+    const overlay = document.getElementById('loadingOverlay');
+
+    // Check auth
+    const user = await OmniRadAuth.getSession();
+    if (!user) { window.location.href = 'auth.html'; return; }
+
+    // Show user info
+    const name = user.user_metadata?.full_name || user.email || 'User';
+    document.getElementById('userName').textContent = name.split(' ')[0];
+    document.getElementById('userAvatar').textContent = name[0].toUpperCase();
+
+    // Load preferences
+    try {
+      const prefs = await OmniRadDB.getPreferences();
+      currentPrefs = prefs;
+      if (prefs.language) {
+        currentLang = prefs.language;
+        localStorage.setItem('omnirad_lang', currentLang);
+      }
+    } catch (_) {}
+
+    // Load SRS
+    try {
+      const cards = await OmniRadDB.getSRSProgress();
+      const now = new Date();
+      const due = cards.filter(c => new Date(c.next_review) <= now);
+      const mastered = cards.filter(c => c.interval >= 21);
+
+      document.getElementById('statDue').textContent     = due.length;
+      document.getElementById('statTotal').textContent   = cards.length;
+      document.getElementById('statMastered').textContent = mastered.length;
+      document.getElementById('statStreak').textContent  = '—'; // future feature
+
+      buildReviewTable(cards.slice(0, 20));
+    } catch (_) {
+      document.getElementById('reviewQueue').innerHTML =
+        `<div class="empty"><div class="empty-text">${currentLang === 'ar' ? 'تعذر تحميل البيانات' : 'Could not load SRS data'}</div></div>`;
+    }
+
+    applyLang();
+    overlay.style.display = 'none';
+  }
+
+  loadData();
+</script>
+</body>
+</html>
