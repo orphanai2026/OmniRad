@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v3.5 |
+| Version | v3.6 |
 | Date | 2026-06-28 |
-| Status | 🚀 Phase 3 In Progress — Task #16 Complete |
+| Status | 🚀 Phase 3 In Progress — Task #17 Complete |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -241,7 +241,8 @@ OmniRad/
 │   ├── survey.html             ← Task #8 ✅
 │   ├── distribution-guide.html ← Task #8 ✅
 │   ├── auth.html               ← Task #14 ✅ (Sign In / Sign Up)
-│   └── my-progress.html        ← Task #14 ✅ (Dashboard + SRS Stats)
+│   ├── my-progress.html        ← Task #14 ✅ (Dashboard + SRS Stats)
+│   └── daily.html              ← Task #17 ✅ (Daily Challenge + Streak + Leaderboard)
 ├── data/
 │   ├── structures.json         ← Task #12 ✅ (12 structures, CC0 images)
 │   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
@@ -293,7 +294,7 @@ OmniRad/
 | 14 | Build user accounts (Backend) | Phase 3 | ✅ Done — 2026-06-28 |
 | 15 | Expand to additional body regions — Visible Human Project | Phase 3 | ✅ Done — 2026-06-28 |
 | 16 | UI/UX Unification — Nav, Versions, Modality Pills | Phase 3 | ✅ Done — 2026-06-28 |
-| 17 | Build Daily Challenge + Community | Phase 3 | ⏳ |
+| 17 | Build Daily Challenge + Community | Phase 3 | ✅ Done — 2026-06-28 |
 | 18 | Official launch + marketing | Phase 3 | ⏳ |
 
 ---
@@ -388,6 +389,15 @@ ORGAN_COLORS = {
 ---
 
 # ⑦ Version History
+
+- **v3.6 — 2026-06-28**
+  - Task #17 approved: Build Daily Challenge + Community ✅
+  - **Supabase schema:** جدولان جديدان `daily_scores` + `streaks` + `leaderboard` view
+  - **modules/supabase.js patch:** +5 دوال: `submitDailyScore` · `getMyDailyScore` · `getLeaderboard` · `getMyStreak` · `updateStreak`
+  - **pages/daily.html:** ملف جديد — 30 سؤال تشريحي inline (CT/MRI/X-Ray/US/NM/PET/Angio/Mammo) · سؤال يومي deterministic بالتاريخ · Timer · Feedback EN+AR · Streak Bar · Leaderboard (ذهبي/فضي/برونزي) · Guest Mode
+  - **index.html patch:** إضافة `🧠 Daily Challenge` في desktop nav + mobile nav
+  - **Issue #27 resolved:** srs.html مربوط بـ Supabase عبر `OmniRadDB.upsertSRSCard`
+  - str_replace patches فقط (Rule #12 مُحترم)
 
 - **v3.5 — 2026-06-28**
   - Task #16 approved: UI/UX Unification ✅

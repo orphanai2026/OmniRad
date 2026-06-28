@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-28 — ✅ Task #16 Complete · v3.5*
+*Last updated: 2026-06-28 — ✅ Task #17 Complete · v3.6*
 
 ---
 
@@ -58,7 +58,7 @@
 | 24 | Lung images — لم تُوجد slice مناسبة في CT-ORG middle slices. الرئة تظهر في slices طرفية فقط. مؤجل لـ Phase 3 مع Visible Human Project. | Task #13.5 | Phase 3 | 🟢 | 🔴 Deferred | — |
 | 25 | Pancreas / Stomach / Gallbladder / Aorta — غير موجودة في CT-ORG أو CHAOS. تحتاج BTCV أو Visible Human. مؤجل لـ Phase 3. | Task #13.5 | Phase 3 | 🟢 | 🔴 Deferred | — |
 | 26 | GitHub duplicate folder OmniRad/pages — حُذف بالـ API. كان يحتوي survey.html فارغة. | Task #13.5 | — | 🟡 | ✅ Resolved | 2026-06-28 |
-| 27 | SRS sync to Supabase — srs.html لا يزال يحفظ في localStorage فقط. يحتاج ربط بـ OmniRadDB.upsertSRSCard عند كل مراجعة. | Task #14 | Task #15 | 🟡 | 🔴 Open | — |
+| 27 | SRS sync to Supabase — srs.html لا يزال يحفظ في localStorage فقط. يحتاج ربط بـ OmniRadDB.upsertSRSCard عند كل مراجعة. | Task #14 | Task #17 | 🟡 | ✅ Resolved | 2026-06-28 |
 | 28 | CT للدماغ والصدر — VHP Sample Data لا يحتوي CT حقيقية. تحتاج Male Data الكامل (~15 GB). مؤجل لـ Task #16 أو Phase 4. | Task #15 | Phase 4 | 🟢 | 🔴 Deferred | — |
 | 29 | Navigation غير موحد عبر الصفحات — كل صفحة لها nav مختلف، روابط ناقصة، srs.html و auth.html بلا nav إطلاقاً | Task #16 audit | Task #16 | 🔴 | ✅ Resolved | 2026-06-28 |
 | 30 | index.html footer v0.1 + About v2.8 + Phase 1 — كلها قديمة جداً | Task #16 audit | Task #16 | 🟡 | ✅ Resolved | 2026-06-28 |
@@ -91,6 +91,7 @@
 | 14 | Build User Accounts (Backend) | 2026-06-28 | Mohammed Saeed Alzahrani | Supabase · auth.html · my-progress.html · supabase.js |
 | 15 | Expand to Additional Body Regions | 2026-06-28 | Mohammed Saeed Alzahrani | VHP Sample Data · Brain · Neck · Lung · Heart · 17 structures |
 | 16 | UI/UX Unification — Nav, Versions, Modality Pills | 2026-06-28 | Mohammed Saeed Alzahrani | 11 commits · 10 صفحات · str_replace patches فقط |
+| 17 | Build Daily Challenge + Community | 2026-06-28 | Mohammed Saeed Alzahrani | daily.html · Supabase schema · supabase.js patch · Issue #27 resolved |
 
 ---
 
