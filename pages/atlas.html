@@ -29,6 +29,8 @@
   --cat-urinary:oklch(0.72 0.14 240);
   --cat-vascular:oklch(0.70 0.14 355);
   --cat-gi:oklch(0.75 0.14 130);
+  --cat-thoracic:oklch(0.72 0.14 60);
+  --cat-neuro:oklch(0.72 0.14 320);
   --radius:8px; --radius-lg:12px;
   --font:'IBM Plex Sans',system-ui,sans-serif;
   --mono:'IBM Plex Mono',monospace;
@@ -72,6 +74,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
 .cat-urinary .cat-dot{background:var(--cat-urinary);}
 .cat-vascular .cat-dot{background:var(--cat-vascular);}
 .cat-gi-tract .cat-dot{background:var(--cat-gi);}
+.cat-thoracic .cat-dot{background:var(--cat-thoracic);}
+.cat-neurological .cat-dot{background:var(--cat-neuro);}
 .cat-chevron{margin-left:auto;font-size:9px;transition:transform .2s;}
 .cat-group.collapsed .cat-chevron{transform:rotate(-90deg);}
 .cat-group.collapsed .cat-items{display:none;}
@@ -321,7 +325,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg-base);color:va
         <h2>Smart Atlas — Full Abdomen</h2>
         <p>Select an anatomical structure from the sidebar to explore imaging across CT, MRI, Ultrasound, X-Ray, and more — with professional image tools, mnemonics, SRS review, and bilingual TTS.</p>
         <div class="welcome-stats">
-          <div class="w-stat"><div class="w-stat-num">13</div><div class="w-stat-label">Structures</div></div>
+          <div class="w-stat"><div class="w-stat-num">17</div><div class="w-stat-label">Structures</div></div>
           <div class="w-stat"><div class="w-stat-num">5+</div><div class="w-stat-label">Modalities</div></div>
           <div class="w-stat"><div class="w-stat-num">22</div><div class="w-stat-label">Mnemonics</div></div>
         </div>
@@ -561,7 +565,9 @@ const CATS=[
   {id:'upper-abdomen',en:'Upper Abdomen',ar:'البطن العلوي'},
   {id:'urinary',en:'Urinary System',ar:'الجهاز البولي'},
   {id:'vascular',en:'Vascular',ar:'الأوعية الدموية'},
-  {id:'gi-tract',en:'GI Tract',ar:'الجهاز الهضمي'}
+  {id:'gi-tract',en:'GI Tract',ar:'الجهاز الهضمي'},
+  {id:'thoracic',en:'Thorax',ar:'الصدر'},
+  {id:'neurological',en:'Head & Neck',ar:'الرأس والرقبة'}
 ];
 
 const IMG='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
@@ -695,7 +701,47 @@ const STRUCTS=[
    mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/bone/ct_original.png`},'X-Ray':{planes:['AP Pelvis','Inlet','Outlet'],img:IMG},MRI:{planes:['Coronal','Axial'],img:IMG}},
    mnemonics:[{title:'Hip Bone Fusion — IIP',en:'"I Is Puberty" — Ilium, Ischium, Pubis fuse at acetabulum at puberty (~16 years).',ar:'"الثلاثة تلتحم عند البلوغ (١٦ سنة)" — الحرقفة والإسك والعانة.',ref:"Gray's 41st ed."},{title:'Pelvic Floor — LEEL',en:'"LEEL" — Levator ani (puborectalis, pubococcygeus, iliococcygeus), External sphincters.',ar:'"رافع الشرج: عانة-مستقيمية، عانة-عصعصية، حرقفية-عصعصية + العضلات المصرّة الخارجية."',ref:"Netter's 7th ed."}],
    related:['bladder','aorta'],
-   ttsEn:'Pelvic bone. Latin: Os coxae. Ilium, ischium, pubis. Fused at acetabulum.',ttsAr:'عظم الحوض. باللاتينية: أوس كوكساي. حرقفة وإسك وعانة تلتحم عند الحُقّ.'}
+   ttsEn:'Pelvic bone. Latin: Os coxae. Ilium, ischium, pubis. Fused at acetabulum.',ttsAr:'عظم الحوض. باللاتينية: أوس كوكساي. حرقفة وإسك وعانة تلتحم عند الحُقّ.'},
+
+  {id:'brain',cat:'neurological',en:'Brain',ar:'الدماغ',latin:'Encephalon',
+   descEn:'The central organ of the nervous system, enclosed within the skull. Divided into cerebrum, cerebellum, and brainstem. Controls all voluntary and involuntary body functions.',
+   descAr:'العضو المركزي للجهاز العصبي داخل الجمجمة. يتقسم إلى المخ والمخيخ وجذع الدماغ. يتحكم في جميع وظائف الجسم الإرادية واللاإرادية.',
+   facts:['Weight: ~1.4 kg','Cerebrum: 2 hemispheres, 4 lobes (frontal, parietal, temporal, occipital)','Cerebellum: coordination and balance','Brainstem: midbrain, pons, medulla','Blood-brain barrier: tight junctions of endothelium'],
+   imaging:{MRI:'T1: gray matter isointense, white matter bright (myelin). T2: CSF bright, gray matter bright vs white. FLAIR: suppresses CSF, shows periventricular lesions. Gold standard for brain pathology.',CT:'Gray matter 35–45 HU, white matter 25–35 HU. Hemorrhage: hyperdense (60–90 HU). Calcifications: very bright. Fast for trauma.',US:'Neonatal only — open fontanelle. Coronal + sagittal planes. Limited in adults.',XR:'Skull XR: calcifications, fractures. Not for brain parenchyma.'},
+   mods:{MRI:{planes:['Axial','Coronal','Sagittal'],img:'../images/structures/brain/mri_original.png'},'MRI-T2':{planes:['Axial'],img:'../images/structures/brain/mri_t2_original.png'},'MRI-PD':{planes:['Axial'],img:'../images/structures/brain/mri_pd_original.png'}},
+   mnemonics:[{title:'Lobes — FTPO',en:'"Frontal Teachers Prefer Oranges" — Frontal, Temporal, Parietal, Occipital.',ar:'"المعلمون الأماميون يفضلون البرتقال" — جبهي، صدغي، جداري، قذالي.',ref:"Gray's 41st ed."},{title:'Circle of Willis',en:'"2 ACAs meet, 2 MCAs off ICA, 2 PCAs off basilar, connected by ACoA + 2 PCoAs."',ar:'"دائرة ويليس: ACA×2، MCA×2، PCA×2 متصلة بـ ACoA وPCoA×2."',ref:"Netter's 7th ed."}],
+   related:['neck'],
+   ttsEn:'Brain. Latin: Encephalon. Cerebrum, cerebellum, brainstem. 1.4 kilograms.',ttsAr:'الدماغ. باللاتينية: إنسيفالون. المخ والمخيخ وجذع الدماغ.'},
+
+  {id:'neck',cat:'neurological',en:'Neck',ar:'الرقبة',latin:'Collum / Cervix',
+   descEn:'The cervical region connecting the head to the thorax. Contains vital neurovascular structures including the carotid arteries, jugular veins, and cervical spinal cord, as well as the thyroid gland, larynx, and pharynx.',
+   descAr:'المنطقة العنقية التي تربط الرأس بالصدر. تحتوي على الشرايين السباتية والأوردة الوداجية والحبل الشوكي العنقي والغدة الدرقية والحنجرة.',
+   facts:['7 cervical vertebrae (C1–C7)','Carotid triangle: common carotid, IJV, vagus nerve','Thyroid: C5–T1 level, isthmus at 2nd–4th tracheal rings','Cervical spinal cord: C1–C7','Anterior triangle vs posterior triangle'],
+   imaging:{MRI:'T1: fat bright, muscles isointense. T2: fluid bright, cord pathology. MRA for carotids. Best soft tissue detail.',CT:'CTA for carotid stenosis. Lymph node size/calcification. Fast for trauma.',US:'Thyroid imaging first-line. Carotid Doppler. Lymph node assessment. Real-time guided biopsy.',XR:'Cervical spine alignment. Prevertebral soft tissue (>7 mm at C2 = abnormal). Airway assessment.'},
+   mods:{MRI:{planes:['Coronal','Sagittal'],img:'../images/structures/neck/mri_original.png'},'MRI-T2':{planes:['Coronal'],img:'../images/structures/neck/mri_t2_original.png'}},
+   mnemonics:[{title:'Cervical Vertebrae',en:'"C3-4-5 keeps the diaphragm alive" — phrenic nerve origin C3,4,5.',ar:'"C3-4-5 تُبقي الحجاب الحاجز حياً" — أصل العصب الحجابي.',ref:"Moore's 8th ed."},{title:'Anterior Triangle Contents',en:'"My Carotid Is Very Nice" — Muscles, Carotid artery, IJV, Vagus nerve, Nerves.',ar:'"الشريان السباتي، الوداجي الداخلي، العصب المبهم."',ref:"Gray's 41st ed."}],
+   related:['brain'],
+   ttsEn:'Neck. Latin: Collum. Seven cervical vertebrae. Carotid arteries and jugular veins.',ttsAr:'الرقبة. باللاتينية: كولوم. سبع فقرات عنقية. الشرايين السباتية والأوردة الوداجية.'},
+
+  {id:'lung',cat:'thoracic',en:'Lung',ar:'الرئة',latin:'Pulmo',
+   descEn:'Paired respiratory organs in the thoracic cavity. Right lung has 3 lobes; left has 2 (with cardiac notch). Essential for gas exchange (O₂/CO₂) via ~300 million alveoli.',
+   descAr:'عضوان تنفسيان متزاوجان في التجويف الصدري. الرئة اليمنى ٣ فصوص واليسرى ٢ (مع النتوء القلبي). تبادل الغازات عبر ~٣٠٠ مليون حويصلة هوائية.',
+   facts:['Right: Upper, Middle, Lower lobes','Left: Upper + Lower (lingula = middle lobe equivalent)','Hilum: bronchi, pulmonary artery/vein, lymph nodes','Fissures: right has oblique + horizontal; left has oblique only','Normal lung: air density on CT (-700 to -900 HU)'],
+   imaging:{MRI:'T2 HASTE: fluid and masses bright. Limited by respiratory motion. MRI for chest wall invasion, cardiac involvement.',CT:'HRCT: 1mm slices, lung windows (-1500/+500). Ground glass, consolidation, nodules, interstitium. Gold standard for lung parenchyma.',US:'Pleural effusion (anechoic), pneumothorax (absent sliding), consolidation (hepatization).',XR:'PA erect: standard. Costophrenic angles, cardiothoracic ratio <50%, hila, lung fields.'},
+   mods:{MRI:{planes:['Coronal'],img:'../images/structures/thorax/mri_original.png'},'MRI-T2':{planes:['Coronal'],img:'../images/structures/thorax/mri_t2_original.png'}},
+   mnemonics:[{title:'Right Bronchus',en:'"Right is More Vertical, Shorter, Wider — foreign bodies go RIGHT."',ar:'"الأيمن أكثر عمودية وأقصر وأوسع — الأجسام الغريبة تذهب يميناً."',ref:"Moore's 8th ed."},{title:'Lobes Mnemonic',en:'"3 Right, 2 Left — Right has More lobes, Left has More heart."',ar:'"٣ يمين، ٢ يسار — اليمين أكثر فصوصاً، اليسار أكثر قلباً."',ref:"Netter's 7th ed."}],
+   related:['heart'],
+   ttsEn:'Lung. Latin: Pulmo. Right 3 lobes, left 2 lobes. 300 million alveoli.',ttsAr:'الرئة. باللاتينية: بولمو. اليمنى ثلاثة فصوص واليسرى فصّان.'},
+
+  {id:'heart',cat:'thoracic',en:'Heart',ar:'القلب',latin:'Cor',
+   descEn:'The muscular pump of the cardiovascular system, located in the mediastinum within the pericardial sac. Four chambers: right/left atria and ventricles. Pumps ~5 L/min at rest.',
+   descAr:'المضخة العضلية للجهاز القلبي الوعائي في المنصف داخل الكيس التأموري. أربع حجرات: أذينان وبطينان. يضخ ~٥ لتر/دقيقة.',
+   facts:['Size: roughly fist-sized, 250–350 g','Right heart: pulmonary circulation (low pressure)','Left heart: systemic circulation (high pressure)','Pericardium: fibrous outer + serous inner (visceral + parietal)','Coronary arteries: RCA (right) + LCA → LAD + LCx (left)'],
+   imaging:{MRI:'Cardiac MRI: cine SSFP for function. T2 for edema (myocarditis). LGE for fibrosis/infarct. Gold standard for cardiomyopathy.',CT:'Coronary CTA: calcium scoring + stenosis. Gated acquisition. Pericardial effusion, masses.',US:'Echocardiography: real-time function, valves, effusion. Most used cardiac modality.',XR:'Cardiothoracic ratio <50%. Boot-shaped heart (RVH). Pulmonary vascular redistribution.'},
+   mods:{MRI:{planes:['Coronal'],img:'../images/structures/thorax/mri_original.png'}},
+   mnemonics:[{title:'Heart Borders',en:'"Right border = RA + SVC. Left border = Aortic knuckle, PA, LAA, LV."',ar:'"الحد الأيمن: RA + SVC. الأيسر: أبهر + PA + LAA + LV."',ref:"Gray's 41st ed."},{title:'Coronary Arteries',en:'"LAD = anterior + septum. LCx = lateral. RCA = inferior + posterior."',ar:'"LAD: أمامي وحاجزي. LCx: جانبي. RCA: سفلي وخلفي."',ref:"Netter's 7th ed."}],
+   related:['lung'],
+   ttsEn:'Heart. Latin: Cor. Four chambers. Pumps 5 liters per minute at rest.',ttsAr:'القلب. باللاتينية: كور. أربع حجرات. يضخ ٥ لترات في الدقيقة.'}
 ];
 
 // ═══════════════════════════════════════════
