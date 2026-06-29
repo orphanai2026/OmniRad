@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-28 — ✅ Issue #34 + #35 Resolved (verified functional, no code change needed) · v3.8*
+*Last updated: 2026-06-29 — ✅ Task #23 Atlas Page Redesign · v4.1*
 
 ---
 
@@ -93,7 +93,9 @@
 | 16 | UI/UX Unification — Nav, Versions, Modality Pills | 2026-06-28 | Mohammed Saeed Alzahrani | 11 commits · 10 صفحات · str_replace patches فقط |
 | 17 | Build Daily Challenge + Community | 2026-06-28 | Mohammed Saeed Alzahrani | daily.html · Supabase schema · supabase.js patch · Issue #27 resolved |
 | 18b | Auth Gate — إلزامية تسجيل الدخول | 2026-06-28 | Mohammed Saeed Alzahrani | supabase.js +3 دوال · auth.html redirect · 9 صفحات محمية · Guest Mode مقيّد |
-| 19 | My Progress + SRS Sync + Account Settings | 2026-06-28 | Mohammed Saeed Alzahrani | Avatar Picker 16 أيقونة · تغيير الاسم/كلمة المرور · استعادة كلمة المرور · SRS→Supabase sync · إصلاح nav link في srs.html |
+| 23 | Atlas Page Redesign — Welcome Screen | 2026-06-29 | Mohammed Saeed Alzahrani | Hero + real images base64 + cards + modality + tools |
+| 21 | Home Page Redesign — real medical images | 2026-06-29 | Mohammed Saeed Alzahrani | 8 صور طبية حقيقية · split hero · modality cards |
+| 22 | Auth Page Redesign — split-screen professional | 2026-06-29 | Mohammed Saeed Alzahrani | skeleton bg 40% · OR logo · field icons · كل الأكواد محفوظة |
 
 ---
 

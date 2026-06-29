@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v3.9 |
-| Date | 2026-06-28 |
-| Status | 🚀 Phase 3 In Progress — Content Sprint Plan Approved |
+| Version | v4.1 |
+| Date | 2026-06-29 |
+| Status | 🚀 Phase 3 Complete — Home + Auth + Atlas Redesigned — Sprint #1 CT Next |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -248,7 +248,16 @@ OmniRad/
 │   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
 │   └── lexicon.json            ← Task #12 ✅ (38 terms)
 ├── images/
-│   └── structures/             ← NEW ✅ 2026-06-28
+│   ├── home/                   ← NEW ✅ 2026-06-29
+│   │   ├── ct_abdomen.png      ← CT Abdomen axial ✅
+│   │   ├── mri_brain.png       ← MRI Brain T1W Sagittal ✅
+│   │   ├── ultrasound.png      ← Ultrasound abdomen ✅
+│   │   ├── chest_xray.png      ← Chest X-Ray PA ✅
+│   │   ├── nm_skeleton.png     ← NM Whole Body Bone Scan ✅
+│   │   ├── angiography.png     ← Coronary Angiography ✅
+│   │   ├── mammography.png     ← Mammography bilateral ✅
+│   │   └── skeleton_bg.png     ← Skeleton background ✅
+│   └── structures/             ← 2026-06-28
 │       ├── liver/              ← ct_original.png + ct_colored.png ✅
 │       ├── kidney/             ← ct_original.png + ct_colored.png ✅
 │       ├── spleen/             ← mri_original.png + mri_colored.png ✅
@@ -298,6 +307,9 @@ OmniRad/
 | 18b | Auth Gate — إلزامية تسجيل الدخول | Phase 3 | ✅ Done — 2026-06-28 |
 | 19 | My Progress + SRS Sync + Account Settings + Avatar Picker | Phase 3 | ✅ Done — 2026-06-28 |
 | 20 | Official launch + marketing | Phase 3 | ⏳ |
+| 21 | Home Page Redesign — real medical images + creative UI | Phase 3 | ✅ Done — 2026-06-29 |
+| 22 | Auth Page Redesign — split-screen + skeleton background | Phase 3 | ✅ Done — 2026-06-29 |
+| 23 | Atlas Page Redesign — 3D organ cards + modality explorer | Phase 4 | ✅ Done — 2026-06-29 |
 
 ---
 
@@ -440,14 +452,97 @@ Medical Lexicon: AR + EN + Latin + تعريف كامل
 
 ---
 
+# ⑩ قرارات ما قبل المرحلة 4 — معتمدة 2026-06-28
+
+## القرارات الاستراتيجية
+
+### ① تطوير الصفحات — محادثة مستقلة لكل صفحة
+```
+كل صفحة تُطوَّر في محادثة خاصة تحت اسم:
+"تطوير صفحة {اسم الصفحة}"
+
+الصفحات:
+- تطوير صفحة Home       → index.html
+- تطوير صفحة Atlas      → pages/atlas.html
+- تطوير صفحة Compare    → pages/comparison.html
+- تطوير صفحة Mnemonics  → pages/mnemonics.html
+- تطوير صفحة Clinic     → pages/clinic.html
+- تطوير صفحة Daily      → pages/daily.html
+- تطوير صفحة My Progress→ pages/my-progress.html
+- تطوير صفحة AI Chat    → pages/ai-chat.html
+- تطوير صفحة Auth       → pages/auth.html
+```
+
+### ② إعادة تصميم الصفحات قبل Sprint #1
+```
+كل صفحة تُراجع وتُعاد تصميمها قبل إضافة محتوى Sprint CT
+الهدف: قوالب نظيفة جاهزة لاستقبال:
+- صور CT الحقيقية
+- Labels AR + EN
+- Tab Latin
+- SRS + Mnemonics
+```
+
+### ③ لا صور SVG — صور طبية حقيقية فقط
+```
+SVG placeholder = غير مقبول في الإنتاج
+المصادر المعتمدة (من OMNIRAD_PROJECT.md § ⑧):
+- صور TCIA الحالية على GitHub (5 أعضاء)
+- إضافة صور TCIA جديدة قبل Sprint #1
+```
+
+### ④ الترتيب المعتمد قبل المرحلة 4
+```
+١. تطوير + إعادة تصميم كل صفحة (محادثة مستقلة)
+٢. التأكد من عمل Issues #32-35
+٣. Sprint #1 CT (المرحلة 4)
+٤. Task #20 الإطلاق — بعد اكتمال Sprint #1
+```
+
+---
+
 # ⑦ Version History
 
-- **v3.9 — 2026-06-28**
-  - قسم ⑨ مضاف: Content Sprint Plan — خطة المحتوى المعتمدة
+- **v4.1 — 2026-06-29**
+  - Task #23 approved: Atlas Page Redesign ✅
+    - Welcome Screen كامل: Hero + Stats + Start Exploring + Modality Explorer + Learning Tools
+    - Hero: صورة تشريحية حقيقية (body illustration) + teal radial glow + gradient overlay
+    - Stats bar: 17 Structures · 5+ Modalities · 22 Memory Aids
+    - Start Exploring: كروت أفقية scrollable لكل 17 عضو — صور حقيقية مضمّنة base64 (Liver, Gallbladder, Kidney, Pancreas, Aorta) + file paths للباقي
+    - Explore by Modality: CT · MRI · Ultrasound · X-Ray · NM/PET
+    - Learning Tools bar: Hotspots · Mnemonics · Quiz · Compare · Cases · SRS Review
+    - كل الوظائف الأصلية محفوظة (canvas tools, TTS, SRS, colorize, auth guard)
+    - str_replace patches فقط (Rule #12 مُحترم) — 3 patches + 2 Python replacements
+
+- **v4.0 — 2026-06-29**
+  - Task #21 approved: Home Page Redesign ✅
+    - تخطيط جديد: Hero يسار + card grid يمين بصور طبية حقيقية
+    - 8 صور طبية مرفوعة على `images/home/`: CT، MRI Brain، US، X-Ray، NM، Angio، Mammo، Skeleton BG
+    - Multimodal Comparison card مع صورتين جانبيتين
+    - Skeleton background شفاف في Hero
+    - Stats bar: 8 Modalities / AR-EN / SM-2 / Phase 3
+  - Task #22 approved: Auth Page Redesign ✅
+    - تخطيط Split-Screen: يسار skeleton + معلومات / يمين Form
+    - صورة skeleton بلا حدود (mask-image radial gradient) opacity 40%
+    - لوغو OR الجديد (بدلاً من Ω القديم)
+    - حقول مع أيقونات ✉ 🔒 👤
+    - كل الأكواد محفوظة: signIn، signUp، toggleLang، Supabase، returnTo
+  - images/home/ مجلد جديد — 8 صور مرفوعة
+  - Task #23 مضاف: Atlas Redesign — محادثة مستقلة
+
+- **v3.9 — 2026-06-28** (first entry)
   - 7 Sprints بالـ Modality: CT → MRI → US → X-Ray → NM/PET → Angio → Mammo
   - كل Sprint = كامل الجسم (لا حدود مسبقة للأعضاء)
   - Labels معتمدة: AR+EN على الصورة · Latin في Tab منفصل
   - تأجيل Task #20 (الإطلاق) حتى اكتمال Sprint #1
+
+- **v3.9 — 2026-06-28**
+  - قسم ⑨ مضاف: Content Sprint Plan — 7 Sprints بالـ Modality
+  - قسم ⑩ مضاف: قرارات ما قبل المرحلة 4 — معتمدة
+  - كل صفحة = محادثة مستقلة "تطوير صفحة {اسم}"
+  - لا SVG placeholder — صور طبية حقيقية فقط
+  - إعادة تصميم الصفحات قبل Sprint #1 CT
+  - تأجيل Task #20 حتى اكتمال Sprint #1
 
 - **v3.8 — 2026-06-28**
   - Task #19 approved: My Progress + SRS Sync + Account Settings ✅
