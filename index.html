@@ -3,530 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="OmniRad — Multimodal Radiologic Anatomy Platform.">
+<meta name="description" content="OmniRad — Multimodal Radiologic Anatomy Platform">
 <title>OmniRad — Multimodal Radiologic Anatomy</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-/* ═══════════════════════════════════════════════════════
-   OmniRad — Unified Theme System v1.1
-   Dark Mode (default) + Dim Mode toggle
-   Font: IBM Plex Sans + IBM Plex Mono
-   ═══════════════════════════════════════════════════════ */
+:root,[data-theme="dark"]{
+  --bg:         #080e14;
+  --bg-s:       #0c1520;
+  --bg-e:       #101e2a;
+  --bg-ov:      #162030;
+  --text:       #e8f0f5;
+  --text-s:     rgba(232,240,245,0.65);
+  --text-m:     rgba(232,240,245,0.38);
+  --acc:        #2dd4c8;
+  --acc-dim:    rgba(45,212,200,0.55);
+  --acc-sub:    rgba(45,212,200,0.10);
+  --acc-glow:   rgba(45,212,200,0.15);
+  --border:     rgba(45,212,200,0.12);
+  --border-s:   rgba(232,240,245,0.08);
+  --r:          6px;
+  --r-lg:       10px;
+  --nav-h:      52px;
+}
+[data-theme="dim"]{
+  --bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;
+  --text:#0f1e2a;--text-s:rgba(15,30,42,0.65);--text-m:rgba(15,30,42,0.42);
+  --acc:oklch(0.46 0.17 195);--acc-dim:oklch(0.40 0.14 195);
+  --acc-sub:rgba(45,180,170,0.12);--border:rgba(45,180,170,0.2);--border-s:rgba(15,30,42,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+img{display:block;}
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  background:rgba(8,14,20,0.92);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:0;
+  z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.nav-logo{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-right:16px;}
+.nav-logo-mark{
+  width:28px;height:28px;background:var(--acc);border-radius:6px;
+  display:grid;place-items:center;font-weight:700;font-size:11px;
+  color:#08100e;letter-spacing:-0.02em;flex-shrink:0;
+}
+.nav-logo-name{font-weight:700;font-size:15px;letter-spacing:-0.02em;color:var(--text);}
+.nav-logo-name span{color:var(--acc);}
+.nav-links{display:flex;align-items:center;gap:1px;flex:1;overflow:hidden;list-style:none;}
+.nav-links a{
+  font-size:12px;font-weight:500;color:var(--text-s);
+  padding:5px 9px;border-radius:var(--r);white-space:nowrap;
+  transition:color .15s,background .15s;display:flex;align-items:center;gap:5px;
+}
+.nav-links a:hover{color:var(--text);background:var(--bg-ov);}
+.nav-links a.active{color:var(--acc);background:var(--acc-sub);border-bottom:1.5px solid var(--acc);}
+.nav-icon{font-size:13px;opacity:0.8;}
+.nav-end{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+.btn-signout{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:500;padding:5px 12px;border-radius:var(--r);
+  background:var(--acc-sub);border:1px solid var(--acc-dim);color:var(--acc);
+  cursor:pointer;transition:all .15s;
+}
+.btn-signout:hover{background:var(--acc);color:#08100e;}
+.edu-badge{
+  font-size:10px;padding:4px 9px;border-radius:var(--r);
+  border:1px solid var(--border-s);color:var(--text-m);
+  display:flex;align-items:center;gap:4px;white-space:nowrap;
+}
+.user-area{
+  display:flex;align-items:center;gap:6px;cursor:pointer;
+  padding:3px 8px;border-radius:var(--r);transition:background .15s;
+}
+.user-area:hover{background:var(--bg-ov);}
+.user-ava{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--acc-sub);border:1.5px solid var(--acc-dim);
+  display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--acc);
+}
+.user-name{font-size:11px;color:var(--text-s);}
+.user-chevron{font-size:10px;color:var(--text-m);}
+.theme-btn{
+  width:30px;height:30px;border-radius:var(--r);background:var(--bg-ov);
+  border:1px solid var(--border-s);color:var(--text-m);cursor:pointer;
+  display:grid;place-items:center;font-size:13px;flex-shrink:0;transition:color .15s;
+}
+.theme-btn:hover{color:var(--acc);}
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:4px;
+  width:30px;height:30px;padding:5px;border-radius:var(--r);
+  background:var(--bg-ov);border:1px solid var(--border-s);cursor:pointer;
+}
+.hamburger span{display:block;width:100%;height:1.5px;background:var(--text-s);border-radius:2px;transition:all .2s;}
+.hamburger.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg);}
+.mobile-menu{
+  display:none;position:fixed;top:var(--nav-h);left:0;right:0;
+  background:var(--bg-e);border-bottom:1px solid var(--border);
+  z-index:199;padding:12px 20px 20px;
+}
+.mobile-menu.open{display:block;}
+.mobile-menu ul{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.mobile-menu a{display:block;padding:10px 12px;border-radius:var(--r);font-size:14px;color:var(--text-s);transition:all .15s;}
+.mobile-menu a:hover{color:var(--acc);background:var(--acc-sub);}
 
-/* ── Dark Mode (default) ── */
-:root,
-[data-theme="dark"] {
-  --bg-base:        oklch(0.10 0.012 240);
-  --bg-surface:     oklch(0.14 0.012 240);
-  --bg-elevated:    oklch(0.18 0.010 240);
-  --bg-overlay:     oklch(0.22 0.010 240);
-  --text-primary:   oklch(0.95 0.005 240);
-  --text-secondary: oklch(0.70 0.008 240);
-  --text-muted:     oklch(0.50 0.006 240);
-  --accent:         oklch(0.72 0.15 195);
-  --accent-dim:     oklch(0.60 0.12 195);
-  --accent-glow:    oklch(0.72 0.15 195 / 0.15);
-  --accent-subtle:  oklch(0.20 0.05 195);
-  --mod-ct:         oklch(0.75 0.12 200);
-  --mod-mri:        oklch(0.72 0.14 290);
-  --mod-us:         oklch(0.78 0.13 140);
-  --mod-xray:       oklch(0.80 0.08 60);
-  --mod-nm:         oklch(0.72 0.16 30);
-  --mod-angio:      oklch(0.74 0.15 320);
-  --mod-mammo:      oklch(0.76 0.12 250);
-  --mod-pet:        oklch(0.78 0.14 25);
-  --border:         oklch(0.28 0.010 240);
-  --border-subtle:  oklch(0.22 0.008 240);
-  --success:        oklch(0.72 0.14 145);
-  --warning:        oklch(0.78 0.14 80);
-  --error:          oklch(0.65 0.18 20);
-  --shadow-sm:      0 1px 3px oklch(0 0 0 / 0.4);
-  --shadow-md:      0 4px 16px oklch(0 0 0 / 0.5);
-  --shadow-lg:      0 8px 32px oklch(0 0 0 / 0.6);
-  --shadow-accent:  0 0 20px var(--accent-glow);
-  --nav-h:          56px;
-  --sidebar-w:      260px;
-  --radius-sm:      4px;
-  --radius-md:      8px;
-  --radius-lg:      12px;
+/* ── PAGE ── */
+.page{padding-top:var(--nav-h);}
+
+/* ── HERO ── */
+.hero{
+  position:relative;overflow:hidden;
+  min-height:calc(100vh - var(--nav-h));
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:40px;
+  padding:48px 48px 56px;
+  max-width:1400px;margin:0 auto;
 }
 
-/* ── Dim Mode (Issue #1 resolved) ── */
-[data-theme="dim"] {
-  --bg-base:        oklch(0.88 0.010 240);
-  --bg-surface:     oklch(0.91 0.008 240);
-  --bg-elevated:    oklch(0.94 0.006 240);
-  --bg-overlay:     oklch(0.86 0.012 240);
-  --text-primary:   oklch(0.18 0.015 240);
-  --text-secondary: oklch(0.38 0.012 240);
-  --text-muted:     oklch(0.55 0.008 240);
-  --accent:         oklch(0.48 0.18 195);
-  --accent-dim:     oklch(0.40 0.14 195);
-  --accent-glow:    oklch(0.48 0.18 195 / 0.15);
-  --accent-subtle:  oklch(0.84 0.04 195);
-  --border:         oklch(0.78 0.012 240);
-  --border-subtle:  oklch(0.82 0.008 240);
-  --shadow-sm:      0 1px 3px oklch(0 0 0 / 0.10);
-  --shadow-md:      0 4px 16px oklch(0 0 0 / 0.12);
-  --shadow-lg:      0 8px 32px oklch(0 0 0 / 0.15);
-  --shadow-accent:  0 0 20px var(--accent-glow);
+/* Skeleton background */
+.hero-bg{
+  position:absolute;top:0;bottom:0;
+  left:50%;transform:translateX(-50%);
+  width:55%;
+  pointer-events:none;z-index:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0.13;
+}
+.hero-bg img{
+  width:100%;height:100%;object-fit:contain;
+  filter:brightness(0.9) saturate(0.6);
+}
+/* subtle teal glow over skeleton */
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 70% at 50% 45%, rgba(45,212,200,0.08) 0%, transparent 70%);
 }
 
-/* ── Reset ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
-body {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  background: var(--bg-base);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  transition: background 0.25s ease, color 0.25s ease;
+/* ── HERO LEFT ── */
+.hero-left{position:relative;z-index:1;display:flex;flex-direction:column;gap:22px;}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--acc);font-family:'IBM Plex Mono',monospace;
+}
+.hero-eyebrow::before{content:'';width:22px;height:1px;background:var(--acc);flex-shrink:0;}
+.hero-h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:700;line-height:1.08;letter-spacing:-0.04em;color:var(--text);}
+.hero-h1 .acc{color:var(--acc);}
+.hero-desc{
+  font-size:15px;color:var(--text-s);line-height:1.75;max-width:44ch;
+}
+.hero-desc strong{color:var(--text);font-weight:600;}
+.hero-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;border-radius:var(--r);
+  background:var(--acc);color:#07110e;
+  font-size:14px;font-weight:600;border:none;cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.btn-primary:hover{background:rgba(45,212,200,0.85);transform:translateY(-1px);}
+.btn-primary svg{width:16px;height:16px;}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--r);
+  background:transparent;color:var(--text-s);
+  font-size:14px;font-weight:500;
+  border:1px solid rgba(232,240,245,0.2);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.btn-secondary:hover{border-color:var(--acc-dim);color:var(--acc);background:var(--acc-sub);}
+.btn-secondary svg{width:16px;height:16px;}
+
+/* ── HERO RIGHT ── */
+.hero-right{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:10px;}
+
+/* Featured card — Multimodal Comparison */
+.card-featured{
+  grid-column:1 / 3;grid-row:1 / 2;
+  background:var(--bg-e);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:18px;
+  display:flex;align-items:center;gap:16px;
+  transition:border-color .2s;
+  position:relative;overflow:hidden;
+}
+.card-featured:hover{border-color:var(--acc-dim);}
+.card-featured-left{flex:1;}
+.card-featured-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.modal-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
+.modal-chip{
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;
+  background:var(--bg-ov);border:1px solid var(--border);
+  color:var(--acc);font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;
+}
+.card-featured-sub{font-size:12px;color:var(--text-m);}
+.card-featured-img{
+  width:130px;height:100px;border-radius:8px;overflow:hidden;
+  border:1px solid var(--border);flex-shrink:0;
+  display:flex;position:relative;
+}
+.card-featured-img img{
+  width:50%;height:100%;object-fit:cover;
+}
+.card-featured-img img:last-child{
+  filter:hue-rotate(200deg) saturate(0.8);
+  opacity:0.85;
+}
+.card-featured-img::after{
+  content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
+  background:var(--acc);box-shadow:0 0 6px var(--acc);
 }
 
-/* ── Typography ── */
-h1 { font-size: clamp(2.1rem, 4.5vw, 3.2rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.08; text-wrap: balance; }
-h2 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; text-wrap: balance; }
-h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
-p  { max-width: 68ch; color: var(--text-secondary); }
-code, .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; }
-
-/* ── Nav ── */
-.omnirad-nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  height: var(--nav-h);
-  background: var(--bg-elevated);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 24px; gap: 32px;
-  z-index: 100;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Modality cards */
+.mod-card{
+  background:var(--bg-e);border:1px solid var(--border-s);
+  border-radius:var(--r-lg);overflow:hidden;
+  display:flex;flex-direction:column;
+  cursor:pointer;transition:border-color .2s,transform .2s;
+  text-decoration:none;
 }
-.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); flex-shrink: 0; }
-.nav-logo-mark {
-  width: 32px; height: 32px;
-  background: var(--accent);
-  border-radius: var(--radius-sm);
-  display: grid; place-items: center;
-  font-weight: 700; font-size: 0.8rem;
-  color: oklch(0.10 0.012 240);
-  letter-spacing: -0.02em; flex-shrink: 0;
+.mod-card:hover{border-color:var(--acc-dim);transform:translateY(-2px);}
+.mod-card-img{
+  width:100%;aspect-ratio:4/3;overflow:hidden;
+  background:#030810;position:relative;flex-shrink:0;
 }
-.nav-logo-text { font-weight: 600; font-size: 1rem; letter-spacing: -0.02em; }
-.nav-logo-text span { color: var(--accent); }
-.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; overflow: hidden; }
-.nav-links a {
-  text-decoration: none; color: var(--text-secondary);
-  font-size: 0.8rem; font-weight: 500;
-  padding: 5px 9px; border-radius: var(--radius-sm);
-  transition: color 0.15s, background 0.15s;
-  white-space: nowrap;
+.mod-card-img img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .3s;
 }
-.nav-links a:hover { color: var(--text-primary); background: var(--bg-overlay); }
-.nav-links a.active { color: var(--accent); background: var(--accent-subtle); }
-.nav-end { display: flex; align-items: center; gap: 12px; margin-left: auto; }
-.theme-toggle {
-  width: 36px; height: 36px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-overlay);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  cursor: pointer; display: grid; place-items: center;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-  font-size: 15px; flex-shrink: 0;
+.mod-card:hover .mod-card-img img{transform:scale(1.05);}
+.mod-card-info{padding:10px 12px;}
+.mod-card-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.01em;}
+.mod-card-full{font-size:11px;color:var(--text-m);margin-top:2px;}
+
+/* CT card spans full right column row 1 */
+.card-ct{
+  grid-column:3 / 4;grid-row:1 / 2;
+  background:var(--bg-e);border:1px solid var(--border-s);
+  border-radius:var(--r-lg);overflow:hidden;
+  display:flex;flex-direction:column;cursor:pointer;
+  transition:border-color .2s,transform .2s;text-decoration:none;
 }
-.theme-toggle:hover { color: var(--accent); border-color: var(--accent-dim); }
+.card-ct:hover{border-color:var(--acc-dim);transform:translateY(-2px);}
+.card-ct-img{width:100%;flex:1;overflow:hidden;background:#030810;min-height:140px;}
+.card-ct-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.card-ct:hover .card-ct-img img{transform:scale(1.05);}
+.card-ct-info{padding:10px 12px;}
+.card-ct-name{font-size:14px;font-weight:700;color:var(--text);}
+.card-ct-full{font-size:11px;color:var(--text-m);margin-top:2px;}
 
-/* ── Buttons ── */
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 18px; border-radius: var(--radius-sm);
-  font-family: inherit; font-size: 0.875rem; font-weight: 500;
-  cursor: pointer; border: 1px solid transparent;
-  text-decoration: none; transition: all 0.15s ease;
-  line-height: 1; white-space: nowrap;
+/* ── STATS BAR ── */
+.stats-bar{
+  background:var(--bg-s);border-top:1px solid var(--border-s);
 }
-.btn-primary { background: var(--accent); color: oklch(0.10 0.012 240); border-color: var(--accent); }
-.btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); box-shadow: var(--shadow-accent); }
-.btn-outline { background: transparent; color: var(--accent); border-color: var(--accent-dim); }
-.btn-outline:hover { background: var(--accent-subtle); }
-.btn-lg { padding: 12px 28px; font-size: 1rem; }
-
-/* ── Edu badge ── */
-.edu-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 0.75rem; color: var(--text-muted);
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 4px 10px;
-  font-family: 'IBM Plex Mono', monospace;
+.stats-inner{
+  max-width:1400px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);
 }
-
-/* ── Page wrapper ── */
-.page-body { padding-top: var(--nav-h); min-height: 100vh; }
-
-/* ── Hero ── */
-.hero {
-  min-height: calc(100vh - var(--nav-h));
-  display: grid; grid-template-columns: 1fr 1fr;
-  align-items: center; gap: 64px;
-  padding: 72px 64px 80px;
-  max-width: 1280px; margin: 0 auto;
+.stat-cell{
+  padding:18px 28px;border-right:1px solid var(--border-s);
+  display:flex;align-items:center;gap:14px;
+  transition:background .15s;
 }
-.hero-content { display: flex; flex-direction: column; gap: 28px; }
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--accent);
-  font-family: 'IBM Plex Mono', monospace;
+.stat-cell:last-child{border-right:none;}
+.stat-cell:hover{background:var(--bg-e);}
+.stat-icon-wrap{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--acc-sub);border:1px solid var(--border);
+  display:grid;place-items:center;flex-shrink:0;
 }
-.hero-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: var(--accent); flex-shrink: 0; }
-.hero h1 .accent { color: var(--accent); }
-.hero-desc { font-size: 1rem; color: var(--text-secondary); line-height: 1.75; max-width: 46ch; }
-.hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.hero-stats { display: flex; gap: 28px; padding-top: 20px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; }
-.stat-item { display: flex; flex-direction: column; gap: 2px; }
-.stat-num { font-size: 1.35rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.03em; font-family: 'IBM Plex Mono', monospace; }
-.stat-lbl { font-size: 0.72rem; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+.stat-icon-wrap svg{width:22px;height:22px;color:var(--acc);}
+.stat-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.03em;line-height:1.1;}
+.stat-label{font-size:12px;color:var(--acc);font-weight:600;margin-top:1px;}
+.stat-sub{font-size:11px;color:var(--text-m);margin-top:2px;}
 
-/* ── Hero Visual ── */
-.hero-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.mod-card {
-  aspect-ratio: 1;
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-  position: relative; overflow: hidden;
-}
-.mod-card::before {
-  content: ''; position: absolute; inset: 0;
-  background: var(--mod-color, var(--accent));
-  opacity: 0; transition: opacity 0.2s; pointer-events: none;
-}
-.mod-card:hover { transform: translateY(-2px); border-color: var(--mod-color, var(--accent)); box-shadow: var(--shadow-md); }
-.mod-card:hover::before { opacity: 0.06; }
-.mod-card.featured {
-  grid-column: span 2; aspect-ratio: 2 / 1;
-  background: var(--accent-subtle); border-color: var(--accent-dim);
-}
-.mod-card.featured::before { background: var(--accent); opacity: 0.04; }
-.mod-icon-wrap { width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--mod-color, var(--accent)); opacity: 0.15; position: relative; flex-shrink: 0; }
-.mod-icon { position: absolute; inset: 0; display: grid; place-items: center; font-size: 17px; opacity: 1; color: var(--mod-color, var(--accent)); }
-.mod-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: var(--text-secondary); z-index: 1; }
-.featured-body { display: flex; align-items: center; gap: 20px; z-index: 1; padding: 0 8px; }
-.compare-slots { display: flex; gap: 6px; flex-shrink: 0; }
-.c-slot {
-  width: 42px; height: 42px; border-radius: var(--radius-sm);
-  background: var(--bg-surface); border: 1px solid var(--border);
-  display: grid; place-items: center;
-  font-size: 0.62rem; font-weight: 600;
-  font-family: 'IBM Plex Mono', monospace; color: var(--text-muted);
-}
-.c-slot.on { border-color: var(--accent-dim); color: var(--accent); background: var(--accent-subtle); }
-.featured-text { display: flex; flex-direction: column; gap: 4px; }
-.featured-title { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
-.featured-sub   { font-size: 0.75rem; color: var(--text-secondary); }
-
-/* ── Features ── */
-.features-section { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 64px; }
-.section-wrap { max-width: 1280px; margin: 0 auto; }
-.section-header { margin-bottom: 48px; display: flex; flex-direction: column; gap: 10px; }
-.section-kicker { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-family: 'IBM Plex Mono', monospace; }
-.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-.feature-card {
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 24px;
-  display: flex; flex-direction: column; gap: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.feature-card:hover { border-color: var(--accent-dim); box-shadow: var(--shadow-sm); }
-.feature-icon { width: 40px; height: 40px; background: var(--accent-subtle); border-radius: var(--radius-sm); display: grid; place-items: center; font-size: 19px; flex-shrink: 0; }
-.feature-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
-.feature-desc  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; max-width: none; }
-.feature-badge { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 0.68rem; font-weight: 600; color: var(--accent); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; }
-
-/* ── Modalities ── */
-.modalities-section { padding: 72px 64px; max-width: 1280px; margin: 0 auto; }
-.mod-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
-.mod-pill {
-  display: flex; align-items: center; gap: 9px;
-  padding: 10px 16px;
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
-  text-decoration: none;
-}
-.mod-pill:hover { border-color: var(--mod-color, var(--accent)); box-shadow: var(--shadow-sm); }
-.mod-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mod-color, var(--accent)); flex-shrink: 0; }
-.mod-name { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
-.mod-abbr { font-size: 0.68rem; font-family: 'IBM Plex Mono', monospace; color: var(--text-muted); letter-spacing: 0.04em; }
-
-/* ── CTA ── */
-.cta-section { background: var(--accent-subtle); border-top: 1px solid var(--accent-dim); border-bottom: 1px solid var(--accent-dim); padding: 80px 64px; text-align: center; }
-.cta-inner { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-.cta-inner p { text-align: center; max-width: none; }
-
-/* ── Footer ── */
-footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; max-width: 1280px; margin: 0 auto; flex-wrap: wrap; gap: 12px; }
-.footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.footer-logo-mark { width: 24px; height: 24px; background: var(--accent); border-radius: var(--radius-sm); display: grid; place-items: center; font-size: 0.62rem; font-weight: 700; color: oklch(0.10 0.012 240); flex-shrink: 0; }
-.footer-name { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); }
-.footer-meta { font-size: 0.75rem; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-/* ── Responsive ── */
-@media (max-width: 960px) {
-  .hero { grid-template-columns: 1fr; padding: 48px 24px 64px; gap: 48px; min-height: auto; }
-  .features-section, .modalities-section, .cta-section { padding: 56px 24px; }
-  footer { padding: 24px; flex-direction: column; align-items: flex-start; }
-}
-@media (max-width: 700px) {
-  .nav-links { display: none; }
-  .edu-badge { display: none; }
-  .hamburger { display: flex; }
-}
-/* Hamburger button */
-.hamburger {
-  display: none; flex-direction: column; justify-content: center; gap: 5px;
-  width: 36px; height: 36px; padding: 6px;
-  border-radius: var(--radius-sm); background: var(--bg-overlay);
-  border: 1px solid var(--border); cursor: pointer; flex-shrink: 0;
-}
-.hamburger span {
-  display: block; width: 100%; height: 2px;
-  background: var(--text-secondary); border-radius: 2px;
-  transition: all 0.2s ease;
-}
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-/* Mobile menu */
-.mobile-menu {
-  display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
-  background: var(--bg-elevated); border-bottom: 1px solid var(--border);
-  z-index: 99; padding: 16px 24px 24px;
-  box-shadow: var(--shadow-md);
-}
-.mobile-menu.open { display: block; }
-.mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-.mobile-menu a {
-  display: block; padding: 12px 16px; border-radius: var(--radius-sm);
-  text-decoration: none; color: var(--text-secondary);
-  font-size: 1rem; font-weight: 500;
-  transition: color 0.15s, background 0.15s;
-}
-.mobile-menu a:hover { color: var(--accent); background: var(--accent-subtle); }
-@media (max-width: 480px) {
-  .hero-visual { grid-template-columns: repeat(2, 1fr); }
-  .compare-slots { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-}
-
-</style>
-<script src="modules/supabase.js"></script>
-<script>OmniRadAuth.guard();</script>
-</head>
-<body>
-
-<nav class="omnirad-nav">
-  <a href="index.html" class="nav-logo">
-    <div class="nav-logo-mark">OR</div>
-    <span class="nav-logo-text">Omni<span>Rad</span></span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html" class="active">Home</a></li>
-    <li><a href="pages/atlas.html">Atlas</a></li>
-    <li><a href="pages/comparison.html">Compare</a></li>
-    <li><a href="pages/mnemonics.html">Mnemonics</a></li>
-    <li><a href="pages/srs.html">My Progress</a></li>
-    <li><a href="pages/clinic.html">🏥 Clinic</a></li>
-    <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
-    <li><a href="pages/daily.html">🧠 Daily Challenge</a></li>
-    <li><a href="#about" id="aboutNavLink">حول المنصة</a></li>
-  </ul>
-  <div class="nav-end">
-    <a href="pages/auth.html" class="btn btn-outline" style="padding:6px 14px;font-size:0.8rem;">Sign In</a>
-    <span class="edu-badge">⚕ Educational use only</span>
-    <button class="theme-toggle" id="themeBtn" aria-label="Switch to dim mode" title="Toggle theme">☀</button>
-    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-<!-- Mobile menu overlay -->
-<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="pages/atlas.html">Atlas</a></li>
-    <li><a href="pages/comparison.html">Compare</a></li>
-    <li><a href="pages/mnemonics.html">Mnemonics</a></li>
-    <li><a href="pages/srs.html">My Progress</a></li>
-    <li><a href="pages/clinic.html">🏥 Clinic</a></li>
-    <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
-    <li><a href="pages/daily.html">🧠 Daily Challenge</a></li>
-    <li><a href="pages/auth.html">🔐 Sign In</a></li>
-    <li><a href="#about">حول المنصة</a></li>
-  </ul>
-</div>
-
-<main class="page-body">
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-content">
-      <span class="hero-eyebrow">Radiologic Anatomy Platform</span>
-      <h1>
-        Every structure.<br>
-        <span class="accent">Every modality.</span><br>
-        One place.
-      </h1>
-      <p class="hero-desc">
-        Explore anatomical structures across CT, MRI, Ultrasound, X-Ray, and four more imaging modalities — with professional tools, colorization training, and spaced repetition built in.
-      </p>
-      <div class="hero-actions">
-        <a href="pages/atlas.html" class="btn btn-primary btn-lg">Open Atlas →</a>
-        <a href="pages/comparison.html" class="btn btn-outline btn-lg">Try Comparison</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-item"><span class="stat-num">8</span><span class="stat-lbl">Modalities</span></div>
-        <div class="stat-item"><span class="stat-num">AR/EN</span><span class="stat-lbl">Bilingual</span></div>
-        <div class="stat-item"><span class="stat-num">SM-2</span><span class="stat-lbl">SRS Algorithm</span></div>
-        <div class="stat-item"><span class="stat-num">Phase 3</span><span class="stat-lbl">Active Development</span></div>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="mod-card featured" style="--mod-color: var(--accent)">
-        <div class="featured-body">
-          <div class="compare-slots">
-            <div class="c-slot on">CT</div>
-            <div class="c-slot on">MRI</div>
-            <div class="c-slot">US</div>
-            <div class="c-slot on">X</div>
-          </div>
-          <div class="featured-text">
-            <span class="featured-title">Multimodal Comparison</span>
-            <span class="featured-sub">Select 2–8 modalities, compare side by side</span>
-          </div>
-        </div>
-      </div>
-      <div class="mod-card" style="--mod-color: var(--mod-ct)"><div class="mod-icon-wrap"><span class="mod-icon">⬛</span></div><span class="mod-label">CT</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-mri)"><div class="mod-icon-wrap"><span class="mod-icon">◈</span></div><span class="mod-label">MRI</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-us)"><div class="mod-icon-wrap"><span class="mod-icon">〰</span></div><span class="mod-label">US</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-xray)"><div class="mod-icon-wrap"><span class="mod-icon">✦</span></div><span class="mod-label">X-Ray</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-nm)"><div class="mod-icon-wrap"><span class="mod-icon">⚛</span></div><span class="mod-label">NM</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-angio)"><div class="mod-icon-wrap"><span class="mod-icon">⟡</span></div><span class="mod-label">Angio</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-mammo)"><div class="mod-icon-wrap"><span class="mod-icon">◎</span></div><span class="mod-label">Mammo</span></div>
-      <div class="mod-card" style="--mod-color: var(--mod-pet)"><div class="mod-icon-wrap"><span class="mod-icon">◉</span></div><span class="mod-label">PET</span></div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="features-section">
-    <div class="section-wrap">
-      <div class="section-header">
-        <span class="section-kicker">Core Features</span>
-        <h2>Built for radiology students</h2>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">⚖</div>
-          <div class="feature-title">Smart Multimodal Comparison</div>
-          <p class="feature-desc">Select any combination of modalities and view them in a synchronized, adaptive layout. Scroll one — all follow.</p>
-          <span class="feature-badge">⭐ Core UVP</span>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🎨</div>
-          <div class="feature-title">Colorization Toggle</div>
-          <p class="feature-desc">Switch between real grayscale and organ-colorized views. One click trains your eye to identify structures across modalities.</p>
-          <span class="feature-badge">⭐ Core UVP</span>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔊</div>
-          <div class="feature-title">TTS Pronunciation</div>
-          <p class="feature-desc">Hear every Latin anatomical term pronounced correctly in English and Arabic. Adjustable speed.</p>
-          <span class="feature-badge">Phase 1</span>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🧠</div>
-          <div class="feature-title">Spaced Repetition (SRS)</div>
-          <p class="feature-desc">SM-2 algorithm tracks mastery per structure. Surfaces your weakest areas automatically, not the ones you already know.</p>
-          <span class="feature-badge">Phase 2</span>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📚</div>
-          <div class="feature-title">Mnemonics Library</div>
-          <p class="feature-desc">Organized AR/EN mnemonics for every structure. Visual stories, not flashcards. Community contributions, supervised review.</p>
-          <span class="feature-badge">Phase 2</span>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🤖</div>
-          <div class="feature-title">AI Assistant (AR/EN)</div>
-          <p class="feature-desc">Scoped chatbot that answers radiologic anatomy questions only. Bilingual. Powered by RAG on OmniRad content.</p>
-          <span class="feature-badge">Phase 2</span>
-        </div>
-        <div class="feature-card" onclick="location.href='pages/clinic.html'" style="cursor:pointer">
-          <div class="feature-icon">🏥</div>
-          <div class="feature-title">Radiology Clinic</div>
-          <p class="feature-desc">Case-based clinical simulation. Choose the right imaging modality, review the image, and write a structured radiology report.</p>
-          <span class="feature-badge">Phase 2</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Modalities -->
-  <section class="modalities-section">
-    <div class="section-header">
-      <span class="section-kicker">Supported Modalities</span>
-      <h2>8 imaging modalities in Phase 1–2</h2>
-    </div>
-    <div class="mod-strip">
-      <a class="mod-pill" style="--mod-color: var(--mod-ct)" href="pages/atlas.html?modality=ct"><span class="mod-dot"></span><span class="mod-name">Computed Tomography</span><span class="mod-abbr">CT</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-mri)" href="pages/atlas.html?modality=mri"><span class="mod-dot"></span><span class="mod-name">Magnetic Resonance</span><span class="mod-abbr">MRI</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-us)" href="pages/atlas.html?modality=us"><span class="mod-dot"></span><span class="mod-name">Ultrasound</span><span class="mod-abbr">US</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-xray)" href="pages/atlas.html?modality=xray"><span class="mod-dot"></span><span class="mod-name">Plain Radiography</span><span class="mod-abbr">X-Ray</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-nm)" href="pages/atlas.html?modality=nm"><span class="mod-dot"></span><span class="mod-name">Nuclear Medicine</span><span class="mod-abbr">NM / SPECT</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-angio)" href="pages/atlas.html?modality=angio"><span class="mod-dot"></span><span class="mod-name">Angiography</span><span class="mod-abbr">Angio</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-mammo)" href="pages/atlas.html?modality=mammo"><span class="mod-dot"></span><span class="mod-name">Mammography</span><span class="mod-abbr">Mammo</span></a>
-      <a class="mod-pill" style="--mod-color: var(--mod-pet)" href="pages/atlas.html?modality=pet"><span class="mod-dot"></span><span class="mod-name">PET / PET-CT</span><span class="mod-abbr">Phase 2</span></a>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="cta-inner">
-      <h2>Start with the Atlas</h2>
-      <p>Phase 1 covers the upper abdomen: 5–10 structures across CT, MRI, and Ultrasound.</p>
-      <a href="pages/atlas.html" class="btn btn-primary btn-lg">Open Atlas →</a>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <a href="index.html" class="footer-logo">
-    <div class="footer-logo-mark">OR</div>
-    <span class="footer-name">OmniRad — v3.4</span>
-  </a>
-  <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
-</footer>
-
-<!-- ═══════════════════════════════════════════════
-     ABOUT SECTION — OmniRad Platform
-     ═══════════════════════════════════════════════ -->
-<section id="about" style="display:none;">
-<style>
+/* ── ABOUT SECTION (preserved) ── */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600&display=swap');
 .ab-wrap{font-family:'IBM Plex Sans',sans-serif;background:#0b0e14;color:#e8edf5;overflow:hidden;position:relative;}
 .ab-ar{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',sans-serif;direction:rtl;text-align:right;}
@@ -558,7 +314,6 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 .ab-mod{font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:400;letter-spacing:.05em;color:#3d4558;padding:5px 12px;border:1px solid rgba(255,255,255,.07);border-right:none;cursor:default;}
 .ab-mod:last-child{border-right:1px solid rgba(255,255,255,.07);}
 .ab-mod.lit{color:#2dd4c8;border-color:rgba(45,212,200,.28);background:rgba(45,212,200,.08);}
-.ab-mod:hover{color:#2dd4c8;background:rgba(45,212,200,.08);}
 .ab-art{display:flex;align-items:center;justify-content:center;padding-top:.5rem;}
 .ab-sband{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);}
 .ab-sc{padding:1.6rem 1.75rem;border-right:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;}
@@ -572,28 +327,6 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 .ab-sechd{display:grid;grid-template-columns:1fr 1fr;align-items:center;margin-bottom:2rem;padding-bottom:.9rem;border-bottom:1px solid rgba(255,255,255,.07);}
 .ab-secen{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(45,212,200,.7);}
 .ab-secar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.73rem;color:#3d4558;direction:rtl;text-align:right;}
-.ab-vmgrid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 2.5rem;}
-.ab-vmsep{background:rgba(255,255,255,.12);}
-.ab-vmtag{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#2dd4c8;margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem;}
-.ab-vmtag::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.12);}
-.ab-vmen{font-size:.93rem;font-weight:300;line-height:1.8;color:#e8edf5;margin-bottom:1.1rem;}
-.ab-vmar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.9rem;font-weight:300;line-height:1.9;color:#8a94aa;direction:rtl;text-align:right;padding:.8rem;background:rgba(45,212,200,.03);border:1px solid rgba(255,255,255,.07);border-radius:2px;}
-.ab-fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);}
-.ab-fc{background:#0f1319;padding:1.5rem 1.35rem;position:relative;transition:background .15s;}
-.ab-fc:hover{background:#141820;}
-.ab-fc.wide{grid-column:span 2;}
-.ab-fcbadge{position:absolute;top:.9rem;right:.9rem;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border:1px solid rgba(45,212,200,.22);border-radius:2px;color:#2dd4c8;background:rgba(45,212,200,.08);}
-.ab-fcnum{font-family:'IBM Plex Mono',monospace;font-size:.56rem;color:#3d4558;letter-spacing:.1em;margin-bottom:.75rem;}
-.ab-fcicon{width:30px;height:30px;margin-bottom:.75rem;}
-.ab-fcicon svg{width:100%;height:100%;}
-.ab-fcent{font-size:.9rem;font-weight:500;color:#e8edf5;line-height:1.2;}
-.ab-fcart{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.8rem;font-weight:400;color:#2dd4c8;direction:rtl;text-align:right;margin-top:.12rem;margin-bottom:.6rem;opacity:.85;}
-.ab-fcdescs{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:.1rem;}
-.ab-fcend{font-size:.74rem;line-height:1.6;color:#8a94aa;}
-.ab-fcard{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.74rem;line-height:1.7;color:#3d4558;direction:rtl;text-align:right;}
-.ab-fwi{display:grid;grid-template-columns:1fr 1px 1fr;gap:1.2rem;margin-top:.6rem;}
-.ab-fwsep{background:rgba(255,255,255,.12);}
-.ab-fwlbl{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#3d4558;margin-bottom:.45rem;}
 .ab-rmphases{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);}
 .ab-rmp{background:#0f1319;padding:1.5rem 1.35rem;position:relative;}
 .ab-rmdot{position:absolute;top:-7px;left:1.35rem;width:13px;height:13px;border-radius:2px;display:flex;align-items:center;justify-content:center;}
@@ -619,32 +352,305 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
 .ab-car{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:1rem;font-weight:300;color:#8a94aa;direction:rtl;margin-bottom:2.25rem;line-height:1.7;}
 .ab-cmeta{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#3d4558;display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;}
 .ab-csep{display:block;width:1px;height:10px;background:rgba(255,255,255,.12);}
-@media(max-width:900px){
-  .ab-hcontent{grid-template-columns:1fr;}
-  .ab-art{display:none;}
-  .ab-sband{grid-template-columns:repeat(2,1fr);}
-  .ab-vmgrid{grid-template-columns:1fr;}
-  .ab-vmsep{display:none;}
-  .ab-fgrid{grid-template-columns:1fr 1fr;}
-  .ab-fc.wide{grid-column:span 2;}
-  .ab-rmphases{grid-template-columns:1fr;}
-  .ab-fcdescs{grid-template-columns:1fr;}
-  .ab-fwi{grid-template-columns:1fr;}
-  .ab-fwsep{display:none;}
+
+/* ── FOOTER ── */
+footer{
+  padding:20px 48px;border-top:1px solid var(--border-s);
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:1400px;margin:0 auto;flex-wrap:wrap;gap:12px;
 }
-@media(max-width:560px){
-  .ab-hero{padding:2rem 1.25rem 0;}
-  .ab-sec{padding:2rem 1.25rem;}
-  .ab-sband{grid-template-columns:repeat(2,1fr);}
-  .ab-sc{padding:1.2rem 1rem;}
-  .ab-fgrid{grid-template-columns:1fr;}
-  .ab-fc.wide{grid-column:span 1;}
-  .ab-hcontent{padding-bottom:2rem;}
-  .ab-closer{padding:2.5rem 1.25rem;}
-  .ab-nav{flex-direction:column;gap:1rem;align-items:flex-start;}
+.footer-logo{display:flex;align-items:center;gap:7px;}
+.footer-mark{width:20px;height:20px;background:var(--acc);border-radius:4px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#07110e;}
+.footer-name{font-size:13px;font-weight:600;color:var(--text-s);}
+.footer-meta{font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border-s);border-radius:3px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .hero{grid-template-columns:1fr;padding:40px 32px 48px;gap:36px;min-height:auto;}
+  .hero-right{max-width:600px;}
+  .stats-inner{grid-template-columns:repeat(2,1fr);}
+  footer{padding:20px 32px;}
 }
+@media(max-width:768px){
+  .nav-links,.edu-badge{display:none;}
+  .hamburger{display:flex;}
+  .hero{padding:32px 20px 40px;}
+  .hero-h1{font-size:2.2rem;}
+  .hero-right{grid-template-columns:1fr 1fr;}
+  .card-featured{grid-column:1/3;}
+  .card-ct{grid-column:1/3;}
+  .stats-inner{grid-template-columns:1fr 1fr;}
+  footer{padding:16px 20px;flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:480px){
+  .hero-right{grid-template-columns:1fr;}
+  .card-featured,.card-ct{grid-column:1/2;}
+  .stats-inner{grid-template-columns:1fr;}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;}}
 </style>
 
+<script src="modules/supabase.js"></script>
+<script>OmniRadAuth.guard();</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">OR</div>
+    <span class="nav-logo-name">Omni<span>Rad</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active"><span class="nav-icon">🏠</span>Home</a></li>
+    <li><a href="pages/atlas.html"><span class="nav-icon">📖</span>Atlas</a></li>
+    <li><a href="pages/comparison.html"><span class="nav-icon">⚖</span>Compare</a></li>
+    <li><a href="pages/mnemonics.html"><span class="nav-icon">📚</span>Mnemonics</a></li>
+    <li><a href="pages/srs.html"><span class="nav-icon">📊</span>My Progress</a></li>
+    <li><a href="pages/clinic.html"><span class="nav-icon">🏥</span>Clinic</a></li>
+    <li><a href="pages/ai-chat.html"><span class="nav-icon">✦</span>AI Assistant</a></li>
+    <li><a href="pages/daily.html"><span class="nav-icon">🧠</span>Daily Challenge</a></li>
+    <li><a href="#about" id="aboutNavLink">حول المنصة</a></li>
+  </ul>
+  <div class="nav-end">
+    <a href="pages/auth.html" class="btn-signout" id="navSignOut">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Sign Out
+    </a>
+    <span class="edu-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Educational use only
+    </span>
+    <div class="user-area" id="navUserArea">
+      <div class="user-ava" id="navUserAva">DA</div>
+      <span class="user-name" id="navUserName">Dr. Dany</span>
+      <span class="user-chevron">▾</span>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">☀</button>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <ul>
+    <li><a href="index.html">🏠 Home</a></li>
+    <li><a href="pages/atlas.html">📖 Atlas</a></li>
+    <li><a href="pages/comparison.html">⚖ Compare</a></li>
+    <li><a href="pages/mnemonics.html">📚 Mnemonics</a></li>
+    <li><a href="pages/srs.html">📊 My Progress</a></li>
+    <li><a href="pages/clinic.html">🏥 Clinic</a></li>
+    <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
+    <li><a href="pages/daily.html">🧠 Daily Challenge</a></li>
+    <li><a href="pages/auth.html">🔐 Sign In</a></li>
+    <li><a href="#about">حول المنصة</a></li>
+  </ul>
+</div>
+
+<div class="page">
+<main>
+
+<!-- HERO -->
+<section class="hero">
+
+  <!-- Skeleton background -->
+  <div class="hero-bg">
+    <img src="images/home/skeleton_bg.png" alt="" aria-hidden="true">
+  </div>
+
+  <!-- Left: text -->
+  <div class="hero-left">
+    <div class="hero-eyebrow">Radiologic Anatomy Platform</div>
+    <h1 class="hero-h1">
+      Every structure.<br>
+      <span class="acc">Every modality.</span><br>
+      One place.
+    </h1>
+    <p class="hero-desc">
+      Explore anatomical structures across CT, MRI, Ultrasound,
+      <strong>X-Ray</strong>, Nuclear Medicine, Mammography and more — with
+      professional tools, colorization training, and spaced repetition
+      built in.
+    </p>
+    <div class="hero-cta">
+      <a href="pages/atlas.html" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Open Atlas
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="pages/comparison.html" class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        Try Comparison
+      </a>
+    </div>
+  </div>
+
+  <!-- Right: card grid -->
+  <div class="hero-right">
+
+    <!-- Featured: Multimodal Comparison -->
+    <a href="pages/comparison.html" class="card-featured">
+      <div class="card-featured-left">
+        <div class="card-featured-title">Multimodal Comparison</div>
+        <div class="modal-chips">
+          <span class="modal-chip">CT</span>
+          <span class="modal-chip">MRI</span>
+          <span class="modal-chip">US</span>
+          <span class="modal-chip">X-RAY</span>
+        </div>
+        <div class="card-featured-sub">Select 2–8 modalities,<br>compare side by side</div>
+      </div>
+      <div class="card-featured-img">
+        <img src="images/home/ct_abdomen.png" alt="CT scan">
+        <img src="images/home/mri_brain.png" alt="MRI scan">
+      </div>
+    </a>
+
+    <!-- CT card -->
+    <a href="pages/atlas.html?modality=ct" class="card-ct">
+      <div class="card-ct-img">
+        <img src="images/home/ct_abdomen.png" alt="CT Abdomen">
+      </div>
+      <div class="card-ct-info">
+        <div class="card-ct-name">CT</div>
+        <div class="card-ct-full">Computed Tomography</div>
+      </div>
+    </a>
+
+    <!-- MRI -->
+    <a href="pages/atlas.html?modality=mri" class="mod-card">
+      <div class="mod-card-img">
+        <img src="images/home/mri_brain.png" alt="MRI Brain">
+      </div>
+      <div class="mod-card-info">
+        <div class="mod-card-name">MRI</div>
+        <div class="mod-card-full">Magnetic Resonance Imaging</div>
+      </div>
+    </a>
+
+    <!-- US -->
+    <a href="pages/atlas.html?modality=us" class="mod-card">
+      <div class="mod-card-img">
+        <img src="images/home/ultrasound.png" alt="Ultrasound">
+      </div>
+      <div class="mod-card-info">
+        <div class="mod-card-name">US</div>
+        <div class="mod-card-full">Ultrasound Imaging</div>
+      </div>
+    </a>
+
+    <!-- X-RAY -->
+    <a href="pages/atlas.html?modality=xray" class="mod-card">
+      <div class="mod-card-img">
+        <img src="images/home/chest_xray.png" alt="Chest X-Ray">
+      </div>
+      <div class="mod-card-info">
+        <div class="mod-card-name">X-RAY</div>
+        <div class="mod-card-full">Radiography</div>
+      </div>
+    </a>
+
+    <!-- NM -->
+    <a href="pages/atlas.html?modality=nm" class="mod-card">
+      <div class="mod-card-img">
+        <img src="images/home/nm_skeleton.png" alt="Nuclear Medicine">
+      </div>
+      <div class="mod-card-info">
+        <div class="mod-card-name">NM</div>
+        <div class="mod-card-full">Nuclear Medicine</div>
+      </div>
+    </a>
+
+    <!-- ANGIO -->
+    <a href="pages/atlas.html?modality=angio" class="mod-card">
+      <div class="mod-card-img">
+        <img src="images/home/angiography.png" alt="Angiography">
+      </div>
+      <div class="mod-card-info">
+        <div class="mod-card-name">ANGIO</div>
+        <div class="mod-card-full">Angiography</div>
+      </div>
+    </a>
+
+    <!-- MAMMO -->
+    <a href="pages/atlas.html?modality=mammo" class="mod-card">
+      <div class="mod-card-img">
+        <img src="images/home/mammography.png" alt="Mammography">
+      </div>
+      <div class="mod-card-info">
+        <div class="mod-card-name">MAMMO</div>
+        <div class="mod-card-full">Mammography</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-cell">
+      <div class="stat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <div>
+        <div class="stat-val">8</div>
+        <div class="stat-label">Imaging Modalities</div>
+        <div class="stat-sub">Comprehensive coverage</div>
+      </div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div>
+        <div class="stat-val">AR / EN</div>
+        <div class="stat-label">Bilingual Support</div>
+        <div class="stat-sub">Arabic &amp; English</div>
+      </div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div>
+        <div class="stat-val">SM-2</div>
+        <div class="stat-label">Spaced Repetition</div>
+        <div class="stat-sub">Science-based learning</div>
+      </div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div>
+        <div class="stat-val">Phase 3</div>
+        <div class="stat-label">Learning Progress</div>
+        <div class="stat-sub">Track your journey</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-logo">
+    <div class="footer-mark">OR</div>
+    <span class="footer-name">OmniRad — v3.9</span>
+  </div>
+  <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
+</footer>
+
+<!-- ABOUT SECTION (preserved) -->
+<section id="about" style="display:none;">
 <div class="ab-wrap">
 <div class="ab-ambient">
   <div class="ab-scanlines"></div>
@@ -653,19 +659,14 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
   <div class="ab-dot" style="top:310px;left:510px;opacity:.20;"></div>
   <div class="ab-dot" style="top:75px;right:190px;opacity:.28;"></div>
 </div>
-
-<!-- HERO -->
 <div class="ab-hero">
   <div class="ab-nav">
     <div class="ab-logo-unit">
       <div class="ab-or-box"><span class="ab-or-text">OR</span></div>
-      <div>
-        <div class="ab-brand-name">OmniRad</div>
-        <div class="ab-brand-sub">منصة التشريح الإشعاعي</div>
-      </div>
+      <div><div class="ab-brand-name">OmniRad</div><div class="ab-brand-sub">منصة التشريح الإشعاعي</div></div>
     </div>
     <div class="ab-npills">
-      <div class="ab-npill">v3.4</div>
+      <div class="ab-npill">v3.9</div>
       <div class="ab-npill">Phase 3</div>
       <div class="ab-npill on">About · حول</div>
     </div>
@@ -682,176 +683,56 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
       </div>
     </div>
     <div class="ab-art">
-      <svg viewBox="0 0 320 320" width="300" height="300" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 320 320" width="280" height="280" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="160" cy="160" r="154" stroke="rgba(45,212,200,0.10)" stroke-width="1"/>
-        <circle cx="160" cy="160" r="144" stroke="rgba(45,212,200,0.06)" stroke-width="1"/>
-        <circle cx="160" cy="160" r="134" stroke="rgba(45,212,200,0.04)" stroke-width="1"/>
-        <g stroke="rgba(45,212,200,0.28)" stroke-width="1.5" stroke-linecap="round">
-          <line x1="160" y1="6" x2="160" y2="18"/><line x1="160" y1="302" x2="160" y2="314"/>
-          <line x1="6" y1="160" x2="18" y2="160"/><line x1="302" y1="160" x2="314" y2="160"/>
-          <line x1="52" y1="34" x2="58" y2="44"/><line x1="262" y1="276" x2="268" y2="286"/>
-          <line x1="34" y1="268" x2="44" y2="262"/><line x1="276" y1="58" x2="286" y2="52"/>
-          <line x1="268" y1="34" x2="262" y2="44"/><line x1="52" y1="276" x2="58" y2="266"/>
-          <line x1="286" y1="268" x2="276" y2="262"/><line x1="44" y1="58" x2="34" y2="52"/>
-        </g>
-        <line x1="160" y1="160" x2="160" y2="20" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
-        <line x1="160" y1="160" x2="20" y2="160" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
-        <line x1="160" y1="160" x2="300" y2="160" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
-        <line x1="160" y1="160" x2="160" y2="300" stroke="rgba(45,212,200,0.07)" stroke-width="1"/>
-        <line x1="160" y1="160" x2="20" y2="88" stroke="rgba(45,212,200,0.05)" stroke-width="1"/>
-        <line x1="160" y1="160" x2="300" y2="88" stroke="rgba(45,212,200,0.05)" stroke-width="1"/>
+        <circle cx="160" cy="160" r="134" stroke="rgba(45,212,200,0.06)" stroke-width="1"/>
         <ellipse cx="160" cy="165" rx="90" ry="80" fill="#0f1319" stroke="rgba(45,212,200,0.22)" stroke-width="1"/>
-        <ellipse cx="160" cy="224" rx="15" ry="13" fill="#1a1f2b" stroke="rgba(45,212,200,0.38)" stroke-width="1"/>
-        <ellipse cx="160" cy="224" rx="8" ry="6" fill="rgba(45,212,200,0.10)"/>
-        <text x="160" y="228" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.50)" letter-spacing=".04em">SP</text>
-        <circle cx="152" cy="209" r="7" fill="rgba(220,60,60,0.22)" stroke="rgba(220,80,80,0.55)" stroke-width="1"/>
-        <circle cx="152" cy="209" r="3.5" fill="rgba(220,60,60,0.45)"/>
-        <ellipse cx="169" cy="210" rx="9" ry="7" fill="rgba(60,100,220,0.18)" stroke="rgba(80,120,220,0.45)" stroke-width="1"/>
         <path d="M96 138 Q118 122 162 124 Q182 127 187 145 Q189 163 183 172 Q172 182 152 182 Q128 182 110 172 Q92 158 96 138Z" fill="rgba(180,110,50,0.28)" stroke="rgba(200,130,70,0.55)" stroke-width="1"/>
-        <text x="146" y="158" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(200,150,80,0.65)" letter-spacing=".04em">LIVER</text>
         <ellipse cx="208" cy="150" rx="21" ry="18" fill="rgba(140,70,190,0.28)" stroke="rgba(160,90,210,0.50)" stroke-width="1"/>
-        <text x="208" y="154" text-anchor="middle" font-family="monospace" font-size="6" fill="rgba(170,110,220,0.65)" letter-spacing=".03em">SPLEEN</text>
-        <ellipse cx="158" cy="140" rx="18" ry="12" fill="rgba(80,160,220,0.18)" stroke="rgba(100,180,240,0.35)" stroke-width="1"/>
         <ellipse cx="204" cy="183" rx="12" ry="17" fill="rgba(220,140,40,0.22)" stroke="rgba(240,160,60,0.45)" stroke-width="1"/>
         <ellipse cx="117" cy="183" rx="12" ry="17" fill="rgba(220,140,40,0.22)" stroke="rgba(240,160,60,0.45)" stroke-width="1"/>
-        <path d="M144 172 Q158 168 176 170 Q184 172 187 178 Q174 181 156 180 Q140 178 144 172Z" fill="rgba(240,200,80,0.18)" stroke="rgba(240,210,100,0.40)" stroke-width="1"/>
-        <line x1="157" y1="155" x2="163" y2="155" stroke="rgba(45,212,200,0.55)" stroke-width=".8"/>
-        <line x1="160" y1="152" x2="160" y2="158" stroke="rgba(45,212,200,0.55)" stroke-width=".8"/>
-        <circle cx="160" cy="155" r="1.5" fill="rgba(45,212,200,0.65)"/>
-        <text x="76" y="258" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.42)" letter-spacing=".06em">HU: +52</text>
-        <text x="76" y="268" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.28)" letter-spacing=".06em">L3 / AXIAL</text>
-        <text x="76" y="278" font-family="monospace" font-size="6.5" fill="rgba(45,212,200,0.28)" letter-spacing=".06em">W:400 L:40</text>
-        <text x="196" y="268" font-family="monospace" font-size="6" fill="rgba(45,212,200,0.20)" letter-spacing=".04em">OmniRad v3.4</text>
-        <path d="M160 16 A144 144 0 0 1 304 160" stroke="rgba(45,212,200,0.40)" stroke-width="1.5" fill="none" stroke-dasharray="4 6"/>
       </svg>
     </div>
   </div>
 </div>
-
-<!-- STATS -->
 <div class="ab-sband">
-  <div class="ab-sc"><div class="ab-snum">8</div><div class="ab-sen">Imaging modalities</div><div class="ab-sar ab-ar">نمط تصوير طبي</div></div>
-  <div class="ab-sc"><div class="ab-snum">17</div><div class="ab-sen">Structures — Phase 3</div><div class="ab-sar ab-ar">بنية تشريحية حالياً</div></div>
-  <div class="ab-sc"><div class="ab-snum">22+</div><div class="ab-sen">Bilingual mnemonics</div><div class="ab-sar ab-ar">مساعدة حفظ ثنائية</div></div>
-  <div class="ab-sc"><div class="ab-snum">AR/EN</div><div class="ab-sen">Full bilingual support</div><div class="ab-sar ab-ar">دعم لغوي ثنائي كامل</div></div>
+  <div class="ab-sc"><div class="ab-snum">17+</div><div class="ab-sen">Anatomical structures</div><div class="ab-sar">بنية تشريحية</div></div>
+  <div class="ab-sc"><div class="ab-snum">8</div><div class="ab-sen">Imaging modalities</div><div class="ab-sar">نمط تصوير</div></div>
+  <div class="ab-sc"><div class="ab-snum">AR/EN</div><div class="ab-sen">Fully bilingual</div><div class="ab-sar">ثنائي اللغة</div></div>
+  <div class="ab-sc"><div class="ab-snum">v3.9</div><div class="ab-sen">Phase 3 active</div><div class="ab-sar">المرحلة ٣ نشطة</div></div>
 </div>
-
-<!-- VISION & MISSION -->
 <div class="ab-sec">
-  <div class="ab-sechd"><div class="ab-secen">01 — Vision &amp; Mission</div><div class="ab-secar ab-ar">الرؤية والرسالة</div></div>
-  <div class="ab-vmgrid">
-    <div>
-      <div class="ab-vmtag">Vision · الرؤية</div>
-      <div class="ab-vmen">To become the world's leading reference for learning multimodal radiologic anatomy — where every student sees the same structure through every imaging lens that matters in clinical practice.</div>
-      <div class="ab-vmar ab-ar">أن نصبح المرجع الأول عالمياً لتعلّم التشريح الإشعاعي متعدد الأنماط، حيث يرى كل طالب نفس البنية التشريحية عبر كل نمط تصوير يحتاجه في الممارسة السريرية.</div>
-    </div>
-    <div class="ab-vmsep"></div>
-    <div>
-      <div class="ab-vmtag">Mission · الرسالة</div>
-      <div class="ab-vmen">Build the platform we needed as students but didn't have — multimodal, bilingual, evidence-based. Spaced repetition that remembers what you forget. An AI that stays on topic. Cases that train clinical reasoning. All in Arabic and English.</div>
-      <div class="ab-vmar ab-ar">بناء المنصة التي احتجناها طلاباً ولم تكن موجودة — متعددة الأنماط، ثنائية اللغة، قائمة على الأدلة. مراجعة ذكية تتذكر ما نسيت، ومساعد لا يخرج عن الموضوع، وحالات تدرّب التفكير السريري — بالعربية والإنجليزية.</div>
-    </div>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<div class="ab-sec">
-  <div class="ab-sechd"><div class="ab-secen">02 — Platform features</div><div class="ab-secar ab-ar">مميزات المنصة</div></div>
-  <div class="ab-fgrid">
-    <div class="ab-fc wide">
-      <div class="ab-fcbadge">Core · الأساس</div>
-      <div class="ab-fcnum">01</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="13" stroke="rgba(45,212,200,0.4)" stroke-width="1"/><circle cx="15" cy="15" r="7" stroke="rgba(45,212,200,0.22)" stroke-width="1"/><circle cx="15" cy="15" r="2.5" fill="rgba(45,212,200,0.7)"/><line x1="15" y1="2" x2="15" y2="7" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="15" y1="23" x2="15" y2="28" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="2" y1="15" x2="7" y2="15" stroke="rgba(45,212,200,0.5)" stroke-width="1"/><line x1="23" y1="15" x2="28" y2="15" stroke="rgba(45,212,200,0.5)" stroke-width="1"/></svg></div>
-      <div class="ab-fcent">Smart Atlas — 17 structures</div>
-      <div class="ab-fcart ab-ar">الأطلس الذكي — ١٧ بنية تشريحية</div>
-      <div class="ab-fwi">
-        <div><div class="ab-fwlbl">English</div><div class="ab-fcend">The core of OmniRad. 17 structures across abdomen, brain, neck, and thorax — covering every modality with professional tools: zoom, pan, invert, rotate, split-view, fullscreen, and bilingual TTS narration. No registration required.</div></div>
-        <div class="ab-fwsep"></div>
-        <div><div class="ab-fwlbl" style="direction:rtl;text-align:right;">العربية</div><div class="ab-fcard ab-ar">قلب OmniRad. ١٧ بنية في البطن والدماغ والرقبة والصدر — تغطي جميع أنماط التصوير مع أدوات احترافية: تكبير، تحريك، عكس، تدوير، عرض مزدوج، شاشة كاملة، وقراءة صوتية ثنائية اللغة.</div></div>
-      </div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">02</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="rgba(220,60,60,0.55)" stroke-width="1" fill="rgba(220,60,60,0.10)"/><rect x="17" y="2" width="11" height="11" rx="2" stroke="rgba(60,100,220,0.55)" stroke-width="1" fill="rgba(60,100,220,0.10)"/><rect x="2" y="17" width="11" height="11" rx="2" stroke="rgba(140,70,190,0.55)" stroke-width="1" fill="rgba(140,70,190,0.10)"/><rect x="17" y="17" width="11" height="11" rx="2" stroke="rgba(45,212,200,0.40)" stroke-width="1" fill="rgba(45,212,200,0.07)"/></svg></div>
-      <div class="ab-fcent">Comparison Engine</div><div class="ab-fcart ab-ar">محرك المقارنة</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">4 modalities, same structure, synchronized pan and zoom.</div><div class="ab-fcard ab-ar">٤ أنماط، نفس البنية، تزامن كامل في الأدوات.</div></div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">03</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><ellipse cx="15" cy="17" rx="10" ry="9" stroke="rgba(45,212,200,0.28)" stroke-width="1"/><ellipse cx="15" cy="17" rx="6" ry="5" fill="rgba(180,110,50,0.45)" stroke="rgba(200,130,70,0.60)" stroke-width="1"/><ellipse cx="21" cy="14" rx="4" ry="3.5" fill="rgba(140,70,190,0.38)" stroke="rgba(160,90,210,0.55)" stroke-width="1"/></svg></div>
-      <div class="ab-fcent">Organ Colorization</div><div class="ab-fcart ab-ar">تلوين الأعضاء</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">MedSAM2 CT and MRI masks. One tap reveals organ boundaries.</div><div class="ab-fcard ab-ar">أقنعة MedSAM2. نقرة واحدة تكشف حدود الأعضاء بدقة.</div></div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">04</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="21" width="5" height="7" rx="1" fill="rgba(45,212,200,0.50)"/><rect x="9" y="15" width="5" height="13" rx="1" fill="rgba(45,212,200,0.35)"/><rect x="16" y="9" width="5" height="19" rx="1" fill="rgba(45,212,200,0.22)"/><rect x="23" y="3" width="5" height="25" rx="1" fill="rgba(45,212,200,0.12)"/><path d="M2 19 L8 13 L16 8 L28 3" stroke="rgba(45,212,200,0.5)" stroke-width="1" fill="none"/></svg></div>
-      <div class="ab-fcent">Spaced Repetition — SM-2</div><div class="ab-fcart ab-ar">التكرار المتباعد — SM-2</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">Evidence-based scheduling per structure and modality.</div><div class="ab-fcard ab-ar">جدولة قائمة على الأدلة لكل بنية ونمط تصوير.</div></div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">05</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="11" r="6" stroke="rgba(45,212,200,0.38)" stroke-width="1"/><path d="M6 28 Q6 21 15 21 Q24 21 24 28" stroke="rgba(45,212,200,0.28)" stroke-width="1" fill="none"/><circle cx="22" cy="21" r="5" fill="rgba(45,212,200,0.10)" stroke="rgba(45,212,200,0.48)" stroke-width="1"/><text x="22" y="24.5" text-anchor="middle" font-size="6" fill="rgba(45,212,200,0.80)" font-family="monospace">AI</text></svg></div>
-      <div class="ab-fcent">AI Assistant</div><div class="ab-fcart ab-ar">المساعد الذكي</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">Claude-powered, radiology-scoped. Arabic and English.</div><div class="ab-fcard ab-ar">مدعوم بـ Claude، مقيّد بالأشعة، عربي وإنجليزي.</div></div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">06</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="4" width="26" height="17" rx="2" stroke="rgba(45,212,200,0.32)" stroke-width="1"/><line x1="2" y1="11" x2="28" y2="11" stroke="rgba(45,212,200,0.18)" stroke-width="1"/><rect x="6" y="7" width="9" height="2" rx="1" fill="rgba(45,212,200,0.30)"/><rect x="6" y="14" width="17" height="1.5" rx=".75" fill="rgba(45,212,200,0.18)"/></svg></div>
-      <div class="ab-fcent">Clinic Simulator</div><div class="ab-fcart ab-ar">محاكي العيادة</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">Patient queue, imaging request, structured report — 6 cases.</div><div class="ab-fcard ab-ar">طابور مرضى، طلب تصوير، تقرير منظّم — ٦ حالات.</div></div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">07</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><rect x="2" y="2" width="26" height="26" rx="2" stroke="rgba(45,212,200,0.28)" stroke-width="1" fill="none"/><line x1="2" y1="10" x2="28" y2="10" stroke="rgba(45,212,200,0.15)" stroke-width="1"/><text x="15" y="8.5" text-anchor="middle" font-size="5" fill="rgba(45,212,200,0.42)" font-family="monospace">MNEMONIC</text><text x="15" y="22" text-anchor="middle" font-size="8" fill="rgba(45,212,200,0.62)" font-family="sans-serif" font-style="italic">SALT</text></svg></div>
-      <div class="ab-fcent">Mnemonics + Lexicon</div><div class="ab-fcart ab-ar">المساعدات الذاكرية والمعجم</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">22 bilingual mnemonics with TTS. 38 terms with inline tooltips.</div><div class="ab-fcard ab-ar">٢٢ مساعدة ثنائية مع صوت. ٣٨ مصطلحاً مضمّناً في الأطلس.</div></div>
-    </div>
-    <div class="ab-fc">
-      <div class="ab-fcnum">08</div>
-      <div class="ab-fcicon"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="12" stroke="rgba(45,212,200,0.22)" stroke-width="1" fill="none"/><path d="M9 15 C9 11.5 11.7 9 15 9 C18.3 9 21 11.5 21 15" stroke="rgba(45,212,200,0.45)" stroke-width="1" fill="none"/><circle cx="15" cy="15" r="2.5" fill="rgba(45,212,200,0.18)" stroke="rgba(45,212,200,0.60)" stroke-width="1"/><line x1="15" y1="15" x2="22" y2="8" stroke="rgba(45,212,200,0.42)" stroke-width="1"/></svg></div>
-      <div class="ab-fcent">Image Tools Suite</div><div class="ab-fcart ab-ar">أدوات معالجة الصور</div>
-      <div class="ab-fcdescs"><div class="ab-fcend">Window/level, colormap, zoom, pan, invert, rotate — Canvas API.</div><div class="ab-fcard ab-ar">نافذة/مستوى، تكبير، تحريك، عكس، تدوير — Canvas API.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ROADMAP -->
-<div class="ab-sec">
-  <div class="ab-sechd"><div class="ab-secen">03 — Roadmap</div><div class="ab-secar ab-ar">خارطة الطريق</div></div>
+  <div class="ab-sechd"><div class="ab-secen">Roadmap · خارطة الطريق</div><div class="ab-secar">مراحل التطوير المعتمدة</div></div>
   <div class="ab-rmphases">
     <div class="ab-rmp">
       <div class="ab-rmdot ab-live-bg"><div class="ab-rmdot-in"></div></div>
-      <div class="ab-rmpt"><div class="ab-rmpten ab-live-c">Phase 2 · Live now</div><div class="ab-rmptar ab-ar">المرحلة ٢ · متاح الآن</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Smart Atlas — 13 structures</div></div><div class="ab-rmar ab-ar">أطلس ذكي — ١٣ بنية تشريحية</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">8-modality comparison engine</div></div><div class="ab-rmar ab-ar">محرك مقارنة ٨ أنماط تصوير</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Organ colorization — CT and MRI</div></div><div class="ab-rmar ab-ar">تلوين أعضاء CT وMRI</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">SRS Module — SM-2 algorithm</div></div><div class="ab-rmar ab-ar">نظام المراجعة المتباعدة SM-2</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">AI Assistant — Arabic and English</div></div><div class="ab-rmar ab-ar">مساعد ذكي عربي وإنجليزي</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Clinic Simulator — 6 cases</div></div><div class="ab-rmar ab-ar">محاكي سريري — ٦ حالات</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Mnemonics, Lexicon, TTS</div></div><div class="ab-rmar ab-ar">مساعدات حفظ، معجم، صوت</div></div>
+      <div class="ab-rmpt"><div class="ab-rmpten ab-live-c">Phase 1–3 · Live now</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Smart Atlas — 17 structures</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">8-modality comparison engine</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">SRS — SM-2 algorithm</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">AI Assistant AR/EN</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Daily Challenge + Leaderboard</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">User accounts + Supabase sync</div></div></div>
     </div>
     <div class="ab-rmp">
       <div class="ab-rmdot ab-next-bg"><div class="ab-rmdot-in"></div></div>
-      <div class="ab-rmpt"><div class="ab-rmpten ab-next-c">Phase 3 · Coming</div><div class="ab-rmptar ab-ar">المرحلة ٣ · قادم قريباً</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Full-body — Visible Human Project</div></div><div class="ab-rmar ab-ar">محتوى كامل الجسم</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">User accounts and progress sync</div></div><div class="ab-rmar ab-ar">حسابات ومزامنة التقدم</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Daily challenge system</div></div><div class="ab-rmar ab-ar">نظام التحديات اليومية</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Community leaderboard</div></div><div class="ab-rmar ab-ar">لوحة الترتيب المجتمعي</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Oncology staging module</div></div><div class="ab-rmar ab-ar">وحدة التصنيف الأورامي</div></div>
+      <div class="ab-rmpt"><div class="ab-rmpten ab-next-c">Sprint #1 CT · Coming</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Full-body CT — TCIA + VHP</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">MedSAM2 organ segmentation</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">AR + EN labels on real images</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Latin terminology tab + TTS</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Official launch after CT sprint</div></div></div>
     </div>
     <div class="ab-rmp">
       <div class="ab-rmdot ab-fut-bg"><div class="ab-rmdot-in"></div></div>
-      <div class="ab-rmpt"><div class="ab-rmpten ab-fut-c">Phase 4 · Future</div><div class="ab-rmptar ab-ar">المرحلة ٤ · المستقبل</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">e-Anatomy API partnership</div></div><div class="ab-rmar ab-ar">شراكة e-Anatomy API</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Hospital imaging partnerships</div></div><div class="ab-rmar ab-ar">شراكات مع المستشفيات</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Mobile app — iOS and Android</div></div><div class="ab-rmar ab-ar">تطبيق جوال iOS وAndroid</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Certification track</div></div><div class="ab-rmar ab-ar">مسار الشهادات المعتمدة</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Official launch and marketing</div></div><div class="ab-rmar ab-ar">الإطلاق الرسمي والتسويق</div></div>
+      <div class="ab-rmpt"><div class="ab-rmpten ab-fut-c">Phase 4 · Future</div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">MRI, US, X-Ray sprints</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">e-Anatomy API partnership</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Hospital imaging partnerships</div></div></div>
+      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Mobile app — iOS and Android</div></div></div>
     </div>
   </div>
 </div>
-
-<!-- CLOSER -->
 <div class="ab-closer">
   <div class="ab-cglow"></div>
   <div class="ab-cen">Built by a student.<br>For students who want to see anatomy<br>the way <strong>it actually looks.</strong></div>
@@ -860,81 +741,62 @@ footer { padding: 28px 64px; border-top: 1px solid var(--border); display: flex;
     <span>Mohammed Saeed Alzahrani</span><span class="ab-csep"></span>
     <span>Radiologic Sciences</span><span class="ab-csep"></span>
     <span>orphanai2026.github.io/OmniRad</span><span class="ab-csep"></span>
-    <span>v3.4 · 2026</span>
+    <span>v3.9 · 2026</span>
   </div>
 </div>
 </div>
 </section>
 
+</div>
+
 <script>
-  // Hamburger menu
-  const hBtn = document.getElementById('hamburgerBtn');
-  const mMenu = document.getElementById('mobileMenu');
-  hBtn.addEventListener('click', () => {
-    const open = mMenu.classList.toggle('open');
-    hBtn.classList.toggle('open', open);
-    hBtn.setAttribute('aria-expanded', open);
-    mMenu.setAttribute('aria-hidden', !open);
-  });
-  mMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    mMenu.classList.remove('open');
-    hBtn.classList.remove('open');
-  }));
-  document.addEventListener('click', e => {
-    if (!hBtn.contains(e.target) && !mMenu.contains(e.target)) {
-      mMenu.classList.remove('open');
-      hBtn.classList.remove('open');
-    }
-  });
+const hBtn=document.getElementById('hamburgerBtn');
+const mMenu=document.getElementById('mobileMenu');
+hBtn.addEventListener('click',()=>{
+  const open=mMenu.classList.toggle('open');
+  hBtn.classList.toggle('open',open);
+  hBtn.setAttribute('aria-expanded',open);
+  mMenu.setAttribute('aria-hidden',!open);
+});
+mMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  mMenu.classList.remove('open');hBtn.classList.remove('open');
+}));
+document.addEventListener('click',e=>{
+  if(!hBtn.contains(e.target)&&!mMenu.contains(e.target)){
+    mMenu.classList.remove('open');hBtn.classList.remove('open');
+  }
+});
 
-  // Theme toggle
-  const html = document.documentElement;
-  const btn = document.getElementById('themeBtn');
-  const ICONS  = { dark: '☀', dim: '☾' };
-  const LABELS = { dark: 'Switch to dim mode', dim: 'Switch to dark mode' };
-  const saved = localStorage.getItem('omnirad-theme') || 'dark';
-  html.dataset.theme = saved;
-  btn.textContent = ICONS[saved];
-  btn.setAttribute('aria-label', LABELS[saved]);
-  btn.addEventListener('click', () => {
-    const next = html.dataset.theme === 'dark' ? 'dim' : 'dark';
-    html.dataset.theme = next;
-    btn.textContent = ICONS[next];
-    btn.setAttribute('aria-label', LABELS[next]);
-    localStorage.setItem('omnirad-theme', next);
-  });
+const html=document.documentElement;
+const btn=document.getElementById('themeBtn');
+const ICONS={dark:'☀',dim:'☾'};
+const LABELS={dark:'Switch to dim mode',dim:'Switch to dark mode'};
+const saved=localStorage.getItem('omnirad-theme')||'dark';
+html.dataset.theme=saved;btn.textContent=ICONS[saved];
+btn.setAttribute('aria-label',LABELS[saved]);
+btn.addEventListener('click',()=>{
+  const next=html.dataset.theme==='dark'?'dim':'dark';
+  html.dataset.theme=next;btn.textContent=ICONS[next];
+  btn.setAttribute('aria-label',LABELS[next]);
+  localStorage.setItem('omnirad-theme',next);
+});
 
-  // About tab toggle
-  (function(){
-    var link = document.getElementById('aboutNavLink');
-    var sec  = document.getElementById('about');
-    var main = document.querySelector('main.page-body');
-    if(!link||!sec||!main) return;
-    link.addEventListener('click', function(e){
-      e.preventDefault();
-      var isOpen = sec.style.display !== 'none';
-      if(isOpen){
-        sec.style.display = 'none';
-        main.style.display = '';
-        link.style.color = '';
-        link.style.background = '';
-        window.scrollTo({top:0,behavior:'smooth'});
-      } else {
-        main.style.display = 'none';
-        sec.style.display = 'block';
-        link.style.color = 'var(--accent)';
-        link.style.background = 'var(--accent-subtle)';
-        window.scrollTo({top:0,behavior:'smooth'});
-      }
-    });
-    var mobileAboutLink = document.querySelector('.mobile-menu a[href="#about"]');
-    if(mobileAboutLink) mobileAboutLink.addEventListener('click', function(e){
-      e.preventDefault();
-      link.click();
-    });
-  })();
-  OmniRadAuth.updateNav();
+(function(){
+  const link=document.getElementById('aboutNavLink');
+  const sec=document.getElementById('about');
+  const main=document.querySelector('main');
+  if(!link||!sec||!main)return;
+  link.addEventListener('click',function(e){
+    e.preventDefault();
+    const isOpen=sec.style.display!=='none';
+    if(isOpen){sec.style.display='none';main.style.display='';link.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});}
+    else{main.style.display='none';sec.style.display='block';link.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+  });
+  const mobileAbout=document.querySelector('.mobile-menu a[href="#about"]');
+  if(mobileAbout)mobileAbout.addEventListener('click',function(e){e.preventDefault();link.click();});
+})();
+
+OmniRadAuth.updateNav();
 </script>
-
 </body>
 </html>
