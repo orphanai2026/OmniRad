@@ -77,7 +77,50 @@ a { color: var(--teal); text-decoration: none; }
 .theme-btn:hover { color: var(--teal); }
 
 /* ─── LAYOUT ─────────────────────────────────────────── */
-.main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 32px 16px 64px; gap: 24px; max-width: 900px; margin: 0 auto; width: 100%; }
+.main { flex: 1; width: 100%; }
+
+/* ─── CLINIC TWO-COLUMN LAYOUT ───────────────────────── */
+.clinic-layout { display: flex; align-items: flex-start; gap: 24px; width: 100%; max-width: 1400px; margin: 0 auto; padding: 28px 20px 64px; }
+.sidebar { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; position: sticky; top: 68px; }
+.case-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.no-case-card { text-align: center; color: var(--text-2); padding: 64px 28px; }
+.btn-newcase {
+  margin-top: 4px; padding: 12px; border-radius: var(--radius-lg);
+  border: 1px dashed var(--border); background: transparent; color: var(--text-2);
+  font-size: 13px; font-weight: 500; transition: all 0.15s;
+}
+.btn-newcase:hover { border-color: var(--teal-dim); color: var(--teal); }
+
+/* ─── STEP 1 GRID (text + decorative art) ────────────── */
+.step1-grid { display: grid; grid-template-columns: 1fr 220px; gap: 24px; align-items: center; }
+@media (max-width: 760px) { .step1-grid { grid-template-columns: 1fr; } .step1-art { display: none; } }
+.step1-art { color: var(--teal); opacity: 0.7; justify-self: center; }
+.step1-art svg { width: 180px; height: auto; }
+
+/* ─── LEARNING STRIP ──────────────────────────────────── */
+.learn-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 800px) { .learn-strip { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .learn-strip { grid-template-columns: 1fr; } }
+.learn-col { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+.learn-col-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.learn-col p, .learn-col ul { font-size: 12px; color: var(--text-2); line-height: 1.6; }
+.learn-col ul { padding-left: 16px; }
+
+/* ─── TIP BAR ─────────────────────────────────────────── */
+.tip-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 12px 18px; background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  font-size: 12px; color: var(--text-2);
+}
+.btn-discussion {
+  padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  background: var(--bg-3); border: 1px solid var(--border); color: var(--text-2);
+}
+.btn-discussion:hover { color: var(--teal); border-color: var(--teal-dim); }
+
+/* ─── TOPBAR USER AREA ────────────────────────────────── */
+.user-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--teal-glow); border: 1px solid var(--teal-dim); color: var(--teal); display: grid; place-items: center; font-size: 11px; font-weight: 700; }
 
 /* ─── PAGE HEADER ────────────────────────────────────── */
 .page-header { text-align: center; }
@@ -93,7 +136,7 @@ a { color: var(--teal); text-decoration: none; }
   background: var(--bg-3); border: 2px solid var(--border); color: var(--text-2);
   transition: all 0.3s; z-index: 1; position: relative;
 }
-.step.active .step-dot { background: var(--teal); border-color: var(--teal); color: #000; }
+.step.active .step-dot { background: var(--teal); border-color: var(--teal); color: #000; box-shadow: 0 0 14px var(--teal-glow); }
 .step.done .step-dot { background: var(--green-dim); border-color: var(--green); color: var(--green); }
 .step-label { font-size: 10px; color: var(--text-2); text-align: center; white-space: nowrap; }
 .step.active .step-label { color: var(--teal); }
@@ -101,17 +144,24 @@ a { color: var(--teal); text-decoration: none; }
 .step-line.done { background: var(--green); }
 
 /* ─── CARD ───────────────────────────────────────────── */
-.card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; width: 100%; }
+.card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; width: 100%; position: relative; overflow: hidden; }
+.card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--teal-dim), var(--teal), var(--teal-dim)); opacity:0.5; }
 .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); margin-bottom: 16px; }
 
 /* ─── CASE CARD ──────────────────────────────────────── */
 .case-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
 .badge {
-  padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
   background: var(--bg-3); border: 1px solid var(--border); color: var(--text-2);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.topbar-tag {
+  font-size: 11px; font-weight: 500; color: var(--text-2);
+  padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--bg-3); white-space: nowrap;
 }
 .case-complaint { font-size: 16px; font-weight: 500; margin-bottom: 12px; line-height: 1.5; }
-.case-history { font-size: 13px; color: var(--text-2); line-height: 1.6; border-left: 3px solid var(--teal-dim); padding-left: 12px; }
+.case-history { font-size: 13px; color: var(--text-2); line-height: 1.6; border-left: 3px solid var(--teal-dim); padding: 10px 12px; background: var(--bg-3); border-radius: 0 var(--radius) var(--radius) 0; }
 
 /* ─── MODALITY GRID ──────────────────────────────────── */
 .modality-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
@@ -131,25 +181,57 @@ a { color: var(--teal); text-decoration: none; }
 .mod-hint.show { display: block; }
 
 /* ─── IMAGE VIEWER ───────────────────────────────────── */
-.image-section { display: flex; flex-direction: column; gap: 12px; }
-.canvas-wrap { position: relative; width: 100%; aspect-ratio: 1; background: #000; border-radius: var(--radius); overflow: hidden; }
-canvas#imgCanvas { width: 100%; height: 100%; display: block; }
-.img-tools { display: flex; gap: 8px; flex-wrap: wrap; }
-.img-tool-btn {
-  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
-  background: var(--bg-3); border: 1px solid var(--border); color: var(--text-2);
-  transition: all 0.15s; cursor: pointer;
+.viewer-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.tool-icon-btn {
+  display: flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 20px;
+  font-size: 11px; font-weight: 500; background: var(--bg-3); border: 1px solid var(--border);
+  color: var(--text-2); transition: all 0.15s; cursor: pointer;
 }
-.img-tool-btn:hover { color: var(--text); border-color: var(--teal-dim); }
-.img-tool-btn.active { background: var(--teal-glow); color: var(--teal); border-color: var(--teal); }
+.tool-icon-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.tool-icon-btn:hover { color: var(--text); border-color: var(--teal-dim); }
+.tool-icon-btn.active { background: var(--teal-glow); color: var(--teal); border-color: var(--teal); }
+@media (max-width: 480px) { .tool-icon-btn span { display: none; } }
+
+.image-layout { display: grid; grid-template-columns: 1fr 220px; gap: 20px; align-items: start; }
+@media (max-width: 760px) { .image-layout { grid-template-columns: 1fr; } }
+.image-section { display: flex; flex-direction: column; gap: 12px; }
+.canvas-wrap { position: relative; width: 100%; aspect-ratio: 1; background: #000; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+canvas#imgCanvas { width: 100%; height: 100%; display: block; }
+.img-badge { position: absolute; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.55); color: var(--teal); border: 1px solid var(--teal-dim); z-index: 2; }
+.img-badge-tl { top: 8px; left: 8px; }
+.img-badge-br { bottom: 8px; right: 8px; color: var(--text-2); border-color: var(--border); }
+.img-label-pin {
+  position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--teal); box-shadow: 0 0 10px var(--teal-glow); transform: translate(-50%,-50%);
+  pointer-events: none; z-index: 2;
+}
 .structure-info { font-size: 13px; color: var(--text-2); line-height: 1.6; }
 .structure-info strong { color: var(--text); }
 
+.lookfor-panel { background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.lookfor-title { font-size: 13px; font-weight: 600; }
+.lookfor-list { padding-left: 16px; font-size: 12px; color: var(--text-2); line-height: 1.7; }
+.hint-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); margin-top: 4px; }
+.hint-box { font-size: 12px; color: var(--text-2); line-height: 1.6; border-left: 3px solid var(--teal-dim); padding-left: 10px; }
+
 /* ─── REPORT FORM ────────────────────────────────────── */
+.report-layout { display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; }
+@media (max-width: 800px) { .report-layout { grid-template-columns: 1fr; } }
 .report-form { display: flex; flex-direction: column; gap: 16px; }
 .report-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
 .report-field textarea { min-height: 80px; font-size: 13px; }
 .report-hint { font-size: 11px; color: var(--text-2); margin-top: 4px; font-style: italic; }
+.btn-ghost { padding: 9px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; background: transparent; border: 1px dashed var(--border); color: var(--text-2); cursor: pointer; }
+.btn-ghost:hover { color: var(--teal); border-color: var(--teal-dim); }
+
+.guide-panel { background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.guide-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.guide-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: 11px; display: flex; flex-direction: column; gap: 2px; }
+.guide-card strong { color: var(--teal); font-size: 11px; }
+.guide-card span { color: var(--text-2); }
+.context-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-size: 12px; color: var(--text-2); line-height: 1.7; }
+.mistakes-list { padding-left: 16px; font-size: 11px; color: var(--text-2); line-height: 1.7; }
+
 
 /* ─── COMPARISON ─────────────────────────────────────── */
 .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -184,20 +266,22 @@ canvas#imgCanvas { width: 100%; height: 100%; display: block; }
   padding: 9px 22px; border-radius: var(--radius); font-size: 13px; font-weight: 500;
   cursor: pointer; transition: all 0.18s; border: 1px solid transparent;
 }
-.btn-primary { background: var(--teal); color: #000; }
-.btn-primary:hover { filter: brightness(1.1); }
+.btn-primary { background: var(--teal); color: #000; box-shadow: 0 0 0 0 var(--teal-glow); }
+.btn-primary:hover { filter: brightness(1.1); box-shadow: 0 0 18px var(--teal-glow); }
 .btn-secondary { background: var(--bg-3); border-color: var(--border); color: var(--text-2); }
 .btn-secondary:hover { color: var(--text); border-color: var(--teal-dim); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
 /* ─── CASE QUEUE ─────────────────────────────────────── */
 .case-list { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.case-list-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-2); margin-bottom: 2px; }
 .case-item {
-  display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px; padding: 16px 20px;
   background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg);
   cursor: pointer; transition: all 0.18s;
 }
-.case-item:hover { border-color: var(--teal-dim); background: var(--bg-3); }
+.case-item:hover { border-color: var(--teal-dim); background: var(--bg-3); box-shadow: 0 0 16px var(--teal-glow); transform: translateY(-1px); }
+.case-item.active { border-color: var(--teal); background: var(--teal-glow); box-shadow: 0 0 18px var(--teal-glow); }
 .case-num { font-family: var(--mono); font-size: 13px; color: var(--teal); min-width: 28px; }
 .case-info { flex: 1; }
 .case-info strong { font-size: 14px; display: block; }
@@ -206,7 +290,9 @@ canvas#imgCanvas { width: 100%; height: 100%; display: block; }
 .diff-easy { background: var(--green-dim); color: var(--green); }
 .diff-med  { background: var(--amber-dim); color: var(--amber); }
 .diff-hard { background: var(--red-dim);   color: var(--red); }
-.case-status-icon { font-size: 16px; }
+.case-status-icon { font-size: 14px; color: var(--text-2); }
+.case-arrow { font-size: 16px; color: var(--text-2); transition: transform 0.15s; }
+.case-item:hover .case-arrow { transform: translateX(2px); color: var(--teal); }
 
 /* ─── FEEDBACK BOX ───────────────────────────────────── */
 .feedback-box {
@@ -244,150 +330,241 @@ canvas#imgCanvas { width: 100%; height: 100%; display: block; }
     <a href="daily.html">🧠 Daily</a>
     <a href="auth.html">🔐 Sign In</a>
   </div>
+  <span class="topbar-tag">🎓 Educational use only</span>
+  <div class="user-chip" id="userChip" style="display:none">
+    <span class="user-avatar" id="userInitials">—</span>
+    <span id="userName"></span>
+  </div>
   <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">◑</button>
 </nav>
 
 <!-- MAIN -->
 <main class="main">
+  <div class="clinic-layout">
 
-  <!-- ══ SCREEN 0: CASE QUEUE ══════════════════════════ -->
-  <div id="screen-queue" class="screen active">
-    <div class="page-header">
-      <h1>🏥 Radiology Clinic</h1>
-      <p>Simulate clinical radiology decision-making · Case-based learning</p>
-    </div>
-
-    <div class="case-list" id="caseList"></div>
-  </div>
-
-  <!-- ══ SCREEN 1–4: ACTIVE CASE ═══════════════════════ -->
-  <div id="screen-case" class="screen">
-
-    <!-- Stepper -->
-    <div class="stepper" id="stepper">
-      <div class="step" id="st0"><div class="step-dot">1</div><span class="step-label">Case</span></div>
-      <div class="step-line" id="sl0"></div>
-      <div class="step" id="st1"><div class="step-dot">2</div><span class="step-label">Imaging</span></div>
-      <div class="step-line" id="sl1"></div>
-      <div class="step" id="st2"><div class="step-dot">3</div><span class="step-label">Image</span></div>
-      <div class="step-line" id="sl2"></div>
-      <div class="step" id="st3"><div class="step-dot">4</div><span class="step-label">Report</span></div>
-      <div class="step-line" id="sl3"></div>
-      <div class="step" id="st4"><div class="step-dot">5</div><span class="step-label">Review</span></div>
-    </div>
-
-    <!-- ── Step 1: Case Presentation ── -->
-    <div id="step1" class="card">
-      <div class="card-title">📋 Clinical Presentation</div>
-      <div class="case-meta" id="caseMeta"></div>
-      <div class="case-complaint" id="caseComplaint"></div>
-      <div class="case-history" id="caseHistory"></div>
-      <div class="actions">
-        <button class="btn btn-secondary" onclick="goQueue()">← Back</button>
-        <button class="btn btn-primary" onclick="goStep(2)">Choose Imaging →</button>
+    <!-- ══ SIDEBAR — Case List (always visible) ══════════ -->
+    <aside class="sidebar">
+      <div class="page-header" style="text-align:left">
+        <h1>🏥 Radiology Clinic</h1>
+        <p>Case-based learning · Real-world decisions</p>
       </div>
-    </div>
+      <div class="case-list-title" id="caseListTitle">All Cases</div>
+      <div class="case-list" id="caseList"></div>
+      <button class="btn-newcase" title="Coming soon">+ New Case</button>
+    </aside>
 
-    <!-- ── Step 2: Imaging Request ── -->
-    <div id="step2" class="card" style="display:none">
-      <div class="card-title">🔬 Select the Most Appropriate Imaging</div>
-      <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">
-        Based on the clinical scenario, which imaging modality is the best first-line investigation?
-      </p>
-      <div class="modality-grid" id="modalityGrid"></div>
-      <div class="feedback-box" id="modalityFeedback"></div>
-      <div class="mod-hint" id="modHint"></div>
-      <div class="actions" style="margin-top:16px;">
-        <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
-        <button class="btn btn-primary" id="btnToImage" onclick="goStep(3)" disabled>View Image →</button>
+    <!-- ══ MAIN PANEL ═════════════════════════════════════ -->
+    <section class="case-main">
+
+      <!-- Placeholder when no case selected -->
+      <div id="noCaseSelected" class="card no-case-card">
+        <p>👈 Select a case from the list to begin.</p>
       </div>
-    </div>
 
-    <!-- ── Step 3: Image Review ── -->
-    <div id="step3" class="card" style="display:none">
-      <div class="card-title">🖼️ Imaging Review</div>
-      <div class="image-section">
-        <div class="img-tools">
-          <button class="img-tool-btn" onclick="toolZoomIn()">＋ Zoom In</button>
-          <button class="img-tool-btn" onclick="toolZoomOut()">－ Zoom Out</button>
-          <button class="img-tool-btn" onclick="toolInvert()">☯ Invert</button>
-          <button class="img-tool-btn" onclick="toolReset()">↺ Reset</button>
+      <!-- Active case workflow -->
+      <div id="caseActive" style="display:none; flex-direction:column; gap:20px;">
+
+        <!-- Stepper -->
+        <div class="stepper" id="stepper">
+          <div class="step" id="st0"><div class="step-dot">1</div><span class="step-label">Case</span></div>
+          <div class="step-line" id="sl0"></div>
+          <div class="step" id="st1"><div class="step-dot">2</div><span class="step-label">Imaging</span></div>
+          <div class="step-line" id="sl1"></div>
+          <div class="step" id="st2"><div class="step-dot">3</div><span class="step-label">Image</span></div>
+          <div class="step-line" id="sl2"></div>
+          <div class="step" id="st3"><div class="step-dot">4</div><span class="step-label">Report</span></div>
+          <div class="step-line" id="sl3"></div>
+          <div class="step" id="st4"><div class="step-dot">5</div><span class="step-label">Review</span></div>
         </div>
-        <div class="canvas-wrap">
-          <canvas id="imgCanvas"></canvas>
-        </div>
-        <div class="structure-info" id="structureInfo"></div>
-      </div>
-      <div class="actions" style="margin-top:16px;">
-        <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
-        <button class="btn btn-primary" onclick="goStep(4)">Write Report →</button>
-      </div>
-    </div>
 
-    <!-- ── Step 4: Structured Report ── -->
-    <div id="step4" class="card" style="display:none">
-      <div class="card-title">📝 Structured Radiology Report</div>
-      <div class="report-form">
-        <div class="report-field">
-          <label>Indication</label>
-          <textarea id="rIndication" rows="2" placeholder="Why was this imaging ordered?"></textarea>
-          <div class="report-hint">State the clinical question the imaging is meant to answer.</div>
+        <!-- ── Step 1: Case Presentation ── -->
+        <div id="step1" class="card">
+          <div class="card-title">📋 Clinical Presentation</div>
+          <div class="step1-grid">
+            <div class="step1-text">
+              <div class="case-meta" id="caseMeta"></div>
+              <div class="case-complaint" id="caseComplaint"></div>
+              <div class="case-history" id="caseHistory"></div>
+              <div class="actions">
+                <button class="btn btn-secondary" onclick="goQueue()">← Back</button>
+                <button class="btn btn-primary" onclick="goStep(2)">Choose Imaging →</button>
+              </div>
+            </div>
+            <div class="step1-art" id="step1Art" aria-hidden="true">
+              <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="100" cy="55" rx="38" ry="42" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
+                <path d="M40 95 Q100 80 160 95 L168 220 Q100 245 32 220 Z" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
+                <circle id="art-organ" cx="100" cy="140" r="22" fill="currentColor" opacity="0.35"/>
+                <path d="M60 150 Q100 175 140 150" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+                <path d="M55 175 Q100 200 145 175" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                <path d="M65 200 Q100 218 135 200" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+              </svg>
+            </div>
+          </div>
         </div>
-        <div class="report-field">
-          <label>Technique</label>
-          <textarea id="rTechnique" rows="2" placeholder="Describe the imaging technique used…"></textarea>
-          <div class="report-hint">Modality, protocol, contrast, and relevant parameters.</div>
-        </div>
-        <div class="report-field">
-          <label>Findings</label>
-          <textarea id="rFindings" rows="4" placeholder="Describe what you see in the image…"></textarea>
-          <div class="report-hint">Describe size, shape, echogenicity/attenuation/signal, margins, and notable features.</div>
-        </div>
-        <div class="report-field">
-          <label>Impression</label>
-          <textarea id="rImpression" rows="2" placeholder="Your radiological conclusion…"></textarea>
-          <div class="report-hint">Summarize the most likely diagnosis or differential diagnoses.</div>
-        </div>
-      </div>
-      <div class="actions" style="margin-top:8px;">
-        <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
-        <button class="btn btn-primary" onclick="goStep(5)">Compare with Model →</button>
-      </div>
-    </div>
 
-    <!-- ── Step 5: Comparison + Review ── -->
-    <div id="step5" class="card" style="display:none">
-      <div class="card-title">✅ Report Comparison</div>
-      <div class="compare-grid">
-        <div class="compare-col student">
-          <h3>Your Report</h3>
-          <div class="compare-text" id="studentReport"></div>
+        <!-- ── Step 2: Imaging Request ── -->
+        <div id="step2" class="card" style="display:none">
+          <div class="card-title">🔬 Select the Most Appropriate Imaging</div>
+          <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">
+            Based on the clinical scenario, which imaging modality is the best first-line investigation?
+          </p>
+          <div class="modality-grid" id="modalityGrid"></div>
+          <div class="feedback-box" id="modalityFeedback"></div>
+          <div class="mod-hint" id="modHint"></div>
+          <div class="actions" style="margin-top:16px;">
+            <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+            <button class="btn btn-primary" id="btnToImage" onclick="goStep(3)" disabled>View Image →</button>
+          </div>
         </div>
-        <div class="compare-col model">
-          <h3>Model Report</h3>
-          <div class="compare-text" id="modelReport"></div>
+
+        <!-- ── Step 3: Image Review ── -->
+        <div id="step3" class="card" style="display:none">
+          <div class="card-title">Imaging Review</div>
+          <div class="viewer-toolbar">
+            <button class="tool-icon-btn" onclick="toolZoomIn()" title="Zoom In"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="10" y1="7" x2="10" y2="13"/><line x1="7" y1="10" x2="13" y2="10"/></svg><span>Zoom In</span></button>
+            <button class="tool-icon-btn" onclick="toolZoomOut()" title="Zoom Out"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="7" y1="10" x2="13" y2="10"/></svg><span>Zoom Out</span></button>
+            <button class="tool-icon-btn" id="panToolBtn" onclick="toolPanInfo()" title="Pan (drag image)"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M7 7l-4 5 4 5M17 7l4 5-4 5"/></svg><span>Pan</span></button>
+            <button class="tool-icon-btn" onclick="toolInvert()" title="Invert"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg><span>Invert</span></button>
+            <button class="tool-icon-btn" onclick="toolReset()" title="Reset"><svg viewBox="0 0 24 24"><path d="M20 11A8 8 0 1 0 19 16"/><path d="M20 5v6h-6"/></svg><span>Reset</span></button>
+            <button class="tool-icon-btn" id="labelToolBtn" onclick="toolLabel()" title="Toggle structure label"><svg viewBox="0 0 24 24"><path d="M3 11l8-8h6a2 2 0 0 1 2 2v6l-8 8a2 2 0 0 1-3 0l-5-5a2 2 0 0 1 0-3z"/><circle cx="15" cy="9" r="1.4" fill="currentColor" stroke="none"/></svg><span>Label</span></button>
+          </div>
+          <div class="image-layout">
+            <div class="image-section">
+              <div class="canvas-wrap">
+                <span class="img-badge img-badge-tl" id="imgBadgeModality"></span>
+                <span class="img-badge img-badge-br">Educational image</span>
+                <canvas id="imgCanvas"></canvas>
+                <div class="img-label-pin" id="imgLabelPin" style="display:none"></div>
+              </div>
+              <div class="structure-info" id="structureInfo"></div>
+            </div>
+            <aside class="lookfor-panel">
+              <div class="lookfor-title">🔎 Look For</div>
+              <ul class="lookfor-list" id="lookforList"></ul>
+              <div class="hint-title">Clinical Hint</div>
+              <div class="hint-box" id="hintBox"></div>
+            </aside>
+          </div>
+          <div class="actions" style="margin-top:16px;">
+            <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+            <button class="btn btn-primary" onclick="goStep(4)">Write Report →</button>
+          </div>
         </div>
-      </div>
-      <div class="rating-row">
-        <span class="rating-label">Self-rate your report:</span>
-        <button class="rating-btn" onclick="rate(1)">1</button>
-        <button class="rating-btn" onclick="rate(2)">2</button>
-        <button class="rating-btn" onclick="rate(3)">3</button>
-        <button class="rating-btn" onclick="rate(4)">4</button>
-        <button class="rating-btn" onclick="rate(5)">5</button>
-      </div>
-      <div class="score-banner" id="scoreBanner">
-        <div class="score-num" id="scoreNum">—</div>
-        <div class="score-label" id="scoreLabel"></div>
-      </div>
-      <div class="actions" style="margin-top:16px;">
-        <button class="btn btn-secondary" onclick="goQueue()">← Case List</button>
-        <button class="btn btn-primary" onclick="nextCase()">Next Case →</button>
-      </div>
-    </div>
 
-  </div><!-- /screen-case -->
+        <!-- ── Step 4: Structured Report ── -->
+        <div id="step4" class="card" style="display:none">
+          <div class="card-title">Structured Radiology Report</div>
+          <div class="report-layout">
+          <div class="report-form">
+            <div class="report-field">
+              <label>Indication</label>
+              <textarea id="rIndication" rows="2" placeholder="Why was this imaging ordered?"></textarea>
+              <div class="report-hint">State the clinical question the imaging is meant to answer.</div>
+            </div>
+            <div class="report-field">
+              <label>Technique</label>
+              <textarea id="rTechnique" rows="2" placeholder="Describe the imaging technique used…"></textarea>
+              <div class="report-hint">Modality, protocol, contrast, and relevant parameters.</div>
+            </div>
+            <div class="report-field">
+              <label>Findings</label>
+              <textarea id="rFindings" rows="4" placeholder="Describe what you see in the image…"></textarea>
+              <div class="report-hint">Describe size, shape, echogenicity/attenuation/signal, margins, and notable features.</div>
+            </div>
+            <div class="report-field">
+              <label>Impression</label>
+              <textarea id="rImpression" rows="2" placeholder="Your radiological conclusion…"></textarea>
+              <div class="report-hint">Summarize the most likely diagnosis or differential diagnoses.</div>
+            </div>
+            <div class="actions" style="margin-top:8px;">
+              <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
+              <button class="btn btn-ghost" title="Coming soon">Save Draft</button>
+              <button class="btn btn-primary" onclick="goStep(5)">Compare with Model →</button>
+            </div>
+          </div>
 
+          <aside class="guide-panel">
+            <div class="guide-title">📖 Reporting Guide</div>
+            <div class="guide-card"><strong>Indication</strong><span>Why was the exam requested?</span></div>
+            <div class="guide-card"><strong>Technique</strong><span>What imaging was performed?</span></div>
+            <div class="guide-card"><strong>Findings</strong><span>What do you objectively see?</span></div>
+            <div class="guide-card"><strong>Impression</strong><span>What is the conclusion?</span></div>
+
+            <div class="guide-title" style="margin-top:14px;">🧾 Case Context</div>
+            <div class="context-card" id="caseContext"></div>
+
+            <div class="guide-title" style="margin-top:14px;">⚠️ Common Mistakes</div>
+            <ul class="mistakes-list">
+              <li>Do not repeat clinical history in Findings.</li>
+              <li>Do not overstate uncertain findings.</li>
+              <li>Keep Impression concise.</li>
+            </ul>
+          </aside>
+          </div>
+        </div>
+
+        <!-- ── Step 5: Comparison + Review ── -->
+        <div id="step5" class="card" style="display:none">
+          <div class="card-title">✅ Report Comparison</div>
+          <div class="compare-grid">
+            <div class="compare-col student">
+              <h3>Your Report</h3>
+              <div class="compare-text" id="studentReport"></div>
+            </div>
+            <div class="compare-col model">
+              <h3>Model Report</h3>
+              <div class="compare-text" id="modelReport"></div>
+            </div>
+          </div>
+          <div class="rating-row">
+            <span class="rating-label">Self-rate your report:</span>
+            <button class="rating-btn" onclick="rate(1)">1</button>
+            <button class="rating-btn" onclick="rate(2)">2</button>
+            <button class="rating-btn" onclick="rate(3)">3</button>
+            <button class="rating-btn" onclick="rate(4)">4</button>
+            <button class="rating-btn" onclick="rate(5)">5</button>
+          </div>
+          <div class="score-banner" id="scoreBanner">
+            <div class="score-num" id="scoreNum">—</div>
+            <div class="score-label" id="scoreLabel"></div>
+          </div>
+          <div class="actions" style="margin-top:16px;">
+            <button class="btn btn-secondary" onclick="goQueue()">← Case List</button>
+            <button class="btn btn-primary" onclick="nextCase()">Next Case →</button>
+          </div>
+        </div>
+
+        <!-- ── Learning Strip (shown with Step 1) ── -->
+        <div class="learn-strip" id="learnStrip">
+          <div class="learn-col">
+            <div class="learn-col-title">🩺 Key Findings</div>
+            <ul id="learnFindings"></ul>
+          </div>
+          <div class="learn-col">
+            <div class="learn-col-title">🎯 Clinical Question</div>
+            <p id="learnQuestion"></p>
+          </div>
+          <div class="learn-col">
+            <div class="learn-col-title">🎓 Learning Goal</div>
+            <p id="learnGoal"></p>
+          </div>
+          <div class="learn-col">
+            <div class="learn-col-title">💡 Why This Case?</div>
+            <p id="learnWhy"></p>
+          </div>
+        </div>
+
+        <!-- ── Tip Bar ── -->
+        <div class="tip-bar" id="tipBar">
+          <span>✦ Tip: Read the case carefully and think like a radiologist. Every decision matters.</span>
+          <button class="btn-discussion" title="Coming soon">💬 Case Discussion</button>
+        </div>
+
+      </div><!-- /caseActive -->
+
+    </section>
+  </div><!-- /clinic-layout -->
 </main>
 
 <script>
@@ -622,15 +799,29 @@ let dragStart = { x: 0, y: 0 };
 // ══════════════════════════════════════════════════════
 function init() {
   renderQueue();
+  initUserBadge();
+}
+
+function initUserBadge() {
+  let u = null;
+  try { u = JSON.parse(localStorage.getItem('omnirad_user')); } catch {}
+  if (!u) return;
+  const name = (u.user_metadata && u.user_metadata.full_name) || u.email || 'User';
+  const initials = name.split(' ').filter(Boolean).map(s => s[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('userInitials').textContent = initials || 'U';
+  document.getElementById('userName').textContent = name.split(' ')[0];
+  document.getElementById('userChip').style.display = 'flex';
 }
 
 function renderQueue() {
+  document.getElementById('caseListTitle').textContent = `All Cases (${CASES.length})`;
   const list = document.getElementById('caseList');
   list.innerHTML = CASES.map((c, i) => {
     const res = caseResults[c.id];
-    const statusIcon = res ? (res.rating >= 4 ? '⭐' : res.rating >= 2 ? '✓' : '—') : '›';
+    const statusIcon = res ? (res.rating >= 4 ? '⭐' : res.rating >= 2 ? '✓' : '—') : '';
+    const isActive = currentCase && currentCase.id === c.id;
     return `
-      <div class="case-item" onclick="startCase(${i})">
+      <div class="case-item${isActive ? ' active' : ''}" onclick="startCase(${i})">
         <span class="case-num">${String(c.id).padStart(2,'0')}</span>
         <div class="case-info">
           <strong>${c.title}</strong>
@@ -638,6 +829,7 @@ function renderQueue() {
         </div>
         <span class="case-diff diff-${c.difficulty}">${c.difficulty}</span>
         <span class="case-status-icon">${statusIcon}</span>
+        <span class="case-arrow">›</span>
       </div>
     `;
   }).join('');
@@ -646,21 +838,21 @@ function renderQueue() {
 // ══════════════════════════════════════════════════════
 //  NAVIGATION
 // ══════════════════════════════════════════════════════
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
 function goQueue() {
-  showScreen('screen-queue');
+  currentCase = null;
+  document.getElementById('caseActive').style.display = 'none';
+  document.getElementById('noCaseSelected').style.display = 'block';
   renderQueue();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function startCase(idx) {
   currentCase = CASES[idx];
   selectedModality = null;
   userRating = null;
-  showScreen('screen-case');
+  document.getElementById('noCaseSelected').style.display = 'none';
+  document.getElementById('caseActive').style.display = 'flex';
+  renderQueue();
   goStep(1);
 }
 
@@ -679,6 +871,8 @@ function goStep(n) {
   });
   const el = document.getElementById('step'+n);
   if (el) el.style.display = 'block';
+  document.getElementById('learnStrip').style.display = (n === 1) ? 'grid' : 'none';
+  document.getElementById('tipBar').style.display = (n === 1) ? 'flex' : 'none';
   updateStepper(n);
   if (n === 1) fillCase();
   if (n === 2) fillModalities();
@@ -704,6 +898,15 @@ function updateStepper(n) {
 // ══════════════════════════════════════════════════════
 //  STEP 1: CASE
 // ══════════════════════════════════════════════════════
+function deriveLearnContent(c) {
+  const findings = c.history.split('. ').map(s => s.trim().replace(/\.$/,'')).filter(Boolean).slice(0,4);
+  const question = `Is this presentation consistent with the suspected diagnosis? What is the best initial imaging modality?`;
+  const goal = `Choose the most appropriate first-line imaging and justify your decision.`;
+  const whyMap = { easy: 'Common presentation in emergency and outpatient settings.', medium: 'Tests systematic reasoning under time-sensitive conditions.', hard: 'Builds pattern recognition for complex or oncologic presentations.' };
+  const why = whyMap[c.difficulty] || 'A valuable case for building clinical-imaging reasoning.';
+  return { findings, question, goal, why };
+}
+
 function fillCase() {
   const c = currentCase;
   document.getElementById('caseMeta').innerHTML = `
@@ -713,6 +916,12 @@ function fillCase() {
   `;
   document.getElementById('caseComplaint').textContent = c.complaint;
   document.getElementById('caseHistory').textContent = c.history;
+
+  const lc = deriveLearnContent(c);
+  document.getElementById('learnFindings').innerHTML = lc.findings.map(f => `<li>${f}</li>`).join('');
+  document.getElementById('learnQuestion').textContent = lc.question;
+  document.getElementById('learnGoal').textContent = lc.goal;
+  document.getElementById('learnWhy').textContent = lc.why;
 }
 
 // ══════════════════════════════════════════════════════
@@ -773,22 +982,41 @@ function selectModality(id) {
 // ══════════════════════════════════════════════════════
 //  STEP 3: IMAGE / CANVAS
 // ══════════════════════════════════════════════════════
+function deriveLookFor(s) {
+  return s.info.split(/[.;]\s+/).map(x => x.trim()).filter(Boolean).slice(0, 4);
+}
+
 function fillImage() {
   const s = STRUCTURES[currentCase.structure];
   document.getElementById('structureInfo').innerHTML = `
     <strong>${s.name}</strong> · ${s.modality}<br>${s.info}
   `;
+  document.getElementById('imgBadgeModality').textContent = `${s.modality} • ${s.name}`;
+  document.getElementById('lookforList').innerHTML = deriveLookFor(s).map(x => `<li>${x}</li>`).join('');
+  const fb = currentCase.modalityFeedback[currentCase.firstLine];
+  document.getElementById('hintBox').textContent = fb ? fb.text.replace(/^[✓✗]\s*/, '') : '';
+  document.getElementById('imgLabelPin').style.display = 'none';
+  document.getElementById('labelToolBtn').classList.remove('active');
+
   canvasScale = 1; canvasInverted = false; canvasOffset = {x:0,y:0};
   canvasImg = null;
 
-  requestAnimationFrame(() => requestAnimationFrame(() => initCanvas(s)));
+  // Lesson #8: layout must settle before measuring canvas size.
+  // Double rAF + short timeout fallback for nested flex layouts.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    setTimeout(() => initCanvas(s), 80);
+  }));
+}
+
+function sizeCanvas(canvas) {
+  const wrap = canvas.parentElement;
+  const w = wrap.offsetWidth, h = wrap.offsetHeight;
+  if (w && h) { canvas.width = w; canvas.height = h; }
 }
 
 function initCanvas(s) {
   const canvas = document.getElementById('imgCanvas');
-  const wrap = canvas.parentElement;
-  canvas.width  = wrap.offsetWidth  || 400;
-  canvas.height = wrap.offsetHeight || 400;
+  sizeCanvas(canvas);
 
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = s.fallbackColor;
@@ -802,9 +1030,11 @@ function initCanvas(s) {
   // NO crossOrigin attribute — critical lesson #1
   img.onload = () => {
     canvasImg = img;
+    sizeCanvas(canvas); // re-measure in case layout settled after image started loading
     drawCanvas();
   };
   img.onerror = () => {
+    sizeCanvas(canvas);
     ctx.fillStyle = s.fallbackColor;
     ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle = '#556655';
@@ -858,6 +1088,20 @@ function toolZoomIn()  { canvasScale = Math.min(canvasScale * 1.25, 4); drawCanv
 function toolZoomOut() { canvasScale = Math.max(canvasScale / 1.25, 0.3); drawCanvas(); }
 function toolInvert()  { canvasInverted = !canvasInverted; drawCanvas(); }
 function toolReset()   { canvasScale = 1; canvasInverted = false; canvasOffset = {x:0,y:0}; drawCanvas(); }
+function toolPanInfo() {
+  // Panning is always active via mouse/touch drag on the canvas;
+  // this button just gives a visual acknowledgement (no mode to toggle).
+  const btn = document.getElementById('panToolBtn');
+  btn.classList.add('active');
+  setTimeout(() => btn.classList.remove('active'), 400);
+}
+function toolLabel() {
+  const pin = document.getElementById('imgLabelPin');
+  const btn = document.getElementById('labelToolBtn');
+  const show = pin.style.display === 'none';
+  pin.style.display = show ? 'block' : 'none';
+  btn.classList.toggle('active', show);
+}
 
 // ══════════════════════════════════════════════════════
 //  STEP 4: REPORT
@@ -869,6 +1113,9 @@ function fillReport() {
       document.getElementById(id).value = '';
     });
   }
+  const c = currentCase;
+  document.getElementById('caseContext').innerHTML =
+    `${c.patient.age}-year-old ${c.patient.gender}<br>${c.title}<br>Target: ${STRUCTURES[c.structure].name}<br>First-line imaging: ${c.firstLine}`;
 }
 
 // ══════════════════════════════════════════════════════
