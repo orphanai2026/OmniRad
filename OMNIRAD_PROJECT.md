@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v4.1 |
+| Version | v4.2 |
 | Date | 2026-06-29 |
-| Status | 🚀 Phase 3 Complete — Home + Auth + Atlas Redesigned — Sprint #1 CT Next |
+| Status | 🧹 Repository Cleanup (Path B) — Before Sprint #1 CT |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -493,15 +493,50 @@ SVG placeholder = غير مقبول في الإنتاج
 
 ### ④ الترتيب المعتمد قبل المرحلة 4
 ```
-١. تطوير + إعادة تصميم كل صفحة (محادثة مستقلة)
-٢. التأكد من عمل Issues #32-35
-٣. Sprint #1 CT (المرحلة 4)
-٤. Task #20 الإطلاق — بعد اكتمال Sprint #1
+١. تنظيف المستودع (المسار ب — دون كسر البنية)
+٢. تطوير + إعادة تصميم كل صفحة (محادثة مستقلة)
+٣. التأكد من عمل Issues #32-35
+٤. Sprint #1 CT (المرحلة 4)
+٥. Task #20 الإطلاق — بعد اكتمال Sprint #1
+```
+
+### ⑤ تنظيف المستودع — المسار (ب) معتمد 2026-06-28
+```
+القرار: تنظيف دون كسر البنية الحالية — وليس Refactor كامل
+
+السبب:
+- المشروع على وشك دخول مرحلة تغييرات كثيفة (Sprint 1-7)
+- Refactor كامل (build tools, src/, components/) يخالف
+  المبدأ المعتمد: Vanilla JS — no build tools — self-contained HTML
+- القيمة غير ملموسة للمستخدم الآن، فقط تسهيل العمل
+
+ما يُنفَّذ (المسار ب):
+١. توحيد أسماء الملفات والمجلدات
+٢. تعليقات واضحة في كل ملف (header comment)
+٣. تبسيط الكود المكرر (مثل nav المكرر عبر 9+ صفحات)
+٤. تنظيم images/ بوضوح أكبر استعداداً لـ Sprint #1
+٥. مراجعة assets غير المستخدمة وحذفها
+
+ما لا يُنفَّذ:
+✗ لا build tools (Vite/Webpack)
+✗ لا تقسيم لمكوّنات (components/)
+✗ لا تغيير المعمارية الأساسية
+✗ لا كسر أي صفحة شغّالة
+
+التوقيت: الـ Refactor الكامل (المسار أ) يُؤجَّل لما بعد الإطلاق الفعلي إن احتيج
 ```
 
 ---
 
 # ⑦ Version History
+
+- **v4.2 — 2026-06-29**
+  - قرار رسمي: تنظيف المستودع — المسار (ب) معتمد
+  - السبب: المشروع على وشك Sprint 1-7 — Refactor كامل يخالف مبدأ Vanilla JS
+  - يُنفَّذ: توحيد الأسماء · تعليقات · تبسيط التكرار · تنظيم images/
+  - لا يُنفَّذ: build tools · components/ · تغيير المعمارية
+  - قسم ⑩.⑤ مضاف في OMNIRAD_PROJECT.md
+  - الترتيب المحدَّث: تنظيف → تصميم الصفحات → Issues → Sprint #1 → الإطلاق
 
 - **v4.1 — 2026-06-29**
   - Task #23 approved: Atlas Page Redesign ✅
@@ -667,4 +702,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v3.5**
+**End of Document — OmniRad Master Plan v4.2**
