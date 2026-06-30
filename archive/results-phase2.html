@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<!-- ════════════════════════════════════════════════════
+     OmniRad — pages/results-phase2.html
+     Purpose: [Archived] Extended test results — Task #13
+     Vanilla JS · self-contained · no build tools
+     ════════════════════════════════════════════════════ -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — تقرير نتائج Phase 2</title>
+<style>
+  :root {
+    --bg:      oklch(0.14 0.010 240);
+    --surface: oklch(0.18 0.012 240);
+    --border:  oklch(0.26 0.012 240);
+    --teal:    oklch(0.72 0.14 195);
+    --teal-d:  oklch(0.42 0.12 195);
+    --text:    oklch(0.92 0.005 240);
+    --muted:   oklch(0.60 0.008 240);
+    --accent:  oklch(0.78 0.15 160);
+    --warn:    oklch(0.75 0.18 50);
+    --error:   oklch(0.70 0.20 25);
+    --font:    'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.7;
+    padding-bottom: 60px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo-mark {
+    width:34px; height:34px; background:var(--teal);
+    border-radius:7px; display:flex; align-items:center;
+    justify-content:center; font-size:12px; font-weight:700; color:var(--bg);
+  }
+  .logo-text { font-size:17px; font-weight:600; color:var(--teal); }
+  .logo-sub  { font-size:11px; color:var(--muted); }
+
+  /* Hero */
+  .hero {
+    padding: 30px 24px 26px;
+    background: linear-gradient(135deg,oklch(0.20 0.020 220),oklch(0.16 0.012 240));
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .hero h1 { font-size:20px; font-weight:700; color:var(--teal); margin-bottom:6px; }
+  .hero p  { color:var(--muted); font-size:13px; }
+  .stamp {
+    display:inline-block; margin-top:12px;
+    padding:4px 14px; border-radius:20px;
+    background:oklch(0.20 0.06 195);
+    border:1px solid var(--teal-d);
+    color:var(--teal); font-size:12px; font-weight:600;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 24px auto 0;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* Card */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .card-head {
+    background:oklch(0.20 0.015 240);
+    padding:13px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .card-icon {
+    width:26px; height:26px; border-radius:5px;
+    display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;
+  }
+  .ci-a { background:oklch(0.22 0.08 195); }
+  .ci-b { background:oklch(0.22 0.08 160); }
+  .ci-c { background:oklch(0.22 0.08 280); }
+  .ci-d { background:oklch(0.22 0.08 50);  }
+  .ci-e { background:oklch(0.22 0.08 25);  }
+
+  .card-head h2 { font-size:14px; font-weight:600; }
+  .card-head .sub { font-size:12px; color:var(--muted); }
+  .card-body { padding:18px 20px; }
+
+  /* KPI table */
+  .kpi-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .kpi-table th {
+    text-align:right; padding:10px 12px;
+    background:oklch(0.16 0.010 240);
+    color:var(--muted); font-weight:500;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+  }
+  .kpi-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .kpi-table tr:last-child td { border-bottom:none; }
+  .kpi-table .target { color:var(--teal); font-weight:600; font-size:12px; }
+
+  /* Status cells */
+  .status { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; }
+  .status.pass  { color:var(--accent); }
+  .status.fail  { color:var(--error); }
+  .status.blank { color:var(--muted); }
+
+  /* Input cell */
+  .result-input {
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:6px 10px;
+    color:var(--text);
+    font-family:var(--font);
+    font-size:13px;
+    width:100%;
+    text-align:center;
+  }
+  .result-input:focus { outline:2px solid var(--teal-d); }
+
+  /* Status select */
+  .status-select {
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:6px 8px;
+    color:var(--text);
+    font-family:var(--font);
+    font-size:12px;
+    cursor:pointer;
+  }
+  .status-select:focus { outline:2px solid var(--teal-d); }
+
+  /* Feature rating table */
+  .feat-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .feat-table th {
+    text-align:right; padding:9px 12px;
+    background:oklch(0.16 0.010 240);
+    color:var(--muted); font-size:12px;
+    border-bottom:1px solid var(--border);
+  }
+  .feat-table td { padding:9px 12px; border-bottom:1px solid var(--border); }
+  .feat-table tr:last-child td { border-bottom:none; }
+
+  /* Textarea */
+  textarea {
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:6px;
+    color:var(--text);
+    font-family:var(--font);
+    font-size:14px;
+    padding:12px;
+    width:100%;
+    resize:vertical;
+    min-height:90px;
+    direction:rtl;
+    line-height:1.7;
+  }
+  textarea:focus { outline:2px solid var(--teal-d); }
+  textarea::placeholder { color:var(--muted); }
+
+  /* Decision block */
+  .decision-cards { display:flex; flex-direction:column; gap:10px; }
+  .decision-card {
+    display:flex; gap:14px; align-items:flex-start;
+    padding:14px; border-radius:8px;
+    border:2px solid var(--border);
+    cursor:pointer; transition:all 0.15s;
+  }
+  .decision-card:hover { border-color:var(--teal-d); }
+  .decision-card.selected { border-color:var(--teal); background:oklch(0.18 0.04 195); }
+  .decision-card input[type="radio"] { display:none; }
+  .dec-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+  .dec-title { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .dec-sub   { font-size:12px; color:var(--muted); }
+
+  /* Save button */
+  .btn-save {
+    width:100%; padding:14px;
+    background:linear-gradient(135deg,var(--teal-d),var(--teal));
+    color:var(--bg); border:none; border-radius:8px;
+    font-size:15px; font-weight:700; font-family:var(--font);
+    cursor:pointer; transition:opacity 0.2s;
+  }
+  .btn-save:hover { opacity:0.88; }
+
+  /* Print-ready badge */
+  .print-note {
+    text-align:center; font-size:12px; color:var(--muted);
+    padding:12px;
+  }
+
+  /* Participants counter */
+  .counter-row {
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .counter-box {
+    flex:1; min-width:100px;
+    background:oklch(0.16 0.010 240);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px;
+    text-align:center;
+  }
+  .counter-box input {
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:6px;
+    color:var(--text);
+    font-family:var(--font);
+    font-size:18px;
+    font-weight:700;
+    width:70px;
+    text-align:center;
+  }
+  .counter-box .clabel { font-size:11px; color:var(--muted); margin-top:5px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-mark">OR</div>
+  <div>
+    <div class="logo-text">OmniRad</div>
+    <div class="logo-sub">Multimodal Radiologic Anatomy Platform</div>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>📊 تقرير نتائج الاختبار الموسَّع — Phase 2</h1>
+  <p>سجّل نتائج الاستبيانات وقرار المتابعة هنا</p>
+  <div class="stamp" id="stamp-date">التاريخ: —</div>
+</div>
+
+<div class="wrap">
+
+  <!-- Section A: Participants -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-a">أ</div>
+      <div>
+        <h2>إحصائيات المشاركة</h2>
+        <div class="sub">أدخل الأرقام الفعلية بعد انتهاء الـ 14 يوماً</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="counter-row">
+        <div class="counter-box">
+          <input type="number" id="c-total" min="0" value="" placeholder="—" oninput="recalc()">
+          <div class="clabel">إجمالي المشاركين</div>
+        </div>
+        <div class="counter-box">
+          <input type="number" id="c-complete" min="0" value="" placeholder="—" oninput="recalc()">
+          <div class="clabel">أكملوا الاستبيان</div>
+        </div>
+        <div class="counter-box">
+          <input type="number" id="c-weekly" min="0" value="" placeholder="—" oninput="recalc()">
+          <div class="clabel">يستخدمون أسبوعياً</div>
+        </div>
+        <div class="counter-box">
+          <input type="number" id="c-retention" min="0" value="" placeholder="—" oninput="recalc()">
+          <div class="clabel">عادوا بعد أسبوعين</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section B: KPI Results -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-b">ب</div>
+      <div>
+        <h2>نتائج KPIs</h2>
+        <div class="sub">أدخل القيم الفعلية ثم حدّد حالة كل مؤشر</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="kpi-table">
+        <thead>
+          <tr>
+            <th>المؤشر</th>
+            <th>الهدف</th>
+            <th>النتيجة الفعلية</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>عدد المشاركين</td>
+            <td class="target">20+ طالب</td>
+            <td><input class="result-input" type="number" id="r1" placeholder="—"></td>
+            <td><select class="status-select" id="s1" onchange="updateStatus()">
+              <option value="">—</option>
+              <option value="pass">✅ تحقق</option>
+              <option value="fail">❌ لم يتحقق</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>الاستخدام الأسبوعي</td>
+            <td class="target">20+ أسبوعياً</td>
+            <td><input class="result-input" type="number" id="r2" placeholder="—"></td>
+            <td><select class="status-select" id="s2" onchange="updateStatus()">
+              <option value="">—</option>
+              <option value="pass">✅ تحقق</option>
+              <option value="fail">❌ لم يتحقق</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>متوسط مدة الجلسة</td>
+            <td class="target">15+ دقيقة</td>
+            <td><input class="result-input" type="text" id="r3" placeholder="— دقيقة"></td>
+            <td><select class="status-select" id="s3" onchange="updateStatus()">
+              <option value="">—</option>
+              <option value="pass">✅ تحقق</option>
+              <option value="fail">❌ لم يتحقق</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>دقة AI Assistant</td>
+            <td class="target">80%+ من الأسئلة</td>
+            <td><input class="result-input" type="text" id="r4" placeholder="—%"></td>
+            <td><select class="status-select" id="s4" onchange="updateStatus()">
+              <option value="">—</option>
+              <option value="pass">✅ تحقق</option>
+              <option value="fail">❌ لم يتحقق</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>الاحتفاظ بعد أسبوعين</td>
+            <td class="target">40%+</td>
+            <td><input class="result-input" type="text" id="r5" placeholder="—%"></td>
+            <td><select class="status-select" id="s5" onchange="updateStatus()">
+              <option value="">—</option>
+              <option value="pass">✅ تحقق</option>
+              <option value="fail">❌ لم يتحقق</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>التفضيل على Radiopaedia</td>
+            <td class="target">70%+</td>
+            <td><input class="result-input" type="text" id="r6" placeholder="—%"></td>
+            <td><select class="status-select" id="s6" onchange="updateStatus()">
+              <option value="">—</option>
+              <option value="pass">✅ تحقق</option>
+              <option value="fail">❌ لم يتحقق</option>
+            </select></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px; font-size:13px; color:var(--muted)">
+        تحقق: <span id="pass-count" style="color:var(--accent); font-weight:600">—</span> /
+        لم يتحقق: <span id="fail-count" style="color:var(--error); font-weight:600">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section C: Feature ratings -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-c">ج</div>
+      <div>
+        <h2>متوسط تقييمات الميزات</h2>
+        <div class="sub">من الاستبيانات — من 5</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="feat-table">
+        <thead>
+          <tr>
+            <th>الميزة</th>
+            <th>المتوسط (/ 5)</th>
+            <th>نسبة الاستخدام</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Smart Atlas</td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—"></td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—%"></td>
+          </tr>
+          <tr>
+            <td>Multimodal Comparison</td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—"></td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—%"></td>
+          </tr>
+          <tr>
+            <td>SRS (Spaced Repetition)</td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—"></td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—%"></td>
+          </tr>
+          <tr>
+            <td>Mnemonics Library</td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—"></td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—%"></td>
+          </tr>
+          <tr>
+            <td>AI Assistant</td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—"></td>
+            <td><input class="result-input" style="width:80px" type="text" placeholder="—%"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section D: Open findings -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-d">د</div>
+      <div>
+        <h2>الملاحظات والمشاكل المكتشفة</h2>
+        <div class="sub">لقّم هنا أبرز ما وردك من الطلاب</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">الميزات الأكثر إشادةً</div>
+        <textarea placeholder="مثال: الطلاب أثنوا على سهولة المقارنة بين وسائط مختلفة…"></textarea>
+      </div>
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">المشاكل التقنية المُبلَّغ عنها</div>
+        <textarea placeholder="مثال: 3 طلاب واجهوا بطء في تحميل صور MRI على الموبايل…"></textarea>
+      </div>
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">طلبات الميزات الأكثر تكراراً</div>
+        <textarea placeholder="مثال: 8 طلاب طلبوا إضافة أسئلة اختيار متعدد…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section E: Decision -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-e">هـ</div>
+      <div>
+        <h2>قرار المتابعة</h2>
+        <div class="sub">القرار النهائي بناءً على نتائج Phase 2</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="decision-cards" id="decision-group">
+        <label class="decision-card" for="dec-1">
+          <input type="radio" name="decision" id="dec-1" value="phase3">
+          <div class="dec-icon">🚀</div>
+          <div>
+            <div class="dec-title" style="color:var(--accent)">المتابعة إلى Phase 3</div>
+            <div class="dec-sub">تحققت أغلب أو جميع KPIs — بناء user accounts + توسيع المحتوى</div>
+          </div>
+        </label>
+        <label class="decision-card" for="dec-2">
+          <input type="radio" name="decision" id="dec-2" value="fix-first">
+          <div class="dec-icon">🔧</div>
+          <div>
+            <div class="dec-title" style="color:var(--warn)">تعديلات أولاً ثم Phase 3</div>
+            <div class="dec-sub">بعض KPIs لم تتحقق — فتح Task مخصصة للإصلاح قبل التوسعة</div>
+          </div>
+        </label>
+        <label class="decision-card" for="dec-3">
+          <input type="radio" name="decision" id="dec-3" value="reassess">
+          <div class="dec-icon">⏸</div>
+          <div>
+            <div class="dec-title" style="color:var(--error)">إعادة تقييم شاملة</div>
+            <div class="dec-sub">أغلب KPIs لم تتحقق — مراجعة جوهرية قبل أي خطوة أخرى</div>
+          </div>
+        </label>
+      </div>
+
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">تبرير القرار</div>
+        <textarea placeholder="اكتب هنا تفسير القرار بناءً على الأرقام والملاحظات…"></textarea>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="font-size:13px;color:var(--muted)">التاريخ:</div>
+        <input type="date" id="decision-date" style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:7px 12px;color:var(--text);font-family:var(--font);font-size:13px;">
+        <div style="font-size:13px;color:var(--muted)">الموقّع:</div>
+        <input type="text" id="decision-sign" placeholder="Mohammed Saeed Alzahrani" style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:7px 12px;color:var(--text);font-family:var(--font);font-size:13px;flex:1;min-width:180px;">
+      </div>
+
+      <button class="btn-save" onclick="saveReport()">💾 حفظ التقرير (طباعة / PDF)</button>
+
+    </div>
+  </div>
+
+  <div class="print-note">
+    اضغط "حفظ التقرير" ثم استخدم Ctrl+P أو ⌘P لحفظ كـ PDF أو طباعة الصفحة كمرجع.
+  </div>
+
+</div>
+
+<script>
+// Set today's date in stamp
+const today = new Date();
+document.getElementById('stamp-date').textContent =
+  'التاريخ: ' + today.toLocaleDateString('ar-SA');
+
+// Decision card selection
+document.querySelectorAll('.decision-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    document.querySelectorAll('.decision-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+  });
+});
+
+// KPI pass/fail counter
+function updateStatus(){
+  let pass=0, fail=0;
+  for(let i=1;i<=6;i++){
+    const v = document.getElementById('s'+i).value;
+    if(v==='pass') pass++;
+    else if(v==='fail') fail++;
+  }
+  document.getElementById('pass-count').textContent = pass || '—';
+  document.getElementById('fail-count').textContent = fail || '—';
+}
+
+// Recalc participation
+function recalc(){
+  const total = parseInt(document.getElementById('c-total').value)||0;
+  const ret   = parseInt(document.getElementById('c-retention').value)||0;
+  if(total>0 && ret>0){
+    const pct = Math.round((ret/total)*100);
+    // Could update retention KPI input automatically
+  }
+}
+
+function saveReport(){ window.print(); }
+</script>
+</body>
+</html>
