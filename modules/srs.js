@@ -1,3 +1,7 @@
+/* ════════════════════════════════════════════════════
+   OmniRad — modules/srs.js
+   Purpose: SM-2 Spaced Repetition algorithm — scheduling, intervals, ease factor
+   ════════════════════════════════════════════════════ */
 // ═══════════════════════════════════════════════════════════
 // SRS MODULE — Task #9
 // Spaced Repetition System · SM-2 Algorithm (Anki-compatible)
