@@ -1,3 +1,7 @@
+/* ════════════════════════════════════════════════════
+   OmniRad — modules/lexicon.js
+   Purpose: Medical Lexicon data + lookup logic (AR/EN/Latin terms)
+   ════════════════════════════════════════════════════ */
 // ═══════════════════════════════════════════════════════════
 // OMNIRAD — MEDICAL LEXICON MODULE
 // Task #10 · Inline Lexicon Tooltips for atlas.html
