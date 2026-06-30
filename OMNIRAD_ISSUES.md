@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-30 — ✅ Repository Cleanup (Path B) Done · v4.3*
+*Last updated: 2026-06-30 — ✅ Task #25 Done (Clinic Page Redesign) · v4.5*
 
 ---
 
@@ -69,6 +69,13 @@
 | 35 | atlas.html: أزرار TTS / Pronounce / Overview / Images / Imaging Guide بلا onclick — تحتاج تحقق وظيفي | Task #16 audit | Future | 🟡 | ✅ Resolved | 2026-06-28 |
 | 36 | 5 صفحات اختبار (survey.html · survey-phase2.html · distribution-guide.html · distribution-guide-phase2.html · results-phase2.html) كانت يتيمة في pages/ بلا أي رابط وارد من index.html أو nav | Repo Cleanup | Repo Cleanup | 🟢 | ✅ Resolved — نُقلت إلى archive/ | 2026-06-30 |
 | 37 | assets/theme.css موجود منذ مدة لكن غير مربوط بأي صفحة (لا `<link>` في أي ملف) — كود ميت حالياً | Repo Cleanup | Future (مع Issue #32) | 🟢 | 🔴 Open | — |
+| 38 | mnemonics.html: "Sort by: Newest" تجميلي فقط — لا منطق فرز فعلي (حسب الأحدث/أبجدي) | Task #24 | Future | 🟢 | 💡 Idea | — |
+| 39 | mnemonics.html: أيقونة Bookmark/Save غير منفّذة (تحتاج حقل جديد + مزامنة Supabase) — لم تُضف لتفادي وظيفة وهمية | Task #24 | Future | 🟢 | 💡 Idea | — |
+| 40 | clinic.html: زر "+ New Case" بلا وظيفة فعلية (شكلي فقط، `title="Coming soon"`) — يحتاج نموذج إنشاء حالة كاملة | Task #25 | Future | 🟢 | 💡 Idea | — |
+| 41 | clinic.html: زر "Case Discussion" بلا وظيفة فعلية — يحتاج منتدى/تعليقات لكل حالة | Task #25 | Future | 🟢 | 💡 Idea | — |
+| 42 | clinic.html: زر "Save Draft" في step4 بلا وظيفة فعلية (بطلب صريح من المالك) — يحتاج localStorage أو Supabase لتخزين المسودات | Task #25 | Future | 🟢 | 💡 Idea | — |
+| 43 | clinic.html: لا يوجد كنتور cyan دقيق حول العضو المستهدف داخل الصورة — لا توجد إحداثيات segmentation للصور الحقيقية المستخدمة (Wikimedia)؛ نفس قيد Issue #8. بديل مؤقت: نقطة تأشير مركزية عامة (زر Label) | Task #25 | Phase 4+ (مع MedSAM2 pipeline) | 🟡 | 🔴 Deferred | — |
+| 44 | clinic.html: فجوات متبقية عن المرجع التصميمي — إيموجي ما زالت مستخدمة في عناوين البطاقات (مخالف لطلب "no emoji icons" في المرجع)، "All Cases (12)" مقابل 6 حالات فعلية، Sign Out كرابط nav وليس زراً منفصلاً، لا يوجد سهم dropdown للـ avatar | Task #25 | Future | 🟢 | 🔴 Open | — |
 
 ---
 
@@ -99,6 +106,8 @@
 | 21 | Home Page Redesign — real medical images | 2026-06-29 | Mohammed Saeed Alzahrani | 8 صور طبية حقيقية · split hero · modality cards |
 | 22 | Auth Page Redesign — split-screen professional | 2026-06-29 | Mohammed Saeed Alzahrani | skeleton bg 40% · OR logo · field icons · كل الأكواد محفوظة |
 | — | Repository Cleanup (Path B) | 2026-06-30 | Mohammed Saeed Alzahrani | Headers لـ17 ملف · 5 صفحات اختبار → archive/ · nav/CSS unification مؤجل (Issue #32) |
+| 24 | Mnemonics Page Redesign | 2026-06-30 | Mohammed Saeed Alzahrani | Brain hero illustration · stats row · real CT/MRI thumbnails (liver/kidneys/spleen) · هيدر محفوظ 100% (تحقق diff) · str_replace patches فقط |
+| 25 | Clinic Page Redesign | 2026-06-30 | Mohammed Saeed Alzahrani | Sidebar+Main layout دائم · إصلاح bug الكانفاس الفارغ (Step 3) · Toolbar أيقونات SVG · Look For + Clinical Hint (مُشتقّان من بيانات موجودة) · Reporting Guide + Case Context + Common Mistakes (Step 4) · 3 أزرار شكلية بلا وظيفة (بموافقة) · str_replace patches فقط |
 
 ---
 

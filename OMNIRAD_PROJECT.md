@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v4.3 |
+| Version | v4.5 |
 | Date | 2026-06-30 |
-| Status | ✅ Repository Cleanup (Path B) Done — Ready for Page Redesign / Issues #32-35 / Sprint #1 CT |
+| Status | ✅ Task #25 Done (Clinic Page Redesign) — Ready for next page redesign / Issues #32-35, #40-43 remaining / Sprint #1 CT |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -236,11 +236,11 @@ OmniRad/
 │   ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅ + Task #12 ✅
 │   ├── comparison.html         ← Task #4 ✅ + Task #12 ✅ (fully functional)
 │   ├── srs.html                ← Task #9 ✅
-│   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ (embedded data)
+│   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ + Task #24 ✅ (real CT/MRI thumbnails)
 │   ├── ai-chat.html            ← Task #11 ✅
 │   ├── auth.html               ← Task #14 ✅ (Sign In / Sign Up)
 │   ├── my-progress.html        ← Task #14 ✅ (Dashboard + SRS Stats)
-│   ├── clinic.html             ← Task #12.5 ✅
+│   ├── clinic.html             ← Task #12.5 ✅ + Task #25 ✅ (Sidebar+Main layout, fixed Image Viewer, Reporting workspace)
 │   └── daily.html              ← Task #17 ✅ (Daily Challenge + Streak + Leaderboard)
 ├── archive/                    ← NEW ✅ 2026-06-30 (Cleanup Path B)
 │   ├── survey.html             ← moved from pages/ (Task #8 — testing complete)
@@ -331,6 +331,8 @@ OmniRad/
 | 21 | Home Page Redesign — real medical images + creative UI | Phase 3 | ✅ Done — 2026-06-29 |
 | 22 | Auth Page Redesign — split-screen + skeleton background | Phase 3 | ✅ Done — 2026-06-29 |
 | 23 | Atlas Page Redesign — 3D organ cards + modality explorer | Phase 4 | ✅ Done — 2026-06-29 |
+| 24 | Mnemonics Page Redesign — brain hero illustration + real CT/MRI thumbnails | Phase 4 | ✅ Done — 2026-06-30 |
+| 25 | Clinic Page Redesign — Sidebar+Main layout, Image Viewer fix, Reporting workspace | Phase 4 | ✅ Done — 2026-06-30 |
 
 ---
 
@@ -551,6 +553,30 @@ SVG placeholder = غير مقبول في الإنتاج
 
 # ⑦ Version History
 
+- **v4.5 — 2026-06-30**
+  - Task #25 approved: Clinic Page Redesign ✅
+    - **بنية جديدة:** تخطيط Sidebar (قائمة حالات دائمة) + Main panel بدل تبديل شاشتين كاملتين — القائمة الجانبية تبقى ظاهرة أثناء حل الحالة مع تظليل cyan للحالة النشطة
+    - **إصلاح Bug فعلي:** الكانفاس (Step 3 Image) كان يظهر فارغاً بسبب توقيت قياس `offsetWidth/offsetHeight` قبل اكتمال الـ layout الجديد — تم الإصلاح بإعادة القياس عند `img.onload` + `setTimeout(80ms)` (طبقاً لـ Critical Lesson #8)
+    - **Step 3 (Image):** Toolbar بأيقونات SVG خطية بدل الإيموجي (Zoom In/Out, Pan, Invert, Reset, Label) + Badges تعريفية ("{Modality} • {Structure}", "Educational image") + لوحة "Look For" (مُشتقة تلقائياً من حقل `info` الموجود لكل عضو في STRUCTURES) + "Clinical Hint" (من `modalityFeedback[firstLine]` الموثوق مسبقاً في CASES — لا محتوى طبي جديد)
+    - **Step 4 (Report):** تخطيط عمودين — نموذج التقرير + لوحة "Reporting Guide" (نص إرشادي عام ثابت) + "Case Context" (من بيانات الحالة الحالية) + "Common Mistakes" (نص ثابت عام)
+    - **عناصر شكلية بلا وظيفة فعلية (بموافقة صريحة):** "+ New Case"، "Case Discussion"، "Save Draft" — جميعها `title="Coming soon"` بدون onclick حقيقي
+    - **لم يُنفَّذ عمداً:** الكنتور cyan الدقيق حول العضو المستهدف في الصورة — لا توجد إحداثيات segmentation حقيقية للصور الفعلية (نفس قيد Colorization Toggle الموثق سابقاً)؛ بديل عام: نقطة تأشير مركزية اختيارية (زر Label) غير مرتبطة بإحداثيات تشريحية دقيقة
+    - **مرجعان تصميميان (Mockups):** Clinic page عام + Image Viewer + Report workspace — استُخدمت كمرجع بصري/هيكلي فقط، مع تكييف كل محتوى نصي ليُشتق من بيانات المشروع الحقيقية بدل اختراع محتوى طبي جديد
+    - كل الوظائف الأصلية محفوظة: stepper logic, modality grid + feedback, Supabase SRS calls (غير مستخدمة هنا), rating/scoring, auth guard
+    - str_replace patches فقط (Rule #12 مُحترم) — تحقق آلي من توازن HTML وصحة JS نحوياً (Node `new Function()`) قبل كل تسليم
+
+- **v4.4 — 2026-06-30**
+  - Task #24 approved: Mnemonics Page Redesign ✅
+    - Hero: عنوان "Remember Everything. Forget Nothing." + رسم خط دماغ شفاف (brain line-art) مضمّن base64 في الزاوية اليمنى — مصدر: صورة مرجعية مرفقة من المالك
+    - Stats row جديد بأيقونات: 22 Mnemonics · 2 Languages · Upper Abdomen (Current Region) · Phase 1 (Learning Phase)
+    - Sources + TTS Voice أعيد تنسيقهما كبطاقتين (info-cards) بنفس أسلوب hero الأصلي
+    - شريط نتائج جديد: "{N} results · Sort by: Newest" — تجميلي ثابت فقط، لا منطق فرز جديد (تجنباً لـ Project Creep — Rule #8)
+    - بطاقات Mnemonics: صور CT/MRI حقيقية مضمّنة base64 (من images/structures/ المرفوعة مسبقاً) لبطاقات **Liver · Kidneys · Spleen فقط** — بقية البنى (Gallbladder, Pancreas, Aorta, IVC, Portal Vein, Stomach, Small/Large Intestine, Adrenal Glands) بلا صور حقيقية مرفوعة بعد (انظر Issue #25) فبقيت بطاقاتها نصية بدون thumbnail — لا صور وهمية أو SVG
+    - **الهيدر (#topbar) محفوظ 100% بدون أي تعديل** — تم التحقق آلياً بمقارنة حرفية (diff) قبل التسليم بناءً على طلب المالك الصريح بحماية البنية الأساسية المعتمدة عبر كل الصفحات (Rule #9)
+    - كل الوظائف الأصلية محفوظة: MNEMONICS array (22 عنصر) · الفلاتر (Region/Difficulty/Language) · TTS (speakCard) · openAtlas() · Auth guard
+    - str_replace patches فقط (Rule #12) — لا إعادة كتابة كاملة للملف
+    - تم التحقق بصرياً عبر Playwright screenshot (desktop + mobile) قبل التسليم
+
 - **v4.3 — 2026-06-30**
   - Repository Cleanup (Path B) — Done ✅ (تنفيذ مباشر عبر GitHub API بإذن المالك)
   - ✅ Header comments مضافة لـ 17 ملف (HTML/JS) كانت بلا توثيق علوي
@@ -730,4 +756,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v4.3**
+**End of Document — OmniRad Master Plan v4.5**
