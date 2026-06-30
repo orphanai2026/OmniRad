@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-29 — ✅ Task #23 Atlas Page Redesign · v4.1*
+*Last updated: 2026-06-30 — ✅ Repository Cleanup (Path B) Done · v4.3*
 
 ---
 
@@ -63,10 +63,12 @@
 | 29 | Navigation غير موحد عبر الصفحات — كل صفحة لها nav مختلف، روابط ناقصة، srs.html و auth.html بلا nav إطلاقاً | Task #16 audit | Task #16 | 🔴 | ✅ Resolved | 2026-06-28 |
 | 30 | index.html footer v0.1 + About v2.8 + Phase 1 — كلها قديمة جداً | Task #16 audit | Task #16 | 🟡 | ✅ Resolved | 2026-06-28 |
 | 31 | Modality pills في index.html `href="#"` — لا تنقل لأي مكان | Task #16 audit | Task #16 | 🟡 | ✅ Resolved | 2026-06-28 |
-| 32 | Theme systems مختلفة بين الصفحات (`--bg-base` vs `--bg`) — يحتاج توحيد بـ theme.css مشترك | Task #16 audit | Future | 🟡 | 🔴 Open | — |
+| 32 | Theme systems مختلفة بين الصفحات (`--bg-base` vs `--bg`) — يحتاج توحيد بـ theme.css مشترك. **تحديث 2026-06-30:** تأكدنا فعلياً — theme.css يستخدم `--accent/--text-secondary/--bg-overlay`، index.html/comparison.html يستخدمان `--acc/--text-s/--bg-ov` لنفس أسماء الكلاسات (nav-links/nav-logo). دمج آمن يحتاج مراجعة بصرية صفحة بصفحة. | Task #16 audit | Future | 🟡 | 🔴 Open | — |
 | 33 | Theme toggle ناقص في 7 صفحات (atlas, daily, srs, mnemonics, ai-chat, auth, my-progress) | Task #16 audit | Future | 🟢 | 🔴 Open | — |
 | 34 | comparison.html: أزرار modality filters (CT+MRI, CT+US, All, Clear) بلا onclick — تحتاج ربط وظيفي | Task #16 audit | Future | 🟡 | ✅ Resolved | 2026-06-28 |
 | 35 | atlas.html: أزرار TTS / Pronounce / Overview / Images / Imaging Guide بلا onclick — تحتاج تحقق وظيفي | Task #16 audit | Future | 🟡 | ✅ Resolved | 2026-06-28 |
+| 36 | 5 صفحات اختبار (survey.html · survey-phase2.html · distribution-guide.html · distribution-guide-phase2.html · results-phase2.html) كانت يتيمة في pages/ بلا أي رابط وارد من index.html أو nav | Repo Cleanup | Repo Cleanup | 🟢 | ✅ Resolved — نُقلت إلى archive/ | 2026-06-30 |
+| 37 | assets/theme.css موجود منذ مدة لكن غير مربوط بأي صفحة (لا `<link>` في أي ملف) — كود ميت حالياً | Repo Cleanup | Future (مع Issue #32) | 🟢 | 🔴 Open | — |
 
 ---
 
@@ -96,6 +98,7 @@
 | 23 | Atlas Page Redesign — Welcome Screen | 2026-06-29 | Mohammed Saeed Alzahrani | Hero + real images base64 + cards + modality + tools |
 | 21 | Home Page Redesign — real medical images | 2026-06-29 | Mohammed Saeed Alzahrani | 8 صور طبية حقيقية · split hero · modality cards |
 | 22 | Auth Page Redesign — split-screen professional | 2026-06-29 | Mohammed Saeed Alzahrani | skeleton bg 40% · OR logo · field icons · كل الأكواد محفوظة |
+| — | Repository Cleanup (Path B) | 2026-06-30 | Mohammed Saeed Alzahrani | Headers لـ17 ملف · 5 صفحات اختبار → archive/ · nav/CSS unification مؤجل (Issue #32) |
 
 ---
 
