@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v4.2 |
-| Date | 2026-06-29 |
-| Status | 🧹 Repository Cleanup (Path B) — Before Sprint #1 CT |
+| Version | v4.3 |
+| Date | 2026-06-30 |
+| Status | ✅ Repository Cleanup (Path B) Done — Ready for Page Redesign / Issues #32-35 / Sprint #1 CT |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -231,18 +231,23 @@ learning methodology.
 ## File Structure
 ```
 OmniRad/
-├── index.html                  ← Main page ✅
+├── index.html                  ← Main page ✅ [header comment added]
 ├── pages/
 │   ├── atlas.html              ← Task #3 ✅ + Task #5 ✅ + Task #7 ✅ + Task #12 ✅
 │   ├── comparison.html         ← Task #4 ✅ + Task #12 ✅ (fully functional)
 │   ├── srs.html                ← Task #9 ✅
 │   ├── mnemonics.html          ← Task #10 ✅ + Task #12 ✅ (embedded data)
 │   ├── ai-chat.html            ← Task #11 ✅
-│   ├── survey.html             ← Task #8 ✅
-│   ├── distribution-guide.html ← Task #8 ✅
 │   ├── auth.html               ← Task #14 ✅ (Sign In / Sign Up)
 │   ├── my-progress.html        ← Task #14 ✅ (Dashboard + SRS Stats)
+│   ├── clinic.html             ← Task #12.5 ✅
 │   └── daily.html              ← Task #17 ✅ (Daily Challenge + Streak + Leaderboard)
+├── archive/                    ← NEW ✅ 2026-06-30 (Cleanup Path B)
+│   ├── survey.html             ← moved from pages/ (Task #8 — testing complete)
+│   ├── survey-phase2.html      ← moved from pages/ (Task #13 — testing complete)
+│   ├── distribution-guide.html ← moved from pages/ (Task #8 — testing complete)
+│   ├── distribution-guide-phase2.html ← moved from pages/ (Task #13 — testing complete)
+│   └── results-phase2.html     ← moved from pages/ (Task #13 — testing complete)
 ├── data/
 │   ├── structures.json         ← Task #12 ✅ (12 structures, CC0 images)
 │   ├── mnemonics.json          ← Task #12 ✅ (22 mnemonics EN+AR)
@@ -271,9 +276,25 @@ OmniRad/
 │       ├── stomach/            ← ⏳ Phase 3
 │       ├── gallbladder/        ← ⏳ Phase 3
 │       └── aorta/              ← ⏳ Phase 3
+├── assets/
+│   └── theme.css               ← Unified Theme System v1.1 (⚠️ not yet linked by any page — Issue #32)
 └── modules/
     ├── srs.js                  ← Task #9 ✅
+    ├── lexicon.js               ← Medical Lexicon data + lookup
     └── supabase.js             ← Task #14 ✅ (Auth + SRS + Preferences)
+```
+
+### 🧹 Repository Cleanup (Path B) — Done 2026-06-30
+```
+✅ Header comments added to all 17 HTML/JS files missing one (path, purpose, per-file)
+✅ 5 orphaned testing-phase pages (Task #8/#13 surveys & guides) moved pages/ → archive/
+   (confirmed via GitHub API: zero inbound links from index.html or active nav)
+⏸️ Nav/CSS de-duplication NOT executed — investigated and deferred:
+   assets/theme.css already defines .nav-links/.nav-logo/.nav-end matching only
+   index.html + comparison.html class names, but with DIFFERENT CSS variable
+   names (--acc/--text-s/--bg-ov vs --accent/--text-secondary/--bg-overlay) —
+   confirms Issue #32. Safe merge requires visual QA per page; deferred to its
+   own task to avoid breaking a working page (Rule #9).
 ```
 
 ---
@@ -530,6 +551,13 @@ SVG placeholder = غير مقبول في الإنتاج
 
 # ⑦ Version History
 
+- **v4.3 — 2026-06-30**
+  - Repository Cleanup (Path B) — Done ✅ (تنفيذ مباشر عبر GitHub API بإذن المالك)
+  - ✅ Header comments مضافة لـ 17 ملف (HTML/JS) كانت بلا توثيق علوي
+  - ✅ 5 صفحات اختبار يتيمة منقولة `pages/` → `archive/`: survey.html · survey-phase2.html · distribution-guide.html · distribution-guide-phase2.html · results-phase2.html (Task #8/#13 — لا روابط واردة من index.html أو nav الفعلي، تحقّقنا عبر API)
+  - ⏸️ توحيد nav/CSS عبر الصفحات — تم الفحص وليس التنفيذ: `assets/theme.css` يحتوي تعريفات `.nav-links/.nav-logo/.nav-end` لكن بأسماء متغيرات مختلفة عن index.html/comparison.html (`--acc` مقابل `--accent`...) — الدمج الآمن يحتاج مراجعة بصرية صفحة بصفحة، مؤجل كمهمة مستقلة (Rule #9 — عدم المخاطرة بكسر صفحة شغّالة). يبقى Issue #32 مفتوحاً.
+  - بنية الملفات في § ④ محدَّثة: إضافة `archive/` و`assets/theme.css` و`modules/lexicon.js` للقائمة
+
 - **v4.2 — 2026-06-29**
   - قرار رسمي: تنظيف المستودع — المسار (ب) معتمد
   - السبب: المشروع على وشك Sprint 1-7 — Refactor كامل يخالف مبدأ Vanilla JS
@@ -702,4 +730,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v4.2**
+**End of Document — OmniRad Master Plan v4.3**
