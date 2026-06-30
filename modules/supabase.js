@@ -1,3 +1,7 @@
+/* ════════════════════════════════════════════════════
+   OmniRad — modules/supabase.js
+   Purpose: Supabase client — Auth, SRS sync, preferences, daily scores, streaks
+   ════════════════════════════════════════════════════ */
 /**
  * OmniRad — Supabase Connection Module
  * Task #14 — User Accounts Backend
