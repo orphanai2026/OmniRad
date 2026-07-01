@@ -194,6 +194,38 @@ async function sbUpdateStreak() {
   });
 }
 
+
+// ─── Content: Structures (Task #26 frontend wiring) ───────────────────────────
+
+async function sbGetStructures() {
+  const rows = await sbFetch(
+    '/rest/v1/structures?select=id,category,en,ar,latin,' +
+    'structure_descriptions(lang,description),' +
+    'structure_facts(fact_en,sort_order),' +
+    'structure_mnemonics(title_en,title_ar,body_en,body_ar,ref),' +
+    'structure_imaging_notes(modality,note),' +
+    'structure_related(related_structure_id)' +
+    '&status=eq.published&order=en.asc'
+  );
+  return rows.map(r => {
+    const descEn = (r.structure_descriptions.find(d => d.lang === 'en') || {}).description || '';
+    const descAr = (r.structure_descriptions.find(d => d.lang === 'ar') || {}).description || '';
+    const facts = [...r.structure_facts]
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map(f => f.fact_en);
+    const imaging = {};
+    r.structure_imaging_notes.forEach(n => { imaging[n.modality] = n.note; });
+    const mnemonics = r.structure_mnemonics.map(m => ({
+      title: m.title_en, en: m.body_en, ar: m.body_ar, ref: m.ref
+    }));
+    const related = r.structure_related.map(x => x.related_structure_id);
+    return {
+      id: r.id, cat: r.category, en: r.en, ar: r.ar, latin: r.latin,
+      descEn, descAr, facts, imaging, mnemonics, related
+    };
+  });
+}
+
 // ─── Export ───────────────────────────────────────────────────────────────────
 
 window.OmniRadAuth = {
@@ -214,7 +246,8 @@ window.OmniRadDB = {
   getMyDailyScore:  sbGetMyDailyScore,
   getLeaderboard:   sbGetLeaderboard,
   getMyStreak:      sbGetMyStreak,
-  updateStreak:     sbUpdateStreak
+  updateStreak:     sbUpdateStreak,
+  getStructures:    sbGetStructures
 };
 
 // ─── Auth Guard ───────────────────────────────────────────────────────────────
