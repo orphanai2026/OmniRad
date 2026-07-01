@@ -226,6 +226,14 @@ async function sbGetStructures() {
   });
 }
 
+
+async function sbGetStructureList() {
+  const rows = await sbFetch(
+    '/rest/v1/structures?select=id,category,en,ar&status=eq.published&order=en.asc'
+  );
+  return rows;
+}
+
 // ─── Export ───────────────────────────────────────────────────────────────────
 
 window.OmniRadAuth = {
@@ -247,7 +255,8 @@ window.OmniRadDB = {
   getLeaderboard:   sbGetLeaderboard,
   getMyStreak:      sbGetMyStreak,
   updateStreak:     sbUpdateStreak,
-  getStructures:    sbGetStructures
+  getStructures:    sbGetStructures,
+  getStructureList: sbGetStructureList
 };
 
 // ─── Auth Guard ───────────────────────────────────────────────────────────────
