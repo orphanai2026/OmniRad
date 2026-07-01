@@ -204,7 +204,7 @@ async function sbGetStructures() {
     'structure_facts(fact_en,sort_order),' +
     'structure_mnemonics(title_en,title_ar,body_en,body_ar,ref),' +
     'structure_imaging_notes(modality,note),' +
-    'structure_related(related_structure_id)' +
+    'structure_related!structure_related_structure_id_fkey(related_structure_id)' +
     '&status=eq.published&order=en.asc'
   );
   return rows.map(r => {
