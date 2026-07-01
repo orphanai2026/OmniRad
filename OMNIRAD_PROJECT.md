@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v4.5 |
-| Date | 2026-06-30 |
-| Status | ✅ Task #25 Done (Clinic Page Redesign) — Ready for next page redesign / Issues #32-35, #40-43 remaining / Sprint #1 CT |
+| Version | v4.7 |
+| Date | 2026-07-01 |
+| Status | ✅ Task #26b Done (atlas.html + comparison.html now read live from Supabase, not inline STRUCTS) — 3 real bugs found & fixed during rollout (ambiguous FK embed, anon RLS permission, stale comparison.html dropdown fixed as a side effect) / Ready for next page redesign or Sprint #1 CT / Issues #32-35, #40-43, #45, #47 remaining |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -284,6 +284,49 @@ OmniRad/
     └── supabase.js             ← Task #14 ✅ (Auth + SRS + Preferences)
 ```
 
+### 🗄️ Supabase Content Database — Live since Task #26 (2026-07-01)
+```
+Project: omnirad (lmbdtktjeggischpqnkw · ap-northeast-1) — same project as Auth/SRS
+
+NEW TABLES (all RLS-enabled):
+  user_roles                ← student|contributor|admin, gates the workflow below
+  structures                 ← id, category, en, ar, latin, status(draft/pending_review/published)
+  structure_descriptions     ← per-language text, source_citation NOT NULL (mandatory)
+  structure_images           ← per modality/plane, license + attribution_text + source_dataset NOT NULL
+  structure_mnemonics        ← title/body EN+AR, ref NOT NULL
+  structure_facts            ← ordered fact list per structure
+  structure_imaging_notes    ← added Task #26b — per-modality imaging appearance text, source_citation NOT NULL
+  structure_related          ← added Task #26b — related-structure links (id, related_structure_id)
+
+Contributor workflow: draft → pending_review → published (RLS enforced, not just convention)
+Images: storage_provider='github' for all rows today — binary files stay on GitHub raw
+  (bandwidth/Egress reasons — see decision log). Re-evaluate moving to Supabase Storage
+  after Task #20 launch based on real usage + contributor growth (owner decision, 2026-07-01).
+
+MIGRATED DATA (from atlas.html's inline STRUCTS array, 2026-07-01):
+  17 structures · 34 descriptions (EN+AR) · 85 facts · 32 mnemonics · 13 real images ·
+  68 imaging notes · 43 related-structure links (Task #26b additions)
+
+FRONTEND WIRING — Done Task #26b (2026-07-01):
+  atlas.html:      STRUCTS now loaded async via OmniRadDB.getStructures() at page load.
+                    Images + TTS text intentionally stay in a local LOCAL_MEDIA object
+                    (not migrated — owner decision to keep images on GitHub raw for now).
+  comparison.html:  Structure dropdown now built dynamically from OmniRadDB.getStructureList()
+                    (17 structures) instead of a hardcoded 8-entry list. Fixed as a side effect:
+                    the old dropdown only exposed 5 of its own 8 hardcoded entries (aorta,
+                    stomach, and a duplicate 'kidneys' entry were defined in code but had no
+                    <option> tag — unreachable except via direct URL param).
+  modules/supabase.js: +2 functions — getStructures() (full content), getStructureList()
+                    (lightweight id/category/en/ar, used by comparison.html only).
+
+Bugs found & fixed during this rollout (see Issues log for full detail):
+  - PostgREST could not auto-resolve structure_related's embed (two FKs to `structures`) →
+    fixed by specifying the constraint name explicitly in the embed query.
+  - anon role lost EXECUTE on is_admin/is_reviewer during the earlier security hardening
+    pass, which silently broke all public (unauthenticated) reads of published content —
+    re-granted; verified directly against the anon role, not just by re-reading table structure.
+```
+
 ### 🧹 Repository Cleanup (Path B) — Done 2026-06-30
 ```
 ✅ Header comments added to all 17 HTML/JS files missing one (path, purpose, per-file)
@@ -333,6 +376,8 @@ OmniRad/
 | 23 | Atlas Page Redesign — 3D organ cards + modality explorer | Phase 4 | ✅ Done — 2026-06-29 |
 | 24 | Mnemonics Page Redesign — brain hero illustration + real CT/MRI thumbnails | Phase 4 | ✅ Done — 2026-06-30 |
 | 25 | Clinic Page Redesign — Sidebar+Main layout, Image Viewer fix, Reporting workspace | Phase 4 | ✅ Done — 2026-06-30 |
+| 26 | Content Database Migration — Supabase schema (structures + contributor workflow) + migrate 17 existing structures | Phase 4 | ✅ Done — 2026-07-01 |
+| 26b | Frontend Wiring — atlas.html + comparison.html read live from Supabase instead of inline STRUCTS | Phase 4 | ✅ Done — 2026-07-01 |
 
 ---
 
@@ -553,6 +598,33 @@ SVG placeholder = غير مقبول في الإنتاج
 
 # ⑦ Version History
 
+- **v4.7 — 2026-07-01**
+  - Task #26b approved: Frontend Wiring (atlas.html + comparison.html → Supabase) ✅
+    - **atlas.html:** `STRUCTS` تُحمَّل الآن `async` من `OmniRadDB.getStructures()` عند فتح الصفحة (استعلام واحد بتقنية PostgREST embedding عبر 6 جداول، وليس 6 استعلامات منفصلة). الصور والنص الصوتي (TTS) بقيا عمداً في كائن محلي `LOCAL_MEDIA` — لم يُنقلا لقاعدة البيانات (قرار سابق: الصور تبقى على GitHub raw). حالة تحميل + حالة خطأ واضحة (لا رجوع صامت لبيانات قديمة عند الفشل)
+    - **comparison.html:** القائمة المنسدلة تُبنى ديناميكياً من `OmniRadDB.getStructureList()` (17 بنية) بدل قائمة ثابتة من 8. **اكتُشف بالمصادفة أثناء العمل:** القائمة القديمة كانت فعلياً تعرض 5 خيارات فقط من أصل 8 معرَّفة في الكود (aorta وstomach ومدخل `kidneys` المكرر لم يكن لها وسم `<option>` — غير قابلة للوصول إلا برابط مباشر). اختفى الخلل تلقائياً بالتبديل للمصدر الجديد، دون تدخّل يدوي منفصل
+    - **modules/supabase.js:** دالتان جديدتان — `getStructures()` (المحتوى الكامل لـAtlas) و`getStructureList()` (نسخة خفيفة id/category/en/ar فقط، خاصة بـComparison، لا تجلب بيانات غير مستخدمة)
+    - **جدولان جديدان على Supabase:** `structure_imaging_notes` (68 صفاً، نص وصف كل وسيلة تصوير لكل بنية) و`structure_related` (43 صفاً، علاقات البنى المرتبطة) — أُضيفا بعد اكتشاف أن حقلي `imaging` و`related` في `STRUCTS` الأصلي لم يُرحَّلا في Task #26، وأن ترحيلهما ضروري لتفادي "مصدرين للحقيقة" في نفس الصفحة
+    - **3 أخطاء حقيقية اكتُشفت وأُصلحت أثناء الرفع الفعلي على الموقع الحي** (وليس أثناء الاختبار المحلي):
+      1. **غموض مفتاح أجنبي مزدوج:** `structure_related` له مفتاحان يشيران لنفس جدول `structures`، فرفضت PostgREST تحديد أيهما للربط التلقائي (embed) — أُصلح بتحديد اسم القيد صراحة في الاستعلام
+      2. **صلاحية `anon` مفقودة (خطأ نجم عن تدقيقي الأمني في Task #26 نفسها):** إلغاء صلاحية تنفيذ `is_admin`/`is_reviewer` من `anon` (لإغلاق ثغرة استدعاء مباشر) كسر بالخطأ قدرة أي زائر غير مسجّل على قراءة أي محتوى منشور، لأن سياسات RLS للقراءة تستدعي هاتين الدالتين داخلياً. اكتُشف باختبار مباشر بصلاحية `anon` الفعلية (`set local role anon`) بدل الاكتفاء بفحص بنية الجداول — درس: أي تدقيق أمني لاحق يجب أن يتضمّن اختبار وظيفي بصلاحية `anon` صراحة
+      3. تخزين المتصفح المؤقت (Cache) أخّر ظهور الإصلاح الأول على المتصفح رغم نجاحه فعلياً على القاعدة — تأكَّد بالتصفح الخفي (Incognito)
+    - كل الإصلاحات الثلاثة تحقَّق منها الفريق مباشرة على الموقع الحي (`orphanai2026.github.io/OmniRad`)، وليس فقط محلياً
+
+- **v4.6 — 2026-07-01**
+  - Task #26 approved: Content Database Migration ✅
+    - **6 جداول جديدة على Supabase (نفس مشروع `omnirad`):** `user_roles`, `structures`, `structure_descriptions`, `structure_images`, `structure_mnemonics`, `structure_facts` — كلها RLS مفعّل
+    - **حقول إلزامية بنيوياً (وليست اتفاقاً شفهياً):** `source_citation` على كل وصف علمي، و`license`+`attribution_text`+`source_dataset` على كل صورة — يمنع تكرار خطأ إسناد الصور مستقبلاً
+    - **تدفق متعاونين:** `draft → pending_review → published` عبر عمود `status` + جدول `user_roles` (student/contributor/admin)
+    - **قرار معماري:** الصور تبقى على GitHub raw الآن (`storage_provider='github'`)، إعادة تقييم بعد الإطلاق (Task #20) حسب استهلاك Egress الفعلي ونمو المتعاونين — وليس قراراً جامداً
+    - **تدقيق أمني/أدائي بعد التنفيذ** (أدوات Supabase الرسمية): أُضيفت 4 فهارس ناقصة على مفاتيح أجنبية، أُعيدت كتابة كل سياسات RLS الجديدة بصيغة `(select auth.uid())` المحسّنة أداءً، أُلغيت صلاحية تنفيذ دالتي `is_admin`/`is_reviewer` من المستخدمين غير المسجّلين (كانت ممنوحة لـ`PUBLIC` افتراضياً)
+    - **إصلاح خلل مكتشف أثناء العمل:** عمود `avatar` كان مفقوداً من `user_preferences` رغم أن Avatar Picker (Task #19) يحاول الكتابة إليه — أُضيف؛ الميزة كانت تحفظ محلياً فقط (`localStorage`) بصمت دون مزامنة سحابية
+    - **ترحيل بيانات:** استُخرجت مصفوفة `STRUCTS` كاملة من `atlas.html` (17 بنية) عبر Node، ورُحِّلت كل الحقول النصية (أوصاف EN+AR، حقائق، Mnemonics) + **فقط الصور الحقيقية العاملة فعلياً** (13 صورة عبر 9 أعضاء) بعد التحقق المباشر (HTTP) من كل رابط صورة
+    - **اكتشاف غير مخطَّط:** فحص الروابط كشف أن 8 بنى (`gallbladder, pancreas, aorta, ivc, portal-vein, stomach, small-intestine, large-intestine`) لديها روابط صور 404 حقيقية في `atlas.html` المباشر الآن — الكود يشير لملفات لم تُرفع أصلاً (متوافق مع Issue #25 الموثّق، لكن الكود نفسه لم يُحدَّث ليعكس ذلك). سُجِّل كـIssue #45
+    - **خلل تكرار أثناء الترحيل:** ظهرت صفوف مكرَّرة في `structure_facts` لـ10 من 17 بنية أثناء التنفيذ لسبب غير مؤكَّد (لم يتضح مصدره من سجل الأوامر)، اكتُشف بالتحقق المباشر بعد كل خطوة وأُصلح بالكامل (85 صف نهائي، مطابق تماماً للمتوقع 17×5) — سُجِّل كـIssue #46
+    - **ملاحظة بيانات:** تصنيف `bone` (Pelvic Bone) كـ`category:'urinary'` في `atlas.html` المصدر — خطأ تصنيف واضح، رُحِّل كما هو (أمانة نقل البيانات) دون تصحيح صامت — سُجِّل كـIssue #47
+    - **atlas.html/comparison.html لا تزالان تقرآن من مصفوفة `STRUCTS` المضمّنة** — لم تُربطا بـSupabase بعد؛ هذا عمل واجهة منفصل غير مجدوَل
+    - **عمل منفصل بدأ ثم أُلغي بطلب صريح من المالك:** توحيد نظام الأيقونات (استبدال الإيموجي بـSVG) في Atlas، Clinic، AI Chat، My Progress، وSRS — نُفِّذ محلياً وقُدِّم للمراجعة، **لم يُرفَع لـGitHub ولم يُطبَّق**، أُلغي بالكامل بطلب "تغيير في الاتجاه مؤقتاً". لا أثر له على الإنتاج.
+
 - **v4.5 — 2026-06-30**
   - Task #25 approved: Clinic Page Redesign ✅
     - **بنية جديدة:** تخطيط Sidebar (قائمة حالات دائمة) + Main panel بدل تبديل شاشتين كاملتين — القائمة الجانبية تبقى ظاهرة أثناء حل الحالة مع تظليل cyan للحالة النشطة
@@ -756,4 +828,4 @@ Then request my approval."
 
 ---
 
-**End of Document — OmniRad Master Plan v4.5**
+**End of Document — OmniRad Master Plan v4.7**

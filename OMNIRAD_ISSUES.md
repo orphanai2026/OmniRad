@@ -1,7 +1,7 @@
 # 🐛 OMNIRAD_ISSUES — Issues & Deferred Tasks Log
 **OmniRad — Multimodal Radiologic Anatomy Platform**
 
-*Last updated: 2026-06-30 — ✅ Task #25 Done (Clinic Page Redesign) · v4.5*
+*Last updated: 2026-07-01 — ✅ Task #26b Done (Frontend Wiring: Atlas + Compare → Supabase) · v4.7*
 
 ---
 
@@ -76,6 +76,12 @@
 | 42 | clinic.html: زر "Save Draft" في step4 بلا وظيفة فعلية (بطلب صريح من المالك) — يحتاج localStorage أو Supabase لتخزين المسودات | Task #25 | Future | 🟢 | 💡 Idea | — |
 | 43 | clinic.html: لا يوجد كنتور cyan دقيق حول العضو المستهدف داخل الصورة — لا توجد إحداثيات segmentation للصور الحقيقية المستخدمة (Wikimedia)؛ نفس قيد Issue #8. بديل مؤقت: نقطة تأشير مركزية عامة (زر Label) | Task #25 | Phase 4+ (مع MedSAM2 pipeline) | 🟡 | 🔴 Deferred | — |
 | 44 | clinic.html: فجوات متبقية عن المرجع التصميمي — إيموجي ما زالت مستخدمة في عناوين البطاقات (مخالف لطلب "no emoji icons" في المرجع)، "All Cases (12)" مقابل 6 حالات فعلية، Sign Out كرابط nav وليس زراً منفصلاً، لا يوجد سهم dropdown للـ avatar | Task #25 | Future | 🟢 | 🔴 Open | — |
+| 45 | atlas.html: روابط صور مكسورة فعلياً (404) لـ8 بنى — gallbladder, pancreas, aorta, ivc, portal-vein, stomach, small-intestine, large-intestine. الكود يشير لمسارات `ct_original.png` لم تُرفع أصلاً (متوافق مع تأجيل Issue #25 لكن الكود لم يُحدَّث). أي طالب يفتح هذه البنى في Atlas يرى صورة مكسورة الآن. | Task #26 (فحص أثناء الترحيل) | Sprint #1 CT | 🔴 | 🔴 Open | — |
+| 46 | Supabase: تكرار غير مفسَّر في صفوف `structure_facts` أثناء تنفيذ Task #26 (10 من 17 بنية أُدرجت مرتين بترتيب `sort_order` مختلف) — لا يوجد تفسير مؤكَّد من سجل الأوامر المُنفَّذة؛ اكتُشف وأُصلح بالتحقق المباشر بعد كل خطوة. يستحق مراقبة إن تكرر النمط في migrations مستقبلية. | Task #26 | — | 🟡 | ✅ Resolved | 2026-07-01 |
+| 47 | atlas.html: البنية `bone` (Pelvic Bone) مصنَّفة `category:'urinary'` — خطأ تصنيف واضح في بيانات المصدر. رُحِّل كما هو لقاعدة Supabase (أمانة نقل البيانات دون تصحيح صامت)، يحتاج تصحيحاً في كل من الكود والقاعدة معاً لاحقاً. | Task #26 | Future | 🟢 | 🔴 Open | — |
+| 48 | Supabase: `structure_related` له مفتاحان أجنبيان يشيران لنفس جدول `structures` (`structure_id` و`related_structure_id`) — سبَّب فشل استعلام PostgREST المُضمَّن (embed) تلقائياً بسبب الغموض. أُصلح بتحديد اسم القيد صراحةً في الاستعلام (`structure_related!structure_related_structure_id_fkey(...)`). درس للمستقبل: أي جدول بمفتاحين للجدول نفسه يحتاج نفس المعالجة. | Task #26b | — | 🟡 | ✅ Resolved | 2026-07-01 |
+| 49 | Supabase: تدقيقي الأمني في Task #26 ألغى صلاحية تنفيذ `is_admin`/`is_reviewer` من دور `anon` (لإغلاق ثغرة استدعاء API مباشر) — لكن هذا كسر بالخطأ كل قراءة عامة غير مسجّلة للمحتوى المنشور، لأن سياسات RLS تستدعي هاتين الدالتين داخلياً. لم يظهر الخلل إلا عند اختبار مباشر بصلاحية `anon` الفعلية على الموقع الحي، وليس بفحص بنية الجداول فقط. أُعيدت الصلاحية. **درس دائم:** أي تدقيق أمني لاحق على RLS يجب أن يتضمّن اختبار وظيفي بـ`set local role anon` صراحة، لا الاكتفاء بفحص الأذونات نظرياً. | Task #26b | — | 🔴 | ✅ Resolved | 2026-07-01 |
+| 50 | comparison.html: القائمة المنسدلة لاختيار البنية كانت تعرض 5 خيارات فقط رغم أن كائن `STRUCTURES` بالكود يحتوي 8 — aorta وstomach ومدخل `kidneys` (جمع، مكرر عن `kidney` المفرد) كانت معرَّفة في JS لكن بلا وسم `<option>` مقابل، فغير قابلة للوصول من الواجهة إلا برابط مباشر (`?structure=aorta`). اكتُشف بالمصادفة أثناء ربط الصفحة بـSupabase، واختفى تلقائياً بالتبديل لمصدر البيانات الجديد (القائمة تُبنى الآن ديناميكياً من الـ17 بنية كاملة). | Task #26b (اكتشاف عرضي) | — | 🟢 | ✅ Resolved | 2026-07-01 |
 
 ---
 
@@ -108,6 +114,8 @@
 | — | Repository Cleanup (Path B) | 2026-06-30 | Mohammed Saeed Alzahrani | Headers لـ17 ملف · 5 صفحات اختبار → archive/ · nav/CSS unification مؤجل (Issue #32) |
 | 24 | Mnemonics Page Redesign | 2026-06-30 | Mohammed Saeed Alzahrani | Brain hero illustration · stats row · real CT/MRI thumbnails (liver/kidneys/spleen) · هيدر محفوظ 100% (تحقق diff) · str_replace patches فقط |
 | 25 | Clinic Page Redesign | 2026-06-30 | Mohammed Saeed Alzahrani | Sidebar+Main layout دائم · إصلاح bug الكانفاس الفارغ (Step 3) · Toolbar أيقونات SVG · Look For + Clinical Hint (مُشتقّان من بيانات موجودة) · Reporting Guide + Case Context + Common Mistakes (Step 4) · 3 أزرار شكلية بلا وظيفة (بموافقة) · str_replace patches فقط |
+| 26 | Content Database Migration | 2026-07-01 | Mohammed Saeed Alzahrani | 6 جداول Supabase جديدة (structures + contributor workflow) · RLS + تدقيق أمني/أدائي كامل · إصلاح خلل avatar المفقود من user_preferences (Task #19) · ترحيل 17 بنية من atlas.html (34 وصف · 85 حقيقة · 32 mnemonic · 13 صورة حقيقية) · الصور تبقى GitHub raw حتى بعد الإطلاق · atlas.html/comparison.html لم تُربطا بالقاعدة بعد (منفصل) · اكتُشفت Issues #45-47 أثناء العمل |
+| 26b | Frontend Wiring (Atlas + Compare → Supabase) | 2026-07-01 | Mohammed Saeed Alzahrani | جدولان إضافيان (structure_imaging_notes · structure_related) · atlas.html تُحمَّل STRUCTS من Supabase async (الصور/TTS تبقى محلية) · comparison.html تُبنى القائمة المنسدلة ديناميكياً من 17 بنية بدل 8 ثابتة · دالتان جديدتان في supabase.js (getStructures · getStructureList) · 3 أخطاء حقيقية اكتُشفت وأُصلحت على الموقع الحي (Issues #48-50) · كل إصلاح تحقَّق منه مباشرة على orphanai2026.github.io/OmniRad |
 
 ---
 
