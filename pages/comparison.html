@@ -777,11 +777,6 @@ select.structure-select:focus {
       <div class="structure-select-wrap">
         <span class="panel-label">Structure</span>
         <select class="structure-select" id="structureSelect" aria-label="Select anatomical structure">
-          <option value="liver">Liver (الكبد)</option>
-          <option value="spleen">Spleen (الطحال)</option>
-          <option value="kidney">Right Kidney (الكلية اليمنى)</option>
-          <option value="pancreas">Pancreas (البنكرياس)</option>
-          <option value="gallbladder">Gallbladder (المرارة)</option>
         </select>
       </div>
 
@@ -887,16 +882,26 @@ select.structure-select:focus {
    ═══════════════════════════════════════════════════════════ */
 
 // ── DATA ─────────────────────────────────────────────────────
-const STRUCTURES = {
-  liver:       { name: 'Liver',         ar: 'الكبد',            system: 'Abdomen · RUQ' },
-  spleen:      { name: 'Spleen',        ar: 'الطحال',           system: 'Abdomen · LUQ' },
-  kidney:      { name: 'Right Kidney',  ar: 'الكلية اليمنى',   system: 'Retroperitoneum' },
-  pancreas:    { name: 'Pancreas',      ar: 'البنكرياس',        system: 'Retroperitoneum' },
-  gallbladder: { name: 'Gallbladder',   ar: 'المرارة',          system: 'Abdomen · RUQ' },
-  kidneys:     { name: 'Kidneys',       ar: 'الكليتان',         system: 'Retroperitoneum' },
-  aorta:       { name: 'Abdominal Aorta', ar: 'الأبهر البطني', system: 'Retroperitoneum' },
-  stomach:     { name: 'Stomach',       ar: 'المعدة',           system: 'Abdomen · LUQ' },
-};
+let STRUCTURES = {};
+
+function formatCategory(cat){
+  return (cat||'').split('-').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+}
+
+// Populates STRUCTURES + the <select> options from Supabase (Task #26).
+// Replaces the previous hardcoded 8-entry list (only 5 of which were even
+// reachable from the dropdown UI) with the full published structure set.
+async function loadStructureList(){
+  const rows = await window.OmniRadDB.getStructureList();
+  STRUCTURES = {};
+  rows.forEach(r => {
+    STRUCTURES[r.id] = { name: r.en, ar: r.ar, system: formatCategory(r.category) };
+  });
+
+  structSel.innerHTML = rows.map(r =>
+    `<option value="${r.id}">${r.en} (${r.ar})</option>`
+  ).join('');
+}
 
 const MODALITIES = {
   ct:    { label:'CT',    full:'Computed Tomography',  planes:['Axial','Coronal','Sagittal'],  color:'oklch(0.72 0.14 188)' },
@@ -1352,10 +1357,30 @@ window.addEventListener('resize',()=>{
 });
 
 // ── INIT ──────────────────────────────────────────────────────
-initTheme();
-readURLParams();
-renderGrid();
-OmniRadAuth.updateNav();
+(async function initComparison(){
+  initTheme();
+  gridWrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted,#8a94aa);">Loading structures…</div>';
+  try{
+    await loadStructureList();
+  }catch(err){
+    gridWrap.innerHTML =
+      '<div style="padding:60px 20px;text-align:center;">'
+      + '<h2 style="margin-bottom:10px;">Unable to load structure list</h2>'
+      + '<p style="color:var(--text-muted,#8a94aa);max-width:420px;margin:0 auto;">'
+      + 'Please check your connection and refresh the page. If the problem continues, try again in a few minutes.'
+      + '</p></div>';
+    console.error('loadStructureList failed:', err);
+    return;
+  }
+  if(!STRUCTURES[state.structure]){
+    const firstId = Object.keys(STRUCTURES)[0];
+    if(firstId) state.structure = firstId;
+  }
+  readURLParams();
+  structSel.value = state.structure;
+  renderGrid();
+  OmniRadAuth.updateNav();
+})();
 </script>
 </body>
 </html>
