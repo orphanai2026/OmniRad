@@ -764,177 +764,39 @@ const CATS=[
 
 const IMG='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
 
-const STRUCTS=[
-  {id:'liver',cat:'upper-abdomen',en:'Liver',ar:'الكبد',latin:'Hepar',
-   descEn:'The largest solid organ in the body, in the right upper quadrant beneath the diaphragm. Performs over 500 functions including metabolism, detoxification, and bile production.',
-   descAr:'أكبر الأعضاء الصلبة، في الربع العلوي الأيمن. يؤدي أكثر من ٥٠٠ وظيفة تشمل الأيض وإزالة السموم وإنتاج الصفراء.',
-   facts:['Weight: 1.2–1.5 kg in adults','Divided into 8 Couinaud segments','Dual blood supply: portal vein (75%) + hepatic artery (25%)','Located in RUQ and epigastrium',"Covered by Glisson's capsule"],
-   imaging:{CT:'Homogeneous 50–70 HU on plain CT. Portal venous phase (70 s) optimal. 8 Couinaud segments identifiable.',MRI:'T1: moderately hyperintense. T2: slightly hypointense vs spleen. Gadolinium shows arterial/portal/delayed phases.',US:'Homogeneous echogenicity, slightly hyperechoic vs renal cortex. Normal ≤15 cm midclavicular.',XR:'Hepatomegaly displaces stomach gas medially. Right hemidiaphragm elevated.'},
-   mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:'../images/structures/liver/ct_original.png'},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
-   mnemonics:[{title:'Couinaud Segments',en:'"LEFT has LOWER numbers" — Segments 1 (caudate) alone; 2–4 left lobe; 5–8 right lobe.',ar:'"اليسار أرقام أصغر" — القطاع ١ منفرداً؛ ٢–٤ الفص الأيسر؛ ٥–٨ الفص الأيمن.',ref:'Couinaud 1957'},{title:"Riedel's Lobe",en:'"Riedel Reaches Right" — tongue-like downward extension of right lobe, common in women.',ar:'"ريدل يمتد يميناً" — امتداد لساني للفص الأيمن، شائع عند النساء.',ref:"Gray's 41st ed."}],
-   related:['gallbladder','portal-vein','ivc'],
-   ttsEn:'Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.',ttsAr:'الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن.'},
+let STRUCTS=[];
 
-  {id:'gallbladder',cat:'upper-abdomen',en:'Gallbladder',ar:'المرارة',latin:'Vesica biliaris',
-   descEn:'A pear-shaped sac on the inferior liver surface. Stores and concentrates bile, releasing it into the duodenum via the cystic and common bile ducts.',
-   descAr:'كيس على شكل كمثرى على السطح السفلي للكبد. يخزّن الصفراء ويُركّزها ثم يُطلقها إلى الاثني عشر.',
-   facts:['Capacity: 30–50 mL','Normal wall thickness ≤3 mm','Located at gallbladder fossa (IV/V junction)','Cystic duct → common bile duct','Best modality for gallstones: Ultrasound'],
-   imaging:{CT:'Thin-walled fluid-filled structure. Bile: 0–20 HU. Calcified stones: bright; cholesterol stones may be invisible.',MRI:'T2 very high signal (MRCP ideal). Wall barely visible when normal.',US:'Anechoic pear-shaped + posterior acoustic enhancement. Wall ≤3 mm. Stones: echogenic + shadowing.',XR:'Invisible unless calcified stones or porcelain gallbladder.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/gallbladder/ct_original.png'},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-   mnemonics:[{title:"Gallstone Risk — 5 F's",en:'"Fat, Female, Fertile, Forty, Fair" — classic risk factors for cholesterol gallstones. 6th F: Family history.',ar:'"سمينة، أنثى، خصبة، أربعينية، فاتحة البشرة" — عوامل خطر الحصى الكولسترولية.',ref:"Moore's 8th ed."}],
-   related:['liver','pancreas','portal-vein'],
-   ttsEn:'Gallbladder. Latin: Vesica biliaris. Bile storage. Gallbladder fossa.',ttsAr:'المرارة. باللاتينية: فيسيكا بيلياريس. تخزين الصفراء.'},
+// ── LOCAL_MEDIA: images (mods) + TTS text stay client-side (Task #26 decision:
+//    images remain on GitHub raw, not migrated to Supabase Storage yet) ──
+const LOCAL_MEDIA={
+  'liver': {mods: {"CT": {"planes": ["Axial", "Coronal", "Sagittal"], "img": "../images/structures/liver/ct_original.png"}, "MRI": {"planes": ["Axial", "Coronal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "US": {"planes": ["Longitudinal", "Transverse"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Liver. Latin: Hepar. Largest solid organ. Right upper quadrant.', ttsAr: 'الكبد. باللاتينية: هيبار. أكبر عضو صلب. الربع العلوي الأيمن.'},
+  'gallbladder': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/gallbladder/ct_original.png"}, "US": {"planes": ["Longitudinal", "Transverse"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "MRI": {"planes": ["Axial"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Gallbladder. Latin: Vesica biliaris. Bile storage. Gallbladder fossa.', ttsAr: 'المرارة. باللاتينية: فيسيكا بيلياريس. تخزين الصفراء.'},
+  'pancreas': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/pancreas/ct_original.png"}, "MRI": {"planes": ["Axial"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "US": {"planes": ["Transverse", "Oblique"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Pancreas. Greek: all flesh. Retroperitoneal. Head, neck, body, tail.', ttsAr: 'البنكرياس. يوناني: كل اللحم. خلف صفاقي.'},
+  'spleen': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/spleen/ct_original.png"}, "US": {"planes": ["Longitudinal", "Coronal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "MRI": {"planes": ["Axial"], "img": "../images/structures/spleen/mri_original.png"}}, ttsEn: 'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.', ttsAr: 'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'},
+  'aorta': {mods: {"CT": {"planes": ["Axial", "Coronal", "Sagittal"], "img": "../images/structures/aorta/ct_original.png"}, "US": {"planes": ["Longitudinal", "Transverse"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "Angio": {"planes": ["Frontal", "Lateral"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.', ttsAr: 'الأبهر البطني. من T12 إلى L4. الطبيعي أقل من ٣ سم.'},
+  'ivc': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/ivc/ct_original.png"}, "US": {"planes": ["Longitudinal", "Transverse"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "MRI": {"planes": ["Axial"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Inferior vena cava. Largest vein. Right of aorta. T8 to L5.', ttsAr: 'الوريد الأجوف السفلي. أكبر وريد. يمين الأبهر.'},
+  'portal-vein': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/portal-vein/ct_original.png"}, "US": {"planes": ["Oblique", "Longitudinal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "MRI": {"planes": ["Axial"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Portal vein. Latin: Vena portae hepatis. Formed at L2. Normal under 13 millimeters.', ttsAr: 'الوريد البابي. يتشكّل عند L2. الطبيعي أقل من ١٣ ملم.'},
+  'stomach': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/stomach/ct_original.png"}, "X-Ray": {"planes": ["Erect PA", "Barium Study"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "US": {"planes": ["Longitudinal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Stomach. Latin: Gaster. Fundus, body, antrum, pylorus. Left upper quadrant.', ttsAr: 'المعدة. باللاتينية: غاستر. القاع، الجسم، القناة المعدية، البواب.'},
+  'small-intestine': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/small-intestine/ct_original.png"}, "X-Ray": {"planes": ["Erect AP", "Supine AP"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "US": {"planes": ["Transverse", "Longitudinal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Small intestine. Latin: Intestinum tenue. Duodenum, jejunum, ileum. 6 to 7 meters.', ttsAr: 'الأمعاء الدقيقة. اثني عشر، صائم، لفائفي. ٦ إلى ٧ أمتار.'},
+  'large-intestine': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/large-intestine/ct_original.png"}, "X-Ray": {"planes": ["Supine AP", "Erect AP"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "US": {"planes": ["Transverse"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.', ttsAr: 'الأمعاء الغليظة. أعور، قولون، مستقيم. متر ونصف.'},
+  'kidney': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/kidney/ct_original.png"}, "MRI": {"planes": ["Axial", "Coronal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "US": {"planes": ["Longitudinal", "Transverse"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Kidney. Latin: Ren. Retroperitoneal. T12 to L3. Filters 180 liters daily.', ttsAr: 'الكلية. باللاتينية: رين. خلف صفاقية. تُرشّح ١٨٠ لتراً يومياً.'},
+  'bladder': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/bladder/ct_original.png"}, "US": {"planes": ["Transverse", "Longitudinal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "MRI": {"planes": ["Axial", "Sagittal"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Urinary bladder. Latin: Vesica urinaria. True pelvis. Stores 300 to 500 milliliters.', ttsAr: 'المثانة البولية. باللاتينية: فيسيكا. الحوض الحقيقي. تخزّن ٣٠٠ إلى ٥٠٠ مل.'},
+  'bone': {mods: {"CT": {"planes": ["Axial", "Coronal"], "img": "../images/structures/bone/ct_original.png"}, "X-Ray": {"planes": ["AP Pelvis", "Inlet", "Outlet"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}, "MRI": {"planes": ["Coronal", "Axial"], "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg"}}, ttsEn: 'Pelvic bone. Latin: Os coxae. Ilium, ischium, pubis. Fused at acetabulum.', ttsAr: 'عظم الحوض. باللاتينية: أوس كوكساي. حرقفة وإسك وعانة تلتحم عند الحُقّ.'},
+  'brain': {mods: {"MRI": {"planes": ["Axial", "Coronal", "Sagittal"], "img": "../images/structures/brain/mri_original.png"}, "MRI-T2": {"planes": ["Axial"], "img": "../images/structures/brain/mri_t2_original.png"}, "MRI-PD": {"planes": ["Axial"], "img": "../images/structures/brain/mri_pd_original.png"}}, ttsEn: 'Brain. Latin: Encephalon. Cerebrum, cerebellum, brainstem. 1.4 kilograms.', ttsAr: 'الدماغ. باللاتينية: إنسيفالون. المخ والمخيخ وجذع الدماغ.'},
+  'neck': {mods: {"MRI": {"planes": ["Coronal", "Sagittal"], "img": "../images/structures/neck/mri_original.png"}, "MRI-T2": {"planes": ["Coronal"], "img": "../images/structures/neck/mri_t2_original.png"}}, ttsEn: 'Neck. Latin: Collum. Seven cervical vertebrae. Carotid arteries and jugular veins.', ttsAr: 'الرقبة. باللاتينية: كولوم. سبع فقرات عنقية. الشرايين السباتية والأوردة الوداجية.'},
+  'lung': {mods: {"MRI": {"planes": ["Coronal"], "img": "../images/structures/thorax/mri_original.png"}, "MRI-T2": {"planes": ["Coronal"], "img": "../images/structures/thorax/mri_t2_original.png"}}, ttsEn: 'Lung. Latin: Pulmo. Right 3 lobes, left 2 lobes. 300 million alveoli.', ttsAr: 'الرئة. باللاتينية: بولمو. اليمنى ثلاثة فصوص واليسرى فصّان.'},
+  'heart': {mods: {"MRI": {"planes": ["Coronal"], "img": "../images/structures/thorax/mri_original.png"}}, ttsEn: 'Heart. Latin: Cor. Four chambers. Pumps 5 liters per minute at rest.', ttsAr: 'القلب. باللاتينية: كور. أربع حجرات. يضخ ٥ لترات في الدقيقة.'}
+};
 
-  {id:'pancreas',cat:'upper-abdomen',en:'Pancreas',ar:'البنكرياس',latin:'Pancreas',
-   descEn:'Mixed exocrine/endocrine gland in the retroperitoneum behind the stomach. Head in the duodenal C-curve; tail to the splenic hilum. Essential for digestion and glucose homeostasis.',
-   descAr:'غدة مختلطة خلف الصفاق خلف المعدة. الرأس في منحنى الاثني عشر والذيل إلى نقير الطحال.',
-   facts:['Parts: Head, Neck, Body, Tail + Uncinate process','Retroperitoneal (except tail)','Main duct (Wirsung) ≤3 mm','Exocrine: acinar cells → digestive enzymes','Endocrine: Islets of Langerhans → insulin, glucagon'],
-   imaging:{CT:'Pancreatic phase (35–40 s) optimal. Attenuation ~40 HU. Duct ≤3 mm. Fat lobulations in elderly.',MRI:'T1: high signal (proteinaceous secretions). MRCP shows duct. DWI for masses.',US:'Echogenicity ≥ liver. Head anterior to IVC; tail posterior to stomach.',XR:'Calcifications of chronic pancreatitis visible. Organ not directly seen.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/pancreas/ct_original.png'},MRI:{planes:['Axial'],img:IMG},US:{planes:['Transverse','Oblique'],img:IMG}},
-   mnemonics:[{title:'Parts — HNBT',en:'"Hang Neatly Before Tail" — Head (duodenal curve), Neck (over portal vein), Body (crosses spine), Tail (to spleen).',ar:'"رأس ثم عنق والجسم ثم الذيل".',ref:"Netter's 7th ed."},{title:'Enzymes — PALE',en:'"PALE" — Protease, Amylase, Lipase, Elastase. All secreted as inactive zymogens.',ar:'"PALE" — بروتياز، أميلاز، ليباز، إيلاستاز. كلها سلائف زيموجينية.',ref:"Moore's 8th ed."}],
-   related:['gallbladder','spleen','stomach','portal-vein'],
-   ttsEn:'Pancreas. Greek: all flesh. Retroperitoneal. Head, neck, body, tail.',ttsAr:'البنكرياس. يوناني: كل اللحم. خلف صفاقي.'},
+// ── Fetch structure content from Supabase (Task #26) ──
+async function loadStructuresData(){
+  const rows = await window.OmniRadDB.getStructures();
+  STRUCTS = rows.map(r => {
+    const media = LOCAL_MEDIA[r.id] || {mods:{}, ttsEn:'', ttsAr:''};
+    return { ...r, mods: media.mods, ttsEn: media.ttsEn, ttsAr: media.ttsAr };
+  });
+}
 
-  {id:'spleen',cat:'upper-abdomen',en:'Spleen',ar:'الطحال',latin:'Lien / Splen',
-   descEn:'The largest lymphoid organ, in the left upper quadrant under ribs 9–11. Filters blood, recycles iron from aged RBCs, and serves as an immunological reservoir.',
-   descAr:'أكبر عضو لمفاوي في الربع العلوي الأيسر. يرشّح الدم ويُعيد تدوير الحديد ويعمل كخزّان مناعي.',
-   facts:['Normal size: ≤12 cm long-axis','LUQ, posterior to stomach','Hilum on medial surface','Fragile capsule — rupture risk in trauma','Red pulp: filtration | White pulp: immune function'],
-   imaging:{CT:'Homogeneous ~50 HU. Arterial phase: "zebra stripes" (normal). Portal phase: homogeneous. Size ≤12 cm.',MRI:'T1: hypointense vs liver. T2: hyperintense vs liver. Arterial phase heterogeneous (normal).',US:'Homogeneous crescent-shaped. ≤12 cm. Splenomegaly >12 cm.',XR:'Splenomegaly displaces stomach medially and elevates left hemidiaphragm.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/spleen/ct_original.png'},US:{planes:['Longitudinal','Coronal'],img:IMG},MRI:{planes:['Axial'],img:'../images/structures/spleen/mri_original.png'}},
-   mnemonics:[{title:'Size — 1×3×5×7×9×11',en:'"1×3×5×7×9×11" — 1 inch thick, 3 wide, 5 long. Weighs 7 oz. Under ribs 9, 10, 11.',ar:'"١×٣×٥×٧×٩×١١" — سُمك ١ إنش، عرض ٣، طول ٥. تحت الأضلاع ٩، ١٠، ١١.',ref:"Gray's 41st ed."},{title:'Functions — FIST',en:'"FIST" — Filtration, Immune response, Storage (platelets/monocytes), haemaTopoiesis (fetal).',ar:'"FIST" — ترشيح، استجابة مناعية، تخزين، تكوين دم (جنيني).',ref:"Moore's 8th ed."}],
-   related:['pancreas','stomach','portal-vein'],
-   ttsEn:'Spleen. Latin: Lien. Largest lymphoid organ. Left upper quadrant.',ttsAr:'الطحال. باللاتينية: لييان. أكبر عضو لمفاوي. الربع العلوي الأيسر.'},
-
-  {id:'aorta',cat:'vascular',en:'Abdominal Aorta',ar:'الأبهر البطني',latin:'Aorta abdominalis',
-   descEn:'Continuation of the descending aorta below the diaphragm at T12. Bifurcates at L4 into common iliac arteries. Major branches supply all abdominal organs.',
-   descAr:'امتداد الأبهر النازل أسفل الحجاب الحاجز عند T12. يتفرع عند L4 إلى الشريانين الحرقفيين.',
-   facts:['Enters abdomen at T12 through aortic hiatus','Bifurcates at L4 → common iliac arteries','Normal diameter ≤3 cm (AAA if >3 cm)','Branches: celiac (T12), SMA (L1), renal (L1), IMA (L3)','Lies to the LEFT of IVC'],
-   imaging:{CT:'Round, left of midline. Measure outer-to-outer. Normal ≤3 cm. CTA arterial phase for branches.',MRI:'Flow void on SE. Bright on GRE/MRA. Gold standard for non-radiation vascular imaging.',US:'Pulsatile anechoic tube. Normal <3 cm. AAA screening: males ≥65 with smoking history.',XR:'Calcified wall on lateral X-ray. Aneurysm = widened soft tissue opacity.'},
-   mods:{CT:{planes:['Axial','Coronal','Sagittal'],img:'../images/structures/aorta/ct_original.png'},US:{planes:['Longitudinal','Transverse'],img:IMG},Angio:{planes:['Frontal','Lateral'],img:IMG}},
-   mnemonics:[{title:'Branches Mnemonic',en:'"Curious Surgeons Rarely Inject Gut Lumens" — Celiac (T12), SMA (L1), Renals (L1), IMA (L3), Gonadal (L2), Lumbars.',ar:'"الجراحون الفضوليون نادراً ما يحقنون تجاويف الأمعاء" — جذع بطني، SMA، كلوية، IMA، تناسلية، قطنية.',ref:"Netter's 7th ed."},{title:'AAA Screening',en:'"One-time US: Male ≥65 who ever Smoked" — AAA = aorta >3 cm.',ar:'"فحص واحد: ذكر ≥٦٥ سنة مدخّن" — تمدد = أبهر > ٣ سم.',ref:'USPSTF'}],
-   related:['ivc','portal-vein','kidney'],
-   ttsEn:'Abdominal aorta. Latin: Aorta abdominalis. T12 to L4. Normal under 3 centimeters.',ttsAr:'الأبهر البطني. من T12 إلى L4. الطبيعي أقل من ٣ سم.'},
-
-  {id:'ivc',cat:'vascular',en:'Inferior Vena Cava',ar:'الوريد الأجوف السفلي',latin:'Vena cava inferior',
-   descEn:'The largest vein, formed at L5 by union of common iliac veins. Ascends right of aorta, passes through diaphragm at T8 into the right atrium.',
-   descAr:'أكبر وريد، يتشكّل عند L5 من اتحاد الوريدين الحرقفيين. يصعد يمين الأبهر ويمر عبر الحجاب الحاجز عند T8.',
-   facts:['Forms at L5 by common iliac veins','Right of aorta','Passes diaphragm at T8','Tributaries: renal, hepatic, lumbar, gonadal veins','No valves in abdominal IVC'],
-   imaging:{CT:'Right of aorta. Variable caliber with respiration. Hepatic veins enter below diaphragm. Thrombosis: filling defect.',MRI:'Variable signal. Bright on TOF. Acute thrombus: T1 bright.',US:'Easily compressible. Collapses on inspiration. Hepatic veins visible entering IVC.',XR:'Not visible unless calcified or massively dilated.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/ivc/ct_original.png'},US:{planes:['Longitudinal','Transverse'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-   mnemonics:[{title:'Tributaries — ILRHGS',en:'"I Like Riding Horses Going South" — Iliac, Lumbar, Renal, Hepatic, Gonadal, Suprarenal.',ar:'"أحب ركوب الخيل جهة الجنوب" — حرقفية، قطنية، كلوية، كبدية، تناسلية، كظرية.',ref:"Gray's 41st ed."}],
-   related:['aorta','liver','kidney'],
-   ttsEn:'Inferior vena cava. Largest vein. Right of aorta. T8 to L5.',ttsAr:'الوريد الأجوف السفلي. أكبر وريد. يمين الأبهر.'},
-
-  {id:'portal-vein',cat:'vascular',en:'Portal Vein',ar:'الوريد البابي',latin:'Vena portae hepatis',
-   descEn:'Formed by SMV + splenic vein behind the pancreatic neck at L2. Carries nutrient-rich blood from the GI tract and spleen to the liver (75% of hepatic blood supply).',
-   descAr:'يتشكّل من الوريد المساريقي العلوي والطحالي خلف عنق البنكرياس عند L2. يحمل دماً غنياً إلى الكبد (٧٥٪ من إمداده الدموي).',
-   facts:['Formed at L2: SMV + splenic vein','Normal diameter ≤13 mm at porta hepatis','Provides 75% of hepatic blood supply','Normal flow: hepatopetal (towards liver)','Portal HTN: gradient >10 mmHg'],
-   imaging:{CT:'Portal venous phase (70 s) optimal. Round at hepatic hilum. Thrombosis: filling defect.',MRI:'Flow void or bright on GRE. Acute thrombus: T1 bright.',US:'Doppler: hepatopetal flow. Monophasic waveform. Diameter ≤13 mm at hilum.',XR:'Not visible.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/portal-vein/ct_original.png'},US:{planes:['Oblique','Longitudinal'],img:IMG},MRI:{planes:['Axial'],img:IMG}},
-   mnemonics:[{title:'Formation',en:'"SMV Marries Splenic behind Pancreatic Neck at L2."',ar:'"المساريقي يتزوج الطحالي خلف عنق البنكرياس عند L2."',ref:"Moore's 8th ed."},{title:'Portal HTN — SPADE',en:'"SPADE" — Splenomegaly, Portal vein >13 mm, Ascites, portoDuodenal collaterals, Esophageal varices.',ar:'"SPADE" — ضخامة طحال، وريد بابي >١٣ مم، استسقاء، وصلات، دوالي مريء.',ref:'Radiographics'}],
-   related:['liver','spleen','pancreas','ivc'],
-   ttsEn:'Portal vein. Latin: Vena portae hepatis. Formed at L2. Normal under 13 millimeters.',ttsAr:'الوريد البابي. يتشكّل عند L2. الطبيعي أقل من ١٣ ملم.'},
-
-  {id:'stomach',cat:'gi-tract',en:'Stomach',ar:'المعدة',latin:'Gaster / Ventriculus',
-   descEn:'J-shaped muscular organ in the LUQ. Receives food from esophagus via the GEJ; delivers chyme to duodenum via the pylorus. Secretes HCl, pepsin, and intrinsic factor.',
-   descAr:'عضو عضلي على شكل J في الربع العلوي الأيسر. يستقبل الطعام من المريء ويُرسل الكيموس إلى الاثني عشر عبر البواب.',
-   facts:['Regions: fundus, body (corpus), antrum, pylorus','Capacity: ~1 L (up to 4 L)','Normal wall ≤5 mm when distended','Greater curvature: left | Lesser curvature: right','Blood supply: celiac axis branches'],
-   imaging:{CT:'Wall ≤5 mm distended. Rugae visible. Air-fluid level common. Oral contrast optimal.',MRI:'T2 shows fluid well. T1 post-contrast for wall. Rarely used routinely.',US:'"Target sign" on transverse view. Pyloric stenosis: muscle >4 mm in infants.',XR:'Gastric air bubble LUQ on erect film. Free air under diaphragm = perforation!'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/stomach/ct_original.png'},'X-Ray':{planes:['Erect PA','Barium Study'],img:IMG},US:{planes:['Longitudinal'],img:IMG}},
-   mnemonics:[{title:'Parts — FBAP',en:'"Fun Boys Always Perform" — Fundus, Body, Antrum, Pylorus.',ar:'"القاع والجسم والقناة والبواب".',ref:"Netter's 7th ed."},{title:'Gastric Cells',en:'"Chief Makes Pepsin, Parietal Has Acid" — Chief: pepsinogen; Parietal: HCl + intrinsic factor; G-cells: gastrin.',ar:'"الرئيسية: بيبسينوجين؛ الجدارية: HCl + عامل داخلي؛ G: غاسترين."',ref:"Moore's 8th ed."}],
-   related:['pancreas','spleen','portal-vein'],
-   ttsEn:'Stomach. Latin: Gaster. Fundus, body, antrum, pylorus. Left upper quadrant.',ttsAr:'المعدة. باللاتينية: غاستر. القاع، الجسم، القناة المعدية، البواب.'},
-
-  {id:'small-intestine',cat:'gi-tract',en:'Small Intestine',ar:'الأمعاء الدقيقة',latin:'Intestinum tenue',
-   descEn:'Coiled tube ~6–7 m: duodenum (25 cm), jejunum (~2.5 m), ileum (~3.5 m). Site of chemical digestion and nutrient absorption. Characterised by plicae circulares and villi.',
-   descAr:'أنبوب ملتوٍ ~٦–٧ أمتار: اثني عشر، صائم، لفائفي. موقع الهضم الكيميائي وامتصاص المواد الغذائية.',
-   facts:['Duodenum: C-shaped, retroperitoneal, surrounds pancreatic head','Jejunum: thick folds, vascular, LEFT abdomen','Ileum: thin folds, Peyer\'s patches, RIGHT lower quadrant','Total length: 6–7 m','Wall ≤3 mm when distended'],
-   imaging:{CT:'Wall ≤3 mm distended. Jejunum: left with more folds. Ileum: right lower quadrant. CT enterography: neutral oral contrast.',MRI:'MR enterography excellent for Crohn\'s. T2 HASTE: fluid bright.',US:'Peristalsis visible in real-time. Target sign. Wall <3 mm.',XR:'Plicae circulares cross ENTIRE lumen (vs haustra). Normal <2.5 cm diameter. Obstruction >3 cm.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/small-intestine/ct_original.png'},'X-Ray':{planes:['Erect AP','Supine AP'],img:IMG},US:{planes:['Transverse','Longitudinal'],img:IMG}},
-   mnemonics:[{title:'Duodenum — 4 Parts',en:'"I Stand Horizontally Down" — Superior (D1), Descending (D2), Horizontal (D3), Ascending (D4). Ampulla of Vater opens into D2.',ar:'"أقف أفقياً للأسفل" — علوي D1، نازل D2، أفقي D3، صاعد D4. حليمة فاتر في D2.',ref:"Gray's 41st ed."},{title:'Jejunum vs Ileum',en:'"Jejunum is Juicy (LEFT, thick folds); Ileum is Inferior (RIGHT, thin, Peyer\'s patches)."',ar:'"الصائم ممتلئ يساراً (طيات سميكة)؛ اللفائفي يمين أسفل (رفيع، لويحات باير)."',ref:"Netter's 7th ed."}],
-   related:['stomach','large-intestine','pancreas'],
-   ttsEn:'Small intestine. Latin: Intestinum tenue. Duodenum, jejunum, ileum. 6 to 7 meters.',ttsAr:'الأمعاء الدقيقة. اثني عشر، صائم، لفائفي. ٦ إلى ٧ أمتار.'},
-
-  {id:'large-intestine',cat:'gi-tract',en:'Large Intestine',ar:'الأمعاء الغليظة',latin:'Intestinum crassum',
-   descEn:'~1.5 m framing the small intestine. Cecum → ascending → transverse → descending → sigmoid → rectum. Water/electrolyte absorption and fecal formation.',
-   descAr:'~١.٥ متر يُحيط بالأمعاء الدقيقة. أعور ← صاعد ← عرضي ← نازل ← سيني ← مستقيم. امتصاص ماء وتشكيل براز.',
-   facts:['Length: ~1.5 m','Features: taeniae coli, haustra, epiploic appendages','Cecum: right iliac fossa, ileocecal valve','Normal caliber: <6 cm transverse, <9 cm cecum','Rectum: 12–15 cm, no taeniae coli'],
-   imaging:{CT:'Peripheral location. Haustra (incomplete folds). Wall ≤3 mm. CT colonography: prone + supine + CO2.',MRI:'Rectal MRI: excellent for staging rectal cancer (mesorectal fascia). T2 key sequence.',US:'Limited by gas. Graded compression for appendix.',XR:'Haustra = INCOMPLETE folds (key vs plicae). Normal: <6 cm transverse, <9 cm cecum.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:'../images/structures/large-intestine/ct_original.png'},'X-Ray':{planes:['Supine AP','Erect AP'],img:IMG},US:{planes:['Transverse'],img:IMG}},
-   mnemonics:[{title:'Colon Runs Clockwise',en:'"The Colon Runs Clockwise" — Cecum (RIF) → Ascending → Transverse → Descending → Sigmoid → Rectum.',ar:'"القولون يسير بمحاذاة عقارب الساعة" — أعور ← صاعد ← عرضي ← نازل ← سيني ← مستقيم.',ref:"Moore's 8th ed."},{title:'Haustra vs Plicae',en:'"Plicae goes ALL the way across; Haustra DOESN\'T." Key for X-ray bowel obstruction!',ar:'"الطيات الدائرية تعبر كامل اللمعة؛ التكميشات لا تعبر." مهم جداً لتشخيص الانسداد!',ref:'Radiographics'}],
-   related:['small-intestine','stomach','aorta'],
-   ttsEn:'Large intestine. Latin: Intestinum crassum. Cecum, colon, rectum. One point five meters.',ttsAr:'الأمعاء الغليظة. أعور، قولون، مستقيم. متر ونصف.'},
-
-  {id:'kidney',cat:'urinary',en:'Kidney',ar:'الكلية',latin:'Ren / Nephros',
-   descEn:'Paired retroperitoneal organs at T12–L3. Filter ~180 L of plasma daily, regulate electrolytes, acid-base balance, and blood pressure via the renin-angiotensin system.',
-   descAr:'عضوان خلف صفاقيان عند T12–L3. يُرشّحان ~١٨٠ لتراً من البلازما يومياً وينظّمان الشوارد والضغط عبر نظام رينين-أنجيوتنسين.',
-   facts:['Size: ~11×6×3 cm (right slightly lower)','Weight: ~150 g each','Cortex: glomeruli + PCT + DCT | Medulla: loops of Henle + collecting ducts','Right kidney lower (liver displaces left upward)','Blood supply: renal artery (from aorta at L1)'],
-   imaging:{CT:'Cortex: 100–140 HU (nephrographic phase, 90 s). Medulla: lower attenuation. Renal sinus: fat density. Unenhanced for stones.',MRI:'Cortex: T1 brighter than medulla. T2: medulla brighter. Corticomedullary phase best for vascularity. DWI for masses.',US:'Echogenicity: cortex ≤ liver/spleen. Medullary pyramids: hypoechoic. Size ≥ 9 cm. Doppler: RI <0.7.',XR:'KUB: renal outline. Psoas shadow. Calcified stones along ureter course.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/kidney/ct_original.png`},MRI:{planes:['Axial','Coronal'],img:IMG},US:{planes:['Longitudinal','Transverse'],img:IMG}},
-   mnemonics:[{title:'Renal Relations — SLAVE',en:'"SLAVE" — Suprarenal gland, Liver/Spleen, Aorta/IVC, Vertebra T12–L3, Eckhorn (ureter) exits medially.',ar:'"SLAVE" — غدة كظرية، كبد/طحال، أبهر/IVC، فقرات T12–L3، الحالب يخرج إنسياً.',ref:"Moore's 8th ed."},{title:'GFR Formula',en:'"Cockroft-Gault: (140−age) × weight / (72 × Cr). ×0.85 for females."',ar:'"كوكروفت-غولت: (١٤٠−العمر) × الوزن / (٧٢ × الكرياتينين). اضرب ٠.٨٥ للإناث."',ref:"Harrison's 21st ed."}],
-   related:['bladder','aorta','ivc'],
-   ttsEn:'Kidney. Latin: Ren. Retroperitoneal. T12 to L3. Filters 180 liters daily.',ttsAr:'الكلية. باللاتينية: رين. خلف صفاقية. تُرشّح ١٨٠ لتراً يومياً.'},
-
-  {id:'bladder',cat:'urinary',en:'Urinary Bladder',ar:'المثانة البولية',latin:'Vesica urinaria',
-   descEn:'Hollow muscular reservoir in the true pelvis, posterior to the pubic symphysis. Stores 300–500 mL of urine. Detrusor muscle contracts for micturition; internal urethral sphincter maintains continence.',
-   descAr:'خزّان عضلي مجوّف في الحوض الحقيقي خلف ارتفاق العانة. يخزّن ٣٠٠–٥٠٠ مل. العضلة النافصة تنقبض للتبوّل.',
-   facts:['Capacity: 300–500 mL (urge at ~150 mL)','Wall thickness: ≤3 mm when distended, ≤5 mm when collapsed','Trigone: fixed base between 2 ureteric orifices + internal urethral meatus','Blood supply: superior + inferior vesical arteries (internal iliac)','Transitional epithelium (urothelium) lines the lumen'],
-   imaging:{CT:'Thin smooth wall ≤3 mm when full. Perivesical fat planes important. CT cystography for trauma.',MRI:'T2: high signal lumen, dark muscular wall. Best for local tumor staging (invasion of detrusor).',US:'Anechoic lumen. Wall ≤3 mm full. Post-void residual ≤50 mL normal. Calculi: echogenic + shadow.',XR:'Not visible unless calcified stones. Cystogram: contrast fills lumen.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/bladder/ct_original.png`},US:{planes:['Transverse','Longitudinal'],img:IMG},MRI:{planes:['Axial','Sagittal'],img:IMG}},
-   mnemonics:[{title:'Trigone Landmarks',en:'"Two Ureters + One Urethra = Trigone Triangle." The only non-distensible part of the bladder.',ar:'"حالبان + إحليل = مثلث المثانة." الجزء الوحيد غير القابل للتمدد.',ref:"Gray's 41st ed."},{title:'Bladder Cancer Staging',en:'"Ta: surface only; T1: lamina propria; T2: detrusor; T3: perivesical fat; T4: adjacent organs."',ar:'"Ta: السطح فقط؛ T1: الصفيحة؛ T2: النافصة؛ T3: الدهن؛ T4: الأعضاء المجاورة."',ref:'TNM 8th ed.'}],
-   related:['kidney','aorta'],
-   ttsEn:'Urinary bladder. Latin: Vesica urinaria. True pelvis. Stores 300 to 500 milliliters.',ttsAr:'المثانة البولية. باللاتينية: فيسيكا. الحوض الحقيقي. تخزّن ٣٠٠ إلى ٥٠٠ مل.'},
-
-  {id:'bone',cat:'urinary',en:'Pelvic Bone',ar:'عظم الحوض',latin:'Os coxae',
-   descEn:'The bony pelvis is formed by two hip bones (ilium, ischium, pubis) fused at the acetabulum, joined anteriorly at the pubic symphysis and posteriorly to the sacrum at the sacroiliac joints.',
-   descAr:'الحوض العظمي يتكوّن من عظمتَي الورك (الحرقفة، الإسك، العانة) ملتحمتَين عند الحُقّ، ومتّحدتَين أمامياً عند ارتفاق العانة وخلفياً عند المفصل العجزي الحرقفي.',
-   facts:['Hip bone = Ilium (superior) + Ischium (posteroinferior) + Pubis (anteroinferior)','Acetabulum: junction of all 3 at age 16','True pelvis (below pelvic brim) vs False pelvis (above)','Pelvic inlet: sacral promontory → arcuate line → pubic crest','Sciatic notches: greater (piriformis, sciatic nerve) + lesser'],
-   imaging:{CT:'Cortical bone: very high HU (400–1000). Trabecular: 100–400. CT best for fractures, fracture classification.',MRI:'Cortex: T1+T2 dark (no protons). Marrow: T1 bright (yellow fat). Bone marrow edema: T2 STIR bright. Best for stress fractures + avascular necrosis.',US:'Limited — cortex only visible as bright reflector. Joint effusion: hypoechoic around cortex.',XR:'AP pelvis: standard projection. Inlet/outlet views for fracture classification. Pelvic ring integrity assessment.'},
-   mods:{CT:{planes:['Axial','Coronal'],img:`../images/structures/bone/ct_original.png`},'X-Ray':{planes:['AP Pelvis','Inlet','Outlet'],img:IMG},MRI:{planes:['Coronal','Axial'],img:IMG}},
-   mnemonics:[{title:'Hip Bone Fusion — IIP',en:'"I Is Puberty" — Ilium, Ischium, Pubis fuse at acetabulum at puberty (~16 years).',ar:'"الثلاثة تلتحم عند البلوغ (١٦ سنة)" — الحرقفة والإسك والعانة.',ref:"Gray's 41st ed."},{title:'Pelvic Floor — LEEL',en:'"LEEL" — Levator ani (puborectalis, pubococcygeus, iliococcygeus), External sphincters.',ar:'"رافع الشرج: عانة-مستقيمية، عانة-عصعصية، حرقفية-عصعصية + العضلات المصرّة الخارجية."',ref:"Netter's 7th ed."}],
-   related:['bladder','aorta'],
-   ttsEn:'Pelvic bone. Latin: Os coxae. Ilium, ischium, pubis. Fused at acetabulum.',ttsAr:'عظم الحوض. باللاتينية: أوس كوكساي. حرقفة وإسك وعانة تلتحم عند الحُقّ.'},
-
-  {id:'brain',cat:'neurological',en:'Brain',ar:'الدماغ',latin:'Encephalon',
-   descEn:'The central organ of the nervous system, enclosed within the skull. Divided into cerebrum, cerebellum, and brainstem. Controls all voluntary and involuntary body functions.',
-   descAr:'العضو المركزي للجهاز العصبي داخل الجمجمة. يتقسم إلى المخ والمخيخ وجذع الدماغ. يتحكم في جميع وظائف الجسم الإرادية واللاإرادية.',
-   facts:['Weight: ~1.4 kg','Cerebrum: 2 hemispheres, 4 lobes (frontal, parietal, temporal, occipital)','Cerebellum: coordination and balance','Brainstem: midbrain, pons, medulla','Blood-brain barrier: tight junctions of endothelium'],
-   imaging:{MRI:'T1: gray matter isointense, white matter bright (myelin). T2: CSF bright, gray matter bright vs white. FLAIR: suppresses CSF, shows periventricular lesions. Gold standard for brain pathology.',CT:'Gray matter 35–45 HU, white matter 25–35 HU. Hemorrhage: hyperdense (60–90 HU). Calcifications: very bright. Fast for trauma.',US:'Neonatal only — open fontanelle. Coronal + sagittal planes. Limited in adults.',XR:'Skull XR: calcifications, fractures. Not for brain parenchyma.'},
-   mods:{MRI:{planes:['Axial','Coronal','Sagittal'],img:'../images/structures/brain/mri_original.png'},'MRI-T2':{planes:['Axial'],img:'../images/structures/brain/mri_t2_original.png'},'MRI-PD':{planes:['Axial'],img:'../images/structures/brain/mri_pd_original.png'}},
-   mnemonics:[{title:'Lobes — FTPO',en:'"Frontal Teachers Prefer Oranges" — Frontal, Temporal, Parietal, Occipital.',ar:'"المعلمون الأماميون يفضلون البرتقال" — جبهي، صدغي، جداري، قذالي.',ref:"Gray's 41st ed."},{title:'Circle of Willis',en:'"2 ACAs meet, 2 MCAs off ICA, 2 PCAs off basilar, connected by ACoA + 2 PCoAs."',ar:'"دائرة ويليس: ACA×2، MCA×2، PCA×2 متصلة بـ ACoA وPCoA×2."',ref:"Netter's 7th ed."}],
-   related:['neck'],
-   ttsEn:'Brain. Latin: Encephalon. Cerebrum, cerebellum, brainstem. 1.4 kilograms.',ttsAr:'الدماغ. باللاتينية: إنسيفالون. المخ والمخيخ وجذع الدماغ.'},
-
-  {id:'neck',cat:'neurological',en:'Neck',ar:'الرقبة',latin:'Collum / Cervix',
-   descEn:'The cervical region connecting the head to the thorax. Contains vital neurovascular structures including the carotid arteries, jugular veins, and cervical spinal cord, as well as the thyroid gland, larynx, and pharynx.',
-   descAr:'المنطقة العنقية التي تربط الرأس بالصدر. تحتوي على الشرايين السباتية والأوردة الوداجية والحبل الشوكي العنقي والغدة الدرقية والحنجرة.',
-   facts:['7 cervical vertebrae (C1–C7)','Carotid triangle: common carotid, IJV, vagus nerve','Thyroid: C5–T1 level, isthmus at 2nd–4th tracheal rings','Cervical spinal cord: C1–C7','Anterior triangle vs posterior triangle'],
-   imaging:{MRI:'T1: fat bright, muscles isointense. T2: fluid bright, cord pathology. MRA for carotids. Best soft tissue detail.',CT:'CTA for carotid stenosis. Lymph node size/calcification. Fast for trauma.',US:'Thyroid imaging first-line. Carotid Doppler. Lymph node assessment. Real-time guided biopsy.',XR:'Cervical spine alignment. Prevertebral soft tissue (>7 mm at C2 = abnormal). Airway assessment.'},
-   mods:{MRI:{planes:['Coronal','Sagittal'],img:'../images/structures/neck/mri_original.png'},'MRI-T2':{planes:['Coronal'],img:'../images/structures/neck/mri_t2_original.png'}},
-   mnemonics:[{title:'Cervical Vertebrae',en:'"C3-4-5 keeps the diaphragm alive" — phrenic nerve origin C3,4,5.',ar:'"C3-4-5 تُبقي الحجاب الحاجز حياً" — أصل العصب الحجابي.',ref:"Moore's 8th ed."},{title:'Anterior Triangle Contents',en:'"My Carotid Is Very Nice" — Muscles, Carotid artery, IJV, Vagus nerve, Nerves.',ar:'"الشريان السباتي، الوداجي الداخلي، العصب المبهم."',ref:"Gray's 41st ed."}],
-   related:['brain'],
-   ttsEn:'Neck. Latin: Collum. Seven cervical vertebrae. Carotid arteries and jugular veins.',ttsAr:'الرقبة. باللاتينية: كولوم. سبع فقرات عنقية. الشرايين السباتية والأوردة الوداجية.'},
-
-  {id:'lung',cat:'thoracic',en:'Lung',ar:'الرئة',latin:'Pulmo',
-   descEn:'Paired respiratory organs in the thoracic cavity. Right lung has 3 lobes; left has 2 (with cardiac notch). Essential for gas exchange (O₂/CO₂) via ~300 million alveoli.',
-   descAr:'عضوان تنفسيان متزاوجان في التجويف الصدري. الرئة اليمنى ٣ فصوص واليسرى ٢ (مع النتوء القلبي). تبادل الغازات عبر ~٣٠٠ مليون حويصلة هوائية.',
-   facts:['Right: Upper, Middle, Lower lobes','Left: Upper + Lower (lingula = middle lobe equivalent)','Hilum: bronchi, pulmonary artery/vein, lymph nodes','Fissures: right has oblique + horizontal; left has oblique only','Normal lung: air density on CT (-700 to -900 HU)'],
-   imaging:{MRI:'T2 HASTE: fluid and masses bright. Limited by respiratory motion. MRI for chest wall invasion, cardiac involvement.',CT:'HRCT: 1mm slices, lung windows (-1500/+500). Ground glass, consolidation, nodules, interstitium. Gold standard for lung parenchyma.',US:'Pleural effusion (anechoic), pneumothorax (absent sliding), consolidation (hepatization).',XR:'PA erect: standard. Costophrenic angles, cardiothoracic ratio <50%, hila, lung fields.'},
-   mods:{MRI:{planes:['Coronal'],img:'../images/structures/thorax/mri_original.png'},'MRI-T2':{planes:['Coronal'],img:'../images/structures/thorax/mri_t2_original.png'}},
-   mnemonics:[{title:'Right Bronchus',en:'"Right is More Vertical, Shorter, Wider — foreign bodies go RIGHT."',ar:'"الأيمن أكثر عمودية وأقصر وأوسع — الأجسام الغريبة تذهب يميناً."',ref:"Moore's 8th ed."},{title:'Lobes Mnemonic',en:'"3 Right, 2 Left — Right has More lobes, Left has More heart."',ar:'"٣ يمين، ٢ يسار — اليمين أكثر فصوصاً، اليسار أكثر قلباً."',ref:"Netter's 7th ed."}],
-   related:['heart'],
-   ttsEn:'Lung. Latin: Pulmo. Right 3 lobes, left 2 lobes. 300 million alveoli.',ttsAr:'الرئة. باللاتينية: بولمو. اليمنى ثلاثة فصوص واليسرى فصّان.'},
-
-  {id:'heart',cat:'thoracic',en:'Heart',ar:'القلب',latin:'Cor',
-   descEn:'The muscular pump of the cardiovascular system, located in the mediastinum within the pericardial sac. Four chambers: right/left atria and ventricles. Pumps ~5 L/min at rest.',
-   descAr:'المضخة العضلية للجهاز القلبي الوعائي في المنصف داخل الكيس التأموري. أربع حجرات: أذينان وبطينان. يضخ ~٥ لتر/دقيقة.',
-   facts:['Size: roughly fist-sized, 250–350 g','Right heart: pulmonary circulation (low pressure)','Left heart: systemic circulation (high pressure)','Pericardium: fibrous outer + serous inner (visceral + parietal)','Coronary arteries: RCA (right) + LCA → LAD + LCx (left)'],
-   imaging:{MRI:'Cardiac MRI: cine SSFP for function. T2 for edema (myocarditis). LGE for fibrosis/infarct. Gold standard for cardiomyopathy.',CT:'Coronary CTA: calcium scoring + stenosis. Gated acquisition. Pericardial effusion, masses.',US:'Echocardiography: real-time function, valves, effusion. Most used cardiac modality.',XR:'Cardiothoracic ratio <50%. Boot-shaped heart (RVH). Pulmonary vascular redistribution.'},
-   mods:{MRI:{planes:['Coronal'],img:'../images/structures/thorax/mri_original.png'}},
-   mnemonics:[{title:'Heart Borders',en:'"Right border = RA + SVC. Left border = Aortic knuckle, PA, LAA, LV."',ar:'"الحد الأيمن: RA + SVC. الأيسر: أبهر + PA + LAA + LV."',ref:"Gray's 41st ed."},{title:'Coronary Arteries',en:'"LAD = anterior + septum. LCx = lateral. RCA = inferior + posterior."',ar:'"LAD: أمامي وحاجزي. LCx: جانبي. RCA: سفلي وخلفي."',ref:"Netter's 7th ed."}],
-   related:['lung'],
-   ttsEn:'Heart. Latin: Cor. Four chambers. Pumps 5 liters per minute at rest.',ttsAr:'القلب. باللاتينية: كور. أربع حجرات. يضخ ٥ لترات في الدقيقة.'}
-];
 
 // ═══════════════════════════════════════════
 // STATE
@@ -1672,11 +1534,27 @@ window.addEventListener('resize',()=>{
 // ═══════════════════════════════════════════
 // DEEP LINK + INIT
 // ═══════════════════════════════════════════
-buildSidebar();
-buildWelcomeCards();
-const p=new URLSearchParams(location.search).get('s');
-if(p) loadStructure(p);
-OmniRadAuth.updateNav();
+(async function initAtlas(){
+  const wl=document.getElementById('wl-cards');
+  if(wl) wl.innerHTML='<div style="padding:20px;color:var(--text-muted);">Loading structures…</div>';
+  try{
+    await loadStructuresData();
+  }catch(err){
+    document.body.innerHTML =
+      '<div style="padding:60px 20px;text-align:center;color:var(--text-primary,#e6ecf3);font-family:sans-serif;">'
+      + '<h2 style="margin-bottom:10px;">Unable to load Atlas content</h2>'
+      + '<p style="color:var(--text-muted,#8a94aa);max-width:420px;margin:0 auto;">'
+      + 'Please check your connection and refresh the page. If the problem continues, try again in a few minutes.'
+      + '</p></div>';
+    console.error('loadStructuresData failed:', err);
+    return;
+  }
+  buildSidebar();
+  buildWelcomeCards();
+  const p=new URLSearchParams(location.search).get('s');
+  if(p) loadStructure(p);
+  OmniRadAuth.updateNav();
+})();
 </script>
 </body>
 </html>
