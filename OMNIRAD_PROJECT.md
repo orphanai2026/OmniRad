@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v4.9 |
+| Version | v5.0 |
 | Date | 2026-07-04 |
-| Status | ✅ Issue #45 & #52 Resolved — atlas.html broken images fixed + Supabase "JWT expired" root cause fixed (stale session token was being sent on public anon reads; sbFetch now auto-clears it and retries as anon) / Issue #51 (spleen broken CT path) still open for Sprint #1 / Issues #32-35, #40-43, #47, #51 remaining |
+| Status | ✅ Issues #45, #47, #51 & #52 Resolved — all broken structure images fixed (atlas.html), Supabase JWT-expired root cause fixed (supabase.js), bone miscategorization corrected in production DB (new `skeletal` category) / Issues #32-35, #40-43 remaining (deferred, non-blocking) / Ready for next page redesign or Sprint #1 CT |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -597,6 +597,12 @@ SVG placeholder = غير مقبول في الإنتاج
 ---
 
 # ⑦ Version History
+
+- **v5.0 — 2026-07-04**
+  - Issues #47 & #51 approved & resolved (بموافقة صريحة على تجاوز "محادثة = مهمة واحدة" لدفعة إصلاحات) ✅
+    - **Issue #51 (spleen):** نفس عائلة خلل Issue #45 — مسار CT مكسور في `LOCAL_MEDIA`، استُبدل بصورة CT العامة الحقيقية نفسها (`images/home/ct_abdomen.png`) حتى Sprint #1
+    - **Issue #47 (bone):** تحقُّق مباشر من قاعدة Supabase الحية أكَّد `category:'urinary'` خطأ فعلي — أُنشئ تصنيف جديد `skeletal` (لم يكن موجوداً ضمن: gi-tract, neurological, thoracic, upper-abdomen, urinary, vascular) وحُدِّث صف `bone` إليه عبر `UPDATE ... RETURNING` بعد موافقة صريحة على تعديل الإنتاج
+    - تحقق نحوي JS ناجح لملف atlas.html المُعدَّل
 
 - **v4.9 — 2026-07-04**
   - Issue #52 approved & resolved: Supabase "JWT expired" / 401 blocking data load ✅
