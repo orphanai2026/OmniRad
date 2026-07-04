@@ -18,17 +18,29 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 async function sbFetch(path, options = {}) {
   const url = `${SUPABASE_URL}${path}`;
+  const token = sbGetToken();
   const headers = {
     'apikey': SUPABASE_KEY,
     'Content-Type': 'application/json',
     ...options.headers
   };
-
-  const token = sbGetToken();
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(url, { ...options, headers });
-  const data = res.status === 204 ? null : await res.json();
+  let res = await fetch(url, { ...options, headers });
+  let data = res.status === 204 ? null : await res.json();
+
+  // Root cause fix (Issue #52): a stale/expired user session token stored in
+  // localStorage was being attached to EVERY request (including public anon
+  // reads like loadStructuresData), so Supabase rejected them with
+  // "JWT expired" even though the anon apikey itself was perfectly valid.
+  // If that happens, drop the dead token and retry once as anon.
+  if (!res.ok && token && res.status === 401 && /jwt expired/i.test(data?.message || '')) {
+    sbClearToken();
+    const anonHeaders = { ...headers };
+    delete anonHeaders['Authorization'];
+    res = await fetch(url, { ...options, headers: anonHeaders });
+    data = res.status === 204 ? null : await res.json();
+  }
 
   if (!res.ok) throw new Error(data?.error_description || data?.message || 'Request failed');
   return data;
