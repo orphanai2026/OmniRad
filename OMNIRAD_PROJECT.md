@@ -3,9 +3,9 @@
 
 | Field | Value |
 |-------|-------|
-| Version | v4.7 |
-| Date | 2026-07-01 |
-| Status | ✅ Task #26b Done (atlas.html + comparison.html now read live from Supabase, not inline STRUCTS) — 3 real bugs found & fixed during rollout (ambiguous FK embed, anon RLS permission, stale comparison.html dropdown fixed as a side effect) / Ready for next page redesign or Sprint #1 CT / Issues #32-35, #40-43, #45, #47 remaining |
+| Version | v4.9 |
+| Date | 2026-07-04 |
+| Status | ✅ Issue #45 & #52 Resolved — atlas.html broken images fixed + Supabase "JWT expired" root cause fixed (stale session token was being sent on public anon reads; sbFetch now auto-clears it and retries as anon) / Issue #51 (spleen broken CT path) still open for Sprint #1 / Issues #32-35, #40-43, #47, #51 remaining |
 | Owner | Mohammed Saeed Alzahrani |
 | Type | Independent academic initiative |
 
@@ -597,6 +597,22 @@ SVG placeholder = غير مقبول في الإنتاج
 ---
 
 # ⑦ Version History
+
+- **v4.9 — 2026-07-04**
+  - Issue #52 approved & resolved: Supabase "JWT expired" / 401 blocking data load ✅
+    - **جذر السبب الحقيقي (وليس تخمين):** فُكِّك JWT الحالي برمجياً وتحقَّق أن مفتاح anon سليم تماماً وصالح حتى 2036، ومطابق لمفتاح Supabase الحالي فعلياً (عبر Management API). المشكلة الفعلية: `sbFetch` في `modules/supabase.js` كانت تُرفق `Authorization: Bearer <توكن جلسة قديم>` من `localStorage` مع **كل** طلب — بما فيها قراءات anon العامة مثل `loadStructuresData` — فإذا كان توكن جلسة المستخدم منتهياً، يرفض Supabase الطلب كاملاً بـ"JWT expired" بغض النظر عن سلامة مفتاح anon
+    - **الإصلاح:** `sbFetch` الآن تكتشف تحديداً 401 + رسالة "jwt expired"، تحذف التوكن القديم من `localStorage` تلقائياً، وتعيد المحاولة فوراً كزائر (anon) دون أي تدخل من المستخدم
+    - تحقق JS نحوي ناجح (`new Function()`) قبل التسليم
+    - Issue #51 (نفس عائلة خلل الصور المكسورة في `spleen`) لا يزال مفتوحاً — خارج نطاق هذه المحادثة
+
+- **v4.8 — 2026-07-04**
+  - Issue #45 approved & resolved: atlas.html broken structure images ✅
+    - **جذر السبب:** `LOCAL_MEDIA` (عارض تفاصيل البنية) يشير لمسارات `ct_original.png` لم تُرفع أصلاً لـ8 بنى، رغم أن 3 منها (gallbladder, pancreas, aorta) لها صور base64 حقيقية موجودة أصلاً في `IMG_MAP` (بطاقات Start Exploring) بنفس الملف
+    - **الإصلاح:** gallbladder/pancreas/aorta ← أُعيد استخدام نفس base64 الحقيقي الموجود (بدون تكرار مصدر جديد) · ivc/portal-vein/stomach/small-intestine/large-intestine ← صورة CT عامة حقيقية مؤقتة (`images/home/ct_abdomen.png`) حتى تتوفر صور فردية حقيقية في Sprint #1 CT
+    - تحقق نحوي JS ناجح (`new Function()`) قبل التسليم · str_replace-equivalent patches مستهدفة فقط على 8 قيم `img` محددة (Rule #12 مُحترم)
+    - **اكتشافان عرضيان أثناء العمل (لم يُعالَجا، خارج النطاق):**
+      1. **Issue #51:** بنية `spleen` لديها نفس عائلة الخلل — مدخل CT في `LOCAL_MEDIA` يشير لمسار غير موجود (فقط MRI حقيقي متوفر لهذا العضو)
+      2. **Issue #52 (🔴 حرج):** المالك رصد مباشرة عبر DevTools خطأ `JWT expired` + 401 من Supabase يمنع تحميل بيانات البنى بالكامل — يحتاج محادثة عاجلة مستقلة للتحقق من مفتاح anon وتجديده
 
 - **v4.7 — 2026-07-01**
   - Task #26b approved: Frontend Wiring (atlas.html + comparison.html → Supabase) ✅
