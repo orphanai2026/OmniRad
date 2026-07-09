@@ -43,10 +43,13 @@
         I('',  'MRI','Axial','PD',        WLP.MRI_PD),
         I('',        'MRI','Axial','FLAIR',     WLP.MRI_FLAIR),
         I('',          'MRI','Axial','DWI',       WLP.MRI_DWI),
+        I('',   'MRI','Coronal','T2',      WLP.MRI_T2),
+        I('',   'MRI','Coronal','T1',      WLP.MRI_T1),
+        I('',  'MRI','Sagittal','T2',     WLP.MRI_T2),
+        I('',  'MRI','Sagittal','T1',     WLP.MRI_T1),
         I('',         'CT', 'Axial','original',  WLP.CT_BRAIN),
         I('',       'CT', 'Coronal','original',WLP.CT_BRAIN),
-        I('',   'MRI','Coronal','T2',      WLP.MRI_T2),
-        I('',  'MRI','Sagittal','T2',     WLP.MRI_T2)
+        I('',      'CT', 'Sagittal','original',WLP.CT_BRAIN)
       ]},
     { id:'neck', region:'Head & Neck', en:'Neck', ar:'الرقبة', icon:'💠',
       desc:'Cervical spine, airway, thyroid and vascular structures.',
