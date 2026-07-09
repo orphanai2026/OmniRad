@@ -93,7 +93,9 @@
         I('','MRI','Axial','T2',        WLP.MRI_T2),
         I('','MRI','Axial','T1',        WLP.MRI_T1),
         I('','MRI','Coronal','T2',      WLP.MRI_T2),
-        I('','X-Ray','AP','original',   WLP.XRAY)
+        I('','X-Ray','AP supine','original',      WLP.XRAY),
+        I('','X-Ray','AP erect','original',       WLP.XRAY),
+        I('','X-Ray','Lateral decubitus','original', WLP.XRAY)
       ]},
     { id:'liver', region:'Abdomen', en:'Liver', ar:'الكبد', icon:'🫘',
       desc:'Largest solid abdominal organ. RUQ, beneath the right hemidiaphragm.',
@@ -157,8 +159,9 @@
         I('','MRI','Axial','STIR',      WLP.MRI_T2),
         I('','MRI','Coronal','T1',      WLP.MRI_T1),
         I('','MRI','Sagittal','T2',     WLP.MRI_T2),
-        I('','X-Ray','AP','original',    WLP.XRAY),
-        I('','X-Ray','Lateral','original', WLP.XRAY)
+        I('','X-Ray','AP','original',       WLP.XRAY),
+        I('','X-Ray','Lateral','original',  WLP.XRAY),
+        I('','X-Ray','Oblique','original',  WLP.XRAY)
       ]}
   ];
 
