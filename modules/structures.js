@@ -38,93 +38,127 @@
     { id:'brain', region:'Head & CNS', en:'Brain', ar:'الدماغ', icon:'🧠',
       desc:'Central nervous system organ in the cranial vault. Best evaluated with MRI for parenchymal detail; CT is first-line for acute hemorrhage or trauma.',
       images:[
-        I('',  'MRI','Axial','T2',        WLP.MRI_T2),
-        I('',     'MRI','Axial','T1',        WLP.MRI_T1),
-        I('',  'MRI','Axial','PD',        WLP.MRI_PD),
-        I('',        'MRI','Axial','FLAIR',     WLP.MRI_FLAIR),
-        I('',          'MRI','Axial','DWI',       WLP.MRI_DWI),
-        I('',   'MRI','Coronal','T2',      WLP.MRI_T2),
-        I('',   'MRI','Coronal','T1',      WLP.MRI_T1),
-        I('',  'MRI','Sagittal','T2',     WLP.MRI_T2),
-        I('',  'MRI','Sagittal','T1',     WLP.MRI_T1),
-        I('',         'CT', 'Axial','original',  WLP.CT_BRAIN),
-        I('',       'CT', 'Coronal','original',WLP.CT_BRAIN),
-        I('',      'CT', 'Sagittal','original',WLP.CT_BRAIN)
+        I('','MRI','Axial','T2',        WLP.MRI_T2),
+        I('','MRI','Axial','T1',        WLP.MRI_T1),
+        I('','MRI','Axial','PD',        WLP.MRI_PD),
+        I('','MRI','Axial','FLAIR',     WLP.MRI_FLAIR),
+        I('','MRI','Axial','DWI',       WLP.MRI_DWI),
+        I('','MRI','Coronal','T2',      WLP.MRI_T2),
+        I('','MRI','Coronal','T1',      WLP.MRI_T1),
+        I('','MRI','Sagittal','T2',     WLP.MRI_T2),
+        I('','MRI','Sagittal','T1',     WLP.MRI_T1),
+        I('','CT','Axial','original',   WLP.CT_BRAIN),
+        I('','CT','Coronal','original', WLP.CT_BRAIN),
+        I('','CT','Sagittal','original',WLP.CT_BRAIN)
       ]},
     { id:'neck', region:'Head & Neck', en:'Neck', ar:'الرقبة', icon:'💠',
       desc:'Cervical spine, airway, thyroid and vascular structures.',
       images:[
-        I('', 'MRI','Sagittal','T2', WLP.MRI_T2),
-        I('',    'MRI','Sagittal','T1', WLP.MRI_T1),
-        I('',        'CT', 'Axial','original', WLP.CT_SOFT),
-        I('',        'US', 'Transverse','original', WLP.US)
+        I('','MRI','Sagittal','T2',    WLP.MRI_T2),
+        I('','MRI','Sagittal','T1',    WLP.MRI_T1),
+        I('','MRI','Axial','T2',       WLP.MRI_T2),
+        I('','MRI','Axial','T1',       WLP.MRI_T1),
+        I('','MRI','Coronal','T2',     WLP.MRI_T2),
+        I('','CT','Axial','original',  WLP.CT_SOFT),
+        I('','CT','Coronal','original',WLP.CT_SOFT),
+        I('','CT','Sagittal','original',WLP.CT_SOFT),
+        I('','US','Transverse','original',   WLP.US),
+        I('','US','Longitudinal','original', WLP.US)
       ]},
 
     // ── Chest ──
     { id:'thorax', region:'Chest', en:'Thorax', ar:'الصدر', icon:'🫁',
       desc:'Chest wall, mediastinum, and cardiothoracic structures.',
       images:[
-        I('','MRI','Axial','T2',    WLP.MRI_T2),
-        I('',   'MRI','Axial','T1',    WLP.MRI_T1),
-        I('',  'CT', 'Axial','lung',  WLP.CT_LUNG),
-        I('',  'CT', 'Axial','soft',  WLP.CT_SOFT),
-        I('',        'X-Ray','PA','original', WLP.XRAY),
-        I('',   'X-Ray','Lateral','original', WLP.XRAY)
+        I('','CT','Axial','lung',      WLP.CT_LUNG),
+        I('','CT','Axial','soft',      WLP.CT_SOFT),
+        I('','CT','Coronal','lung',    WLP.CT_LUNG),
+        I('','CT','Coronal','soft',    WLP.CT_SOFT),
+        I('','CT','Sagittal','lung',   WLP.CT_LUNG),
+        I('','MRI','Axial','T2',       WLP.MRI_T2),
+        I('','MRI','Axial','T1',       WLP.MRI_T1),
+        I('','MRI','Coronal','T2',     WLP.MRI_T2),
+        I('','X-Ray','PA','original',      WLP.XRAY),
+        I('','X-Ray','AP','original',      WLP.XRAY),
+        I('','X-Ray','Lateral','original', WLP.XRAY)
       ]},
 
     // ── Abdomen ──
     { id:'abdomen', region:'Abdomen', en:'Abdomen (general)', ar:'البطن', icon:'🫃',
       desc:'Global abdominal view showing solid organs, bowel, and vasculature.',
       images:[
-        I('','MRI','Axial','T2', WLP.MRI_T2),
-        I('',   'MRI','Axial','T1', WLP.MRI_T1),
-        I('',       'CT', 'Axial','original', WLP.CT_ABD),
-        I('',     'CT', 'Coronal','original', WLP.CT_ABD)
+        I('','CT','Axial','original',   WLP.CT_ABD),
+        I('','CT','Coronal','original', WLP.CT_ABD),
+        I('','CT','Sagittal','original',WLP.CT_ABD),
+        I('','MRI','Axial','T2',        WLP.MRI_T2),
+        I('','MRI','Axial','T1',        WLP.MRI_T1),
+        I('','MRI','Coronal','T2',      WLP.MRI_T2),
+        I('','X-Ray','AP','original',   WLP.XRAY)
       ]},
     { id:'liver', region:'Abdomen', en:'Liver', ar:'الكبد', icon:'🫘',
       desc:'Largest solid abdominal organ. RUQ, beneath the right hemidiaphragm.',
       images:[
-        I('', 'CT','Axial','original', WLP.CT_ABD),
-        I('',  'CT','Axial','colored',  {ww:250,wl:128}),
-        I('',      'MRI','Axial','T2',      WLP.MRI_T2),
-        I('',      'MRI','Axial','T1',      WLP.MRI_T1),
-        I('',          'US','Longitudinal','original', WLP.US),
-        I('',  'CT','Coronal','original', WLP.CT_ABD)
+        I('','CT','Axial','original',    WLP.CT_ABD),
+        I('','CT','Axial','colored',     {ww:250,wl:128}),
+        I('','CT','Coronal','original',  WLP.CT_ABD),
+        I('','CT','Sagittal','original', WLP.CT_ABD),
+        I('','MRI','Axial','T2',         WLP.MRI_T2),
+        I('','MRI','Axial','T1',         WLP.MRI_T1),
+        I('','MRI','Coronal','T2',       WLP.MRI_T2),
+        I('','US','Longitudinal','original', WLP.US),
+        I('','US','Transverse','original',   WLP.US)
       ]},
     { id:'kidney', region:'Abdomen', en:'Kidney', ar:'الكلية', icon:'🫘',
       desc:'Retroperitoneal, right lower than left. Spans T12–L3. Cortex + medulla with pelvis draining to ureter.',
       images:[
-        I('', 'CT','Axial','original', WLP.CT_ABD),
-        I('',  'CT','Axial','colored',  {ww:250,wl:128}),
-        I('',      'MRI','Axial','T2',      WLP.MRI_T2),
-        I('',          'US','Longitudinal','original', WLP.US),
-        I('',  'CT','Coronal','original', WLP.CT_ABD)
+        I('','CT','Axial','original',    WLP.CT_ABD),
+        I('','CT','Axial','colored',     {ww:250,wl:128}),
+        I('','CT','Coronal','original',  WLP.CT_ABD),
+        I('','CT','Sagittal','original', WLP.CT_ABD),
+        I('','MRI','Axial','T2',         WLP.MRI_T2),
+        I('','MRI','Coronal','T2',       WLP.MRI_T2),
+        I('','US','Longitudinal','original', WLP.US),
+        I('','US','Transverse','original',   WLP.US)
       ]},
     { id:'spleen', region:'Abdomen', en:'Spleen', ar:'الطحال', icon:'🫘',
       desc:'LUQ, behind stomach, along ribs 9–11.',
       images:[
-        I('','MRI','Axial','T1', WLP.MRI_T1),
-        I('', 'MRI','Axial','colored', {ww:250,wl:128}),
-        I('',    'CT','Axial','original', WLP.CT_ABD),
-        I('',          'US','Longitudinal','original', WLP.US)
+        I('','CT','Axial','original',    WLP.CT_ABD),
+        I('','CT','Coronal','original',  WLP.CT_ABD),
+        I('','CT','Sagittal','original', WLP.CT_ABD),
+        I('','MRI','Axial','T1',         WLP.MRI_T1),
+        I('','MRI','Axial','T2',         WLP.MRI_T2),
+        I('','MRI','Axial','colored',    {ww:250,wl:128}),
+        I('','US','Longitudinal','original', WLP.US)
       ]},
     { id:'bladder', region:'Pelvis', en:'Urinary bladder', ar:'المثانة', icon:'🫘',
       desc:'Anterior pelvis, behind pubic symphysis.',
       images:[
-        I('','CT','Axial','original', WLP.CT_ABD),
-        I('', 'CT','Axial','colored',  {ww:250,wl:128}),
-        I('',     'MRI','Axial','T2', WLP.MRI_T2),
-        I('',         'US','Transverse','original', WLP.US)
+        I('','CT','Axial','original',    WLP.CT_ABD),
+        I('','CT','Axial','colored',     {ww:250,wl:128}),
+        I('','CT','Coronal','original',  WLP.CT_ABD),
+        I('','CT','Sagittal','original', WLP.CT_ABD),
+        I('','MRI','Axial','T2',         WLP.MRI_T2),
+        I('','MRI','Sagittal','T2',      WLP.MRI_T2),
+        I('','US','Transverse','original',   WLP.US),
+        I('','US','Longitudinal','original', WLP.US)
       ]},
 
     // ── Musculoskeletal ──
     { id:'bone', region:'Musculoskeletal', en:'Bone', ar:'العظم', icon:'🦴',
       desc:'Bone window on CT — trabecular vs cortical detail.',
       images:[
-        I('','CT','Axial','bone', WLP.CT_BONE),
-        I('', 'CT','Axial','colored', {ww:250,wl:128}),
-        I('',       'X-Ray','AP','original', WLP.XRAY),
-        I('',     'MRI','Axial','T2', WLP.MRI_T2)
+        I('','CT','Axial','bone',       WLP.CT_BONE),
+        I('','CT','Coronal','bone',     WLP.CT_BONE),
+        I('','CT','Sagittal','bone',    WLP.CT_BONE),
+        I('','CT','Axial','colored',    {ww:250,wl:128}),
+        I('','MRI','Axial','T1',        WLP.MRI_T1),
+        I('','MRI','Axial','T2',        WLP.MRI_T2),
+        I('','MRI','Axial','STIR',      WLP.MRI_T2),
+        I('','MRI','Coronal','T1',      WLP.MRI_T1),
+        I('','MRI','Sagittal','T2',     WLP.MRI_T2),
+        I('','X-Ray','AP','original',    WLP.XRAY),
+        I('','X-Ray','Lateral','original', WLP.XRAY)
       ]}
   ];
 
