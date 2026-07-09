@@ -17,18 +17,18 @@
 
   // Nav model — single source of truth for every page
   var CORE = [
-    { href: 'pages/atlas.html', icon: '📖', label: 'Atlas' },
-    { href: 'pages/comparison.html', icon: '⚖', label: 'Compare' }
+    { href: 'pages/atlas.html',       icon: '📖', label: 'Atlas',   i18n: 'nav.atlas' },
+    { href: 'pages/comparison.html',  icon: '⚖',  label: 'Compare', i18n: 'nav.compare' }
   ];
   var GROUPS = [
-    { icon: '🎓', label: 'Learn', items: [
-      { href: 'pages/mnemonics.html', icon: '📚', title: 'Mnemonics', sub: 'Memory techniques' },
-      { href: 'pages/daily.html', icon: '🧠', title: 'Daily Challenge', sub: 'Quiz + leaderboard' },
-      { href: 'pages/srs.html', icon: '📊', title: 'My Progress', sub: 'Spaced repetition' }
+    { icon: '🎓', label: 'Learn', i18n:'nav.learn', items: [
+      { href: 'pages/mnemonics.html',  icon: '📚', title: 'Mnemonics',       sub: 'Memory techniques',  i18n:'nav.mnemonics' },
+      { href: 'pages/daily.html',      icon: '🧠', title: 'Daily Challenge', sub: 'Quiz + leaderboard', i18n:'nav.daily' },
+      { href: 'pages/my-progress.html',icon: '📊', title: 'My Progress',     sub: 'Spaced repetition',  i18n:'nav.progress' }
     ]},
-    { icon: '🛠', label: 'Tools', items: [
-      { href: 'pages/ai-chat.html', icon: '✦', title: 'AI Assistant', sub: 'Radiology-scoped chat' },
-      { href: 'pages/clinic.html', icon: '🏥', title: 'Clinic', sub: 'Applied cases' }
+    { icon: '🛠', label: 'Tools', i18n:'nav.tools', items: [
+      { href: 'pages/ai-chat.html',    icon: '✦', title: 'AI Assistant',     sub: 'Radiology-scoped chat', i18n:'nav.aiChat' },
+      { href: 'pages/clinic.html',     icon: '🏥', title: 'Clinic',           sub: 'Applied cases',        i18n:'nav.clinic' }
     ]}
   ];
 
@@ -95,14 +95,17 @@
 
   // ── markup ──
   function linkA(l, core) {
-    return '<a href="' + abs(l.href) + '" class="' + (core ? 'core ' : '') + (isActive(l.href) ? 'active' : '') + '"><span class="onav-ic">' + l.icon + '</span>' + l.label + '</a>';
+    const attr = l.i18n ? ' data-i18n="'+l.i18n+'"' : '';
+    return '<a href="' + abs(l.href) + '" class="' + (core ? 'core ' : '') + (isActive(l.href) ? 'active' : '') + '"><span class="onav-ic">' + l.icon + '</span><span' + attr + '>' + l.label + '</span></a>';
   }
   var coreHTML = CORE.map(function (l) { return '<li>' + linkA(l, true) + '</li>'; }).join('');
   var groupHTML = GROUPS.map(function (g) {
     var items = g.items.map(function (it) {
-      return '<a href="' + abs(it.href) + '"><span class="dt">' + it.icon + ' ' + it.title + '</span><span class="ds">' + it.sub + '</span></a>';
+      const kAttr = it.i18n ? ' data-i18n="'+it.i18n+'"' : '';
+      return '<a href="' + abs(it.href) + '"><span class="dt"' + kAttr + '>' + it.icon + ' ' + it.title + '</span><span class="ds">' + it.sub + '</span></a>';
     }).join('');
-    return '<li class="onav-g"><button class="onav-gbtn" aria-haspopup="true"><span class="onav-ic">' + g.icon + '</span>' + g.label + '<span class="onav-chev">▾</span></button><div class="onav-drop">' + items + '</div></li>';
+    const gAttr = g.i18n ? ' data-i18n="'+g.i18n+'"' : '';
+    return '<li class="onav-g"><button class="onav-gbtn" aria-haspopup="true"><span class="onav-ic">' + g.icon + '</span><span' + gAttr + '>' + g.label + '</span><span class="onav-chev">▾</span></button><div class="onav-drop">' + items + '</div></li>';
   }).join('');
 
   var nav = document.createElement('nav');
@@ -111,10 +114,11 @@
     '<a href="' + abs('index.html') + '" class="onav-logo"><div class="onav-mark">OR</div><span class="onav-name">Omni<span>Rad</span></span></a>' +
     '<ul class="onav-links">' + coreHTML + '<li class="onav-sep" aria-hidden="true"></li>' + groupHTML + '</ul>' +
     '<div class="onav-end">' +
-      '<span class="onav-edu"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Educational use only</span>' +
+      '<span class="onav-edu"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n="common.educational">Educational use only</span></span>' +
+      '<button class="onav-ib" id="onavLang" title="Language">🌐</button>' +
       '<button class="onav-ib" id="onavTheme" title="Toggle theme">☀</button>' +
       '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">DA</div><span class="onav-un" id="onavName">Dr. Dany</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
-        '<div class="onav-udrop"><a href="' + abs('index.html') + '#about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Sign Out</a></div>' +
+        '<div class="onav-udrop"><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
       '</div>' +
       '<button class="onav-ham" id="onavHam" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>' +
     '</div>';
@@ -169,6 +173,18 @@
     if (window.OmniRadAuth && typeof OmniRadAuth.updateNav === 'function') {
       try { OmniRadAuth.updateNav(); } catch (e) {}
     }
+    // Language toggle
+    var langBtn = document.getElementById('onavLang');
+    if (langBtn && window.OmniRadI18n) {
+      var setLangText = function(){ langBtn.textContent = OmniRadI18n.lang === 'ar' ? '🌐 EN' : '🌐 عربي'; };
+      setLangText();
+      langBtn.addEventListener('click', function(){ OmniRadI18n.toggle(); setLangText(); });
+      window.addEventListener('omnirad-lang', setLangText);
+    } else if (langBtn) {
+      langBtn.style.display = 'none';
+    }
+    // Apply i18n immediately if available
+    if (window.OmniRadI18n) OmniRadI18n.applyToDOM();
   }
 
   if (document.body) mount();
