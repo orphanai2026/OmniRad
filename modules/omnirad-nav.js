@@ -29,6 +29,10 @@
     { icon: '🛠', label: 'Tools', i18n:'nav.tools', items: [
       { href: 'pages/ai-chat.html',    icon: '✦', title: 'AI Assistant',     sub: 'Radiology-scoped chat', i18n:'nav.aiChat' },
       { href: 'pages/clinic.html',     icon: '🏥', title: 'Clinic',           sub: 'Applied cases',        i18n:'nav.clinic' }
+    ]},
+    { icon: '🔒', label: 'Admin', i18n:'nav.admin', role:['admin','contributor'], items: [
+      { href: 'pages/studio.html',    icon: '🎨', title: 'Studio',       sub: 'Prompt authoring',       i18n:'nav.studio', role:['admin','contributor'] },
+      { href: 'pages/admin.html',     icon: '🛡', title: 'Admin Console', sub: 'Users, content, review', i18n:'nav.adminConsole', role:['admin'] }
     ]}
   ];
 
@@ -105,10 +109,12 @@
   var groupHTML = GROUPS.map(function (g) {
     var items = g.items.map(function (it) {
       const kAttr = it.i18n ? ' data-i18n="'+it.i18n+'"' : '';
-      return '<a href="' + abs(it.href) + '"><span class="dt"' + kAttr + '>' + it.icon + ' ' + it.title + '</span><span class="ds">' + it.sub + '</span></a>';
+      const roleAttr = it.role ? ' data-nav-role="'+it.role.join(',')+'"' : '';
+      return '<a href="' + abs(it.href) + '"' + roleAttr + '><span class="dt"' + kAttr + '>' + it.icon + ' ' + it.title + '</span><span class="ds">' + it.sub + '</span></a>';
     }).join('');
     const gAttr = g.i18n ? ' data-i18n="'+g.i18n+'"' : '';
-    return '<li class="onav-g"><button class="onav-gbtn" aria-haspopup="true"><span class="onav-ic">' + g.icon + '</span><span' + gAttr + '>' + g.label + '</span><span class="onav-chev">▾</span></button><div class="onav-drop">' + items + '</div></li>';
+    const gRoleAttr = g.role ? ' data-nav-role="'+g.role.join(',')+'"' : '';
+    return '<li class="onav-g"' + gRoleAttr + '><button class="onav-gbtn" aria-haspopup="true"><span class="onav-ic">' + g.icon + '</span><span' + gAttr + '>' + g.label + '</span><span class="onav-chev">▾</span></button><div class="onav-drop">' + items + '</div></li>';
   }).join('');
 
   var nav = document.createElement('nav');
@@ -120,7 +126,7 @@
       '<span class="onav-edu"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n="common.educational">Educational use only</span></span>' +
       '<button class="onav-ib onav-lang" id="onavLang" title="Language">🌐</button>' +
       '<button class="onav-ib" id="onavTheme" title="Toggle theme">☀</button>' +
-      '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">DA</div><span class="onav-un" id="onavName">Dr. Dany</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
+      '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">…</div><span class="onav-un" id="onavName">…</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
         '<div class="onav-udrop"><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
       '</div>' +
       '<button class="onav-ham" id="onavHam" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>' +
@@ -172,6 +178,31 @@
       html.dataset.theme = next; btn.textContent = ICONS[next];
       localStorage.setItem('omnirad-theme', next);
     });
+    // Hide role-gated nav items by default; reveal after auth check
+    document.querySelectorAll('[data-nav-role]').forEach(function(el){ el.style.display = 'none'; });
+    async function syncUser(){
+      if (!window.OmniRadAuth || !OmniRadAuth.client) return;
+      try {
+        const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
+        var nameEl = document.getElementById('onavName');
+        var avaEl = document.getElementById('onavAva');
+        if (!session){ if(nameEl) nameEl.textContent='Guest'; if(avaEl) avaEl.textContent='?'; return; }
+        const { data:profile } = await OmniRadAuth.client.from('profiles').select('display_name, email, role').eq('id', session.user.id).maybeSingle();
+        const name = (profile && (profile.display_name || (profile.email||'').split('@')[0])) || session.user.email || 'User';
+        if (nameEl) nameEl.textContent = name;
+        const initials = name.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
+        if (avaEl) avaEl.textContent = initials;
+        const role = (profile && profile.role) || 'viewer';
+        document.querySelectorAll('[data-nav-role]').forEach(function(el){
+          const allowed = (el.getAttribute('data-nav-role')||'').split(',');
+          el.style.display = allowed.includes(role) ? '' : 'none';
+        });
+      } catch(e){ console.warn('[onav] syncUser', e); }
+    }
+    (function pollAuth(){
+      if (window.OmniRadAuth && OmniRadAuth.client) return syncUser();
+      setTimeout(pollAuth, 120);
+    })();
     // hook into existing auth if present
     if (window.OmniRadAuth && typeof OmniRadAuth.updateNav === 'function') {
       try { OmniRadAuth.updateNav(); } catch (e) {}
