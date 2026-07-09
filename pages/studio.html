@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Studio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc2:#cba43a;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--warn:#f59e0b;--warn-sub:rgba(245,158,11,.14);--ok:#4ade80;--err:#f87171;--pending:#fbbf24}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc2:#7d6210;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--warn:#b45309;--warn-sub:rgba(180,83,9,.14);--ok:#0e8f4a;--err:#c53030;--pending:#a16207}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{text-decoration:none;color:inherit}
+
+/* Layout */
+.wrap{max-width:960px;margin:0 auto;padding:26px 20px 44px}
+.header{margin-bottom:22px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:10px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:var(--text-s);font-size:14px;line-height:1.65;max-width:60ch}
+
+/* Access gate (loading / denied) */
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px}
+
+/* Disclaimer bar */
+.disc-bar{margin-bottom:22px;background:var(--warn-sub);border:1px solid var(--warn);border-radius:12px;padding:12px 15px;display:flex;gap:11px;align-items:flex-start}
+.disc-bar .di{flex:0 0 auto;font-size:17px;line-height:1.2;color:var(--warn)}
+.disc-bar .dt{font-weight:800;font-size:12.5px;color:var(--warn);margin-bottom:2px}
+.disc-bar .dd{font-size:11.5px;color:var(--text-s);line-height:1.6}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:5px;margin-bottom:18px;flex-wrap:wrap}
+.tab{flex:1;min-width:140px;padding:11px 14px;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--text-m);letter-spacing:.02em;transition:.14s}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--acc);color:var(--acc-ink)}
+body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
+
+/* Card */
+.card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:20px;margin-bottom:16px}
+.section-head{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:0;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;cursor:pointer;user-select:none}
+.section-head::before{content:'▾';font-size:10px;transition:transform .18s}
+.section-head.collapsed::before{transform:rotate(-90deg)}
+.section-head .badge{margin-inline-start:auto;padding:2px 8px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.section-head .badge.req{background:rgba(248,113,113,.18);color:var(--err)}
+.section-head .badge.opt{background:var(--acc-sub);color:var(--acc)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-weight:700;font-size:11.5px;color:var(--text-s);letter-spacing:.02em}
+.f input,.f select,.f textarea{padding:10px 12px;background:var(--bg-s);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:500}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--acc)}
+.f textarea{resize:vertical;min-height:70px}
+
+/* Preview */
+.preview{margin-top:18px}
+.preview .row{background:var(--bg-e);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.preview .row-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.preview .row-lbl{font-size:10px;font-weight:800;color:var(--acc);letter-spacing:.14em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.preview p{margin:0;font-size:13px;line-height:1.7;font-family:'IBM Plex Mono',monospace;color:var(--text)}
+.preview .row.ar p{font-family:'Noto Sans Arabic',sans-serif;font-size:14px;line-height:1.85;direction:rtl;text-align:right}
+.preview .row.neg{border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.05)}
+.preview .row.neg .row-lbl{color:var(--err)}
+.copy-btn{border:1px solid var(--acc);background:transparent;color:var(--acc);font-size:10.5px;font-weight:800;padding:4px 11px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em}
+.copy-btn:hover{background:var(--acc);color:var(--acc-ink)}
+.copy-btn.neg{border-color:var(--err);color:var(--err)}
+.copy-btn.neg:hover{background:var(--err);color:#fff}
+.copy-btn.copied{background:var(--ok);color:#fff;border-color:var(--ok)}
+.file-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-s);border:1px solid var(--border);border-radius:10px;margin-top:10px;flex-wrap:wrap}
+.file-row .lbl{font-size:9.5px;font-weight:800;color:var(--text-s);letter-spacing:.11em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.file-row code{flex:1;min-width:180px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--acc);overflow-wrap:anywhere}
+
+/* Warnings */
+.warn{margin-top:10px;background:var(--warn-sub);border:1px solid var(--warn);border-radius:10px;padding:10px 13px;display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--text)}
+.warn .wi{flex:0 0 auto;color:var(--warn)}
+.warn-list{display:flex;flex-direction:column;gap:4px;line-height:1.55}
+
+/* Coming soon shell for placeholder tabs */
+.placeholder{padding:40px 20px;text-align:center;color:var(--text-m);font-size:13px;line-height:1.7;background:var(--bg-e);border:1px dashed var(--border);border-radius:14px}
+
+/* Toolbar right */
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{padding:9px 16px;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:9px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;transition:.14s}
+.btn:hover{border-color:var(--acc);color:var(--acc)}
+.btn.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.btn.primary:hover{transform:translateY(-1px)}
+.btn.ghost{border-color:transparent;color:var(--text-s)}
+
+.disc-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--border-s);font-size:11px;color:var(--text-m);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+
+<!-- Gate: loading + access check -->
+<div id="gate" class="gate">
+  <div class="icon">⚙️</div>
+  <h2 id="gateTitle">Checking access…</h2>
+  <p id="gateMsg">Verifying your role.</p>
+  <a id="gateCta" class="cta" href="auth.html" style="display:none">Sign in</a>
+</div>
+
+<!-- Main app (hidden until access confirmed) -->
+<div id="app" class="wrap" style="display:none">
+  <div class="header">
+    <div class="eyebrow" data-i18n="studio.eyebrow">OmniRad · Studio</div>
+    <h1 data-i18n="studio.h1">Medical Prompt Studio</h1>
+    <p class="sub" data-i18n="studio.sub">Generate professional radiology prompts with bilingual output, ACR-informed presets and a pathology-first case builder. Admin/Contributor-only workspace.</p>
+  </div>
+
+  <div class="disc-bar">
+    <span class="di">⚕️</span>
+    <div>
+      <div class="dt" data-i18n="studio.disc.t">Medical notice</div>
+      <div class="dd" data-i18n="studio.disc.d">Generated images and prompts are for illustrative educational use only — not for diagnosis or clinical decisions. AI generators may produce anatomically inaccurate details; every image must be reviewed by a qualified professional before educational use.</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="custom">⚙️ <span data-i18n="studio.tabCustom">Custom</span></button>
+    <button class="tab" data-tab="presets">⚡ <span data-i18n="studio.tabPresets">Presets</span></button>
+    <button class="tab" data-tab="case">🩺 <span data-i18n="studio.tabCase">Case Builder</span></button>
+    <button class="tab" data-tab="library">📚 <span data-i18n="studio.tabLibrary">Library</span> <span id="libCount" style="opacity:.7"></span></button>
+  </div>
+
+  <!-- CUSTOM TAB -->
+  <div id="tabCustom" class="tab-body">
+    <!-- Section 1: Clinical context (required) -->
+    <div class="card">
+      <div class="section-head"><span data-i18n="studio.sec1">Clinical context</span><span class="badge req" data-i18n="studio.required">Required</span></div>
+      <div class="grid">
+        <div class="f"><label data-i18n="fields.modality">Modality</label><select data-key="modality"></select></div>
+        <div class="f"><label data-i18n="fields.view">View / Plane</label><select data-key="view"></select></div>
+        <div class="f"><label data-i18n="fields.laterality">Laterality</label><select data-key="laterality"></select></div>
+        <div class="f"><label data-i18n="fields.purpose">Clinical purpose</label><select data-key="purpose"></select></div>
+      </div>
+      <div id="warn1" class="warn" style="display:none"><span class="wi">⚠️</span><div class="warn-list" id="warn1List"></div></div>
+    </div>
+
+    <!-- Section 2: Patient -->
+    <div class="card">
+      <div class="section-head" data-toggle="patient"><span data-i18n="studio.sec2">Patient</span><span class="badge opt" data-i18n="studio.optional">Optional</span></div>
+      <div class="section-body" data-body="patient">
+        <div class="grid">
+          <div class="f"><label data-i18n="fields.sex">Sex</label><select data-key="sex"></select></div>
+          <div class="f"><label data-i18n="fields.age">Age group</label><select data-key="age"></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Anatomy (required) -->
+    <div class="card">
+      <div class="section-head"><span data-i18n="studio.sec3">Anatomy</span><span class="badge req" data-i18n="studio.required">Required</span></div>
+      <div class="grid">
+        <div class="f"><label data-i18n="fields.region">Anatomical region</label>
+          <input list="anat-all" data-key="region" placeholder="e.g. Chest / Head & CNS / Abdomen">
+        </div>
+        <div class="f"><label data-i18n="fields.organ">Organ</label>
+          <input list="anat-region" data-key="organ" placeholder="e.g. Lungs / Brain / Liver">
+        </div>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div class="f"><label data-i18n="fields.slice">Slice level (optional)</label><input data-key="slice" placeholder="e.g. porta hepatis"></div>
+        <div class="f"><label data-i18n="fields.callouts">Structures to label (optional)</label><input data-key="callouts" placeholder="e.g. ventricles, basal ganglia"></div>
+      </div>
+      <datalist id="anat-all"></datalist>
+      <datalist id="anat-region"></datalist>
+    </div>
+
+    <!-- Section 4: Findings -->
+    <div class="card">
+      <div class="section-head" data-toggle="findings"><span data-i18n="studio.sec4">Findings</span><span class="badge opt" data-i18n="studio.optional">Optional</span></div>
+      <div class="section-body" data-body="findings">
+        <div class="grid">
+          <div class="f"><label data-i18n="fields.normalPath">Normal / pathological</label><select data-key="normalPath"></select></div>
+          <div class="f pathCase" style="display:none"><label data-i18n="fields.pathCase">Expected pathology</label><select data-key="pathCase"></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Technical (modality-dependent) -->
+    <div class="card">
+      <div class="section-head" data-toggle="tech"><span data-i18n="studio.sec5">Technical parameters</span><span class="badge opt" data-i18n="studio.optional">Optional</span></div>
+      <div class="section-body" data-body="tech">
+        <div class="grid" id="techGrid"></div>
+      </div>
+    </div>
+
+    <!-- Section 6: Output settings -->
+    <div class="card">
+      <div class="section-head" data-toggle="output"><span data-i18n="studio.sec6">Output settings</span><span class="badge opt" data-i18n="studio.optional">Optional</span></div>
+      <div class="section-body" data-body="output">
+        <div class="grid">
+          <div class="f"><label data-i18n="fields.style">Rendering style</label><select data-key="style"></select></div>
+          <div class="f"><label data-i18n="fields.labels">Labels</label><select data-key="labels"></select></div>
+          <div class="f"><label data-i18n="fields.labelLang">Label language</label><select data-key="labelLang"></select></div>
+          <div class="f"><label data-i18n="fields.segmentation">Segmentation overlay</label><select data-key="segmentation"></select></div>
+          <div class="f"><label data-i18n="fields.learner">Learner level</label><select data-key="learner"></select></div>
+          <div class="f"><label data-i18n="fields.lang">Prompt language</label><select data-key="lang"></select></div>
+        </div>
+        <div class="f" style="margin-top:12px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" data-key="negOn" checked> <span data-i18n="fields.negOn">Include Negative prompt (recommended)</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live preview -->
+    <div class="preview">
+      <div class="row">
+        <div class="row-head"><span class="row-lbl">ENGLISH</span><button class="copy-btn" data-copy="en">Copy EN <span class="neg-tag" style="display:none">+Neg</span></button></div>
+        <p id="outEn"></p>
+      </div>
+      <div class="row ar">
+        <div class="row-head"><span class="row-lbl">عربي · Arabic</span><button class="copy-btn" data-copy="ar">Copy AR <span class="neg-tag" style="display:none">+Neg</span></button></div>
+        <p id="outAr"></p>
+      </div>
+      <div id="negRow" class="row neg">
+        <div class="row-head"><span class="row-lbl">NEGATIVE</span><button class="copy-btn neg" data-copy="neg">Copy</button></div>
+        <p id="outNeg"></p>
+      </div>
+      <div class="file-row">
+        <span class="lbl" data-i18n="studio.fname">Suggested filename</span>
+        <code id="fname"></code>
+        <button class="copy-btn" data-copy="name">Copy name</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost" id="btnReset" data-i18n="studio.reset">↺ Reset</button>
+      <button class="btn" id="btnHist" data-i18n="studio.save">💾 Save to history</button>
+    </div>
+  </div>
+
+  <!-- PRESETS TAB -->
+  <div id="tabPresets" class="tab-body" style="display:none">
+    <div class="placeholder">⚡ Presets — <span data-i18n="studio.p2">Coming in phase 2 of the platform migration. All 36+ curated one-click presets will be here, filterable by category (Neuro / Chest / Cardiac / Abdomen / GU / MSK / Breast / Vascular / Pediatric / Emergency).</span></div>
+  </div>
+
+  <!-- CASE BUILDER TAB -->
+  <div id="tabCase" class="tab-body" style="display:none">
+    <div class="placeholder">🩺 Case Builder — <span data-i18n="studio.p3">Coming in phase 2. Pathology-first flow with ACR appropriateness scoring for 118+ conditions.</span></div>
+  </div>
+
+  <!-- LIBRARY TAB -->
+  <div id="tabLibrary" class="tab-body" style="display:none">
+    <div class="placeholder">📚 Library — <span data-i18n="studio.p5">Coming in phase 3. Local IndexedDB with drag/drop import, approve/reject workflow, and one-click cloud publish (watermarked + copyright metadata + Signed URLs).</span></div>
+  </div>
+
+  <div class="disc-foot">
+    ⚕️ © 2026 OmniRad Platform. All rights reserved. Educational only — not for diagnosis or clinical use.
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="../modules/data/anatomy-dict.js"></script>
+<script src="../modules/data/anatomy-landmarks.js"></script>
+<script src="../modules/data/presets-acr.js"></script>
+<script src="../modules/omnirad-lib.js"></script>
+<script src="../modules/omnirad-cloud.js"></script>
+<script src="./studio-app.js"></script>
+
+</body>
+</html>
