@@ -38,9 +38,9 @@ body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex 
 
 <div class="chat-wrap">
   <div class="chat-header">
-    <div class="eyebrow">AI Assistant · radiology scope</div>
-    <h1>Ask anything about radiologic anatomy.</h1>
-    <div class="sub">Bilingual · educational answers only · never for clinical decisions.</div>
+    <div class="eyebrow"><span data-i18n="chat.title">AI Assistant</span> · radiology scope</div>
+    <h1 data-i18n="chat.h1">Ask anything about radiologic anatomy.</h1>
+    <div class="sub" data-i18n="chat.sub">Bilingual · educational answers only · never for clinical decisions.</div>
   </div>
 
   <div class="chat-scroll" id="scroll">
@@ -55,14 +55,15 @@ body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex 
   </div>
 
   <div class="input-row">
-    <textarea id="prompt" rows="2" placeholder="Type a question…"></textarea>
-    <button id="send">Send</button>
+    <textarea id="prompt" rows="2" placeholder="Type a question…" data-i18n-placeholder="chat.placeholder"></textarea>
+    <button id="send" data-i18n="chat.send">Send</button>
   </div>
 
   <div class="disc">⚕️ Educational only — not for diagnosis or clinical use. © 2026 OmniRad Platform.</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>

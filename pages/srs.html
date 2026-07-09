@@ -40,20 +40,21 @@ h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;letter-spacing:-.02em;marg
 <body>
 
 <div class="wrap">
-  <div class="eyebrow">Spaced repetition · SM-2</div>
-  <h1>Study to remember, not to cram.</h1>
+  <div class="eyebrow"><span data-i18n="srs.title">Spaced repetition</span> · SM-2</div>
+  <h1 data-i18n="srs.h1">Study to remember, not to cram.</h1>
   <p class="sub">Cards are scheduled by the SM-2 algorithm: cards you struggle with come back sooner, easy ones spread further apart. That's how you build durable knowledge.</p>
 
   <div class="stats">
-    <div class="stat"><div class="n" id="stDue">—</div><div class="l">Due today</div></div>
-    <div class="stat"><div class="n" id="stTotal">—</div><div class="l">Total cards</div></div>
-    <div class="stat"><div class="n" id="stStreak">0</div><div class="l">Streak (days)</div></div>
+    <div class="stat"><div class="n" id="stDue">—</div><div class="l" data-i18n="srs.due">Due today</div></div>
+    <div class="stat"><div class="n" id="stTotal">—</div><div class="l" data-i18n="srs.total">Total cards</div></div>
+    <div class="stat"><div class="n" id="stStreak">0</div><div class="l" data-i18n="srs.streakDays">Streak (days)</div></div>
   </div>
 
   <div id="deck"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>

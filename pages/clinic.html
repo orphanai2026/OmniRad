@@ -38,15 +38,16 @@ h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;letter-spacing:-.02em;marg
 <body>
 
 <div class="wrap">
-  <div class="eyebrow">Clinic · applied cases</div>
-  <h1>Practice how radiologists think.</h1>
-  <p class="lead">Structured clinical vignettes with the imaging pathway. Read the case, pick the modality, review the reasoning — grounded in ACR appropriateness criteria.</p>
+  <div class="eyebrow" data-i18n="clinic.title">Clinic · applied cases</div>
+  <h1 data-i18n="clinic.h1">Practice how radiologists think.</h1>
+  <p class="lead"><span data-i18n="clinic.lead">Structured clinical vignettes with the imaging pathway. Read the case, pick the modality, review the reasoning — grounded in ACR appropriateness criteria.</span></p>
 
   <div class="chip-row" id="filters"></div>
   <div class="grid" id="cases"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>

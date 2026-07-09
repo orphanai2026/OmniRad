@@ -39,27 +39,28 @@ h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;letter-spacing:-.02em;marg
 <body>
 
 <div class="wrap">
-  <div class="eyebrow">Daily challenge</div>
-  <h1>One case a day.</h1>
+  <div class="eyebrow" data-i18n="daily.title">Daily challenge</div>
+  <h1 data-i18n="daily.h1">One case a day.</h1>
   <div class="day-tag" id="dayTag">DAY —</div>
 
   <div class="stats">
-    <div class="stat"><div class="n" id="stStreak">0</div><div class="l">Streak</div></div>
-    <div class="stat"><div class="n" id="stTotal">0</div><div class="l">Answered</div></div>
-    <div class="stat"><div class="n" id="stPct">—</div><div class="l">Accuracy</div></div>
+    <div class="stat"><div class="n" id="stStreak">0</div><div class="l" data-i18n="daily.streak">Streak</div></div>
+    <div class="stat"><div class="n" id="stTotal">0</div><div class="l" data-i18n="daily.answered">Answered</div></div>
+    <div class="stat"><div class="n" id="stPct">—</div><div class="l" data-i18n="daily.accuracy">Accuracy</div></div>
   </div>
 
   <div class="card">
     <div class="q" id="q">Loading…</div>
     <div class="choices" id="choices"></div>
     <div class="actions">
-      <button class="btn primary" id="btnCheck">Check answer</button>
+      <button class="btn primary" id="btnCheck" data-i18n="daily.check">Check answer</button>
     </div>
     <div class="explain" id="explain" style="display:none"></div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>
