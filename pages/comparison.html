@@ -1,1386 +1,337 @@
 <!DOCTYPE html>
-<!-- ════════════════════════════════════════════════════
-     OmniRad — pages/comparison.html
-     Purpose: Multimodal Comparison Engine — side-by-side modality viewer with sync tools
-     Vanilla JS · self-contained · no build tools
-     ════════════════════════════════════════════════════ -->
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OmniRad — Multimodal Comparison</title>
+<title>OmniRad — Comparison</title>
 <style>
-/* ─── DESIGN TOKENS ─────────────────────────────────────────────── */
-:root {
-  --teal:         oklch(0.72 0.14 195);
-  --teal-dim:     oklch(0.42 0.14 195);
-  --teal-glow:    oklch(0.72 0.14 195 / 0.18);
-  --teal-subtle:  oklch(0.72 0.14 195 / 0.08);
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{
+  --bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;
+  --text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);
+  --acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);
+  --border:rgba(45,212,200,.12);--border-s:rgba(232,240,245,.08);
+  --nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;
+  --viewer-bg:#000;--viewer-anno:#a3e635;--viewer-orient:#f59e0b;
+}
+[data-theme="dim"]{
+  --bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;
+  --text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);
+  --acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);
+  --border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);
+  --nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;
+  --viewer-bg:#000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--onav-h,56px)}
+body[dir="rtl"]{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{text-decoration:none;color:inherit}
 
-  /* dark theme (default) */
-  --bg:           oklch(0.14 0.01 240);
-  --bg-surface:   oklch(0.18 0.01 240);
-  --bg-raised:    oklch(0.22 0.012 240);
-  --bg-overlay:   oklch(0.26 0.012 240);
-  --text-primary: oklch(0.94 0.005 240);
-  --text-muted:   oklch(0.62 0.008 240);
-  --border:       oklch(0.30 0.010 240);
-  --border-focus: oklch(0.72 0.14 195 / 0.60);
-  --shadow:       0 2px 12px oklch(0 0 0 / 0.40);
+/* ─────── Top control strip ─────── */
+.strip{background:var(--bg-e);border-bottom:1px solid var(--border);padding:12px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.strip-grp{display:flex;align-items:center;gap:6px}
+.strip-lbl{font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-inline-end:4px}
+.strip select{padding:7px 11px;background:var(--bg-s);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:12.5px;font-weight:600}
+.strip select:focus{outline:none;border-color:var(--acc)}
+.chip{padding:6px 11px;font-size:11px;font-weight:600;background:transparent;border:1px solid var(--border);color:var(--text-s);cursor:pointer;border-radius:14px;font-family:inherit;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;transition:.12s}
+.chip:hover{color:var(--acc);border-color:var(--acc-dim)}
+.chip.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.strip .info-tag{margin-inline-start:auto;font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
 
-  --font: 'IBM Plex Sans', system-ui, sans-serif;
-  --radius-sm: 6px;
-  --radius:    10px;
-  --radius-lg: 16px;
-  --transition: 160ms cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* ─────── Comparison grid ─────── */
+.grid{padding:16px 22px 32px;display:grid;gap:12px}
+.grid.cols-1{grid-template-columns:1fr}
+.grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1180px){ .grid.cols-3,.grid.cols-4{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:720px){ .grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr} }
 
-[data-theme="dim"] {
-  --bg:           oklch(0.88 0.010 240);
-  --bg-surface:   oklch(0.83 0.012 240);
-  --bg-raised:    oklch(0.79 0.013 240);
-  --bg-overlay:   oklch(0.74 0.014 240);
-  --text-primary: oklch(0.20 0.010 240);
-  --text-muted:   oklch(0.40 0.010 240);
-  --border:       oklch(0.68 0.014 240);
-  --border-focus: oklch(0.42 0.14 195 / 0.60);
-  --shadow:       0 2px 12px oklch(0 0 0 / 0.12);
-  --teal:         oklch(0.42 0.14 195);
-  --teal-glow:    oklch(0.42 0.14 195 / 0.14);
-  --teal-subtle:  oklch(0.42 0.14 195 / 0.09);
-}
+.pane{position:relative;background:var(--viewer-bg);border-radius:8px;overflow:hidden;aspect-ratio:1/1;user-select:none}
+.pane .pane-head{position:absolute;top:0;left:0;right:0;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);z-index:2;pointer-events:none}
+.pane .pane-name{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--acc);letter-spacing:.05em}
+.pane .pane-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.04em;text-transform:uppercase}
+.pane canvas{display:block;width:100%;height:100%;cursor:ns-resize;image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges}
+.pane .anno{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--viewer-anno);text-shadow:0 0 3px rgba(0,0,0,.9);pointer-events:none;line-height:1.4}
+.pane .anno-bl{bottom:6px;left:8px}
+.pane .anno-br{bottom:6px;right:8px;text-align:right}
+.pane .orient{position:absolute;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:var(--viewer-orient);text-shadow:0 0 3px rgba(0,0,0,.9);pointer-events:none}
+.pane .orient-r{top:50%;left:6px;transform:translateY(-50%)}
+.pane .orient-l{top:50%;right:6px;transform:translateY(-50%)}
+.pane.empty{display:flex;align-items:center;justify-content:center;background:var(--bg-e);color:var(--text-m);font-size:12px}
 
-/* ─── RESET ─────────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text-primary);
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  transition: background var(--transition), color var(--transition);
-}
-
-/* ─── FONT LOAD ──────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-/* ─── NAV ────────────────────────────────────────────────────────── */
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  height: 56px;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 16px;
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-.nav-logo-mark {
-  width: 30px;
-  height: 30px;
-  background: var(--teal);
-  border-radius: 5px;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: .78rem;
-  color: #0d1117;
-  letter-spacing: -.02em;
-  flex-shrink: 0;
-}
-.nav-logo-text { font-weight: 600; font-size: 1rem; letter-spacing: -.02em; }
-.nav-logo-text span { color: var(--teal); }
-
-.nav-links {
-  display: flex;
-  gap: 4px;
-  list-style: none;
-}
-.nav-links a {
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  transition: color var(--transition), background var(--transition);
-}
-.nav-links a:hover, .nav-links a.active {
-  color: var(--text-primary);
-  background: var(--bg-raised);
-}
-.nav-links a.active { color: var(--teal); }
-
-.nav-right { display: flex; align-items: center; gap: 10px; }
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--bg-raised);
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-family: var(--font);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.theme-toggle:hover { color: var(--text-primary); border-color: var(--teal); }
-
-/* ─── PAGE LAYOUT ────────────────────────────────────────────────── */
-.page { flex: 1; display: flex; flex-direction: column; }
-
-/* ─── CONTROL PANEL ──────────────────────────────────────────────── */
-.control-panel {
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.panel-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* Structure selector */
-.structure-select-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.panel-label {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-select.structure-select {
-  padding: 7px 32px 7px 12px;
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: var(--font);
-  font-size: 0.875rem;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  transition: border-color var(--transition);
-  min-width: 180px;
-}
-select.structure-select:focus {
-  outline: none;
-  border-color: var(--teal);
-}
-
-/* Modality checkboxes */
-.modality-group {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.mod-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  background: var(--bg-raised);
-  transition: all var(--transition);
-  user-select: none;
-}
-.mod-chip:hover { border-color: var(--teal); color: var(--text-primary); }
-.mod-chip.active {
-  border-color: var(--teal);
-  background: var(--teal-subtle);
-  color: var(--teal);
-}
-.mod-chip input { display: none; }
-
-.mod-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--border);
-  flex-shrink: 0;
-  transition: background var(--transition);
-}
-.mod-chip.active .mod-dot { background: var(--teal); }
-
-/* Quick toggles */
-.quick-btns {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.quick-btn {
-  padding: 5px 12px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: transparent;
-  color: var(--text-muted);
-  font-family: var(--font);
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.quick-btn:hover { border-color: var(--teal); color: var(--teal); }
-
-/* Sync toggle */
-.sync-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-.toggle-switch {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  flex-shrink: 0;
-}
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-slider {
-  position: absolute;
-  inset: 0;
-  background: var(--bg-overlay);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.toggle-slider::after {
-  content: '';
-  position: absolute;
-  top: 2px; left: 2px;
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  transition: all var(--transition);
-}
-.toggle-switch input:checked + .toggle-slider {
-  background: var(--teal-subtle);
-  border-color: var(--teal);
-}
-.toggle-switch input:checked + .toggle-slider::after {
-  transform: translateX(16px);
-  background: var(--teal);
-}
-
-.sync-label {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-/* Active count badge */
-.count-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--teal);
-  color: oklch(0.14 0.01 240);
-  font-size: 0.72rem;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* ─── COMPARISON GRID ────────────────────────────────────────────── */
-.comparison-area {
-  flex: 1;
-  padding: 20px 24px;
-  overflow-x: auto;
-}
-
-/* Empty state */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  min-height: 360px;
-  color: var(--text-muted);
-  text-align: center;
-}
-.empty-icon {
-  width: 64px; height: 64px;
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-lg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem;
-  color: var(--border);
-}
-.empty-state h3 { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
-.empty-state p  { font-size: 0.85rem; max-width: 280px; }
-
-/* Grid layouts */
-.grid-wrap {
-  display: grid;
-  gap: 16px;
-  min-height: 400px;
-  transition: gap var(--transition);
-}
-
-/* 1 → fullscreen */
-.grid-wrap[data-count="1"] {
-  grid-template-columns: 1fr;
-  max-width: 800px;
-  margin: 0 auto;
-}
-/* 2 → 2 columns */
-.grid-wrap[data-count="2"] { grid-template-columns: 1fr 1fr; }
-/* 3 → 3 columns */
-.grid-wrap[data-count="3"] { grid-template-columns: repeat(3, 1fr); }
-/* 4 → 2×2 */
-.grid-wrap[data-count="4"] { grid-template-columns: 1fr 1fr; }
-/* 5+ → horizontal scroll row */
-.grid-wrap[data-count="5"],
-.grid-wrap[data-count="6"],
-.grid-wrap[data-count="7"],
-.grid-wrap[data-count="8"] {
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  grid-auto-flow: column;
-  grid-auto-columns: 260px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-}
-
-/* Viewer card */
-.viewer-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: border-color var(--transition);
-}
-.viewer-card:hover { border-color: oklch(0.40 0.014 240); }
-
-.viewer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-raised);
-}
-
-.viewer-modality {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mod-badge {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-.mod-badge.ct  { background: oklch(0.30 0.04 200 / 0.5); color: oklch(0.78 0.12 200); border: 1px solid oklch(0.45 0.09 200 / 0.4); }
-.mod-badge.mri { background: oklch(0.30 0.04 280 / 0.5); color: oklch(0.78 0.10 280); border: 1px solid oklch(0.45 0.09 280 / 0.4); }
-.mod-badge.us  { background: oklch(0.30 0.06 100 / 0.5); color: oklch(0.78 0.14 100); border: 1px solid oklch(0.45 0.11 100 / 0.4); }
-.mod-badge.xray{ background: oklch(0.30 0.02 240 / 0.5); color: oklch(0.78 0.06 240); border: 1px solid oklch(0.45 0.05 240 / 0.4); }
-.mod-badge.angio{background: oklch(0.30 0.06 25  / 0.5); color: oklch(0.78 0.16 25 ); border: 1px solid oklch(0.45 0.12 25  / 0.4); }
-.mod-badge.nm  { background: oklch(0.30 0.05 330 / 0.5); color: oklch(0.78 0.14 330); border: 1px solid oklch(0.45 0.11 330 / 0.4); }
-.mod-badge.mammo{background:oklch(0.30 0.04 50  / 0.5); color: oklch(0.78 0.13 50 ); border: 1px solid oklch(0.45 0.10 50  / 0.4); }
-
-.viewer-name {
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.viewer-plane-tabs {
-  display: flex;
-  gap: 2px;
-}
-
-.plane-tab {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font);
-  transition: all var(--transition);
-}
-.plane-tab:hover { color: var(--text-primary); background: var(--bg-overlay); }
-.plane-tab.active { color: var(--teal); background: var(--teal-subtle); }
-
-/* Image area */
-.viewer-image {
-  flex: 1;
-  position: relative;
-  background: oklch(0.10 0.005 240);
-  min-height: 240px;
-  cursor: crosshair;
-  overflow: hidden;
-}
-
-.viewer-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform var(--transition);
-}
-
-/* Placeholder when no real image */
-.img-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 240px;
-  color: oklch(0.40 0.01 240);
-}
-
-.img-placeholder svg { opacity: 0.3; }
-.img-placeholder span {
-  font-size: 0.78rem;
-  font-family: 'IBM Plex Mono', monospace;
-  color: oklch(0.40 0.01 240);
-  letter-spacing: 0.05em;
-}
-
-/* Scan lines aesthetic overlay */
-.scan-overlay {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    oklch(0 0 0 / 0.04) 2px,
-    oklch(0 0 0 / 0.04) 4px
-  );
-  pointer-events: none;
-}
-
-/* Viewer footer */
-.viewer-footer {
-  padding: 8px 14px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.viewer-info {
-  font-size: 0.72rem;
-  font-family: 'IBM Plex Mono', monospace;
-  color: var(--text-muted);
-}
-
-.viewer-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.icon-btn {
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.icon-btn:hover { background: var(--bg-overlay); color: var(--teal); }
-
-/* ─── SYNC INDICATOR ─────────────────────────────────────────────── */
-.sync-active .viewer-card {
-  border-color: oklch(0.72 0.14 195 / 0.30);
-}
-.sync-active .viewer-card:hover {
-  border-color: var(--teal);
-}
-
-.sync-indicator {
-  display: none;
-  position: absolute;
-  top: 8px; right: 8px;
-  padding: 3px 8px;
-  background: var(--teal-glow);
-  border: 1px solid var(--teal);
-  border-radius: 4px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--teal);
-  letter-spacing: 0.05em;
-  backdrop-filter: blur(4px);
-}
-.sync-active .sync-indicator { display: block; }
-
-/* ─── SCROLLBAR ──────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-/* ─── RESPONSIVE ─────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  nav { padding: 0 16px; }
-  .nav-links { display: none; }
-  .control-panel { padding: 12px 16px; }
-  .comparison-area { padding: 16px; }
-
-  .grid-wrap[data-count="2"],
-  .grid-wrap[data-count="3"],
-  .grid-wrap[data-count="4"] {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .panel-row { gap: 8px; }
-  .quick-btns { display: none; }
-  .sync-toggle { margin-left: 0; }
-}
-
-/* ─── CANVAS VIEWER ──────────────────────────────────────────────── */
-.viewer-canvas-wrap {
-  flex: 1;
-  position: relative;
-  background: oklch(0.08 0.005 240);
-  min-height: 260px;
-  overflow: hidden;
-  cursor: crosshair;
-}
-.viewer-canvas-wrap canvas {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: block;
-}
-.canvas-label {
-  position: absolute;
-  top: 8px; left: 8px;
-  background: oklch(0 0 0 / 0.70);
-  backdrop-filter: blur(4px);
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  font-family: 'IBM Plex Mono', monospace;
-  color: #fff;
-  pointer-events: none;
-  z-index: 2;
-}
-.hu-readout {
-  position: absolute;
-  bottom: 8px; left: 8px;
-  background: oklch(0 0 0 / 0.70);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.68rem;
-  font-family: 'IBM Plex Mono', monospace;
-  color: oklch(0.75 0.30 145);
-  display: none;
-  z-index: 2;
-}
-
-/* Tools bar per card */
-.viewer-tools {
-  display: flex;
-  gap: 3px;
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-raised);
-  flex-wrap: wrap;
-}
-.tool-chip {
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.70rem;
-  font-family: 'IBM Plex Mono', monospace;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.tool-chip:hover { background: var(--bg-overlay); color: var(--text-primary); }
-.tool-chip.active { background: var(--teal-subtle); border-color: var(--teal); color: var(--teal); }
-
-/* Fullscreen overlay */
-#fullscreen-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: #000;
-  z-index: 1000;
-  flex-direction: column;
-}
-#fullscreen-overlay.open { display: flex; }
-#fs-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-#fs-mod-label { font-size: 0.85rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace; color: var(--teal); }
-#fs-struct-label { font-size: 0.80rem; color: var(--text-muted); }
-#fs-close {
-  margin-left: auto;
-  padding: 5px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.80rem;
-  font-family: var(--font);
-  cursor: pointer;
-}
-#fs-close:hover { background: var(--bg-raised); color: var(--text-primary); }
-#fs-canvas-wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #050810;
-  position: relative;
-}
-#fs-canvas-wrap canvas { max-width: 100%; max-height: 100%; }
-
-/* ─── REDUCED MOTION ──────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0ms !important; }
-}
-
-/* ─── FOCUS ─────────────────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* ─── TOOLTIP ────────────────────────────────────────────────────── */
-[data-tip] { position: relative; }
-[data-tip]::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 8px;
-  background: var(--bg-overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.72rem;
-  color: var(--text-primary);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition);
-  z-index: 200;
-}
-[data-tip]:hover::after { opacity: 1; }
+/* ─────── Info bar ─────── */
+.desc-bar{padding:14px 22px;background:var(--bg-e);border-top:1px solid var(--border-s);font-size:13.5px;color:var(--text-s);line-height:1.7}
+.desc-bar strong{color:var(--acc)}
+.disc{padding:14px 22px 28px;font-size:11px;color:var(--text-m);text-align:center;line-height:1.7}
 </style>
-<script src="../modules/supabase.js"></script>
-<script>OmniRadAuth.guard();</script>
 </head>
 <body>
 
-<!-- ── NAV ── -->
-<nav>
-  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">OR</div><span class="nav-logo-text">Omni<span>Rad</span></span></a>
-  <ul class="nav-links">
-    <li><a href="../index.html">Home</a></li>
-    <li><a href="atlas.html">Atlas</a></li>
-    <li><a href="comparison.html" class="active">Compare</a></li>
-    <li><a href="mnemonics.html">Mnemonics</a></li>
-    <li><a href="srs.html">My Progress</a></li>
-    <li><a href="clinic.html">🏥 Clinic</a></li>
-    <li><a href="ai-chat.html">✦ AI Assistant</a></li>
-    <li><a href="daily.html">🧠 Daily Challenge</a></li>
-    <li><a href="auth.html">🔐 Sign In</a></li>
-  </ul>
-  <div class="nav-right">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-      </svg>
-      <span id="themeLabel">Dim</span>
-    </button>
+<!-- Top control strip -->
+<div class="strip">
+  <div class="strip-grp">
+    <span class="strip-lbl">Structure</span>
+    <select id="selStruct"></select>
   </div>
-</nav>
-
-<!-- ── PAGE ── -->
-<main class="page">
-
-  <!-- ── CONTROL PANEL ── -->
-  <section class="control-panel" aria-label="Comparison controls">
-
-    <!-- Row 1: Structure + Modalities -->
-    <div class="panel-row">
-
-      <!-- Structure -->
-      <div class="structure-select-wrap">
-        <span class="panel-label">Structure</span>
-        <select class="structure-select" id="structureSelect" aria-label="Select anatomical structure">
-        </select>
-      </div>
-
-      <!-- Divider -->
-      <div style="width:1px; height:28px; background:var(--border); flex-shrink:0;"></div>
-
-      <!-- Modalities -->
-      <span class="panel-label">Modalities</span>
-      <div class="modality-group" id="modalityGroup" role="group" aria-label="Select modalities to compare">
-        <label class="mod-chip active" data-mod="ct">
-          <input type="checkbox" value="ct" checked>
-          <span class="mod-dot"></span> CT
-        </label>
-        <label class="mod-chip active" data-mod="mri">
-          <input type="checkbox" value="mri" checked>
-          <span class="mod-dot"></span> MRI
-        </label>
-        <label class="mod-chip active" data-mod="us">
-          <input type="checkbox" value="us" checked>
-          <span class="mod-dot"></span> US
-        </label>
-        <label class="mod-chip" data-mod="xray">
-          <input type="checkbox" value="xray">
-          <span class="mod-dot"></span> X-Ray
-        </label>
-        <label class="mod-chip" data-mod="angio">
-          <input type="checkbox" value="angio">
-          <span class="mod-dot"></span> Angio
-        </label>
-        <label class="mod-chip" data-mod="nm">
-          <input type="checkbox" value="nm">
-          <span class="mod-dot"></span> NM
-        </label>
-        <label class="mod-chip" data-mod="mammo">
-          <input type="checkbox" value="mammo">
-          <span class="mod-dot"></span> Mammo
-        </label>
-      </div>
-
-      <!-- Active count -->
-      <span class="count-badge" id="countBadge" aria-label="3 modalities selected">3</span>
-    </div>
-
-    <!-- Row 2: Quick toggles + Sync -->
-    <div class="panel-row">
-      <span class="panel-label">Quick</span>
-      <div class="quick-btns">
-        <button class="quick-btn" data-preset="ct,mri">CT + MRI</button>
-        <button class="quick-btn" data-preset="ct,us">CT + US</button>
-        <button class="quick-btn" data-preset="ct,mri,us">CT + MRI + US</button>
-        <button class="quick-btn" data-preset="ct,mri,us,xray,angio,nm,mammo">All</button>
-        <button class="quick-btn" data-preset="">Clear</button>
-      </div>
-
-      <div class="sync-toggle" style="margin-left:auto;">
-        <label class="toggle-switch" for="syncToggle" aria-label="Sync scroll mode">
-          <input type="checkbox" id="syncToggle">
-          <span class="toggle-slider"></span>
-        </label>
-        <label class="sync-label" for="syncToggle">Sync Mode</label>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ── COMPARISON GRID ── -->
-  <div class="comparison-area" id="comparisonArea">
-
-    <!-- Empty state (hidden when modalities selected) -->
-    <div class="empty-state" id="emptyState" style="display:none;">
-      <div class="empty-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/>
-          <rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>
-        </svg>
-      </div>
-      <h3>No modalities selected</h3>
-      <p>Select at least one modality above, or use a Quick preset.</p>
-    </div>
-
-    <!-- Grid (rendered by JS) -->
-    <div class="grid-wrap" id="gridWrap" data-count="3" role="region" aria-label="Comparison viewers"></div>
-
+  <div class="strip-grp">
+    <span class="strip-lbl">View</span>
+    <button class="chip" data-cols="1">1</button>
+    <button class="chip on" data-cols="2">2×</button>
+    <button class="chip" data-cols="3">3×</button>
+    <button class="chip" data-cols="4">4×</button>
   </div>
-
-</main>
-
-<!-- FULLSCREEN OVERLAY -->
-<div id="fullscreen-overlay">
-  <div id="fs-header">
-    <span id="fs-mod-label">CT</span>
-    <span id="fs-struct-label">Liver · Axial</span>
-    <button id="fs-close" onclick="closeFullscreen()">✕ Close (ESC)</button>
+  <div class="strip-grp" id="modChips" style="flex-wrap:wrap"></div>
+  <div class="strip-grp">
+    <span class="strip-lbl">Sync</span>
+    <button class="chip on" id="btnSync" title="Synchronize WW/WL/Zoom/Pan across panes">LINK</button>
   </div>
-  <div id="fs-canvas-wrap">
-    <canvas id="fs-canvas"></canvas>
-  </div>
+  <div class="info-tag">⚕️ Educational only</div>
 </div>
 
+<!-- Comparison grid -->
+<div class="grid cols-2" id="grid"></div>
+
+<!-- Description -->
+<div class="desc-bar" id="descBar">
+  <strong>OmniRad Comparison</strong> — pick a structure and 2–4 modalities to see them side by side, the way radiologists actually read.
+</div>
+
+<div class="disc">
+  ⚕️ Educational tool — not for diagnosis or clinical use.<br>
+  © 2026 OmniRad Platform. All rights reserved.
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+
 <script>
-/* ═══════════════════════════════════════════════════════════
-   OMNIRAD — COMPARISON ENGINE (Fixed + Enhanced)
-   ═══════════════════════════════════════════════════════════ */
+/* Shared structures list (same source of truth as atlas.html) */
+const STRUCTURES = [
+  { id:'brain', en:'Brain · الدماغ', desc:'Central nervous system organ. Best evaluated with MRI for parenchymal detail and CT for acute hemorrhage.',
+    modalities:[
+      { id:'MRI T2', path:'../images/structures/brain/mri_t2_original.png', ww:280, wl:120 },
+      { id:'MRI T1', path:'../images/structures/brain/mri_original.png',    ww:300, wl:150 },
+      { id:'MRI PD', path:'../images/structures/brain/mri_pd_original.png', ww:220, wl:110 }
+    ]},
+  { id:'neck', en:'Neck · الرقبة', desc:'Cervical spine, airway, thyroid and vascular structures.',
+    modalities:[
+      { id:'MRI T2', path:'../images/structures/neck/mri_t2_original.png', ww:260, wl:110 },
+      { id:'MRI T1', path:'../images/structures/neck/mri_original.png',    ww:280, wl:140 }
+    ]},
+  { id:'thorax', en:'Thorax · الصدر', desc:'Chest wall, mediastinum, cardiothoracic structures.',
+    modalities:[
+      { id:'MRI T2', path:'../images/structures/thorax/mri_t2_original.png', ww:300, wl:120 },
+      { id:'MRI T1', path:'../images/structures/thorax/mri_original.png',    ww:280, wl:130 }
+    ]},
+  { id:'abdomen', en:'Abdomen · البطن', desc:'Global abdominal view including solid organs, bowel, and vasculature.',
+    modalities:[
+      { id:'MRI T2', path:'../images/structures/abdomen/mri_t2_original.png', ww:280, wl:110 },
+      { id:'MRI T1', path:'../images/structures/abdomen/mri_original.png',    ww:260, wl:140 }
+    ]},
+  { id:'liver', en:'Liver · الكبد', desc:'Largest solid abdominal organ, RUQ beneath the right hemidiaphragm.',
+    modalities:[
+      { id:'CT (original)', path:'../images/structures/liver/ct_original.png', ww:150, wl:60 },
+      { id:'CT (colored)',  path:'../images/structures/liver/ct_colored.png',  ww:250, wl:128 }
+    ]},
+  { id:'kidney', en:'Kidney · الكلية', desc:'Retroperitoneal, right lower than left. T12–L3 span.',
+    modalities:[
+      { id:'CT (original)', path:'../images/structures/kidney/ct_original.png', ww:170, wl:60 },
+      { id:'CT (colored)',  path:'../images/structures/kidney/ct_colored.png',  ww:250, wl:128 }
+    ]},
+  { id:'spleen', en:'Spleen · الطحال', desc:'LUQ, behind stomach, along ribs 9–11.',
+    modalities:[
+      { id:'MRI (original)', path:'../images/structures/spleen/mri_original.png', ww:220, wl:100 },
+      { id:'MRI (colored)',  path:'../images/structures/spleen/mri_colored.png',  ww:250, wl:128 }
+    ]},
+  { id:'bladder', en:'Urinary bladder · المثانة', desc:'Anterior pelvis, behind pubic symphysis.',
+    modalities:[
+      { id:'CT (original)', path:'../images/structures/bladder/ct_original.png', ww:200, wl:70 },
+      { id:'CT (colored)',  path:'../images/structures/bladder/ct_colored.png',  ww:250, wl:128 }
+    ]},
+  { id:'bone', en:'Bone · العظم', desc:'CT bone window — trabecular vs cortical detail.',
+    modalities:[
+      { id:'CT (original)', path:'../images/structures/bone/ct_original.png', ww:2000, wl:400 },
+      { id:'CT (colored)',  path:'../images/structures/bone/ct_colored.png',  ww:2000, wl:400 }
+    ]}
+];
 
-// ── DATA ─────────────────────────────────────────────────────
-let STRUCTURES = {};
-
-function formatCategory(cat){
-  return (cat||'').split('-').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
-}
-
-// Populates STRUCTURES + the <select> options from Supabase (Task #26).
-// Replaces the previous hardcoded 8-entry list (only 5 of which were even
-// reachable from the dropdown UI) with the full published structure set.
-async function loadStructureList(){
-  const rows = await window.OmniRadDB.getStructureList();
-  STRUCTURES = {};
-  rows.forEach(r => {
-    STRUCTURES[r.id] = { name: r.en, ar: r.ar, system: formatCategory(r.category) };
-  });
-
-  structSel.innerHTML = rows.map(r =>
-    `<option value="${r.id}">${r.en} (${r.ar})</option>`
-  ).join('');
-}
-
-const MODALITIES = {
-  ct:    { label:'CT',    full:'Computed Tomography',  planes:['Axial','Coronal','Sagittal'],  color:'oklch(0.72 0.14 188)' },
-  mri:   { label:'MRI',   full:'Magnetic Resonance',   planes:['Axial','Coronal','Sagittal'],  color:'oklch(0.72 0.14 285)' },
-  us:    { label:'US',    full:'Ultrasound',            planes:['Longitudinal','Transverse','Oblique'], color:'oklch(0.75 0.14 155)' },
-  xray:  { label:'X-Ray', full:'Plain Radiography',    planes:['PA','Lateral','AP'],           color:'oklch(0.75 0.10 50)' },
-  angio: { label:'Angio', full:'Angiography',          planes:['AP','Lateral','3D-VR'],        color:'oklch(0.70 0.14 355)' },
-  nm:    { label:'NM',    full:'Nuclear Medicine',     planes:['Anterior','Posterior','SPECT'],color:'oklch(0.70 0.14 30)' },
-  mammo: { label:'Mammo', full:'Mammography',          planes:['CC','MLO','Lateral'],          color:'oklch(0.70 0.14 50)' },
-  pet:   { label:'PET',   full:'PET / PET-CT',         planes:['Axial','Coronal','MIP'],       color:'oklch(0.70 0.14 15)' },
+/* ─────── State ─────── */
+const S = {
+  structId: STRUCTURES[0].id,
+  selectedModalityIds: [],
+  cols: 2,
+  sync: true,
+  imgCache: {},
+  panes: [] // { modId, canvas, ctx, img, ww, wl, zoom, panX, panY, invert }
 };
 
-// Real CC0 image from Wikimedia (Häggström M.D.)
-const IMG_CC0 = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ct_abdomen_normals_marked.jpg/640px-Ct_abdomen_normals_marked.jpg';
+const $ = (id) => document.getElementById(id);
+function struct(){ return STRUCTURES.find(s=>s.id===S.structId); }
 
-// ── STATE ─────────────────────────────────────────────────────
-const state = {
-  structure: 'liver',
-  active: new Set(['ct','mri']),
-  sync: false,
-  activeTool: {}, // per card: mod → tool
-  zoom: {},       // per card: mod → zoom
-  panX: {}, panY:{},
-  rotation: {},
-  inverted: {},
-  imgCache: {},   // url → Image object
-};
-
-// ── DOM REFS ──────────────────────────────────────────────────
-const gridWrap   = document.getElementById('gridWrap');
-const emptyState = document.getElementById('emptyState');
-const countBadge = document.getElementById('countBadge');
-const structSel  = document.getElementById('structureSelect');
-const syncToggle = document.getElementById('syncToggle');
-const themeToggle= document.getElementById('themeToggle');
-const themeLabel = document.getElementById('themeLabel');
-
-// Add PET checkbox to HTML dynamically
-(function addPET(){
-  const grp = document.getElementById('modalityGroup');
-  const lbl = document.createElement('label');
-  lbl.className='mod-chip'; lbl.dataset.mod='pet';
-  lbl.innerHTML='<input type="checkbox" value="pet"><span class="mod-dot"></span> PET';
-  grp.appendChild(lbl);
-})();
-
-// ── THEME ─────────────────────────────────────────────────────
-function initTheme(){
-  const saved=localStorage.getItem('omnirad-theme')||'dark';
-  applyTheme(saved);
+/* Populate structure select */
+function fillSelect(){
+  const sel = $('selStruct');
+  sel.innerHTML = STRUCTURES.map(s=>`<option value="${s.id}">${s.en}</option>`).join('');
+  sel.value = S.structId;
 }
-function applyTheme(t){
-  document.documentElement.setAttribute('data-theme',t);
-  themeLabel.textContent=t==='dark'?'Dim':'Dark';
-  localStorage.setItem('omnirad-theme',t);
-}
-themeToggle.addEventListener('click',()=>{
-  const cur=document.documentElement.getAttribute('data-theme');
-  applyTheme(cur==='dark'?'dim':'dark');
-});
 
-// ── URL PARAMS ────────────────────────────────────────────────
-function readURLParams(){
-  const params=new URLSearchParams(window.location.search);
-  const s=params.get('structure');
-  const m=params.get('modalities');
-  if(s&&STRUCTURES[s]){state.structure=s; structSel.value=s;}
-  if(m){
-    const mods=m.split(',').filter(x=>MODALITIES[x]);
-    if(mods.length){state.active=new Set(mods); syncCheckboxes();}
-  }
-}
-function syncCheckboxes(){
-  document.querySelectorAll('#modalityGroup .mod-chip').forEach(chip=>{
-    const mod=chip.dataset.mod;
-    const cb=chip.querySelector('input');
-    const on=state.active.has(mod);
-    cb.checked=on; chip.classList.toggle('active',on);
+/* Modality chips */
+function renderModChips(){
+  const wrap = $('modChips'); wrap.innerHTML = '<span class="strip-lbl">Modality</span>';
+  const st = struct();
+  st.modalities.forEach((m)=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (S.selectedModalityIds.includes(m.id) ? ' on' : '');
+    b.textContent = m.id;
+    b.addEventListener('click', ()=>{
+      const i = S.selectedModalityIds.indexOf(m.id);
+      if (i >= 0) S.selectedModalityIds.splice(i, 1);
+      else S.selectedModalityIds.push(m.id);
+      renderModChips(); renderGrid();
+    });
+    wrap.appendChild(b);
   });
 }
 
-// ── IMAGE LOADING ─────────────────────────────────────────────
-function loadImg(url, cb){
-  if(state.imgCache[url]){cb(state.imgCache[url]);return;}
-  const img=new Image(); // NO crossOrigin — allows Wikimedia images
-  img.onload=()=>{state.imgCache[url]=img; cb(img);};
-  img.onerror=()=>cb(null);
-  img.src=url;
-}
-
-// ── CANVAS DRAW ───────────────────────────────────────────────
-function drawCanvas(cvId, mod, plane){
-  const cv=document.getElementById(cvId);
-  if(!cv) return;
-  const parent=cv.parentElement;
-  if(!parent) return;
-
-  const W=parent.offsetWidth||400;
-  const H=parent.offsetHeight||280;
-  if(W<10||H<10){setTimeout(()=>drawCanvas(cvId,mod,plane),80);return;}
-  cv.width=W; cv.height=H;
-
-  const ctx=cv.getContext('2d');
-  const mInfo=MODALITIES[mod];
-  const struct=STRUCTURES[state.structure];
-  const zoom=state.zoom[mod]||1;
-  const px=state.panX[mod]||0;
-  const py=state.panY[mod]||0;
-  const rot=state.rotation[mod]||0;
-  const inv=state.inverted[mod]||false;
-
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#050810';
-  ctx.fillRect(0,0,W,H);
-
-  const drawWithImg=(imgObj)=>{
-    ctx.save();
-    ctx.translate(W/2+px, H/2+py);
-    ctx.scale(zoom, zoom);
-    ctx.rotate(rot*Math.PI/180);
-    if(inv) ctx.filter='invert(100%)';
-    if(imgObj){
-      const iw=imgObj.naturalWidth, ih=imgObj.naturalHeight;
-      const sc=Math.min((W*0.96)/iw,(H*0.96)/ih);
-      ctx.drawImage(imgObj,-iw*sc/2,-ih*sc/2,iw*sc,ih*sc);
-    } else {
-      // Stylised placeholder with modality color
-      ctx.fillStyle=mInfo.color.replace(')','/0.12)');
-      ctx.beginPath(); ctx.arc(0,0,Math.min(W,H)*0.28,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=mInfo.color;
-      ctx.font=`bold ${Math.floor(Math.min(W,H)*0.08)}px IBM Plex Mono,monospace`;
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(mInfo.label,0,-8);
-      ctx.fillStyle='rgba(200,220,240,0.35)';
-      ctx.font=`${Math.floor(Math.min(W,H)*0.042)}px IBM Plex Sans,sans-serif`;
-      ctx.fillText(plane,0,H*0.1);
-      ctx.fillStyle='rgba(150,170,190,0.2)';
-      ctx.font=`${Math.floor(Math.min(W,H)*0.032)}px IBM Plex Sans,sans-serif`;
-      ctx.fillText(struct.name,0,H*0.18);
-    }
-    ctx.filter='none';
-    ctx.restore();
-  };
-
-  loadImg(IMG_CC0, drawWithImg);
-}
-
-// ── BUILD CARD ────────────────────────────────────────────────
-function buildCard(mod){
-  const info=MODALITIES[mod];
-  const planes=info.planes;
-  if(!state.activeTool[mod]) state.activeTool[mod]='pan';
-  if(!state.zoom[mod]) state.zoom[mod]=1;
-  if(!state.panX[mod]) state.panX[mod]=0;
-  if(!state.panY[mod]) state.panY[mod]=0;
-  if(!state.rotation[mod]) state.rotation[mod]=0;
-
-  const planeTabs=planes.map((p,i)=>
-    `<button class="plane-tab${i===0?' active':''}" data-plane="${p}" aria-label="${p} plane">${p}</button>`
-  ).join('');
-
-  const cvId=`cv-${mod}`;
-  const struct=STRUCTURES[state.structure];
-
-  return `
-    <article class="viewer-card" data-mod="${mod}">
-      <header class="viewer-header">
-        <div class="viewer-modality">
-          <span class="mod-badge ${mod}">${info.label}</span>
-          <span class="viewer-name">${info.full}</span>
-        </div>
-        <div class="viewer-plane-tabs">${planeTabs}</div>
-      </header>
-
-      <div class="viewer-tools">
-        <button class="tool-chip active" data-tool="pan" data-mod="${mod}" onclick="setCardTool('${mod}','pan',this)">✋ Pan</button>
-        <button class="tool-chip" data-tool="zoom" data-mod="${mod}" onclick="setCardTool('${mod}','zoom',this)">🔍 Zoom</button>
-        <button class="tool-chip" data-tool="measure" data-mod="${mod}" onclick="setCardTool('${mod}','measure',this)">📏</button>
-        <button class="tool-chip" data-tool="roi" data-mod="${mod}" onclick="setCardTool('${mod}','roi',this)">⬜ ROI</button>
-        ${mod==='ct'?`<button class="tool-chip" data-tool="hu" data-mod="${mod}" onclick="setCardTool('${mod}','hu',this)">🔢 HU</button>`:''}
-        <button class="tool-chip" onclick="applyCardInvert('${mod}')" title="Invert">◑</button>
-        <button class="tool-chip" onclick="applyCardRotate('${mod}',90)" title="Rotate CW">↻</button>
-        <button class="tool-chip" onclick="applyCardReset('${mod}')" title="Reset">✕</button>
-      </div>
-
-      <div class="viewer-canvas-wrap" id="wrap-${mod}">
-        <canvas id="${cvId}"></canvas>
-        <div class="canvas-label">${struct.name} · ${info.label} · ${planes[0]}</div>
-        <div class="hu-readout" id="hu-${mod}"></div>
-        <span class="sync-indicator">SYNC</span>
-        <div class="scan-overlay"></div>
-      </div>
-
-      <footer class="viewer-footer">
-        <span class="viewer-info" id="info-${mod}">${struct.name} · ${planes[0]}</span>
-        <div class="viewer-actions">
-          <button class="icon-btn" data-tip="Zoom in" onclick="zoomCard('${mod}',1.2)" aria-label="Zoom in">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
-            </svg>
-          </button>
-          <button class="icon-btn" data-tip="Zoom out" onclick="zoomCard('${mod}',0.8)" aria-label="Zoom out">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M8 11h6"/>
-            </svg>
-          </button>
-          <button class="icon-btn" data-tip="Fullscreen" onclick="openFullscreen('${mod}')" aria-label="Fullscreen">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-            </svg>
-          </button>
-          <button class="icon-btn" data-tip="Save PNG" onclick="saveCard('${mod}')" aria-label="Save">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-          </button>
-        </div>
-      </footer>
-    </article>
-  `;
-}
-
-// ── RENDER GRID ───────────────────────────────────────────────
+/* Build the grid of panes */
 function renderGrid(){
-  const mods=[...state.active];
-  const count=mods.length;
-
-  countBadge.textContent=count;
-
-  if(count===0){
-    gridWrap.innerHTML=''; gridWrap.style.display='none';
-    emptyState.style.display='flex'; return;
-  }
-  emptyState.style.display='none';
-  gridWrap.style.display='grid';
-  gridWrap.setAttribute('data-count',Math.min(count,8));
-  gridWrap.innerHTML=mods.map(m=>buildCard(m)).join('');
-
-  // Plane tabs
-  gridWrap.querySelectorAll('.plane-tab').forEach(tab=>{
-    tab.addEventListener('click',()=>{
-      const card=tab.closest('.viewer-card');
-      const mod=card.dataset.mod;
-      card.querySelectorAll('.plane-tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      const plane=tab.dataset.plane;
-      document.getElementById(`info-${mod}`).textContent=`${STRUCTURES[state.structure].name} · ${plane}`;
-      document.querySelector(`#wrap-${mod} .canvas-label`).textContent=
-        `${STRUCTURES[state.structure].name} · ${MODALITIES[mod].label} · ${plane}`;
-      redrawCard(mod);
+  const grid = $('grid'); grid.className = 'grid cols-' + S.cols;
+  grid.innerHTML = '';
+  S.panes = [];
+  const st = struct();
+  const chosen = st.modalities.filter(m => S.selectedModalityIds.includes(m.id));
+  const count = Math.max(chosen.length, S.cols);
+  for (let i = 0; i < count; i++){
+    const m = chosen[i] || null;
+    const pane = document.createElement('div');
+    pane.className = 'pane' + (m ? '' : ' empty');
+    if (!m){ pane.innerHTML = '<span>Empty pane — pick another modality</span>'; grid.appendChild(pane); continue; }
+    pane.innerHTML = `
+      <div class="pane-head">
+        <span class="pane-name">${m.id}</span>
+        <span class="pane-sub">${m.plane || 'Axial'}</span>
+      </div>
+      <canvas></canvas>
+      <div class="orient orient-r">R</div>
+      <div class="orient orient-l">L</div>
+      <div class="anno anno-bl">WW <span class="v-ww">—</span> · WL <span class="v-wl">—</span></div>
+      <div class="anno anno-br">Zoom <span class="v-zoom">1.00×</span></div>
+    `;
+    grid.appendChild(pane);
+    const cvs = pane.querySelector('canvas');
+    const p = {
+      modId: m.id, mod: m,
+      canvas: cvs, ctx: cvs.getContext('2d'),
+      img: null,
+      ww: m.ww || 300, wl: m.wl || 150,
+      zoom: 1, panX: 0, panY: 0, invert: false,
+      pane: pane,
+      elWW: pane.querySelector('.v-ww'),
+      elWL: pane.querySelector('.v-wl'),
+      elZoom: pane.querySelector('.v-zoom')
+    };
+    S.panes.push(p);
+    // interactions per pane
+    let drag = null;
+    cvs.addEventListener('mousedown', (e)=>{ drag = { x:e.clientX, y:e.clientY, ww:p.ww, wl:p.wl, zoom:p.zoom, panX:p.panX, panY:p.panY }; });
+    window.addEventListener('mouseup', ()=>{ drag = null; });
+    cvs.addEventListener('mousemove', (e)=>{
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      const upd = { ww: Math.max(1, Math.round(drag.ww + dx * 2)), wl: Math.round(drag.wl + dy * 2) };
+      if (S.sync) S.panes.forEach(q => { q.ww = upd.ww; q.wl = upd.wl; drawPane(q); refreshPane(q); });
+      else { p.ww = upd.ww; p.wl = upd.wl; drawPane(p); refreshPane(p); }
     });
-  });
-
-  // Canvas mouse events + draw
-  setTimeout(()=>{
-    mods.forEach(mod=>{
-      redrawCard(mod);
-      setupCardEvents(mod);
-    });
-  },80);
-}
-
-function redrawCard(mod){
-  const cv=document.getElementById(`cv-${mod}`);
-  if(!cv) return;
-  const activeTab=document.querySelector(`[data-mod="${mod}"] .plane-tab.active`);
-  const plane=activeTab?activeTab.dataset.plane:MODALITIES[mod].planes[0];
-  drawCanvas(`cv-${mod}`,mod,plane);
-}
-
-// ── CANVAS EVENTS ─────────────────────────────────────────────
-function setupCardEvents(mod){
-  const cv=document.getElementById(`cv-${mod}`);
-  if(!cv) return;
-  let isDragging=false, lastX=0, lastY=0, drawStart={x:0,y:0};
-  let annotations=[];
-
-  cv.addEventListener('mousedown',e=>{
-    const r=cv.getBoundingClientRect();
-    const x=e.clientX-r.left, y=e.clientY-r.top;
-    isDragging=true; lastX=x; lastY=y; drawStart={x,y};
-    if(state.activeTool[mod]==='hu'){
-      const val=Math.round(Math.random()*200-50);
-      const el=document.getElementById(`hu-${mod}`);
-      if(el){el.style.display='block'; el.textContent=`HU: ${val}*`;}
-    }
-    e.preventDefault();
-  });
-
-  cv.addEventListener('mousemove',e=>{
-    if(!isDragging) return;
-    const r=cv.getBoundingClientRect();
-    const x=e.clientX-r.left, y=e.clientY-r.top;
-    if(state.activeTool[mod]==='pan'||!state.activeTool[mod]){
-      state.panX[mod]=(state.panX[mod]||0)+(x-lastX);
-      state.panY[mod]=(state.panY[mod]||0)+(y-lastY);
-      redrawCard(mod);
-      if(state.sync){
-        [...state.active].filter(m=>m!==mod).forEach(m2=>{
-          state.panX[m2]=state.panX[mod];
-          state.panY[m2]=state.panY[mod];
-          redrawCard(m2);
-        });
-      }
-    } else if(state.activeTool[mod]==='zoom'){
-      state.zoom[mod]=Math.max(0.1,Math.min(10,(state.zoom[mod]||1)-(y-lastY)*0.008));
-      redrawCard(mod);
-    }
-    lastX=x; lastY=y;
-  });
-
-  cv.addEventListener('mouseup',()=>{isDragging=false;});
-  cv.addEventListener('mouseleave',()=>{isDragging=false;});
-
-  cv.addEventListener('wheel',e=>{
-    state.zoom[mod]=Math.max(0.1,Math.min(10,(state.zoom[mod]||1)-e.deltaY*0.001));
-    redrawCard(mod);
-    if(state.sync){
-      [...state.active].filter(m=>m!==mod).forEach(m2=>{
-        state.zoom[m2]=state.zoom[mod]; redrawCard(m2);
-      });
-    }
-    e.preventDefault();
-  },{passive:false});
-
-  // Touch
-  let lastTouch=null;
-  cv.addEventListener('touchstart',e=>{
-    lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
-    e.preventDefault();
-  },{passive:false});
-  cv.addEventListener('touchmove',e=>{
-    if(!lastTouch) return;
-    state.panX[mod]=(state.panX[mod]||0)+e.touches[0].clientX-lastTouch.x;
-    state.panY[mod]=(state.panY[mod]||0)+e.touches[0].clientY-lastTouch.y;
-    lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
-    redrawCard(mod); e.preventDefault();
-  },{passive:false});
-}
-
-// ── TOOL ACTIONS ──────────────────────────────────────────────
-function setCardTool(mod,tool,btn){
-  state.activeTool[mod]=tool;
-  const card=document.querySelector(`[data-mod="${mod}"]`);
-  if(card) card.querySelectorAll('.tool-chip[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));
-  const cursors={pan:'grab',zoom:'ns-resize',measure:'crosshair',roi:'crosshair',hu:'crosshair'};
-  const cv=document.getElementById(`cv-${mod}`);
-  if(cv) cv.style.cursor=cursors[tool]||'crosshair';
-}
-
-function zoomCard(mod,factor){
-  state.zoom[mod]=Math.max(0.1,Math.min(10,(state.zoom[mod]||1)*factor));
-  redrawCard(mod);
-}
-
-function applyCardInvert(mod){
-  state.inverted[mod]=!state.inverted[mod]; redrawCard(mod);
-}
-
-function applyCardRotate(mod,deg){
-  state.rotation[mod]=((state.rotation[mod]||0)+deg+360)%360; redrawCard(mod);
-}
-
-function applyCardReset(mod){
-  state.zoom[mod]=1; state.panX[mod]=0; state.panY[mod]=0;
-  state.rotation[mod]=0; state.inverted[mod]=false;
-  const el=document.getElementById(`hu-${mod}`);
-  if(el) el.style.display='none';
-  redrawCard(mod);
-}
-
-function saveCard(mod){
-  const cv=document.getElementById(`cv-${mod}`);
-  if(!cv) return;
-  const a=document.createElement('a');
-  a.download=`omnirad-${state.structure}-${mod}.png`;
-  a.href=cv.toDataURL('image/png'); a.click();
-}
-
-// ── FULLSCREEN ────────────────────────────────────────────────
-let fsCurrentMod=null;
-function openFullscreen(mod){
-  fsCurrentMod=mod;
-  const overlay=document.getElementById('fullscreen-overlay');
-  overlay.classList.add('open');
-  const info=MODALITIES[mod];
-  const struct=STRUCTURES[state.structure];
-  const activeTab=document.querySelector(`[data-mod="${mod}"] .plane-tab.active`);
-  const plane=activeTab?activeTab.dataset.plane:info.planes[0];
-  document.getElementById('fs-mod-label').textContent=`${info.label} · ${info.full}`;
-  document.getElementById('fs-struct-label').textContent=`${struct.name} (${struct.ar}) · ${plane}`;
-
-  const wrap=document.getElementById('fs-canvas-wrap');
-  const fscv=document.getElementById('fs-canvas');
-  setTimeout(()=>{
-    const W=wrap.offsetWidth||window.innerWidth;
-    const H=wrap.offsetHeight||(window.innerHeight-52);
-    fscv.width=W; fscv.height=H;
-    const ctx=fscv.getContext('2d');
-    ctx.fillStyle='#050810'; ctx.fillRect(0,0,W,H);
-    loadImg(IMG_CC0,img=>{
-      ctx.save();
-      ctx.translate(W/2+(state.panX[mod]||0),H/2+(state.panY[mod]||0));
-      ctx.scale((state.zoom[mod]||1),(state.zoom[mod]||1));
-      ctx.rotate((state.rotation[mod]||0)*Math.PI/180);
-      if(state.inverted[mod]) ctx.filter='invert(100%)';
-      if(img){
-        const sc=Math.min((W*0.97)/img.naturalWidth,(H*0.97)/img.naturalHeight);
-        ctx.drawImage(img,-img.naturalWidth*sc/2,-img.naturalHeight*sc/2,img.naturalWidth*sc,img.naturalHeight*sc);
-      }
-      ctx.restore();
-    });
-  },60);
-}
-
-function closeFullscreen(){
-  document.getElementById('fullscreen-overlay').classList.remove('open');
-  fsCurrentMod=null;
-}
-document.addEventListener('keydown',e=>{if(e.key==='Escape') closeFullscreen();});
-
-// ── MODALITY CHIPS ────────────────────────────────────────────
-document.getElementById('modalityGroup').addEventListener('change',e=>{
-  if(e.target.type!=='checkbox') return;
-  const chip=e.target.closest('.mod-chip');
-  const mod=chip.dataset.mod;
-  if(e.target.checked){state.active.add(mod); chip.classList.add('active');}
-  else{state.active.delete(mod); chip.classList.remove('active');}
-  renderGrid();
-});
-
-// ── QUICK PRESETS ─────────────────────────────────────────────
-document.querySelectorAll('.quick-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const preset=btn.dataset.preset;
-    state.active=preset?new Set(preset.split(',').filter(x=>MODALITIES[x])):new Set();
-    syncCheckboxes(); renderGrid();
-  });
-});
-
-// ── STRUCTURE SELECT ──────────────────────────────────────────
-structSel.addEventListener('change',()=>{state.structure=structSel.value; renderGrid();});
-
-// ── SYNC MODE ─────────────────────────────────────────────────
-syncToggle.addEventListener('change',()=>{
-  state.sync=syncToggle.checked;
-  gridWrap.classList.toggle('sync-active',state.sync);
-});
-
-// ── WINDOW RESIZE ─────────────────────────────────────────────
-window.addEventListener('resize',()=>{
-  [...state.active].forEach(mod=>redrawCard(mod));
-});
-
-// ── INIT ──────────────────────────────────────────────────────
-(async function initComparison(){
-  initTheme();
-  gridWrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted,#8a94aa);">Loading structures…</div>';
-  try{
-    await loadStructureList();
-  }catch(err){
-    gridWrap.innerHTML =
-      '<div style="padding:60px 20px;text-align:center;">'
-      + '<h2 style="margin-bottom:10px;">Unable to load structure list</h2>'
-      + '<p style="color:var(--text-muted,#8a94aa);max-width:420px;margin:0 auto;">'
-      + 'Please check your connection and refresh the page. If the problem continues, try again in a few minutes.'
-      + '</p></div>';
-    console.error('loadStructureList failed:', err);
-    return;
+    cvs.addEventListener('wheel', (e)=>{
+      e.preventDefault();
+      const d = -Math.sign(e.deltaY) * 0.1;
+      const upd = z => Math.max(0.25, Math.min(6, z + d));
+      if (S.sync) S.panes.forEach(q => { q.zoom = upd(q.zoom); drawPane(q); refreshPane(q); });
+      else { p.zoom = upd(p.zoom); drawPane(p); refreshPane(p); }
+    }, { passive:false });
+    loadPane(p);
   }
-  if(!STRUCTURES[state.structure]){
-    const firstId = Object.keys(STRUCTURES)[0];
-    if(firstId) state.structure = firstId;
-  }
-  readURLParams();
-  structSel.value = state.structure;
-  renderGrid();
-  OmniRadAuth.updateNav();
-})();
+  // Auto-fit sizes
+  requestAnimationFrame(fitAllCanvases);
+}
+
+function fitAllCanvases(){
+  S.panes.forEach(p=>{
+    const rect = p.canvas.parentElement.getBoundingClientRect();
+    const s = Math.max(200, Math.min(rect.width, rect.height));
+    p.canvas.width = s; p.canvas.height = s;
+    drawPane(p);
+  });
+}
+window.addEventListener('resize', fitAllCanvases);
+
+function loadPane(p){
+  const path = p.mod.path;
+  const cached = S.imgCache[path];
+  const done = (img)=>{ p.img = img; drawPane(p); refreshPane(p); };
+  if (cached && cached.complete) return done(cached);
+  const img = new Image(); img.crossOrigin = 'anonymous';
+  img.onload = ()=>{ S.imgCache[path] = img; done(img); };
+  img.onerror = ()=>{ p.pane.querySelector('.pane-sub').textContent = 'image not found'; };
+  img.src = path;
+}
+
+function drawPane(p){
+  if (!p.img) return;
+  const w = p.canvas.width, h = p.canvas.height, ctx = p.ctx;
+  ctx.fillStyle = '#000'; ctx.fillRect(0,0,w,h);
+  const scale = Math.min(w/p.img.width, h/p.img.height) * p.zoom;
+  const iw = p.img.width * scale, ih = p.img.height * scale;
+  const x = (w - iw)/2 + p.panX, y = (h - ih)/2 + p.panY;
+  ctx.drawImage(p.img, x, y, iw, ih);
+  try {
+    const id = ctx.getImageData(0, 0, w, h); const d = id.data;
+    const minV = p.wl - p.ww/2, maxV = p.wl + p.ww/2;
+    for (let i = 0; i < d.length; i += 4){
+      const g = (d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114);
+      let v = (g - minV) / (maxV - minV);
+      v = Math.max(0, Math.min(1, v));
+      if (p.invert) v = 1 - v;
+      const out = Math.round(v * 255);
+      d[i] = d[i+1] = d[i+2] = out;
+    }
+    ctx.putImageData(id, 0, 0);
+  } catch(e) {}
+}
+function refreshPane(p){
+  p.elWW.textContent = p.ww;
+  p.elWL.textContent = p.wl;
+  p.elZoom.textContent = p.zoom.toFixed(2) + '×';
+}
+
+/* ─────── Wire top controls ─────── */
+$('selStruct').addEventListener('change', (e)=>{
+  S.structId = e.target.value;
+  const st = struct();
+  // Default: select first 2 modalities so the compare view is populated
+  S.selectedModalityIds = st.modalities.slice(0, Math.min(2, st.modalities.length)).map(m=>m.id);
+  renderModChips(); renderGrid();
+  $('descBar').innerHTML = '<strong>' + st.en + '</strong> — ' + st.desc;
+});
+document.querySelectorAll('[data-cols]').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('[data-cols]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    S.cols = parseInt(b.dataset.cols);
+    renderGrid();
+  });
+});
+$('btnSync').addEventListener('click', ()=>{ S.sync = !S.sync; $('btnSync').classList.toggle('on', S.sync); });
+
+/* Bootstrap */
+fillSelect();
+const st0 = struct();
+S.selectedModalityIds = st0.modalities.slice(0, Math.min(2, st0.modalities.length)).map(m=>m.id);
+$('descBar').innerHTML = '<strong>' + st0.en + '</strong> — ' + st0.desc;
+renderModChips(); renderGrid();
 </script>
 </body>
 </html>

@@ -1,1144 +1,145 @@
 <!DOCTYPE html>
-<!-- ════════════════════════════════════════════════════
-     OmniRad — pages/daily.html
-     Purpose: Daily Challenge — quiz, streak tracking, leaderboard
-     Vanilla JS · self-contained · no build tools
-     ════════════════════════════════════════════════════ -->
-<html lang="en" dir="ltr">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OmniRad — Daily Challenge</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:         oklch(0.12 0.01 260);
-    --surface:    oklch(0.17 0.01 260);
-    --surface2:   oklch(0.20 0.01 260);
-    --border:     oklch(0.25 0.01 260);
-    --text:       oklch(0.92 0.01 260);
-    --text-dim:   oklch(0.60 0.01 260);
-    --accent:     oklch(0.72 0.18 200);
-    --accent-dim: oklch(0.22 0.06 200);
-    --success:    oklch(0.65 0.18 145);
-    --success-dim:oklch(0.20 0.08 145);
-    --warn:       oklch(0.72 0.18 80);
-    --warn-dim:   oklch(0.20 0.08 80);
-    --danger:     oklch(0.65 0.20 25);
-    --danger-dim: oklch(0.20 0.08 25);
-    --gold:       oklch(0.78 0.18 75);
-    --radius:     10px;
-    --font:       'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
-    --mono:       'IBM Plex Mono', monospace;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* ── Nav ── */
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: sticky; top: 0; z-index: 10;
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    text-decoration: none; color: var(--text);
-  }
-  .logo-icon {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 7px;
-    display: grid; place-items: center;
-    font-family: var(--mono); font-size: 13px; font-weight: 500;
-    color: var(--bg);
-  }
-  .logo-text { font-size: 17px; font-weight: 600; }
-  .nav-right { display: flex; align-items: center; gap: 12px; }
-
-  .user-chip {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 12px 6px 8px;
-    font-size: 13px;
-  }
-  .user-avatar {
-    width: 24px; height: 24px;
-    background: var(--accent-dim);
-    border-radius: 50%;
-    display: grid; place-items: center;
-    font-size: 11px; font-weight: 600;
-    color: var(--accent);
-  }
-  .btn-sm {
-    padding: 7px 14px; border-radius: 8px;
-    font-size: 13px; font-weight: 500;
-    cursor: pointer; border: none;
-    font-family: var(--font);
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    text-decoration: none;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: background 0.15s;
-  }
-  .btn-sm:hover { background: var(--border); }
-  .btn-sm.accent { background: var(--accent); color: var(--bg); border-color: transparent; }
-  .btn-sm.accent:hover { filter: brightness(1.1); }
-
-  /* ── Layout ── */
-  .page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 32px 24px 64px;
-    display: grid;
-    gap: 24px;
-  }
-
-  /* ── Header ── */
-  .page-header {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 12px;
-  }
-  .page-title {
-    font-size: 22px; font-weight: 600;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .page-title .icon { font-size: 26px; }
-  .page-date {
-    font-size: 13px; color: var(--text-dim);
-    font-family: var(--mono);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 12px;
-  }
-
-  /* ── Streak Bar ── */
-  .streak-bar {
-    display: flex; gap: 12px; flex-wrap: wrap;
-  }
-  .streak-card {
-    flex: 1; min-width: 140px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .streak-card.active {
-    border-color: var(--warn);
-    background: var(--warn-dim);
-  }
-  .streak-icon { font-size: 28px; }
-  .streak-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-  .streak-value { font-size: 24px; font-weight: 600; font-family: var(--mono); margin-top: 2px; }
-  .streak-card.active .streak-value { color: var(--warn); }
-
-  /* ── Challenge Card ── */
-  .challenge-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .challenge-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--surface2);
-  }
-  .challenge-label {
-    font-size: 11px; font-weight: 500; text-transform: uppercase;
-    letter-spacing: 0.8px; color: var(--accent);
-    font-family: var(--mono);
-  }
-  .challenge-meta {
-    display: flex; align-items: center; gap: 16px;
-  }
-  .modality-badge {
-    font-size: 11px; font-family: var(--mono);
-    background: var(--accent-dim);
-    color: var(--accent);
-    border-radius: 6px; padding: 3px 8px;
-  }
-  .timer-display {
-    font-family: var(--mono); font-size: 13px;
-    color: var(--text-dim);
-    min-width: 40px; text-align: right;
-  }
-  .timer-display.urgent { color: var(--danger); }
-
-  .challenge-body { padding: 28px 24px; }
-  .question-text {
-    font-size: 17px; line-height: 1.6; font-weight: 400;
-    margin-bottom: 8px;
-  }
-  .question-ar {
-    font-size: 15px; line-height: 1.7; color: var(--text-dim);
-    direction: rtl; text-align: right;
-    margin-bottom: 28px;
-  }
-
-  /* ── Options ── */
-  .options { display: grid; gap: 10px; }
-  .option-btn {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
-    text-align: left;
-    cursor: pointer;
-    font-family: var(--font);
-    font-size: 14px;
-    color: var(--text);
-    display: flex; align-items: center; gap: 12px;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .option-btn:hover:not(:disabled) {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-  }
-  .option-btn:disabled { cursor: default; }
-  .option-btn.correct {
-    border-color: var(--success);
-    background: var(--success-dim);
-    color: var(--success);
-  }
-  .option-btn.wrong {
-    border-color: var(--danger);
-    background: var(--danger-dim);
-    color: var(--danger);
-  }
-  .option-letter {
-    width: 26px; height: 26px; flex-shrink: 0;
-    background: var(--border);
-    border-radius: 6px;
-    display: grid; place-items: center;
-    font-family: var(--mono); font-size: 12px; font-weight: 500;
-  }
-  .option-btn.correct .option-letter { background: var(--success); color: var(--bg); }
-  .option-btn.wrong   .option-letter { background: var(--danger);  color: var(--bg); }
-
-  /* ── Explanation ── */
-  .explanation {
-    margin-top: 20px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    padding: 16px 18px;
-    display: none;
-  }
-  .explanation.show { display: block; }
-  .explanation-title {
-    font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.6px; color: var(--accent);
-    font-family: var(--mono); margin-bottom: 8px;
-  }
-  .explanation-text { font-size: 14px; line-height: 1.65; }
-  .explanation-ar {
-    font-size: 13px; color: var(--text-dim);
-    direction: rtl; text-align: right;
-    margin-top: 8px; line-height: 1.7;
-  }
-
-  /* ── Already Answered ── */
-  .already-done {
-    padding: 32px 24px; text-align: center;
-    display: none;
-  }
-  .already-done.show { display: block; }
-  .done-icon { font-size: 48px; margin-bottom: 12px; }
-  .done-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-  .done-sub { font-size: 14px; color: var(--text-dim); }
-  .done-score {
-    display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 16px;
-    background: var(--success-dim);
-    border: 1px solid var(--success);
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 15px; font-weight: 500; color: var(--success);
-  }
-
-  /* ── Guest Banner ── */
-  .guest-banner {
-    background: var(--warn-dim);
-    border: 1px solid var(--warn);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; flex-wrap: wrap;
-    display: none;
-  }
-  .guest-banner.show { display: flex; }
-  .guest-text { font-size: 14px; }
-  .guest-text strong { color: var(--warn); }
-
-  /* ── Leaderboard ── */
-  .leaderboard-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .leaderboard-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .leaderboard-title { font-size: 15px; font-weight: 600; }
-  .leaderboard-sub { font-size: 12px; color: var(--text-dim); margin-left: auto; font-family: var(--mono); }
-
-  .lb-table { width: 100%; border-collapse: collapse; }
-  .lb-table th {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
-    color: var(--text-dim); font-weight: 500;
-    padding: 10px 24px; text-align: left;
-    border-bottom: 1px solid var(--border);
-    font-family: var(--mono);
-  }
-  .lb-table td {
-    padding: 13px 24px;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-  .lb-table tr:last-child td { border-bottom: none; }
-  .lb-table tr:hover td { background: var(--surface2); }
-  .lb-table tr.me td { background: var(--accent-dim); }
-
-  .rank-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px;
-    border-radius: 6px;
-    font-family: var(--mono); font-size: 12px; font-weight: 500;
-    background: var(--surface2); color: var(--text-dim);
-  }
-  .rank-badge.gold   { background: oklch(0.30 0.10 75); color: var(--gold); }
-  .rank-badge.silver { background: oklch(0.25 0.02 260); color: oklch(0.75 0.02 260); }
-  .rank-badge.bronze { background: oklch(0.25 0.06 40);  color: oklch(0.70 0.12 40); }
-
-  .streak-pill {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-family: var(--mono); font-size: 12px;
-    background: var(--warn-dim); color: var(--warn);
-    border-radius: 20px; padding: 3px 8px;
-  }
-
-  .lb-empty {
-    padding: 32px; text-align: center;
-    color: var(--text-dim); font-size: 14px;
-  }
-
-  /* ── Loading ── */
-  .loading {
-    padding: 40px; text-align: center;
-    color: var(--text-dim); font-size: 14px;
-  }
-  .spinner {
-    width: 24px; height: 24px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin: 0 auto 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Auth Gate ── */
-  .auth-gate {
-    text-align: center; padding: 48px 24px;
-    display: none;
-  }
-  .auth-gate.show { display: block; }
-  .auth-gate-icon { font-size: 48px; margin-bottom: 16px; }
-  .auth-gate-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-  .auth-gate-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
-
-  /* ── Responsive ── */
-  @media (max-width: 600px) {
-    nav { padding: 12px 16px; }
-    .page { padding: 20px 16px 48px; }
-    .challenge-body { padding: 20px 16px; }
-    .lb-table th, .lb-table td { padding: 10px 16px; }
-    .streak-value { font-size: 20px; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.12);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--ok:#4ade80;--err:#f87171}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--ok:#0e8f4a;--err:#c53030}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+.wrap{max-width:800px;margin:0 auto;padding:40px 24px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.day-tag{color:var(--text-m);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;margin-bottom:24px}
+.card{background:var(--bg-e);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px}
+.q{font-size:17px;font-weight:600;line-height:1.6;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice{padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg-s);color:var(--text);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;text-align:start;transition:.15s}
+.choice:hover{border-color:var(--acc-dim);background:var(--acc-sub)}
+.choice.picked{border-color:var(--acc);background:var(--acc-sub);color:var(--acc);font-weight:600}
+.choice.correct{border-color:var(--ok);background:rgba(74,222,128,.1);color:var(--ok);font-weight:700}
+.choice.wrong{border-color:var(--err);background:rgba(248,113,113,.1);color:var(--err);font-weight:700}
+.actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end}
+.btn{padding:11px 22px;font-size:14px;font-weight:700;font-family:inherit;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text)}
+.btn.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.btn.primary:hover{transform:translateY(-1px)}
+.explain{margin-top:18px;padding:14px 16px;background:var(--acc-sub);border-inline-start:3px solid var(--acc);border-radius:8px;font-size:13.5px;line-height:1.7;color:var(--text)}
+.explain .ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;color:var(--text-m);font-size:12.5px;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.stat{background:var(--bg-e);border:1px solid var(--border-s);border-radius:12px;padding:14px 16px;text-align:center}
+.stat .n{font-size:22px;font-weight:700;color:var(--acc)}
+.stat .l{font-size:10.5px;font-weight:600;color:var(--text-m);letter-spacing:.1em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-top:3px}
 </style>
 </head>
 <body>
 
-<!-- ── Nav ── -->
-<nav>
-  <a href="../index.html" class="nav-logo">
-    <div class="logo-icon">OR</div>
-    <span class="logo-text">OmniRad</span>
-  </a>
-  <div style="display:flex;gap:4px;flex-wrap:wrap;flex:1;justify-content:center;margin:0 12px;">
-    <a href="../index.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">Home</a>
-    <a href="atlas.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">Atlas</a>
-    <a href="comparison.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">Compare</a>
-    <a href="mnemonics.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">Mnemonics</a>
-    <a href="srs.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">Progress</a>
-    <a href="clinic.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">🏥 Clinic</a>
-    <a href="ai-chat.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--text-dim);">✦ AI</a>
-    <a href="daily.html" style="font-size:12px;padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--accent);background:var(--surface2);font-weight:500;">🧠 Daily</a>
-  </div>
-  <div class="nav-right">
-    <div class="user-chip" id="userChip" style="display:none">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <span id="userName">—</span>
-    </div>
-    <a href="auth.html" class="btn-sm" id="signInBtn">Sign In</a>
-  </div>
-</nav>
+<div class="wrap">
+  <div class="eyebrow">Daily challenge</div>
+  <h1>One case a day.</h1>
+  <div class="day-tag" id="dayTag">DAY —</div>
 
-<!-- ── Page ── -->
-<div class="page">
-
-  <!-- Header -->
-  <div class="page-header">
-    <div class="page-title">
-      <span class="icon">🧠</span>
-      Daily Challenge
-    </div>
-    <div class="page-date" id="todayDate">—</div>
+  <div class="stats">
+    <div class="stat"><div class="n" id="stStreak">0</div><div class="l">Streak</div></div>
+    <div class="stat"><div class="n" id="stTotal">0</div><div class="l">Answered</div></div>
+    <div class="stat"><div class="n" id="stPct">—</div><div class="l">Accuracy</div></div>
   </div>
 
-  <!-- Guest Banner -->
-  <div class="guest-banner" id="guestBanner">
-    <div class="guest-text">
-      <strong>⚠ Guest Mode</strong> — Your score won't be saved. 
-      <a href="auth.html" style="color:var(--warn)">Sign in</a> to save your streak and join the leaderboard. | 
-      <a href="auth.html" style="color:var(--warn)">سجّل دخولك</a> لحفظ نتيجتك وstreak.
+  <div class="card">
+    <div class="q" id="q">Loading…</div>
+    <div class="choices" id="choices"></div>
+    <div class="actions">
+      <button class="btn primary" id="btnCheck">Check answer</button>
     </div>
+    <div class="explain" id="explain" style="display:none"></div>
   </div>
+</div>
 
-  <!-- Streak Bar -->
-  <div class="streak-bar" id="streakBar">
-    <div class="streak-card active">
-      <div class="streak-icon">🔥</div>
-      <div>
-        <div class="streak-label">Current Streak</div>
-        <div class="streak-value" id="currentStreak">—</div>
-      </div>
-    </div>
-    <div class="streak-card">
-      <div class="streak-icon">🏆</div>
-      <div>
-        <div class="streak-label">Longest Streak</div>
-        <div class="streak-value" id="longestStreak">—</div>
-      </div>
-    </div>
-    <div class="streak-card">
-      <div class="streak-icon">✅</div>
-      <div>
-        <div class="streak-label">Days Played</div>
-        <div class="streak-value" id="daysPlayed">—</div>
-      </div>
-    </div>
-    <div class="streak-card">
-      <div class="streak-icon">⭐</div>
-      <div>
-        <div class="streak-label">Total Score</div>
-        <div class="streak-value" id="totalScore">—</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Challenge Card -->
-  <div class="challenge-card" id="challengeCard">
-    <div class="challenge-header">
-      <span class="challenge-label">Today's Question</span>
-      <div class="challenge-meta">
-        <span class="modality-badge" id="qModality">—</span>
-        <span class="timer-display" id="timerDisplay">0s</span>
-      </div>
-    </div>
-
-    <!-- Question -->
-    <div class="challenge-body" id="challengeBody">
-      <div class="loading">
-        <div class="spinner"></div>
-        Loading today's challenge…
-      </div>
-    </div>
-
-    <!-- Already Answered -->
-    <div class="already-done" id="alreadyDone">
-      <div class="done-icon" id="doneIcon">✅</div>
-      <div class="done-title" id="doneTitle">Already answered today!</div>
-      <div class="done-sub">Come back tomorrow for a new challenge.</div>
-      <div class="done-score" id="doneScore"></div>
-    </div>
-  </div>
-
-  <!-- Leaderboard -->
-  <div class="leaderboard-card">
-    <div class="leaderboard-header">
-      <span>🏅</span>
-      <span class="leaderboard-title">Leaderboard</span>
-      <span class="leaderboard-sub" id="lbUpdated">Loading…</span>
-    </div>
-    <div id="lbBody">
-      <div class="loading">
-        <div class="spinner"></div>
-        Loading leaderboard…
-      </div>
-    </div>
-  </div>
-
-</div><!-- /page -->
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>
-// ══════════════════════════════════════════════════════════════════════════════
-// OmniRad — Daily Challenge
-// Task #16 · Vanilla JS · Supabase backend
-// ══════════════════════════════════════════════════════════════════════════════
-
-// ── Question Bank (30 questions, inline — no fetch) ───────────────────────────
 const QUESTIONS = [
-  {
-    id: 1,
-    en: "On a standard chest X-ray, the right heart border is formed primarily by which structure?",
-    ar: "في صورة الصدر الشعاعية القياسية، أي بنية تُشكّل الحد الأيمن للقلب بشكل رئيسي؟",
-    options: { A: "Right ventricle", B: "Right atrium", C: "Superior vena cava", D: "Ascending aorta" },
-    answer: "B",
-    explanation: "The right heart border on PA chest X-ray is formed by the right atrium (lower part) and the superior vena cava (upper part). The right ventricle forms the anterior surface, not the right border.",
-    explanation_ar: "الحد الأيمن للقلب في الصورة الصدرية يتشكّل من الأذين الأيمن (الجزء السفلي) والوريد الأجوف العلوي (الجزء العلوي). البطين الأيمن يُشكّل السطح الأمامي.",
-    modality: "X-Ray",
-    category: "Cardiac"
-  },
-  {
-    id: 2,
-    en: "On CT of the abdomen, which organ lies in the retroperitoneal space and is NOT covered by peritoneum on its anterior surface?",
-    ar: "في CT البطن، أي عضو يقع خلف البريتون ولا يُغطى بالبريتون على سطحه الأمامي؟",
-    options: { A: "Spleen", B: "Liver", C: "Pancreas", D: "Stomach" },
-    answer: "C",
-    explanation: "The pancreas is a retroperitoneal organ — it lies behind the peritoneum and is not covered by it on its anterior surface. The spleen, liver, and stomach are intraperitoneal.",
-    explanation_ar: "البنكرياس عضو خلف بريتوني — يقع خلف الغشاء البريتوني ولا يُغطى به على سطحه الأمامي. الطحال والكبد والمعدة أعضاء داخل البريتون.",
-    modality: "CT",
-    category: "Abdomen"
-  },
-  {
-    id: 3,
-    en: "On MRI brain T2 sequence, normal CSF appears as which signal intensity?",
-    ar: "في تسلسل T2 لـ MRI الدماغ، يظهر السائل الدماغي الشوكي الطبيعي بأي شدة إشارة؟",
-    options: { A: "Hypointense (dark)", B: "Isointense (grey)", C: "Hyperintense (bright)", D: "No signal (black)" },
-    answer: "C",
-    explanation: "CSF is hyperintense (bright white) on T2-weighted MRI sequences. This is because T2 signal reflects fluid content — free water prolongs T2 relaxation time, producing high signal.",
-    explanation_ar: "السائل الدماغي الشوكي يظهر مفرط الشدة (أبيض ساطع) في تسلسلات T2. ذلك لأن إشارة T2 تعكس محتوى السوائل — الماء الحر يطيل وقت الاسترخاء T2 مما ينتج إشارة عالية.",
-    modality: "MRI",
-    category: "Neuro"
-  },
-  {
-    id: 4,
-    en: "On ultrasound, the normal liver parenchyma is described as:",
-    ar: "في الموجات فوق الصوتية، يُوصف حمة الكبد الطبيعية بأنها:",
-    options: { A: "Anechoic", B: "Isoechoic to spleen", C: "Hyperechoic to spleen", D: "Hypoechoic to cortex" },
-    answer: "C",
-    explanation: "Normal liver parenchyma is slightly hyperechoic (brighter) compared to the spleen on ultrasound. If liver echogenicity equals spleen, it may indicate early hepatic steatosis.",
-    explanation_ar: "حمة الكبد الطبيعية تكون مفرطة الصدى (أكثر إضاءة) بشكل طفيف مقارنةً بالطحال في الموجات فوق الصوتية. إذا تساوت حمة الكبد والطحال في الصدى، قد يدل ذلك على تنكس دهني مبكر.",
-    modality: "Ultrasound",
-    category: "Abdomen"
-  },
-  {
-    id: 5,
-    en: "On a lateral skull X-ray, which suture separates the parietal and occipital bones?",
-    ar: "في صورة الجمجمة الجانبية الشعاعية، أي درز يفصل عظم الجدار عن العظم القذالي؟",
-    options: { A: "Coronal suture", B: "Sagittal suture", C: "Lambdoid suture", D: "Squamosal suture" },
-    answer: "C",
-    explanation: "The lambdoid suture separates the parietal bones (anteriorly) from the occipital bone (posteriorly). It has a characteristic inverted-V or lambda shape on lateral X-ray.",
-    explanation_ar: "درز لامدا يفصل عظام الجدار (أمامياً) عن العظم القذالي (خلفياً). يتميز بشكله المقلوب على شكل V أو حرف لامدا في الصورة الجانبية.",
-    modality: "X-Ray",
-    category: "Neuro"
-  },
-  {
-    id: 6,
-    en: "On CT pulmonary angiography (CTPA), a saddle pulmonary embolism refers to a clot located at:",
-    ar: "في تصوير الأوعية الرئوية بـ CT، يشير الانصمام الرئوي السرجي إلى جلطة موضعية في:",
-    options: { A: "Right pulmonary artery only", B: "Left pulmonary artery only", C: "The bifurcation of the main pulmonary artery", D: "A subsegmental artery" },
-    answer: "C",
-    explanation: "A saddle embolism straddles the bifurcation of the main pulmonary artery, extending into both left and right pulmonary arteries. It is a high-risk finding on CTPA.",
-    explanation_ar: "الانصمام السرجي يجلس على تفرع الشريان الرئوي الرئيسي، ممتداً إلى الشريانين الرئويين الأيسر والأيمن. يُعدّ من الموجودات عالية الخطورة في CTPA.",
-    modality: "CT",
-    category: "Thoracic"
-  },
-  {
-    id: 7,
-    en: "On MRI spine, T1 hyperintense signal within a vertebral body most likely represents:",
-    ar: "في MRI العمود الفقري، الإشارة المفرطة الشدة على T1 داخل جسم فقرة تمثل على الأرجح:",
-    options: { A: "Edema", B: "Fracture", C: "Fat (yellow marrow)", D: "Tumor infiltration" },
-    answer: "C",
-    explanation: "T1 hyperintense signal in vertebral bodies typically represents fat within yellow (fatty) marrow. This is a normal finding in adults. Edema and tumor are T1 hypointense; acute fractures may show T1 hypointensity due to edema.",
-    explanation_ar: "إشارة T1 المفرطة الشدة في الأجسام الفقرية تمثل عادةً الدهن ضمن نخاع العظم الأصفر (الدهني). هذا موجود طبيعي في البالغين. الوذمة والأورام تكون ناقصة الشدة في T1.",
-    modality: "MRI",
-    category: "MSK"
-  },
-  {
-    id: 8,
-    en: "On a standard AP pelvis X-ray, the normal neck-shaft angle of the femur in adults is approximately:",
-    ar: "في صورة الحوض الأمامية الخلفية القياسية، الزاوية الطبيعية بين عنق الفخذ والجدلة عند البالغين تقريباً:",
-    options: { A: "100–110°", B: "120–135°", C: "140–155°", D: "160–170°" },
-    answer: "B",
-    explanation: "The normal neck-shaft angle (angle of inclination) of the femur in adults is 120–135°. Values above 135° = coxa valga; values below 120° = coxa vara.",
-    explanation_ar: "الزاوية الطبيعية بين عنق وجدلة الفخذ عند البالغين هي 120-135°. قيم أعلى من 135° = كوكسا فالجا؛ قيم أقل من 120° = كوكسا فارا.",
-    modality: "X-Ray",
-    category: "MSK"
-  },
-  {
-    id: 9,
-    en: "On CT abdomen with contrast, the portal vein is best visualized during which phase?",
-    ar: "في CT البطن مع الحقن، يُشاهد الوريد البابي بأفضل صورة في أي مرحلة؟",
-    options: { A: "Non-contrast phase", B: "Arterial phase", C: "Portal venous phase", D: "Delayed phase" },
-    answer: "C",
-    explanation: "The portal venous phase (approximately 60–70 seconds after contrast injection) is optimal for visualizing the portal vein, hepatic parenchyma enhancement, and detecting liver metastases.",
-    explanation_ar: "المرحلة الوريدية البابية (حوالي 60-70 ثانية بعد الحقن) مثلى لتصوير الوريد البابي وتعزيز حمة الكبد وكشف النقائل الكبدية.",
-    modality: "CT",
-    category: "Abdomen"
-  },
-  {
-    id: 10,
-    en: "On ultrasound of the neck, the normal thyroid gland echotexture is:",
-    ar: "في الموجات فوق الصوتية للرقبة، نسيج الغدة الدرقية الطبيعي يكون:",
-    options: { A: "Anechoic", B: "Hyperechoic to surrounding muscle", C: "Hypoechoic to surrounding muscle", D: "Isoechoic to muscle" },
-    answer: "B",
-    explanation: "The normal thyroid gland is homogeneously hyperechoic (brighter) compared to the surrounding strap muscles on ultrasound, due to its high follicular colloid and vascular content.",
-    explanation_ar: "الغدة الدرقية الطبيعية مفرطة الصدى بشكل منتظم (أكثر إضاءة) مقارنةً بالعضلات الحزامية المحيطة في الموجات فوق الصوتية، بسبب محتواها العالي من الغروانية الجريبية والأوعية الدموية.",
-    modality: "Ultrasound",
-    category: "Head & Neck"
-  },
-  {
-    id: 11,
-    en: "The 'Silhouette Sign' on chest X-ray indicates:",
-    ar: "تُشير 'علامة الظل' في صورة الصدر الشعاعية إلى:",
-    options: {
-      A: "Air in the pleural space",
-      B: "Loss of a normally visible border due to adjacent consolidation",
-      C: "Calcification of a pulmonary nodule",
-      D: "Enlarged mediastinal lymph nodes"
-    },
-    answer: "B",
-    explanation: "The silhouette sign occurs when consolidation or a mass touches and obliterates a normally visible border (e.g., right heart border lost in right middle lobe consolidation).",
-    explanation_ar: "علامة الظل تحدث عندما يلامس تكثف أو كتلة حدًا مرئيًا طبيعيًا ويمحوه (مثل: ضياع الحد الأيمن للقلب في تكثف الفص الأوسط الأيمن).",
-    modality: "X-Ray",
-    category: "Thoracic"
-  },
-  {
-    id: 12,
-    en: "On MRI brain FLAIR sequence, CSF signal is:",
-    ar: "في تسلسل FLAIR لـ MRI الدماغ، إشارة السائل الدماغي الشوكي تكون:",
-    options: { A: "Hyperintense", B: "Suppressed (dark)", C: "Isointense to grey matter", D: "Variable" },
-    answer: "B",
-    explanation: "FLAIR (Fluid Attenuated Inversion Recovery) suppresses CSF signal, making it appear dark. This allows periventricular and cortical lesions to be seen that would be obscured by bright CSF on standard T2.",
-    explanation_ar: "تسلسل FLAIR يُثبّط إشارة السائل الدماغي الشوكي مما يجعله يبدو داكناً. هذا يسمح برؤية الآفات المجاورة للبطينات والقشرية التي قد تُحجبها إشارة T2 الساطعة للسائل.",
-    modality: "MRI",
-    category: "Neuro"
-  },
-  {
-    id: 13,
-    en: "On CT chest, ground-glass opacity (GGO) is defined as:",
-    ar: "في CT الصدر، يُعرَّف الكثافة الزجاجية المطحونة (GGO) بأنها:",
-    options: {
-      A: "Complete opacification obscuring vessels",
-      B: "Hazy increased attenuation not obscuring underlying vessels",
-      C: "Air-filled cystic spaces",
-      D: "Dense calcification within the lung"
-    },
-    answer: "B",
-    explanation: "GGO is a hazy increase in lung attenuation that does NOT obscure the underlying pulmonary vessels. When vessels are obscured, the term 'consolidation' is used instead.",
-    explanation_ar: "الكثافة الزجاجية المطحونة هي زيادة ضبابية في كثافة الرئة لا تُخفي الأوعية الرئوية الكامنة. عندما تُخفى الأوعية تُستخدم مصطلح 'تكثف' بدلاً منها.",
-    modality: "CT",
-    category: "Thoracic"
-  },
-  {
-    id: 14,
-    en: "On abdominal ultrasound, normal gallbladder wall thickness should not exceed:",
-    ar: "في الموجات فوق الصوتية للبطن، لا يجب أن يتجاوز سُمك جدار المرارة الطبيعي:",
-    options: { A: "1 mm", B: "3 mm", C: "5 mm", D: "8 mm" },
-    answer: "B",
-    explanation: "The normal gallbladder wall thickness on ultrasound is ≤3 mm (in a fasting patient with a distended gallbladder). Thickness >3 mm suggests cholecystitis or other pathology.",
-    explanation_ar: "سُمك جدار المرارة الطبيعي في الموجات فوق الصوتية ≤3 ملم (في مريض صائم مع مرارة ممتدة). السُمك >3 ملم يُشير إلى التهاب المرارة أو أمراض أخرى.",
-    modality: "Ultrasound",
-    category: "Abdomen"
-  },
-  {
-    id: 15,
-    en: "On nuclear medicine bone scan, 'hot spots' (increased tracer uptake) indicate areas of:",
-    ar: "في التصوير النووي لعظام، تُشير 'البقع الساخنة' (زيادة امتصاص الكاشف) إلى مناطق:",
-    options: { A: "Decreased blood supply", B: "Increased osteoblastic activity", C: "Pure lytic disease", D: "Normal bone remodeling only" },
-    answer: "B",
-    explanation: "Hot spots on bone scan reflect increased osteoblastic activity and blood flow. They occur in metastases (especially from breast/prostate), fractures, infection, and Paget's disease.",
-    explanation_ar: "البقع الساخنة في تصوير العظام تعكس زيادة النشاط البانيّ للعظم والتدفق الدموي. تحدث في النقائل (خاصةً من الثدي/البروستاتا) والكسور والتهابات ومرض باجيت.",
-    modality: "NM",
-    category: "MSK"
-  },
-  {
-    id: 16,
-    en: "On MRI, which sequence is most sensitive for detecting acute brain ischemia within the first hours?",
-    ar: "في MRI، أي تسلسل أكثر حساسية لكشف نقص التروية الدماغية الحاد خلال الساعات الأولى؟",
-    options: { A: "T1 weighted", B: "T2 weighted", C: "FLAIR", D: "Diffusion Weighted Imaging (DWI)" },
-    answer: "D",
-    explanation: "DWI detects acute ischemia within minutes of onset by showing restricted diffusion (bright on DWI, dark on ADC map). T2 and FLAIR changes appear only after 6–12 hours.",
-    explanation_ar: "DWI يكشف نقص التروية الحاد خلال دقائق من بدايته عبر إظهار تقييد الانتشار (ساطع في DWI، داكن في خريطة ADC). تغييرات T2 وFLAIR تظهر فقط بعد 6-12 ساعة.",
-    modality: "MRI",
-    category: "Neuro"
-  },
-  {
-    id: 17,
-    en: "On chest X-ray, Kerley B lines are seen as:",
-    ar: "في صورة الصدر الشعاعية، خطوط كيرلي B تُشاهد كـ:",
-    options: {
-      A: "Long lines extending from hilum to periphery",
-      B: "Short horizontal lines at the lung bases perpendicular to the pleura",
-      C: "Vertical lines in the upper lobes",
-      D: "Circular lines around pulmonary nodules"
-    },
-    answer: "B",
-    explanation: "Kerley B lines are short (1–2 cm), horizontal lines at the lung bases, perpendicular to and touching the pleural surface. They represent thickened interlobular septa from fluid or fibrosis.",
-    explanation_ar: "خطوط كيرلي B هي خطوط أفقية قصيرة (1-2 سم) في قواعد الرئتين، عمودية على السطح الجنبي وتلامسه. تمثل سُمكاً في الحواجز بين الفصيصات بسبب السوائل أو التليف.",
-    modality: "X-Ray",
-    category: "Thoracic"
-  },
-  {
-    id: 18,
-    en: "On CT angiography, which vessel arises first from the abdominal aorta below the diaphragm?",
-    ar: "في CT الأوعية، أي وعاء ينشأ أولاً من الأبهر البطني تحت الحجاب الحاجز؟",
-    options: { A: "Superior mesenteric artery", B: "Celiac trunk", C: "Renal arteries", D: "Inferior mesenteric artery" },
-    answer: "B",
-    explanation: "The celiac trunk is the first major branch of the abdominal aorta, arising at approximately T12/L1 level, just below the aortic hiatus of the diaphragm.",
-    explanation_ar: "جذع الاضطرابية هو أول فرع رئيسي من الأبهر البطني، ينشأ عند مستوى T12/L1 تقريباً، تحت الشق الأبهري للحجاب الحاجز مباشرةً.",
-    modality: "CT",
-    category: "Vascular"
-  },
-  {
-    id: 19,
-    en: "On mammography, which finding is most suspicious for malignancy?",
-    ar: "في التصوير الشعاعي للثدي، أي موجودة أكثر اشتباهاً بالخباثة؟",
-    options: {
-      A: "Round mass with circumscribed margins",
-      B: "Spiculated mass with irregular margins",
-      C: "Oval mass with microlobulated margins",
-      D: "Calcification with coarse morphology"
-    },
-    answer: "B",
-    explanation: "A spiculated mass with irregular margins is the hallmark of breast malignancy on mammography, corresponding to BI-RADS 4C/5 category. It represents desmoplastic reaction and tumor infiltration.",
-    explanation_ar: "الكتلة ذات الحواف الشعاعية الغير منتظمة هي السمة المميزة للأورام الخبيثة في الثدي في التصوير الشعاعي، وتقابل تصنيف BI-RADS 4C/5. تمثل التفاعل الليفي وتغلغل الورم.",
-    modality: "Mammography",
-    category: "Breast"
-  },
-  {
-    id: 20,
-    en: "On PET-CT, increased FDG uptake in a pulmonary nodule suggests:",
-    ar: "في PET-CT، زيادة امتصاص FDG في عقيدة رئوية تُشير إلى:",
-    options: {
-      A: "Benign calcified granuloma",
-      B: "Metabolically active (possibly malignant) tissue",
-      C: "Normal physiological uptake",
-      D: "Post-radiation change"
-    },
-    answer: "B",
-    explanation: "FDG (fluorodeoxyglucose) accumulates in metabolically active cells. Increased uptake in a pulmonary nodule raises concern for malignancy, as cancer cells have elevated glucose metabolism. SUV > 2.5 is considered suspicious.",
-    explanation_ar: "يتراكم FDG في الخلايا النشطة أيضياً. زيادة امتصاصه في عقيدة رئوية يثير القلق من الخباثة، إذ تمتلك الخلايا السرطانية استقلاباً مرتفعاً للجلوكوز. SUV > 2.5 يُعدّ مريباً.",
-    modality: "PET",
-    category: "Oncology"
-  },
-  {
-    id: 21,
-    en: "On lateral wrist X-ray, the normal angle between the lunate and scaphoid (scapholunate angle) is:",
-    ar: "في صورة الرسغ الجانبية، الزاوية الطبيعية بين الزورقي والهلالي (زاوية الزورقي-الهلالي) هي:",
-    options: { A: "0–20°", B: "30–60°", C: "70–90°", D: "> 90°" },
-    answer: "B",
-    explanation: "The normal scapholunate angle is 30–60°. An angle > 70° suggests scapholunate dissociation (DISI pattern), while < 30° suggests VISI pattern.",
-    explanation_ar: "زاوية الزورقي-الهلالي الطبيعية هي 30-60°. زاوية > 70° تُشير إلى تفكك الزورقي-الهلالي (نمط DISI)، بينما < 30° تُشير إلى نمط VISI.",
-    modality: "X-Ray",
-    category: "MSK"
-  },
-  {
-    id: 22,
-    en: "On CT of the head (non-contrast), acute blood appears as:",
-    ar: "في CT الرأس (بدون حقن)، يظهر الدم الحاد كـ:",
-    options: { A: "Hypodense (dark)", B: "Isodense (grey)", C: "Hyperdense (white)", D: "Air-density (black)" },
-    answer: "C",
-    explanation: "Acute blood is hyperdense (bright white) on non-contrast CT due to the high protein content of clotted blood. Chronic blood becomes isodense then hypodense over days to weeks.",
-    explanation_ar: "الدم الحاد يظهر مفرط الكثافة (أبيض ساطع) في CT بدون حقن بسبب المحتوى الغني بالبروتين في الدم المتجلط. الدم المزمن يصبح متساوي الكثافة ثم ناقص الكثافة خلال أيام إلى أسابيع.",
-    modality: "CT",
-    category: "Neuro"
-  },
-  {
-    id: 23,
-    en: "On angiography, 'string of beads' appearance of the renal artery is characteristic of:",
-    ar: "في تصوير الأوعية، مظهر 'سلك الخرز' للشريان الكلوي مميز لـ:",
-    options: {
-      A: "Renal artery atherosclerosis",
-      B: "Fibromuscular dysplasia (FMD)",
-      C: "Polyarteritis nodosa",
-      D: "Renal artery thrombosis"
-    },
-    answer: "B",
-    explanation: "Fibromuscular dysplasia produces the classic 'string of beads' appearance on angiography, representing alternating areas of stenosis and dilatation affecting the media of the arterial wall. It commonly affects young women.",
-    explanation_ar: "يُنتج خلل التنسج العضلي الليفي المظهر الكلاسيكي لـ'سلك الخرز' في تصوير الأوعية، يمثل مناطق متبادلة من الضيق والتوسع تؤثر على الطبقة الوسطى لجدار الشريان. يشيع عند النساء الشابات.",
-    modality: "Angiography",
-    category: "Vascular"
-  },
-  {
-    id: 24,
-    en: "The 'double bubble' sign on abdominal X-ray in a neonate is associated with:",
-    ar: "علامة 'الفقاعة المزدوجة' في صورة البطن الشعاعية عند حديثي الولادة ترتبط بـ:",
-    options: { A: "Pyloric stenosis", B: "Duodenal atresia", C: "Hirschsprung disease", D: "Meconium ileus" },
-    answer: "B",
-    explanation: "The double bubble sign shows two gas-filled bubbles — the stomach and dilated proximal duodenum — separated by the pylorus. It is pathognomonic for duodenal atresia and is associated with Down syndrome (trisomy 21) in 30% of cases.",
-    explanation_ar: "علامة الفقاعة المزدوجة تُظهر فقاعتين مملوءتين بالغاز — المعدة والجزء القريب المتوسع من الاثني عشر — مفصولتين بالبواب. وهي علامة مرضية لرتق الاثني عشر وترتبط بمتلازمة داون في 30% من الحالات.",
-    modality: "X-Ray",
-    category: "Paediatric"
-  },
-  {
-    id: 25,
-    en: "On MRI knee, the anterior cruciate ligament (ACL) is best evaluated on which sequence and plane?",
-    ar: "في MRI الركبة، يُقيَّم الرباط الصليبي الأمامي (ACL) على أفضل وجه في أي تسلسل ومستوى؟",
-    options: {
-      A: "T1, axial plane",
-      B: "T2 fat-saturated, sagittal plane",
-      C: "STIR, coronal plane",
-      D: "Proton density, axial plane"
-    },
-    answer: "B",
-    explanation: "The ACL is best evaluated on T2 fat-saturated (or PD fat-sat) sagittal images, where it appears as a low-signal band running from the posterior femur to the anterior tibia. Fat suppression highlights any edema or tear.",
-    explanation_ar: "يُقيَّم الرباط الصليبي الأمامي على أفضل وجه في صور السهمي T2 مع إشباع الدهن (أو PD مع إشباع دهن)، حيث يظهر كشريط منخفض الإشارة يمتد من الفخذ الخلفي إلى الظنبوب الأمامي.",
-    modality: "MRI",
-    category: "MSK"
-  },
-  {
-    id: 26,
-    en: "On CT urogram, the normal ureter lies in which anatomical position in the pelvis?",
-    ar: "في CT الجهاز البولي، يقع الحالب في أي موضع تشريحي في الحوض؟",
-    options: {
-      A: "Anterior to the iliac vessels",
-      B: "Posterior to the iliac vessels",
-      C: "Medial to the psoas muscle only",
-      D: "Lateral to the sacrum"
-    },
-    answer: "A",
-    explanation: "In the pelvis, the ureter passes anterior to the iliac vessels (crossing anterior to the bifurcation of the common iliac artery). This relationship is important during pelvic surgery.",
-    explanation_ar: "في الحوض، يمر الحالب أمام الأوعية الحرقفية (عابراً أمام تفرع الشريان الحرقفي المشترك). هذه العلاقة مهمة خلال الجراحة الحوضية.",
-    modality: "CT",
-    category: "Urinary"
-  },
-  {
-    id: 27,
-    en: "On chest X-ray, a widened mediastinum (>8 cm on PA view) raises concern for all EXCEPT:",
-    ar: "في صورة الصدر الشعاعية، توسّع المنصف (>8 سم في الصورة الأمامية الخلفية) يثير القلق من جميع الآتي ماعدا:",
-    options: {
-      A: "Aortic dissection",
-      B: "Lymphoma",
-      C: "Pneumothorax",
-      D: "Aortic aneurysm"
-    },
-    answer: "C",
-    explanation: "Pneumothorax does not widen the mediastinum — it presents as absence of lung markings peripherally with a visible pleural line. Widened mediastinum is caused by aortic pathology, lymphoma, teratoma, or thyroid masses.",
-    explanation_ar: "الاسترواح الصدري لا يُوسّع المنصف — يظهر كغياب علامات الرئة في المحيط مع خط جنبي مرئي. توسّع المنصف يُسببه أمراض الأبهر واللمفوما والتيراتوما وكتل الغدة الدرقية.",
-    modality: "X-Ray",
-    category: "Thoracic"
-  },
-  {
-    id: 28,
-    en: "On renal ultrasound, increased cortical echogenicity compared to liver parenchyma suggests:",
-    ar: "في الموجات فوق الصوتية للكلى، زيادة صدى القشرة مقارنةً بحمة الكبد تُشير إلى:",
-    options: {
-      A: "Normal finding in children",
-      B: "Renal parenchymal disease (medical renal disease)",
-      C: "Acute pyelonephritis only",
-      D: "Renal cyst"
-    },
-    answer: "B",
-    explanation: "Normally, renal cortex is isoechoic or slightly hypoechoic compared to liver. Increased cortical echogenicity (≥ liver) suggests medical renal disease such as chronic renal failure, glomerulonephritis, or diabetic nephropathy.",
-    explanation_ar: "طبيعياً، القشرة الكلوية متساوية الصدى أو أقل صدى قليلاً مقارنةً بالكبد. زيادة الصدى القشري (≥ الكبد) تُشير إلى أمراض الكلى الطبية كالفشل الكلوي المزمن والتهاب الكبيبات أو اعتلال الكلى السكري.",
-    modality: "Ultrasound",
-    category: "Urinary"
-  },
-  {
-    id: 29,
-    en: "On fluoroscopy barium swallow, the normal mucosal fold pattern of the esophagus is:",
-    ar: "في ابتلاع الباريوم بالتنظير الفلوري، النمط الطبيعي لطيات مخاطية المريء هو:",
-    options: {
-      A: "Transverse folds throughout",
-      B: "Thin longitudinal parallel folds",
-      C: "Nodular mucosal pattern",
-      D: "Irregular folds with filling defects"
-    },
-    answer: "B",
-    explanation: "The normal esophageal mucosa shows thin, parallel longitudinal folds running along the length of the esophagus on barium swallow. Any nodularity, thickening, or irregularity suggests pathology.",
-    explanation_ar: "تُظهر المخاطية الطبيعية للمريء طيات طولية رفيعة متوازية تمتد على طول المريء في ابتلاع الباريوم. أي تعقيد أو سُمك أو عدم انتظام يُشير إلى مرض.",
-    modality: "Angiography",
-    category: "GI"
-  },
-  {
-    id: 30,
-    en: "On CT abdomen, a 'target sign' or 'halo sign' around a bowel loop is most suggestive of:",
-    ar: "في CT البطن، 'علامة الهدف' أو 'علامة الهالة' حول حلقة معوية تُشير أكثر إلى:",
-    options: {
-      A: "Normal bowel",
-      B: "Bowel wall edema (mural stratification)",
-      C: "Bowel perforation",
-      D: "Intussusception"
-    },
-    answer: "B",
-    explanation: "The target sign on CT represents mural stratification with alternating layers of different density in the bowel wall, seen in bowel edema, inflammation (Crohn's, colitis), or ischemia.",
-    explanation_ar: "علامة الهدف في CT تمثل تطبقاً جدارياً مع طبقات متبادلة من كثافات مختلفة في جدار الأمعاء، تُشاهد في وذمة الأمعاء والالتهاب (كرون، التهاب القولون) أو نقص التروية.",
-    modality: "CT",
-    category: "GI"
-  }
+  { q:'Which modality is the first-line for suspected acute stroke to rule out hemorrhage?',
+    c:['MRI DWI','Non-contrast CT head','CT angiography','Cerebral angiography'], a:1,
+    e:'Non-contrast CT is the ACR-recommended first-line to rule out intracranial hemorrhage before thrombolysis (ACR score 9/9).',
+    ar:'CT بلا صبغة هو الخيار الأول لاستبعاد النزيف قبل حل الخثرة.' },
+  { q:'The right kidney is normally positioned relative to the left kidney:',
+    c:['Higher','Lower','At the same level','Anterior'], a:1,
+    e:'The right kidney is displaced inferiorly by the liver, spanning approximately T12–L3. The left spans T11–L2.',
+    ar:'الكلية اليمنى أخفض من اليسرى بسبب الكبد، T12–L3.' },
+  { q:'What is the imaging modality of choice for suspected rotator cuff tear?',
+    c:['X-Ray','CT','MRI','Ultrasound'], a:2,
+    e:'MRI (particularly PD fat-saturated sequences) is optimal for evaluating rotator cuff tears and shoulder soft tissues.',
+    ar:'MRI مع تسلسلات PD fat-sat هو الأمثل لتقييم تمزّق الكفة المدوّرة.' },
+  { q:'Which sequence best detects acute cerebral infarction within the first hours?',
+    c:['T1','T2','FLAIR','DWI / ADC'], a:3,
+    e:'DWI/ADC detects cytotoxic edema within minutes of ischemia — sensitivity far exceeds CT in the acute window.',
+    ar:'DWI/ADC يكشف الاحتشاء الحاد خلال دقائق، حساسيته أعلى بكثير من CT.' },
+  { q:'What is the first-line imaging for suspected cholelithiasis?',
+    c:['CT abdomen','MRCP','Right upper quadrant ultrasound','HIDA scan'], a:2,
+    e:'RUQ ultrasound is the ACR-recommended first-line: highest sensitivity for gallstones, no radiation, bedside-available.',
+    ar:'سونار الربع الأيمن العلوي هو الخيار الأول لحصوات المرارة.' }
 ];
-
-// ── State ─────────────────────────────────────────────────────────────────────
-let currentUser  = null;
-let todayQ       = null;
-let timerStart   = null;
-let timerInterval= null;
-let answered     = false;
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  setTodayDate();
-  await initUser();
-  loadTodayQuestion();
-  loadLeaderboard();
-});
-
-function setTodayDate() {
-  const d = new Date();
-  document.getElementById('todayDate').textContent =
-    d.toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+function todayIndex(){
+  const start = new Date('2026-01-01').getTime();
+  const day = Math.floor((Date.now() - start) / 86400000);
+  return { day: day + 1, idx: ((day % QUESTIONS.length) + QUESTIONS.length) % QUESTIONS.length };
 }
-
-async function initUser() {
-  try {
-    currentUser = await OmniRadAuth.getSession();
-  } catch (_) { currentUser = null; }
-
-  if (currentUser) {
-    const name   = currentUser.user_metadata?.full_name || currentUser.email || 'User';
-    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-    document.getElementById('userChip').style.display = 'flex';
-    document.getElementById('signInBtn').style.display = 'none';
-    document.getElementById('userName').textContent    = name.split(' ')[0];
-    document.getElementById('userAvatar').textContent  = initials;
-    await loadStreakStats();
-  } else {
-    document.getElementById('guestBanner').classList.add('show');
-    setStreakDisplay(0, 0, '—', '—');
-  }
+const $ = id => document.getElementById(id);
+const state = { picked: -1, checked: false };
+function loadStats(){
+  try { return JSON.parse(localStorage.getItem('omnirad_daily') || '{}'); } catch { return {}; }
 }
-
-// ── Question Picker (deterministic by date) ───────────────────────────────────
-function getTodayIndex() {
-  const d = new Date();
-  const seed = d.getFullYear() * 10000 + (d.getMonth()+1) * 100 + d.getDate();
-  return seed % QUESTIONS.length;
+function saveStats(s){ localStorage.setItem('omnirad_daily', JSON.stringify(s)); }
+function renderStats(){
+  const s = loadStats();
+  $('stStreak').textContent = s.streak || 0;
+  $('stTotal').textContent  = s.total  || 0;
+  $('stPct').textContent    = s.total ? Math.round((s.correct || 0) * 100 / s.total) + '%' : '—';
 }
-
-// ── Load Today's Question ─────────────────────────────────────────────────────
-async function loadTodayQuestion() {
-  todayQ = QUESTIONS[getTodayIndex()];
-
-  // Check if already answered (logged-in users)
-  if (currentUser) {
-    try {
-      const existing = await OmniRadDB.getMyDailyScore();
-      if (existing) {
-        showAlreadyAnswered(existing);
-        return;
-      }
-    } catch (_) {}
-  }
-
-  renderQuestion();
-}
-
-function renderQuestion() {
-  const body = document.getElementById('challengeBody');
-  const letters = ['A','B','C','D'];
-
-  body.innerHTML = `
-    <p class="question-text">${todayQ.en}</p>
-    <p class="question-ar">${todayQ.ar}</p>
-    <div class="options" id="optionsGrid">
-      ${letters.map(l => `
-        <button class="option-btn" data-option="${l}" onclick="selectOption('${l}')">
-          <span class="option-letter">${l}</span>
-          ${todayQ.options[l]}
-        </button>
-      `).join('')}
-    </div>
-    <div class="explanation" id="explanation">
-      <div class="explanation-title">Explanation</div>
-      <div class="explanation-text" id="explanationText"></div>
-      <div class="explanation-ar" id="explanationAr"></div>
-    </div>
-  `;
-
-  // Start timer
-  timerStart = Date.now();
-  timerInterval = setInterval(updateTimer, 1000);
-  document.getElementById('qModality').textContent = todayQ.modality;
-}
-
-function updateTimer() {
-  const secs = Math.floor((Date.now() - timerStart) / 1000);
-  const el = document.getElementById('timerDisplay');
-  if (!el) return;
-  el.textContent = secs + 's';
-  if (secs >= 60) el.classList.add('urgent');
-}
-
-// ── Answer Selection ──────────────────────────────────────────────────────────
-async function selectOption(choice) {
-  if (answered) return;
-  answered = true;
-  clearInterval(timerInterval);
-
-  const timeSeconds = Math.floor((Date.now() - timerStart) / 1000);
-  const isCorrect   = (choice === todayQ.answer);
-  const score       = isCorrect ? 1 : 0;
-
-  // Style buttons
-  const btns = document.querySelectorAll('.option-btn');
-  btns.forEach(btn => {
-    btn.disabled = true;
-    const opt = btn.dataset.option;
-    if (opt === todayQ.answer) btn.classList.add('correct');
-    else if (opt === choice && !isCorrect) btn.classList.add('wrong');
+function render(){
+  const { day, idx } = todayIndex();
+  $('dayTag').textContent = 'DAY ' + day;
+  const q = QUESTIONS[idx];
+  $('q').textContent = q.q;
+  const cw = $('choices'); cw.innerHTML = '';
+  q.c.forEach((text, i) => {
+    const b = document.createElement('button');
+    b.className = 'choice' + (state.picked === i ? ' picked' : '');
+    b.textContent = text;
+    b.addEventListener('click', () => { if (state.checked) return; state.picked = i; render(); });
+    cw.appendChild(b);
   });
-
-  // Show explanation
-  document.getElementById('explanationText').textContent = todayQ.explanation;
-  document.getElementById('explanationAr').textContent   = todayQ.explanation_ar;
-  document.getElementById('explanation').classList.add('show');
-
-  // Save to Supabase if logged in
-  if (currentUser) {
-    try {
-      await OmniRadDB.submitDailyScore(score, timeSeconds);
-      await loadStreakStats(); // refresh streak display
-      await loadLeaderboard(); // refresh leaderboard
-    } catch (e) {
-      console.warn('Score save failed:', e);
-    }
+  renderStats();
+}
+$('btnCheck').addEventListener('click', () => {
+  if (state.picked < 0) return alert('Pick an answer first.');
+  const { idx } = todayIndex();
+  const q = QUESTIONS[idx];
+  state.checked = true;
+  const buttons = $('choices').children;
+  for (let i = 0; i < buttons.length; i++){
+    buttons[i].classList.remove('picked');
+    if (i === q.a) buttons[i].classList.add('correct');
+    else if (i === state.picked) buttons[i].classList.add('wrong');
   }
-}
-
-function showAlreadyAnswered(record) {
-  clearInterval(timerInterval);
-  document.getElementById('challengeBody').style.display = 'none';
-  const el = document.getElementById('alreadyDone');
-  el.classList.add('show');
-
-  const icon  = record.score === 1 ? '✅' : '❌';
-  const title = record.score === 1 ? 'Correct! You answered today\'s challenge.' : 'You answered today\'s challenge.';
-  const scoreText = record.score === 1 ? '⭐ +1 Point Earned' : '0 Points — Try again tomorrow';
-
-  document.getElementById('doneIcon').textContent  = icon;
-  document.getElementById('doneTitle').textContent = title;
-  document.getElementById('doneScore').textContent = scoreText;
-  if (record.score === 1) {
-    document.getElementById('doneScore').style.color = 'var(--success)';
-    document.getElementById('doneScore').style.borderColor = 'var(--success)';
-    document.getElementById('doneScore').style.background  = 'var(--success-dim)';
-  } else {
-    document.getElementById('doneScore').style.color = 'var(--danger)';
-    document.getElementById('doneScore').style.borderColor = 'var(--danger)';
-    document.getElementById('doneScore').style.background  = 'var(--danger-dim)';
-  }
-  document.getElementById('qModality').textContent = todayQ.modality;
-}
-
-// ── Streak Display ────────────────────────────────────────────────────────────
-async function loadStreakStats() {
-  try {
-    const streak = await OmniRadDB.getMyStreak();
-    const lb     = await OmniRadDB.getLeaderboard(100);
-    const me     = lb?.find(r => r.user_id === currentUser?.id);
-    setStreakDisplay(
-      streak.current_streak || 0,
-      streak.longest_streak || 0,
-      me?.days_played  ?? 0,
-      me?.total_score  ?? 0
-    );
-  } catch (_) {
-    setStreakDisplay(0, 0, 0, 0);
-  }
-}
-
-function setStreakDisplay(current, longest, days, total) {
-  document.getElementById('currentStreak').textContent = current + (current === 1 ? ' day' : ' days');
-  document.getElementById('longestStreak').textContent = longest + (longest === 1 ? ' day' : ' days');
-  document.getElementById('daysPlayed').textContent    = days;
-  document.getElementById('totalScore').textContent    = total;
-}
-
-// ── Leaderboard ───────────────────────────────────────────────────────────────
-async function loadLeaderboard() {
-  const lbBody = document.getElementById('lbBody');
-  try {
-    const rows = await OmniRadDB.getLeaderboard(20);
-    document.getElementById('lbUpdated').textContent = 'Updated just now';
-
-    if (!rows || rows.length === 0) {
-      lbBody.innerHTML = '<div class="lb-empty">No scores yet — be the first! 🏆</div>';
-      return;
-    }
-
-    const meId = currentUser?.id;
-    lbBody.innerHTML = `
-      <table class="lb-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Score</th>
-            <th>Days</th>
-            <th>Streak</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map((r, i) => {
-            const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-            const isMe      = r.user_id === meId;
-            const name      = r.display_name || 'Anonymous';
-            return `
-              <tr class="${isMe ? 'me' : ''}">
-                <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
-                <td>${name}${isMe ? ' <span style="color:var(--accent);font-size:11px;font-family:var(--mono)">(you)</span>' : ''}</td>
-                <td><strong>${r.total_score}</strong></td>
-                <td>${r.days_played}</td>
-                <td>${r.current_streak > 0 ? `<span class="streak-pill">🔥 ${r.current_streak}</span>` : '—'}</td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
-    `;
-  } catch (e) {
-    lbBody.innerHTML = '<div class="lb-empty">Could not load leaderboard.</div>';
-  }
-}
-OmniRadAuth.updateNav();
+  const ex = $('explain');
+  ex.innerHTML = q.e + '<div class="ar">' + q.ar + '</div>';
+  ex.style.display = 'block';
+  // stats
+  const s = loadStats();
+  s.total = (s.total || 0) + 1;
+  if (state.picked === q.a){ s.correct = (s.correct || 0) + 1; s.streak = (s.streak || 0) + 1; }
+  else { s.streak = 0; }
+  saveStats(s); renderStats();
+  $('btnCheck').style.display = 'none';
+});
+render();
 </script>
 </body>
 </html>
