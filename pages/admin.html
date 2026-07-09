@@ -113,6 +113,9 @@ tr:hover td{background:var(--bg-ov)}
     <div class="side-item"       data-tab="contrib"><span class="ico">👨‍⚕️</span><span data-i18n="admin.contrib">Contributors</span></div>
     <div class="side-item"       data-tab="contacts"><span class="ico">📩</span><span data-i18n="admin.contacts">Messages</span></div>
     <div class="side-item"       data-tab="settings"><span class="ico">⚙️</span><span data-i18n="admin.settings">Settings</span></div>
+    <div class="side-item"       data-tab="access"><span class="ico">🔐</span><span data-i18n="admin.access">Access matrix</span></div>
+    <div class="side-item"       data-tab="activity"><span class="ico">📜</span><span data-i18n="admin.activity">Activity log</span></div>
+    <div class="side-item"       data-tab="contrib" style="display:none"><span class="ico">👨‍⚕️</span><span data-i18n="admin.contrib">Contributors</span></div>
   </aside>
 
   <!-- Main -->
@@ -129,7 +132,14 @@ tr:hover td{background:var(--bg-ov)}
     <!-- USERS -->
     <section id="secUsers" class="section">
       <div class="section-card">
-        <div class="section-head"><h2 data-i18n="admin.users">Users</h2></div>
+        <div class="section-head">
+          <h2 data-i18n="admin.users">Users</h2>
+          <button class="btn" onclick="openInviteModal()">✉️ <span data-i18n="admin.invite">Invite user</span></button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+          <input id="userSearch" placeholder="Search by name or email…" data-i18n-placeholder="admin.searchUsers" style="flex:1;min-width:200px;padding:8px 12px;background:var(--bg-s);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12.5px">
+          <div id="roleFilter" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+        </div>
         <div id="usersTable"></div>
       </div>
     </section>
@@ -180,6 +190,24 @@ tr:hover td{background:var(--bg-ov)}
       <div class="section-card">
         <div class="section-head"><h2 data-i18n="admin.contacts">Incoming Messages</h2></div>
         <div id="contactsTable"></div>
+      </div>
+    </section>
+
+    <!-- ACCESS MATRIX -->
+    <section id="secAccess" class="section">
+      <div class="section-card">
+        <div class="section-head"><h2 data-i18n="admin.access">Access Matrix</h2></div>
+        <p style="color:var(--text-s);font-size:13px;line-height:1.7;margin-bottom:14px" data-i18n="admin.accessLead">Five roles, from most restrictive to most privileged. Change any user's role from the Users tab.</p>
+        <div id="accessMatrix"></div>
+      </div>
+    </section>
+
+    <!-- ACTIVITY LOG -->
+    <section id="secActivity" class="section">
+      <div class="section-card">
+        <div class="section-head"><h2 data-i18n="admin.activity">Activity log</h2></div>
+        <p style="color:var(--text-s);font-size:13px;line-height:1.7;margin-bottom:14px" data-i18n="admin.activityLead">Audit trail of role changes and administrative actions (last 200 events).</p>
+        <div id="activityTable"></div>
       </div>
     </section>
 
@@ -236,6 +264,26 @@ tr:hover td{background:var(--bg-ov)}
   <div class="modal-actions">
     <button class="btn ghost" onclick="closeModal('contribModal')" data-i18n="mod.cancel">Cancel</button>
     <button class="btn" id="coSave" data-i18n="mod.save">Save</button>
+  </div>
+</div></div>
+
+<!-- Invite modal -->
+<div class="modal-bg" id="inviteModal"><div class="modal">
+  <h3 data-i18n="mod.inviteTitle">Invite a new user</h3>
+  <p style="color:var(--text-s);font-size:12.5px;line-height:1.6;margin-bottom:12px" data-i18n="mod.inviteHint">The user receives an email invitation. When they click the link, they set their own password and become a member.</p>
+  <div class="f"><label data-i18n="lbl.email">Email</label><input id="invEmail" type="email" placeholder="user@example.com"></div>
+  <div class="f"><label data-i18n="lbl.roleAssign">Initial role</label>
+    <select id="invRole">
+      <option value="viewer">viewer</option>
+      <option value="trial">trial</option>
+      <option value="contributor">contributor</option>
+      <option value="reviewer">reviewer</option>
+      <option value="admin">admin</option>
+    </select>
+  </div>
+  <div class="modal-actions">
+    <button class="btn ghost" onclick="closeModal('inviteModal')" data-i18n="mod.cancel">Cancel</button>
+    <button class="btn" id="invSend" data-i18n="mod.sendInvite">Send invite</button>
   </div>
 </div></div>
 

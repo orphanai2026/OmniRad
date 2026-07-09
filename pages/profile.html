@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — My Profile</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--ok:#4ade80;--err:#f87171}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--err:#c53030}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:36px 22px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:10px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+.lead{color:var(--text-s);font-size:14px;line-height:1.65;margin-bottom:24px}
+.card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+.section-t{font-size:11px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+.f{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.f label{font-weight:700;font-size:11px;color:var(--text-s);letter-spacing:.02em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.f input,.f textarea,.f select{padding:10px 12px;background:var(--bg-s);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13.5px}
+.f textarea{min-height:78px;resize:vertical}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:var(--acc)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.f2{grid-template-columns:1fr}}
+.avatar-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.avatar{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc-dim));display:grid;place-items:center;font-weight:700;font-size:26px;color:var(--acc-ink);overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.role-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 11px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;border-radius:999px;background:var(--acc-sub);color:var(--acc)}
+.role-tag.viewer{color:var(--text-m);background:var(--bg-ov)}
+.role-tag.trial{background:rgba(251,191,36,.16);color:#fbbf24}
+.role-tag.admin{background:rgba(45,212,200,.18);color:var(--acc)}
+.role-tag.contributor,.role-tag.reviewer{background:rgba(74,222,128,.18);color:var(--ok)}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:8px;flex-wrap:wrap}
+.btn{padding:10px 18px;background:var(--acc);color:var(--acc-ink);border:none;border-radius:9px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;transition:.14s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+.btn.ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn.danger{background:transparent;border:1.5px solid var(--err);color:var(--err)}
+.btn.danger:hover{background:var(--err);color:#fff}
+.msg{margin-top:12px;padding:9px 12px;font-size:12.5px;border-radius:8px;display:none}
+.msg.ok{background:rgba(74,222,128,.14);color:var(--ok);border:1px solid rgba(74,222,128,.35);display:block}
+.msg.err{background:rgba(248,113,113,.14);color:var(--err);border:1px solid rgba(248,113,113,.35);display:block}
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg-s);border:1px solid var(--border-s);border-radius:10px;cursor:pointer}
+.toggle-row:hover{border-color:var(--acc-dim)}
+.toggle-row input{margin:0}
+.disc{margin-top:22px;font-size:11px;color:var(--text-m);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <div class="icon">👤</div>
+  <h2 id="gateTitle">Checking access…</h2>
+  <p id="gateMsg">Loading your profile.</p>
+  <a id="gateCta" class="cta" href="auth.html" style="display:none">Sign in</a>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <div class="eyebrow" data-i18n="profile.eyebrow">OmniRad · My profile</div>
+  <h1 data-i18n="profile.h1">My profile</h1>
+  <p class="lead" data-i18n="profile.lead">Your public details on the OmniRad platform. Admins assign roles; everything else here is yours to edit.</p>
+
+  <div class="card">
+    <div class="section-t" data-i18n="profile.identity">Identity</div>
+    <div class="avatar-row">
+      <div class="avatar" id="avaBox"><span id="avaInitials">…</span></div>
+      <div style="flex:1;min-width:0">
+        <div id="whoName" style="font-weight:700;font-size:16px;margin-bottom:3px">…</div>
+        <div id="whoEmail" style="color:var(--text-m);font-size:12.5px;font-family:'IBM Plex Mono',monospace;margin-bottom:6px">…</div>
+        <span id="whoRole" class="role-tag">…</span>
+      </div>
+      <div>
+        <input type="file" id="avaFile" accept="image/png,image/jpeg,image/webp" style="display:none">
+        <button type="button" class="btn ghost" id="btnAvaPick" style="font-size:12px;padding:6px 12px" data-i18n="profile.uploadAvatar">📷 Upload photo</button>
+        <button type="button" class="btn danger" id="btnAvaClear" style="font-size:12px;padding:6px 12px;display:none" data-i18n="profile.removeAvatar">Remove</button>
+        <div id="avaHint" style="font-size:10.5px;color:var(--text-m);margin-top:4px" data-i18n="profile.avatarHint">JPG / PNG / WebP · max 2MB</div>
+      </div>
+    </div>
+
+    <div style="margin-top:6px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-s);letter-spacing:.02em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:8px" data-i18n="profile.preset">Or pick a radiology avatar</div>
+      <div id="presetGrid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(58px, 1fr));gap:8px"></div>
+    </div>
+    <div class="f2">
+      <div class="f"><label data-i18n="profile.nameEn">Display name (EN)</label><input id="fNameEn" placeholder="John Smith"></div>
+      <div class="f"><label data-i18n="profile.nameAr">Display name (AR)</label><input id="fNameAr" dir="rtl" placeholder="محمد سعيد"></div>
+    </div>
+    <div class="f2">
+      <div class="f"><label data-i18n="profile.roleTitleEn">Role title (EN)</label><input id="fRoleEn" placeholder="Radiology resident"></div>
+      <div class="f"><label data-i18n="profile.roleTitleAr">Role title (AR)</label><input id="fRoleAr" dir="rtl" placeholder="طبيب أشعة مقيم"></div>
+    </div>
+    <div class="f"><label data-i18n="profile.avatar">Avatar URL (optional — or upload above)</label><input id="fAvatar" placeholder="https://…"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-t" data-i18n="profile.about">About you</div>
+    <div class="f"><label data-i18n="profile.bioEn">Bio (EN)</label><textarea id="fBioEn" placeholder="A short professional bio in English."></textarea></div>
+    <div class="f"><label data-i18n="profile.bioAr">Bio (AR)</label><textarea id="fBioAr" dir="rtl" placeholder="نبذة قصيرة عنك بالعربية."></textarea></div>
+    <div class="f"><label data-i18n="profile.link">Personal / professional link</label><input id="fLink" placeholder="https://linkedin.com/in/…"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-t" data-i18n="profile.visibility">Visibility</div>
+    <label class="toggle-row">
+      <input type="checkbox" id="fShow" checked>
+      <div>
+        <div style="font-weight:700;font-size:13.5px" data-i18n="profile.showTitle">Show me on the Contributors page</div>
+        <div style="color:var(--text-m);font-size:11.5px;margin-top:2px" data-i18n="profile.showSub">If your role permits (Contributor / Reviewer / Admin), your card will appear publicly.</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="actions">
+    <button class="btn ghost" id="btnSignOut" data-i18n="profile.signOut">Sign out</button>
+    <button class="btn" id="btnSave" data-i18n="profile.save">💾 Save changes</button>
+  </div>
+  <div class="msg" id="msg"></div>
+  <div class="disc">⚕️ © 2026 OmniRad Platform. Educational only — not for diagnosis or clinical use.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const qa = s => [...document.querySelectorAll(s)];
+
+  const I18N = {
+    en: {
+      'profile.eyebrow':'OmniRad · My profile','profile.h1':'My profile',
+      'profile.lead':'Your public details on the OmniRad platform. Admins assign roles; everything else here is yours to edit.',
+      'profile.identity':'Identity','profile.about':'About you','profile.visibility':'Visibility',
+      'profile.nameEn':'Display name (EN)','profile.nameAr':'Display name (AR)',
+      'profile.roleTitleEn':'Role title (EN)','profile.roleTitleAr':'Role title (AR)',
+      'profile.avatar':'Avatar URL (optional)','profile.bioEn':'Bio (EN)','profile.bioAr':'Bio (AR)','profile.link':'Personal / professional link',
+      'profile.uploadAvatar':'📷 Upload photo','profile.removeAvatar':'Remove','profile.avatarHint':'JPG / PNG / WebP · max 2MB',
+      'profile.preset':'Or pick a radiology avatar',
+      'profile.uploading':'Uploading…','profile.uploadError':'Upload error: ',
+      'profile.showTitle':'Show me on the Contributors page',
+      'profile.showSub':'If your role permits (Contributor / Reviewer / Admin), your card will appear publicly.',
+      'profile.save':'💾 Save changes','profile.signOut':'Sign out',
+      'profile.gateCheck':'Checking access…','profile.gateSignin':'Sign in required','profile.gateSigninMsg':'Sign in to view and edit your profile.',
+      'profile.gateSigninBtn':'Sign in',
+      'msg.saved':'✓ Saved successfully.','msg.error':'Save error: '
+    },
+    ar: {
+      'profile.eyebrow':'OmniRad · بروفايلي','profile.h1':'بروفايلي',
+      'profile.lead':'بياناتك العامة على منصّة OmniRad. الأدمن يعيّن الأدوار؛ كل ما عدا ذلك من صلاحياتك.',
+      'profile.identity':'الهوية','profile.about':'عنك','profile.visibility':'الظهور',
+      'profile.nameEn':'الاسم للعرض (إنجليزي)','profile.nameAr':'الاسم للعرض (عربي)',
+      'profile.roleTitleEn':'المسمّى الوظيفي (إنجليزي)','profile.roleTitleAr':'المسمّى الوظيفي (عربي)',
+      'profile.avatar':'رابط الصورة الشخصية (اختياري)','profile.bioEn':'النبذة (إنجليزي)','profile.bioAr':'النبذة (عربي)','profile.link':'رابط شخصي / مهني',
+      'profile.uploadAvatar':'📷 رفع صورة','profile.removeAvatar':'إزالة','profile.avatarHint':'JPG / PNG / WebP · الحد الأقصى 2MB',
+      'profile.preset':'أو اختر أفاتار إشعاعياً',
+      'profile.uploading':'جارٍ الرفع…','profile.uploadError':'خطأ في الرفع: ',
+      'profile.showTitle':'أظهرني في صفحة المساهمين',
+      'profile.showSub':'إن سمح دورك (مساهم / مراجع / أدمن)، ستظهر بطاقتك للجمهور.',
+      'profile.save':'💾 حفظ التغييرات','profile.signOut':'تسجيل الخروج',
+      'profile.gateCheck':'التحقق من الصلاحية…','profile.gateSignin':'يلزم تسجيل الدخول','profile.gateSigninMsg':'سجّل الدخول لعرض بروفايلك وتعديله.',
+      'profile.gateSigninBtn':'تسجيل الدخول',
+      'msg.saved':'✓ تم الحفظ بنجاح.','msg.error':'خطأ في الحفظ: '
+    }
+  };
+  function t(k){ const lang = (window.OmniRadI18n && OmniRadI18n.lang)||'en'; return (I18N[lang]||I18N.en)[k]||k; }
+  function applyI18n(){ const lang=(window.OmniRadI18n&&OmniRadI18n.lang)||'en'; const d=I18N[lang]||I18N.en; qa('[data-i18n]').forEach(el=>{ const k=el.dataset.i18n; if(d[k]) el.textContent=d[k]; }); }
+  window.addEventListener('omnirad-lang', applyI18n);
+
+  let sb = null, uid = null, cur = {};
+
+  async function guard(){
+    let tries = 0;
+    while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+    if (!window.OmniRadAuth){ showGate('signin'); return; }
+    sb = OmniRadAuth.client;
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session){ showGate('signin'); return; }
+    uid = session.user.id;
+    $('gate').style.display = 'none'; $('app').style.display = 'block';
+    load(session.user.email);
+  }
+  function showGate(kind){
+    const g = $('gate'); g.style.display = 'grid';
+    $('gateTitle').textContent = t('profile.gateSignin');
+    $('gateMsg').textContent = t('profile.gateSigninMsg');
+    $('gateCta').style.display = 'inline-block';
+    $('gateCta').textContent = t('profile.gateSigninBtn');
+  }
+
+  async function load(email){
+    const { data, error } = await sb.from('profiles').select('*').eq('id', uid).maybeSingle();
+    cur = data || {};
+    const name = cur.display_name || (email||'').split('@')[0] || 'User';
+    $('whoName').textContent = name;
+    $('whoEmail').textContent = email || cur.email || '';
+    const role = cur.role || 'viewer';
+    const roleTag = $('whoRole'); roleTag.className = 'role-tag ' + role; roleTag.textContent = role;
+    $('avaInitials').textContent = name.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
+    if (cur.avatar_url){ renderAvatar(); }
+    else { renderAvatar(); }
+    renderPresetGrid();
+    $('fNameEn').value = cur.display_name || '';
+    $('fNameAr').value = cur.display_name_ar || '';
+    $('fRoleEn').value = cur.role_title_en || '';
+    $('fRoleAr').value = cur.role_title_ar || '';
+    $('fAvatar').value = cur.avatar_url || '';
+    $('fBioEn').value = cur.bio_en || '';
+    $('fBioAr').value = cur.bio_ar || '';
+    $('fLink').value = cur.link || '';
+    $('fShow').checked = cur.show_on_contributors !== false;
+  }
+
+  $('btnSave').addEventListener('click', async () => {
+    const patch = {
+      display_name:      $('fNameEn').value.trim() || null,
+      display_name_ar:   $('fNameAr').value.trim() || null,
+      role_title_en:     $('fRoleEn').value.trim() || null,
+      role_title_ar:     $('fRoleAr').value.trim() || null,
+      avatar_url:        $('fAvatar').value.trim() || null,
+      bio_en:            $('fBioEn').value.trim() || null,
+      bio_ar:            $('fBioAr').value.trim() || null,
+      link:              $('fLink').value.trim() || null,
+      show_on_contributors: $('fShow').checked
+    };
+    try {
+      const { error } = await sb.from('profiles').update(patch).eq('id', uid);
+      if (error) throw error;
+      const m = $('msg'); m.className = 'msg ok'; m.textContent = t('msg.saved');
+      setTimeout(()=>{ m.className='msg'; m.textContent=''; }, 3000);
+      load($('whoEmail').textContent);
+    } catch(e){
+      const m = $('msg'); m.className = 'msg err'; m.textContent = t('msg.error') + e.message;
+    }
+  });
+
+  $('btnSignOut').addEventListener('click', async () => {
+    try { await sb.auth.signOut(); location.href = 'auth.html'; } catch(e){}
+  });
+
+  /* ─── Preset radiology avatars ─── */
+  const PRESETS = [
+    { k:'brain',    label:'Brain',      svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c-6 0-10 4-10 10 0 2 .5 4 1.5 5.5C11 29 9 32 9 36c0 4 3 7 6 8 0 4 4 8 9 8 3 0 6-2 8-4 2 2 5 4 8 4 5 0 9-4 9-8 3-1 6-4 6-8 0-4-2-7-4.5-8.5C51.5 26 52 24 52 22c0-6-4-10-10-10-3 0-6 2-8 5-2-3-5-5-8-5z"/><path d="M32 17v34M22 24c2 0 4 1 4 3M42 24c-2 0-4 1-4 3M22 40c2 0 4-1 4-3M42 40c-2 0-4-1-4-3"/></svg>' },
+    { k:'heart',    label:'Heart',      svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 54s-20-10-20-26c0-6 5-12 12-12 4 0 6 2 8 5 2-3 4-5 8-5 7 0 12 6 12 12 0 16-20 26-20 26z"/><path d="M14 28h8l3-4 4 8 3-6 3 4h13"/></svg>' },
+    { k:'lungs',    label:'Lungs',      svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v22M32 32c-3 0-6 2-6 5v11c0 3 3 6 6 6M32 32c3 0 6 2 6 5v11c0 3-3 6-6 6M14 34c-4 3-4 12 0 18 4 4 8 2 8-2V22c0-3-4-3-6 0-2 3-2 8-2 12M50 34c4 3 4 12 0 18-4 4-8 2-8-2V22c0-3 4-3 6 0 2 3 2 8 2 12"/></svg>' },
+    { k:'kidney',   label:'Kidney',     svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c-6 4-10 12-10 20s4 16 10 20c4 2 8-2 8-6v-6c0-4 4-4 4 0v6c0 4 4 6 8 4 6-4 10-12 10-18s-4-16-10-20c-8-4-14 4-14 8v4c0 4-4 4-4 0v-4c0-4-2-8-2-8z"/><path d="M30 32c2 0 4 2 4 4"/></svg>' },
+    { k:'liver',    label:'Liver',      svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 22c0-6 6-10 14-10h22c6 0 10 4 10 10s-4 22-14 26c-8 3-16 4-22 2-6-2-10-8-10-14v-14z"/><path d="M22 22h14M22 30h20M22 38h16"/></svg>' },
+    { k:'spine',    label:'Spine',      svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6v52"/><rect x="24" y="10" width="16" height="6" rx="2"/><rect x="24" y="18" width="16" height="6" rx="2"/><rect x="24" y="26" width="16" height="6" rx="2"/><rect x="24" y="34" width="16" height="6" rx="2"/><rect x="24" y="42" width="16" height="6" rx="2"/><rect x="24" y="50" width="16" height="6" rx="2"/></svg>' },
+    { k:'bone',     label:'Bone',       svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 20c-3 0-5 2-5 5s2 5 5 5c0 3 2 5 5 5l14-14c0-3 2-5 5-5s5-2 5-5-2-5-5-5c0-3-2-5-5-5s-5 2-5 5L19 20c-3 0-5 0-5 0z" transform="rotate(-15 32 32)"/></svg>' },
+    { k:'stetho',   label:'Stethoscope',svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10v18c0 6 5 11 11 11s11-5 11-11V10"/><circle cx="48" cy="42" r="6"/><path d="M48 48v6c0 2-2 4-4 4h-8c-2 0-4-2-4-4v-4"/></svg>' },
+    { k:'xray',     label:'X-Ray',      svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="10" width="48" height="36" rx="3"/><path d="M18 22l10 12M28 22l-10 12M36 22h12M36 28h12M36 34h8"/><path d="M22 52h20"/></svg>' },
+    { k:'mri',      label:'MRI',        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="14" width="48" height="36" rx="4"/><circle cx="32" cy="32" r="12"/><circle cx="32" cy="32" r="4"/><path d="M32 20v-6M32 50v-6M20 32h-6M50 32h-6"/></svg>' },
+    { k:'ct',       label:'CT',         svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="22"/><circle cx="32" cy="32" r="10"/><path d="M32 10v6M32 54v-6M10 32h6M54 32h-6M17 17l4 4M47 47l-4-4M17 47l4-4M47 17l-4 4"/></svg>' },
+    { k:'us',       label:'Ultrasound', svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c-6 0-10 4-10 10v10c0 12 10 20 22 20s22-8 22-20V20c0-6-4-10-10-10z"/><path d="M20 20v10M28 24v6M36 24v6M44 20v10"/></svg>' }
+  ];
+  const PRESET_PREFIX = 'preset:';
+  function presetToDataUrl(svg){
+    const wrapped = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" style="background:#0c1520;color:#2dd4c8;padding:8px;border-radius:50%">' + svg.replace(/^<svg[^>]*>|<\/svg>$/g, '') + '</svg>';
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(wrapped);
+  }
+  function renderPresetGrid(){
+    const grid = $('presetGrid'); if (!grid) return;
+    const active = (cur.avatar_url||'').startsWith(PRESET_PREFIX) ? cur.avatar_url.slice(PRESET_PREFIX.length) : '';
+    grid.innerHTML = PRESETS.map(p => {
+      const on = p.k === active;
+      return `<button type="button" data-preset="${p.k}" title="${p.label}" style="aspect-ratio:1;padding:8px;background:${on?'var(--acc-sub)':'var(--bg-s)'};border:1.5px solid ${on?'var(--acc)':'var(--border)'};border-radius:12px;cursor:pointer;color:${on?'var(--acc)':'var(--text-s)'};display:grid;place-items:center;transition:.14s">${p.svg.replace('<svg','<svg width="100%" height="100%"')}</button>`;
+    }).join('');
+    grid.querySelectorAll('[data-preset]').forEach(btn => btn.addEventListener('click', () => pickPreset(btn.dataset.preset)));
+  }
+  async function pickPreset(k){
+    const p = PRESETS.find(x=>x.k===k); if (!p) return;
+    const url = PRESET_PREFIX + k;
+    try {
+      const { error } = await sb.from('profiles').update({ avatar_url: url }).eq('id', uid);
+      if (error) throw error;
+      cur.avatar_url = url;
+      renderAvatar();
+      renderPresetGrid();
+      showMsg('ok', t('msg.saved'));
+    } catch(e){ showMsg('err', t('profile.uploadError') + e.message); }
+  }
+  function renderAvatar(){
+    const box = $('avaBox');
+    const url = cur.avatar_url || '';
+    if (url.startsWith(PRESET_PREFIX)){
+      const p = PRESETS.find(x=>x.k === url.slice(PRESET_PREFIX.length));
+      if (p){ box.innerHTML = p.svg.replace('<svg', '<svg width="72%" height="72%" style="color:var(--acc-ink)"'); box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))'; $('btnAvaClear').style.display = 'inline-block'; return; }
+    }
+    if (url){ box.innerHTML = '<img src="'+url+'" alt="">'; $('btnAvaClear').style.display = 'inline-block'; }
+    else { box.innerHTML = '<span>'+initialsOf($('whoName').textContent)+'</span>'; box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))'; $('btnAvaClear').style.display = 'none'; }
+  }
+
+
+  $('btnAvaPick').addEventListener('click', ()=> $('avaFile').click());
+  $('btnAvaClear').addEventListener('click', async ()=>{
+    try {
+      const { error } = await sb.from('profiles').update({ avatar_url: null }).eq('id', uid);
+      if (error) throw error;
+      cur.avatar_url = null;
+      $('avaBox').innerHTML = '<span id="avaInitials">'+initialsOf($('whoName').textContent)+'</span>';
+      $('btnAvaClear').style.display = 'none';
+      showMsg('ok', t('msg.saved'));
+    } catch(e){ showMsg('err', t('profile.uploadError') + e.message); }
+  });
+  $('avaFile').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; if (!file) return;
+    if (file.size > 2*1024*1024){ showMsg('err', t('profile.uploadError') + 'file too large (>2MB)'); return; }
+    showMsg('ok', t('profile.uploading'));
+    try {
+      // Resize on client to a 512×512 square
+      const resized = await resizeSquare(file, 512);
+      const path = uid + '/avatar.' + (resized.ext);
+      const { error: upErr } = await sb.storage.from('avatars').upload(path, resized.blob, {
+        contentType: resized.type, upsert: true, cacheControl: '3600'
+      });
+      if (upErr) throw upErr;
+      const { data } = sb.storage.from('avatars').getPublicUrl(path);
+      const url = data.publicUrl + '?v=' + Date.now();
+      const { error } = await sb.from('profiles').update({ avatar_url: url }).eq('id', uid);
+      if (error) throw error;
+      cur.avatar_url = url;
+      $('avaBox').innerHTML = '<img src="'+url+'" alt="">';
+      $('btnAvaClear').style.display = 'inline-block';
+      $('fAvatar').value = url;
+      showMsg('ok', t('msg.saved'));
+    } catch(err){ showMsg('err', t('profile.uploadError') + err.message); }
+    finally { e.target.value = ''; }
+  });
+  function initialsOf(n){ return (n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U'; }
+  function showMsg(kind, text){ const m = $('msg'); m.className = 'msg ' + kind; m.textContent = text; if(kind==='ok') setTimeout(()=>{ m.className='msg'; m.textContent=''; }, 2400); }
+  function resizeSquare(file, size){
+    return new Promise((res, rej)=>{
+      const img = new Image(); const url = URL.createObjectURL(file);
+      img.onload = ()=>{
+        const min = Math.min(img.width, img.height);
+        const sx = (img.width-min)/2, sy = (img.height-min)/2;
+        const c = document.createElement('canvas'); c.width = size; c.height = size;
+        c.getContext('2d').drawImage(img, sx, sy, min, min, 0, 0, size, size);
+        c.toBlob(b => { URL.revokeObjectURL(url); res({ blob:b, type:'image/jpeg', ext:'jpg' }); }, 'image/jpeg', 0.9);
+      };
+      img.onerror = ()=>{ URL.revokeObjectURL(url); rej(new Error('image load failed')); };
+      img.src = url;
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{ applyI18n(); guard(); });
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,11 @@
   let sb = null;
   let editingId = { mnemo:null, card:null, contrib:null };
 
+  const ROLES = ['viewer','trial','contributor','reviewer','admin'];
+  const ROLE_BADGE = { viewer:'viewer', trial:'pending', contributor:'contrib', reviewer:'contrib', admin:'admin' };
+  function roleBadgeClass(r){ return ROLE_BADGE[r || 'viewer'] || 'viewer'; }
+  window.roleBadgeClass = roleBadgeClass;
+
   const I18N = {
     en: {
       'admin.sections':'Sections','admin.dash':'Dashboard','admin.dashLead':'Platform overview — content and user activity.',
@@ -20,6 +25,13 @@
       'admin.contrib':'Contributors','admin.contribLead':'People building the platform.',
       'admin.contacts':'Messages','admin.contactsLead':'Incoming messages from the public contact form.',
       'admin.settings':'Settings','admin.settingsLead':'Platform-wide switches.',
+      'admin.access':'Access Matrix','admin.accessLead':'Five roles, from most restrictive to most privileged. Change any user\'s role from the Users tab.',
+      'admin.activity':'Activity Log','admin.activityLead':'Audit trail of role changes and administrative actions (last 200 events).',
+      'admin.invite':'Invite user','admin.searchUsers':'Search by name or email…',
+      'empty.activity':'No activity yet.',
+      'col.when':'When','col.actor':'Actor','col.action':'Action',
+      'mod.inviteTitle':'Invite a new user','mod.inviteHint':'The user receives an email invitation. When they click the link, they set their own password and become a member.',
+      'mod.sendInvite':'Send invite','lbl.email':'Email','lbl.roleAssign':'Initial role',
       'admin.gateCheck':'Checking access…','admin.gateSignin':'Sign in required','admin.gateSigninMsg':'Admin console is restricted. Sign in with an admin account.',
       'admin.gateDenied':'Admin only','admin.gateDeniedMsg':'Your account does not have admin rights.','admin.gateSigninBtn':'Sign in',
       'tile.totalUsers':'Total users','tile.approvedImages':'Approved images','tile.mnemonics':'Mnemonics','tile.cards':'Learning cards','tile.contributors':'Contributors','tile.unread':'Unread messages',
@@ -51,6 +63,13 @@
       'admin.contrib':'المساهمون','admin.contribLead':'الفريق الذي يبني المنصّة.',
       'admin.contacts':'الرسائل','admin.contactsLead':'الرسائل الواردة من نموذج التواصل العام.',
       'admin.settings':'الإعدادات','admin.settingsLead':'خيارات على مستوى المنصّة.',
+      'admin.access':'خريطة الصلاحيات','admin.accessLead':'خمسة أدوار من الأقل إلى الأعلى صلاحية. غيّر دور أي مستخدم من تبويب المستخدمين.',
+      'admin.activity':'سجل النشاط','admin.activityLead':'سجل تدقيق لتغييرات الأدوار والإجراءات الإدارية (آخر 200 حدث).',
+      'admin.invite':'دعوة مستخدم','admin.searchUsers':'بحث بالاسم أو الإيميل…',
+      'empty.activity':'لا يوجد نشاط بعد.',
+      'col.when':'الوقت','col.actor':'المُنفّذ','col.action':'الإجراء',
+      'mod.inviteTitle':'دعوة مستخدم جديد','mod.inviteHint':'يستلم المستخدم دعوة عبر الإيميل. عند الضغط على الرابط، يُنشئ كلمة سرّه ويصبح عضواً.',
+      'mod.sendInvite':'إرسال الدعوة','lbl.email':'الإيميل','lbl.roleAssign':'الدور الابتدائي',
       'admin.gateCheck':'التحقّق من الصلاحية…','admin.gateSignin':'يلزم تسجيل الدخول','admin.gateSigninMsg':'لوحة الإدارة مقيّدة. سجّل الدخول بحساب أدمن.',
       'admin.gateDenied':'خاص بالأدمن','admin.gateDeniedMsg':'حسابك لا يملك صلاحيات إدارية.','admin.gateSigninBtn':'تسجيل الدخول',
       'tile.totalUsers':'مجموع المستخدمين','tile.approvedImages':'الصور المعتمدة','tile.mnemonics':'المخططات','tile.cards':'بطاقات التعليم','tile.contributors':'المساهمون','tile.unread':'رسائل غير مقروءة',
@@ -90,10 +109,10 @@
     while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
     if (!window.OmniRadAuth){ showGate('signin'); return; }
     sb = OmniRadAuth.client;
-    const { data:{ session } } = await sb.auth.getSession();
+    const { data: { session } } = await OmniRadAuth.client.auth.getSession();
     if (!session){ showGate('signin'); return; }
     const { data:profile } = await sb.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-    if (!profile || profile.role !== 'admin'){ showGate('denied'); return; }
+    if (!profile || !['admin','reviewer'].includes(profile.role)){ showGate('denied'); return; }
     $('gate').style.display = 'none';
     $('app').style.display = 'grid';
     boot();
@@ -121,7 +140,9 @@
     else if (currentTab === 'cards') loadCards();
     else if (currentTab === 'contrib') loadContributors();
     else if (currentTab === 'contacts') loadContacts();
-    const map = { dash:'admin.dash', users:'admin.users', library:'admin.library', mnemo:'admin.mnemo', cards:'admin.cards', contrib:'admin.contrib', contacts:'admin.contacts', settings:'admin.settings' };
+    else if (currentTab === 'access') renderAccessMatrix();
+    else if (currentTab === 'activity') loadActivity();
+    const map = { dash:'admin.dash', users:'admin.users', library:'admin.library', mnemo:'admin.mnemo', cards:'admin.cards', contrib:'admin.contrib', contacts:'admin.contacts', settings:'admin.settings', access:'admin.access', activity:'admin.activity' };
     $('secTitle').textContent = t(map[currentTab]);
     $('secLead').textContent = t(map[currentTab] + 'Lead');
   }
@@ -154,30 +175,67 @@
   }
 
   /* ─── Users ─── */
+  let userSearchQuery = '';
+  let roleFilter = 'all';
   async function loadUsers(){
     const box = $('usersTable'); box.innerHTML = '<div class="empty">'+t('empty.loading')+'</div>';
+    // Render filter chips
+    const chipsBox = $('roleFilter');
+    if (chipsBox && !chipsBox.dataset.wired){
+      const roles = ['all','viewer','trial','contributor','reviewer','admin'];
+      chipsBox.innerHTML = roles.map(r=>`<button class="btn small ghost" data-role="${r}" style="padding:5px 11px;font-size:11px;font-weight:700;border-radius:999px${r===roleFilter?';background:var(--acc);color:var(--acc-ink);border-color:var(--acc)':''}">${r}</button>`).join('');
+      chipsBox.dataset.wired = '1';
+      chipsBox.addEventListener('click', e=>{
+        const btn = e.target.closest('[data-role]'); if (!btn) return;
+        roleFilter = btn.dataset.role;
+        chipsBox.querySelectorAll('button').forEach(b=>{ const on = b.dataset.role === roleFilter; b.style.background = on?'var(--acc)':''; b.style.color = on?'var(--acc-ink)':''; b.style.borderColor = on?'var(--acc)':''; });
+        loadUsers();
+      });
+      $('userSearch').addEventListener('input', e=>{ userSearchQuery = e.target.value.trim().toLowerCase(); loadUsers(); });
+    }
     try {
-      const { data, error } = await sb.from('profiles').select('id, email, display_name, role, created_at').order('created_at', { ascending:false }).limit(200);
+      let query = sb.from('profiles').select('id, email, display_name, role, created_at').order('created_at', { ascending:false }).limit(500);
+      if (roleFilter !== 'all') query = query.eq('role', roleFilter);
+      if (userSearchQuery) query = query.or(`email.ilike.%${userSearchQuery}%,display_name.ilike.%${userSearchQuery}%`);
+      const { data, error } = await query;
       if (error) throw error;
       if (!data.length){ box.innerHTML = '<div class="empty">'+t('empty.users')+'</div>'; return; }
       const rows = data.map(u => `
         <tr>
           <td>${u.email || '—'}</td>
           <td>${u.display_name || '—'}</td>
-          <td><span class="badge ${u.role==='admin'?'admin':u.role==='contributor'?'contrib':'viewer'}">${u.role||'viewer'}</span></td>
+          <td><span class="badge ${roleBadgeClass(u.role)}">${u.role||'viewer'}</span></td>
           <td>${new Date(u.created_at).toLocaleDateString('en-GB')}</td>
           <td>
             <select onchange="setUserRole('${u.id}', this.value)" style="padding:5px 8px;background:var(--bg-s);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:11px">
               <option value="viewer" ${u.role==='viewer'?'selected':''}>viewer</option>
-              <option value="contributor" ${u.role==='contributor'?'selected':''}>contributor</option>
-              <option value="admin" ${u.role==='admin'?'selected':''}>admin</option>
               <option value="trial" ${u.role==='trial'?'selected':''}>trial</option>
+              <option value="contributor" ${u.role==='contributor'?'selected':''}>contributor</option>
+              <option value="reviewer" ${u.role==='reviewer'?'selected':''}>reviewer</option>
+              <option value="admin" ${u.role==='admin'?'selected':''}>admin</option>
             </select>
           </td>
         </tr>`).join('');
       box.innerHTML = `<table><thead><tr><th>${t('col.email')}</th><th>${t('col.name')}</th><th>${t('col.role')}</th><th>${t('col.joined')}</th><th>${t('col.changeRole')}</th></tr></thead><tbody>${rows}</tbody></table>`;
     } catch(e){ box.innerHTML = '<div class="empty">Error: '+e.message+'</div>'; }
   }
+  window.openInviteModal = () => { $('invEmail').value=''; $('invRole').value='viewer'; $('inviteModal').classList.add('on'); };
+  document.getElementById('invSend') && document.getElementById('invSend').addEventListener('click', async ()=>{
+    const email = $('invEmail').value.trim(); const role = $('invRole').value;
+    if (!email) return alert('Email required.');
+    try {
+      // Supabase requires the anon key to send magic-link invitations via signInWithOtp
+      const { error } = await sb.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html') }
+      });
+      if (error) throw error;
+      // Optimistically insert a placeholder profile with the desired role
+      // (row is created via trigger on signup; we can update role after they join)
+      await sb.from('activity_log').insert({ actor_id:(await sb.auth.getUser()).data.user.id, action:'user_invited', target_type:'email', target_id:email, details:{ role } }).catch(()=>{});
+      closeModal('inviteModal'); toast('✉️ Invitation sent to ' + email);
+    } catch(e){ alert('Invite error: ' + e.message); }
+  });
   window.setUserRole = async (id, role) => {
     try { const { error } = await sb.from('profiles').update({ role }).eq('id', id); if (error) throw error; toast(t('saved')); } catch(e){ toast(t('error')); }
   };
@@ -401,7 +459,50 @@
   window.markRead = async (id, read) => { try { const { error } = await sb.from('contacts').update({ read }).eq('id', id); if (error) throw error; loadContacts(); } catch(e){ toast(t('error')); } };
   window.delContact = async (id) => { if (!confirm('Delete message?')) return; try { const { error } = await sb.from('contacts').delete().eq('id', id); if (error) throw error; toast(t('deleted')); loadContacts(); } catch(e){ toast(t('error')); } };
 
-  window.closeModal = (id) => $(id).classList.remove('on');
+  /* ─── Access matrix ─── */
+  function renderAccessMatrix(){
+    const box = $('accessMatrix'); if (!box) return;
+    const ar = isAr();
+    const roles = ['viewer','trial','contributor','reviewer','admin'];
+    const roleLabels = {
+      en: { viewer:'Viewer', trial:'Trial', contributor:'Contributor', reviewer:'Reviewer', admin:'Admin' },
+      ar: { viewer:'مشاهد', trial:'تجريبي', contributor:'مساهم', reviewer:'مراجع', admin:'أدمن' }
+    };
+    const rows = [
+      { k:'Atlas / Compare / Learn', ak:'أطلس / مقارنة / تعلّم', v:{viewer:1,trial:1,contributor:1,reviewer:1,admin:1} },
+      { k:'Studio (author prompts)', ak:'الاستوديو (تأليف البرومبت)', v:{viewer:0,trial:0,contributor:1,reviewer:1,admin:1} },
+      { k:'Approve own images (self)', ak:'اعتماد صور شخصية', v:{viewer:0,trial:0,contributor:'own',reviewer:1,admin:1} },
+      { k:'Approve others\' images', ak:'اعتماد صور الآخرين', v:{viewer:0,trial:0,contributor:0,reviewer:1,admin:1} },
+      { k:'Publish to Atlas', ak:'النشر على Atlas', v:{viewer:0,trial:0,contributor:0,reviewer:1,admin:1} },
+      { k:'Admin Console (partial)', ak:'لوحة الإدارة (جزئي)', v:{viewer:0,trial:0,contributor:0,reviewer:1,admin:1} },
+      { k:'Manage users & roles', ak:'إدارة المستخدمين والأدوار', v:{viewer:0,trial:0,contributor:0,reviewer:0,admin:1} },
+      { k:'Platform settings', ak:'إعدادات المنصّة', v:{viewer:0,trial:0,contributor:0,reviewer:0,admin:1} },
+      { k:'Trial expires (14 days)', ak:'انتهاء التجريب (١٤ يوم)', v:{viewer:0,trial:1,contributor:0,reviewer:0,admin:0} }
+    ];
+    const cell = v => v === 1 ? '<span style="color:var(--ok);font-weight:700">✓</span>'
+      : v === 0 ? '<span style="color:var(--text-m)">—</span>'
+      : `<span style="color:var(--pending);font-size:11px;font-weight:700">${v}</span>`;
+    const legend = ar
+      ? `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--text-m)"><span><span style="color:var(--ok)">✓</span> مسموح</span><span>— غير مسموح</span><span><span style="color:var(--pending)">own</span> على المحتوى الشخصي فقط</span></div>`
+      : `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--text-m)"><span><span style="color:var(--ok)">✓</span> Allowed</span><span>— Not allowed</span><span><span style="color:var(--pending)">own</span> On own content only</span></div>`;
+    box.innerHTML = `
+      <div style="overflow-x:auto"><table style="min-width:640px">
+        <thead><tr>
+          <th style="text-align:start">${ar?'الميزة':'Capability'}</th>
+          ${roles.map(r=>`<th style="text-align:center">${roleLabels[ar?'ar':'en'][r]}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${rows.map(row=>`<tr>
+            <td>${ar?row.ak:row.k}</td>
+            ${roles.map(r=>`<td style="text-align:center">${cell(row.v[r])}</td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+      ${legend}
+    `;
+  }
+
+
 
   /* ─── Boot ─── */
   function boot(){
