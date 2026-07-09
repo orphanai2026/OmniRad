@@ -1,588 +1,178 @@
 <!DOCTYPE html>
-<!-- ════════════════════════════════════════════════════
-     OmniRad — pages/auth.html
-     Purpose: Sign In / Sign Up — Supabase auth, split-screen design
-     Vanilla JS · self-contained · no build tools
-     ════════════════════════════════════════════════════ -->
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OmniRad — Sign In</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>OmniRad — Sign in</title>
 <style>
-:root {
-  --bg:         #060c12;
-  --surface:    rgba(10,18,28,0.85);
-  --border:     rgba(45,212,200,0.14);
-  --text:       #e8f0f5;
-  --text-dim:   rgba(232,240,245,0.5);
-  --text-muted: rgba(232,240,245,0.32);
-  --accent:     #2dd4c8;
-  --accent-sub: rgba(45,212,200,0.1);
-  --accent-dim: rgba(45,212,200,0.4);
-  --danger:     oklch(0.65 0.20 25);
-  --success:    oklch(0.65 0.18 145);
-  --radius:     8px;
-  --font:       'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
-  --mono:       'IBM Plex Mono', monospace;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-  height: 100%;
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── LAYOUT ── */
-.page {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  position: relative;
-  overflow: hidden;
-}
-
-/* ── NAV TOP ── */
-.nav-top {
-  position: fixed;
-  top: 14px; left: 14px; right: 14px;
-  display: flex; justify-content: space-between; align-items: center;
-  z-index: 100;
-}
-.home-btn {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 12px; color: rgba(232,240,245,0.55);
-  padding: 6px 14px; border-radius: 20px;
-  background: rgba(232,240,245,0.05);
-  border: 1px solid rgba(232,240,245,0.1);
-  text-decoration: none; transition: color .15s, border-color .15s;
-}
-.home-btn:hover { color: var(--accent); border-color: var(--accent-dim); }
-.lang-btn {
-  font-size: 12px; color: rgba(232,240,245,0.55);
-  padding: 6px 14px; border-radius: 20px;
-  background: rgba(232,240,245,0.05);
-  border: 1px solid rgba(232,240,245,0.1);
-  cursor: pointer; font-family: var(--mono);
-  transition: color .15s;
-}
-.lang-btn:hover { color: var(--text); }
-
-/* ── LEFT PANEL ── */
-.left {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 40px;
-}
-.left-bg { position: absolute; inset: 0; }
-.left-bg img {
-  width: 100%; height: 100%; object-fit: cover;
-  filter: brightness(0.55) saturate(0.4) contrast(1.1);
-  -webkit-mask-image: radial-gradient(ellipse 85% 90% at 50% 50%, black 40%, transparent 100%);
-  mask-image: radial-gradient(ellipse 85% 90% at 50% 50%, black 40%, transparent 100%);
-}
-.left-bg::after {
-  content: ''; position: absolute; inset: 0;
-  background:
-    linear-gradient(to right, transparent 55%, #060c12 100%),
-    linear-gradient(to bottom, #060c12 0%, transparent 12%, transparent 88%, #060c12 100%),
-    linear-gradient(135deg, rgba(6,12,18,0.2) 0%, rgba(45,212,200,0.06) 100%);
-}
-.left-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(45,212,200,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(45,212,200,0.04) 1px, transparent 1px);
-  background-size: 32px 32px; z-index: 1;
-}
-.left-scan {
-  position: absolute; inset: 0; z-index: 1;
-  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px);
-}
-.left-corner {
-  position: absolute; top: 0; left: 0;
-  width: 2px; height: 100%; z-index: 2;
-  background: linear-gradient(180deg, transparent, var(--accent), rgba(45,212,200,0.2), transparent);
-}
-.left-content { position: relative; z-index: 3; }
-.left-tag {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--accent); font-family: var(--mono);
-  background: var(--accent-sub); border: 1px solid rgba(45,212,200,0.25);
-  padding: 5px 12px; border-radius: 3px; margin-bottom: 16px; width: fit-content;
-}
-.left-tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-.left-mods { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
-.lmod {
-  font-size: 9px; font-family: var(--mono); letter-spacing: 0.05em;
-  padding: 3px 9px; border-radius: 3px;
-  border: 1px solid rgba(45,212,200,0.18); color: rgba(45,212,200,0.6);
-}
-.lmod.on { background: var(--accent-sub); color: var(--accent); border-color: rgba(45,212,200,0.32); }
-.left-title {
-  font-size: 28px; font-weight: 700; color: var(--text);
-  line-height: 1.12; letter-spacing: -0.04em; margin-bottom: 12px;
-}
-.left-title em { color: var(--accent); font-style: normal; display: block; }
-.left-desc {
-  font-size: 12px; color: rgba(232,240,245,0.42);
-  line-height: 1.75; max-width: 240px; margin-bottom: 24px;
-}
-.left-stats { display: flex; gap: 20px; align-items: center; }
-.lstat { display: flex; flex-direction: column; gap: 3px; }
-.lstat-val { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: -0.03em; font-family: var(--mono); line-height: 1; }
-.lstat-lbl { font-size: 9px; color: rgba(232,240,245,0.32); text-transform: uppercase; letter-spacing: 0.08em; }
-.lstat-sep { width: 1px; height: 32px; background: rgba(45,212,200,0.15); }
-
-/* ── RIGHT PANEL ── */
-.right {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 40px 32px;
-  background: var(--bg);
-  position: relative; overflow: hidden;
-}
-.right-glow {
-  position: absolute; width: 320px; height: 320px; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(45,212,200,0.045) 0%, transparent 65%);
-  top: -60px; right: -80px; pointer-events: none;
-}
-.right-glow2 {
-  position: absolute; width: 240px; height: 240px; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(80,50,200,0.03) 0%, transparent 65%);
-  bottom: -60px; left: -60px; pointer-events: none;
-}
-
-/* Logo */
-.logo {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 8px;
-  margin-bottom: 32px; text-decoration: none;
-}
-.logo-row { display: flex; align-items: center; gap: 10px; }
-.logo-icon {
-  width: 34px; height: 34px; border-radius: 8px;
-  background: var(--accent);
-  display: grid; place-items: center;
-  font-size: 13px; font-weight: 700;
-  color: var(--bg); font-family: var(--mono); flex-shrink: 0;
-}
-.logo-name { font-size: 19px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); }
-.logo-name span { color: var(--accent); }
-.logo-sub { font-size: 9px; color: var(--text-muted); font-family: var(--mono); letter-spacing: 0.1em; }
-
-/* Card */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 26px;
-  width: 100%; max-width: 320px;
-  position: relative; overflow: hidden;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-.card::before {
-  content: ''; position: absolute;
-  top: 0; left: 20%; right: 20%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(45,212,200,0.6), transparent);
-}
-
-/* Tabs */
-.tabs {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 3px; background: rgba(4,8,14,0.9);
-  border-radius: 8px; padding: 3px;
-  margin-bottom: 22px;
-  border: 1px solid rgba(232,240,245,0.06);
-}
-.tab {
-  padding: 8px; border: none;
-  background: transparent; color: rgba(232,240,245,0.35);
-  border-radius: 6px; font-family: var(--font);
-  font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: all .15s;
-}
-.tab.active {
-  background: rgba(45,212,200,0.12);
-  color: var(--accent);
-  border: 1px solid rgba(45,212,200,0.22);
-}
-
-/* Alert */
-.alert {
-  padding: 11px 14px; border-radius: var(--radius);
-  font-size: 12px; margin-bottom: 16px; display: none;
-}
-.alert.error   { background: rgba(180,40,30,0.12); border: 1px solid var(--danger); color: var(--danger); }
-.alert.success { background: rgba(30,140,80,0.12); border: 1px solid var(--success); color: var(--success); }
-.alert.show    { display: block; }
-
-/* Form */
-.form-group { margin-bottom: 14px; }
-.field-lbl {
-  display: block; font-size: 11px; font-weight: 500;
-  color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.02em;
-}
-.field-wrap { position: relative; }
-.field-icon {
-  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
-  font-size: 13px; color: rgba(45,212,200,0.4); pointer-events: none;
-}
-input {
-  width: 100%; padding: 10px 12px 10px 32px;
-  background: rgba(4,8,14,0.9);
-  border: 1px solid rgba(232,240,245,0.09);
-  border-radius: var(--radius);
-  color: var(--text); font-family: var(--font); font-size: 13px;
-  outline: none; transition: border-color .15s, box-shadow .15s;
-}
-input:focus {
-  border-color: var(--accent-dim);
-  box-shadow: 0 0 0 3px rgba(45,212,200,0.07);
-}
-input::placeholder { color: rgba(232,240,245,0.25); }
-
-/* Button */
-.btn {
-  width: 100%; padding: 11px;
-  background: var(--accent); color: var(--bg);
-  border: none; border-radius: var(--radius);
-  font-family: var(--font); font-size: 13px; font-weight: 700;
-  cursor: pointer; transition: opacity .15s;
-  margin-top: 6px;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.btn:hover    { opacity: 0.88; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Divider */
-.divider {
-  display: flex; align-items: center; gap: 10px;
-  margin: 16px 0 14px;
-}
-.divider-line { flex: 1; height: 1px; background: rgba(232,240,245,0.07); }
-.divider-text { font-size: 10px; color: rgba(232,240,245,0.22); white-space: nowrap; }
-
-/* Back link */
-.back-link {
-  text-align: center; font-size: 11px;
-  color: var(--text-muted);
-}
-.back-link a { color: var(--accent); text-decoration: none; }
-.back-link a:hover { text-decoration: underline; }
-
-/* Spinner */
-.spinner {
-  width: 15px; height: 15px;
-  border: 2px solid transparent;
-  border-top-color: var(--bg);
-  border-radius: 50%;
-  animation: spin .6s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Bottom accent line */
-.bline {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 2px; z-index: 50;
-  background: linear-gradient(90deg, transparent, var(--accent), rgba(45,212,200,0.3), transparent);
-}
-
-/* RTL */
-body.ar { font-family: 'IBM Plex Sans Arabic', sans-serif; }
-body.ar input, body.ar label, body.ar .tab, body.ar .btn { font-family: 'IBM Plex Sans Arabic', sans-serif; }
-
-/* Responsive */
-@media (max-width: 700px) {
-  .page { grid-template-columns: 1fr; }
-  .left { display: none; }
-  .right { min-height: 100vh; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
-}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+:root { --bg:#080e14; --bg-s:#0c1520; --bg-e:#101e2a; --text:#e8f0f5; --text-s:rgba(232,240,245,.65); --text-m:rgba(232,240,245,.4); --acc:#2dd4c8; --acc-ink:#08100e; --border:rgba(45,212,200,.15); --line:rgba(232,240,245,.08); --err:#f87171; }
+[data-theme="dim"] { --bg:#e6ecf3; --bg-s:#edf2f8; --bg-e:#f6f9fc; --text:#0f1e2a; --text-s:rgba(15,30,42,.65); --text-m:rgba(15,30,42,.42); --acc:#0b6b64; --acc-ink:#fff; --border:rgba(11,107,100,.2); --line:rgba(15,30,42,.1); --err:#c53030; }
+* { box-sizing: border-box; }
+body { margin:0; min-height:100vh; font-family:'IBM Plex Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); display:flex; align-items:center; justify-content:center; padding:24px; }
+body[dir="rtl"] { font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif; }
+.card { width:100%; max-width:420px; background:var(--bg-e); border:1px solid var(--border); border-radius:16px; padding:34px 30px; box-shadow:0 24px 60px -30px rgba(0,0,0,.5); }
+.brand { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+.mark { width:36px; height:36px; background:var(--acc); border-radius:9px; display:grid; place-items:center; color:var(--acc-ink); font-weight:700; font-size:14px; letter-spacing:-.03em; }
+.name { font-weight:700; font-size:19px; letter-spacing:-.02em; }
+.name span { color:var(--acc); }
+h1 { font-size:24px; font-weight:700; letter-spacing:-.02em; margin:8px 0 4px; }
+.sub { font-size:13.5px; color:var(--text-s); margin-bottom:22px; }
+.tabs { display:flex; gap:6px; padding:5px; background:var(--bg-s); border:1px solid var(--line); border-radius:11px; margin-bottom:18px; }
+.tabs button { flex:1; padding:9px 10px; border:none; border-radius:7px; background:transparent; color:var(--text-s); font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:.15s; }
+.tabs button.on { background:var(--acc); color:var(--acc-ink); }
+label { display:block; margin-bottom:12px; }
+.lbl { display:block; font-size:12px; font-weight:600; color:var(--text-s); margin-bottom:5px; }
+input { width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:9px; background:var(--bg-s); color:var(--text); font-family:inherit; font-size:14px; }
+input:focus { outline:none; border-color:var(--acc); }
+button.primary { width:100%; margin-top:6px; padding:12px; border:none; border-radius:10px; background:var(--acc); color:var(--acc-ink); font-family:inherit; font-size:14.5px; font-weight:700; cursor:pointer; transition:transform .15s,opacity .15s; }
+button.primary:hover { transform:translateY(-1px); }
+button.primary:disabled { opacity:.55; cursor:wait; }
+.msg { font-size:13px; padding:10px 12px; border-radius:8px; margin-bottom:14px; display:none; }
+.msg.err { background:rgba(248,113,113,.12); color:var(--err); border:1px solid rgba(248,113,113,.35); display:block; }
+.msg.ok { background:rgba(45,212,200,.12); color:var(--acc); border:1px solid var(--border); display:block; }
+.small { text-align:center; margin-top:16px; font-size:12px; color:var(--text-m); }
+.small a { color:var(--acc); text-decoration:none; }
+.lang { position:fixed; top:20px; inset-inline-end:20px; background:var(--bg-e); border:1px solid var(--line); border-radius:999px; padding:8px 14px; font-family:inherit; font-size:12.5px; font-weight:700; color:var(--text); cursor:pointer; }
+.disc { margin-top:20px; padding-top:16px; border-top:1px solid var(--line); font-size:11.5px; color:var(--text-m); text-align:center; line-height:1.7; }
 </style>
 </head>
 <body>
 
-<!-- Nav -->
-<div class="nav-top">
-  <a href="../index.html" class="home-btn">← Home</a>
-  <button class="lang-btn" onclick="toggleLang()" id="langBtn">AR</button>
-</div>
+<button class="lang" id="langBtn" onclick="toggleLang()">🌐 عربي</button>
 
-<div class="page">
-
-  <!-- LEFT: visual panel -->
-  <div class="left">
-    <div class="left-bg">
-      <img src="../images/home/skeleton_bg.png" alt="">
-    </div>
-    <div class="left-grid"></div>
-    <div class="left-scan"></div>
-    <div class="left-corner"></div>
-    <div class="left-content">
-      <div class="left-tag">Radiologic Anatomy Platform</div>
-      <div class="left-mods">
-        <span class="lmod on">CT</span>
-        <span class="lmod on">MRI</span>
-        <span class="lmod on">US</span>
-        <span class="lmod">X-Ray</span>
-        <span class="lmod">NM</span>
-        <span class="lmod">Angio</span>
-        <span class="lmod">Mammo</span>
-      </div>
-      <div class="left-title">
-        Master Radiologic
-        <em>Anatomy.</em>
-      </div>
-      <div class="left-desc">
-        Explore anatomy through real imaging modalities, interactive labels, and spaced repetition.
-      </div>
-      <div class="left-stats">
-        <div class="lstat">
-          <div class="lstat-val">8</div>
-          <div class="lstat-lbl">Modalities</div>
-        </div>
-        <div class="lstat-sep"></div>
-        <div class="lstat">
-          <div class="lstat-val">17+</div>
-          <div class="lstat-lbl">Structures</div>
-        </div>
-        <div class="lstat-sep"></div>
-        <div class="lstat">
-          <div class="lstat-val">AR/EN</div>
-          <div class="lstat-lbl">Bilingual</div>
-        </div>
-      </div>
-    </div>
+<div class="card">
+  <div class="brand">
+    <div class="mark">OR</div>
+    <div class="name">Omni<span>Rad</span></div>
   </div>
 
-  <!-- RIGHT: form panel -->
-  <div class="right">
-    <div class="right-glow"></div>
-    <div class="right-glow2"></div>
+  <h1 id="title">Welcome back.</h1>
+  <div class="sub" id="subtitle">Sign in to your OmniRad account.</div>
 
-    <a class="logo" href="../index.html">
-      <div class="logo-row">
-        <div class="logo-icon">OR</div>
-        <div class="logo-name">Omni<span>Rad</span></div>
-      </div>
-      <div class="logo-sub">MULTIMODAL RADIOLOGY ATLAS</div>
-    </a>
+  <div class="tabs" role="tablist">
+    <button id="tSignIn" class="on" onclick="switchMode('signin')">Sign in</button>
+    <button id="tSignUp" onclick="switchMode('signup')">Sign up</button>
+  </div>
 
-    <div class="card">
-      <!-- Tabs -->
-      <div class="tabs">
-        <button class="tab active" id="tabSignIn" onclick="showTab('signin')" data-en="Sign In" data-ar="تسجيل الدخول">Sign In</button>
-        <button class="tab"        id="tabSignUp" onclick="showTab('signup')" data-en="Create Account" data-ar="إنشاء حساب">Create Account</button>
-      </div>
+  <div class="msg" id="msg"></div>
 
-      <!-- Alert -->
-      <div class="alert" id="alert"></div>
+  <label id="nameField" style="display:none">
+    <span class="lbl" id="lblName">Display name</span>
+    <input type="text" id="fName" autocomplete="name" placeholder="Full name">
+  </label>
 
-      <!-- Sign In Form -->
-      <div id="formSignIn">
-        <div class="form-group">
-          <label class="field-lbl" data-en="Email" data-ar="البريد الإلكتروني">Email</label>
-          <div class="field-wrap">
-            <span class="field-icon">✉</span>
-            <input type="email" id="siEmail" placeholder="you@example.com" autocomplete="email">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="field-lbl" data-en="Password" data-ar="كلمة المرور">Password</label>
-          <div class="field-wrap">
-            <span class="field-icon">🔒</span>
-            <input type="password" id="siPassword" placeholder="••••••••" autocomplete="current-password">
-          </div>
-        </div>
-        <button class="btn" id="btnSignIn" onclick="handleSignIn()">
-          <span data-en="Sign In →" data-ar="دخول →">Sign In →</span>
-        </button>
-      </div>
+  <label>
+    <span class="lbl" id="lblEmail">Email</span>
+    <input type="email" id="fEmail" autocomplete="email" required placeholder="you@example.com">
+  </label>
 
-      <!-- Sign Up Form -->
-      <div id="formSignUp" style="display:none">
-        <div class="form-group">
-          <label class="field-lbl" data-en="Full Name" data-ar="الاسم الكامل">Full Name</label>
-          <div class="field-wrap">
-            <span class="field-icon">👤</span>
-            <input type="text" id="suName" placeholder="Mohammed Saeed" autocomplete="name">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="field-lbl" data-en="Email" data-ar="البريد الإلكتروني">Email</label>
-          <div class="field-wrap">
-            <span class="field-icon">✉</span>
-            <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="field-lbl" data-en="Password" data-ar="كلمة المرور">Password</label>
-          <div class="field-wrap">
-            <span class="field-icon">🔒</span>
-            <input type="password" id="suPassword" placeholder="••••••••" autocomplete="new-password">
-          </div>
-        </div>
-        <button class="btn" id="btnSignUp" onclick="handleSignUp()">
-          <span data-en="Create Account →" data-ar="إنشاء الحساب →">Create Account →</span>
-        </button>
-      </div>
+  <label>
+    <span class="lbl" id="lblPass">Password</span>
+    <input type="password" id="fPass" autocomplete="current-password" required placeholder="••••••••">
+  </label>
 
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-text">or</div>
-        <div class="divider-line"></div>
-      </div>
+  <button class="primary" id="submitBtn" onclick="submit()">Sign in →</button>
 
-      <div class="back-link">
-        <span data-en="Back to" data-ar="العودة إلى">Back to</span>
-        <a href="../index.html" data-en="OmniRad Home" data-ar="الصفحة الرئيسية">OmniRad Home</a>
-      </div>
-    </div>
+  <div class="small" id="switchNote">
+    New here? <a href="#" onclick="event.preventDefault();switchMode('signup')">Create an account</a>
+  </div>
+
+  <div class="disc" id="disc">
+    ⚕️ Educational tool — not for diagnosis or clinical use.<br>
+    © 2026 OmniRad Platform · All rights reserved.
   </div>
 </div>
 
-<div class="bline"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../modules/supabase.js"></script>
 <script>
-  // ── Language ──────────────────────────────────────────────────────────────
-  let currentLang = localStorage.getItem('omnirad_lang') || 'en';
-
-  function applyLang() {
-    document.body.classList.toggle('ar', currentLang === 'ar');
-    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-    document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'EN' : 'AR';
-    document.querySelectorAll('[data-en]').forEach(el => {
-      el.textContent = currentLang === 'ar' ? el.dataset.ar : el.dataset.en;
-    });
+let MODE = 'signin';
+let LANG = localStorage.getItem('omnirad_lang') || 'en';
+const T = {
+  en: {
+    title_signin:'Welcome back.', title_signup:'Create your account.',
+    sub_signin:'Sign in to your OmniRad account.', sub_signup:'Join OmniRad — educational bilingual radiology.',
+    signin:'Sign in', signup:'Sign up',
+    lblName:'Display name', lblEmail:'Email', lblPass:'Password',
+    btn_signin:'Sign in →', btn_signup:'Create account →',
+    switch_signin:'New here? <a href="#" onclick="event.preventDefault();switchMode(\'signup\')">Create an account</a>',
+    switch_signup:'Already have an account? <a href="#" onclick="event.preventDefault();switchMode(\'signin\')">Sign in</a>',
+    disc:'⚕️ Educational tool — not for diagnosis or clinical use.<br>© 2026 OmniRad Platform · All rights reserved.',
+    langBtn:'🌐 عربي', dir:'ltr', family:'IBM Plex Sans'
+  },
+  ar: {
+    title_signin:'مرحباً بعودتك.', title_signup:'أنشئ حسابك.',
+    sub_signin:'سجّل الدخول إلى حسابك في OmniRad.', sub_signup:'انضم إلى OmniRad — أشعة تعليمية ثنائية اللغة.',
+    signin:'تسجيل الدخول', signup:'إنشاء حساب',
+    lblName:'الاسم الظاهر', lblEmail:'البريد الإلكتروني', lblPass:'كلمة المرور',
+    btn_signin:'دخول ←', btn_signup:'إنشاء الحساب ←',
+    switch_signin:'مستخدم جديد؟ <a href="#" onclick="event.preventDefault();switchMode(\'signup\')">أنشئ حساباً</a>',
+    switch_signup:'لديك حساب بالفعل؟ <a href="#" onclick="event.preventDefault();switchMode(\'signin\')">سجّل الدخول</a>',
+    disc:'⚕️ أداة تعليمية — ليست للتشخيص أو الاستخدام السريري.<br>© 2026 منصة OmniRad · جميع الحقوق محفوظة.',
+    langBtn:'🌐 English', dir:'rtl', family:'IBM Plex Sans Arabic'
   }
-
-  function toggleLang() {
-    currentLang = currentLang === 'en' ? 'ar' : 'en';
-    localStorage.setItem('omnirad_lang', currentLang);
-    applyLang();
-  }
-
-  // ── Tabs ──────────────────────────────────────────────────────────────────
-  function showTab(tab) {
-    const isSignIn = tab === 'signin';
-    document.getElementById('formSignIn').style.display = isSignIn ? 'block' : 'none';
-    document.getElementById('formSignUp').style.display = isSignIn ? 'none'  : 'block';
-    document.getElementById('tabSignIn').classList.toggle('active', isSignIn);
-    document.getElementById('tabSignUp').classList.toggle('active', !isSignIn);
-    hideAlert();
-  }
-
-  // ── Alert ─────────────────────────────────────────────────────────────────
-  function showAlert(msg, type = 'error') {
-    const el = document.getElementById('alert');
-    el.textContent = msg;
-    el.className = `alert ${type} show`;
-  }
-  function hideAlert() {
-    document.getElementById('alert').className = 'alert';
-  }
-
-  // ── Loading ───────────────────────────────────────────────────────────────
-  function setLoading(btnId, loading) {
-    const btn = document.getElementById(btnId);
-    btn.disabled = loading;
-    if (loading) {
-      btn.innerHTML = '<div class="spinner"></div>';
-    } else {
-      btn.innerHTML = btn.id === 'btnSignIn'
-        ? `<span data-en="Sign In →" data-ar="دخول →">${currentLang === 'ar' ? 'دخول →' : 'Sign In →'}</span>`
-        : `<span data-en="Create Account →" data-ar="إنشاء الحساب →">${currentLang === 'ar' ? 'إنشاء الحساب →' : 'Create Account →'}</span>`;
-    }
-  }
-
-  // ── Session check ─────────────────────────────────────────────────────────
-  async function checkSession() {
-    const user = OmniRadAuth.getUser();
-    if (user) {
-      const params = new URLSearchParams(window.location.search);
-      const returnTo = params.get('returnTo');
-      window.location.replace(returnTo ? decodeURIComponent(returnTo) : '../index.html');
-    }
-  }
-
-  // ── Sign In ───────────────────────────────────────────────────────────────
-  async function handleSignIn() {
-    hideAlert();
-    const email    = document.getElementById('siEmail').value.trim();
-    const password = document.getElementById('siPassword').value;
-    if (!email || !password) {
-      showAlert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
-      return;
-    }
-    setLoading('btnSignIn', true);
-    try {
-      await OmniRadAuth.signIn(email, password);
-      showAlert(currentLang === 'ar' ? 'تم الدخول بنجاح! جاري التوجيه...' : 'Signed in! Redirecting...', 'success');
-      setTimeout(() => {
-        const params = new URLSearchParams(window.location.search);
-        const returnTo = params.get('returnTo');
-        window.location.replace(returnTo ? decodeURIComponent(returnTo) : '../index.html');
-      }, 800);
-    } catch (err) {
-      showAlert(currentLang === 'ar' ? 'خطأ في البريد أو كلمة المرور' : err.message);
-      setLoading('btnSignIn', false);
-    }
-  }
-
-  // ── Sign Up ───────────────────────────────────────────────────────────────
-  async function handleSignUp() {
-    hideAlert();
-    const name     = document.getElementById('suName').value.trim();
-    const email    = document.getElementById('suEmail').value.trim();
-    const password = document.getElementById('suPassword').value;
-    if (!name || !email || !password) {
-      showAlert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
-      return;
-    }
-    if (password.length < 6) {
-      showAlert(currentLang === 'ar' ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters');
-      return;
-    }
-    setLoading('btnSignUp', true);
-    try {
-      await OmniRadAuth.signUp(email, password, name);
-      showAlert(
-        currentLang === 'ar'
-          ? '✅ تم إنشاء الحساب! تحقق من بريدك لتأكيد الحساب.'
-          : '✅ Account created! Check your email to confirm.',
-        'success'
-      );
-      setLoading('btnSignUp', false);
-    } catch (err) {
-      showAlert(err.message);
-      setLoading('btnSignUp', false);
-    }
-  }
-
-  // ── Keyboard Enter ────────────────────────────────────────────────────────
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
-    const active = document.getElementById('formSignIn').style.display !== 'none';
-    if (active) handleSignIn(); else handleSignUp();
-  });
-
-  // ── Init ──────────────────────────────────────────────────────────────────
+};
+function applyLang() {
+  const t = T[LANG];
+  document.documentElement.lang = LANG;
+  document.body.dir = t.dir;
+  document.getElementById('tSignIn').textContent = t.signin;
+  document.getElementById('tSignUp').textContent = t.signup;
+  document.getElementById('lblName').textContent = t.lblName;
+  document.getElementById('lblEmail').textContent = t.lblEmail;
+  document.getElementById('lblPass').textContent = t.lblPass;
+  document.getElementById('langBtn').textContent = t.langBtn;
+  document.getElementById('disc').innerHTML = t.disc;
+  refreshMode();
+}
+function toggleLang() {
+  LANG = LANG === 'en' ? 'ar' : 'en';
+  localStorage.setItem('omnirad_lang', LANG);
   applyLang();
-  checkSession();
+}
+function refreshMode() {
+  const t = T[LANG];
+  document.getElementById('title').textContent = MODE === 'signin' ? t.title_signin : t.title_signup;
+  document.getElementById('subtitle').textContent = MODE === 'signin' ? t.sub_signin : t.sub_signup;
+  document.getElementById('submitBtn').textContent = MODE === 'signin' ? t.btn_signin : t.btn_signup;
+  document.getElementById('switchNote').innerHTML = MODE === 'signin' ? t.switch_signin : t.switch_signup;
+  document.getElementById('nameField').style.display = MODE === 'signup' ? 'block' : 'none';
+  document.getElementById('tSignIn').classList.toggle('on', MODE === 'signin');
+  document.getElementById('tSignUp').classList.toggle('on', MODE === 'signup');
+  document.getElementById('fPass').autocomplete = MODE === 'signup' ? 'new-password' : 'current-password';
+}
+function switchMode(m) { MODE = m; refreshMode(); hideMsg(); }
+function showMsg(text, kind) {
+  const el = document.getElementById('msg');
+  el.textContent = text; el.className = 'msg ' + (kind || 'err');
+}
+function hideMsg() { document.getElementById('msg').style.display = 'none'; }
+async function submit() {
+  hideMsg();
+  const email = document.getElementById('fEmail').value.trim();
+  const pass  = document.getElementById('fPass').value;
+  const name  = document.getElementById('fName').value.trim();
+  const btn = document.getElementById('submitBtn'); btn.disabled = true;
+  try {
+    if (MODE === 'signup') {
+      await OmniRadAuth.signUp(email, pass, name);
+      showMsg(LANG === 'ar' ? 'تحقّق من بريدك لتأكيد الحساب، ثم سجّل الدخول.' : 'Check your email to confirm your account, then sign in.', 'ok');
+      switchMode('signin');
+    } else {
+      await OmniRadAuth.signIn(email, pass);
+      location.href = '../index.html';
+    }
+  } catch (e) {
+    showMsg(e.message || 'Authentication error', 'err');
+  } finally { btn.disabled = false; }
+}
+applyLang();
+// Redirect if already signed in
+(async()=>{
+  const u = await OmniRadAuth.currentUser();
+  if (u) location.href = '../index.html';
+})();
 </script>
 </body>
 </html>
