@@ -236,7 +236,10 @@
       // Supabase requires the anon key to send magic-link invitations via signInWithOtp
       const { error } = await sb.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html') }
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html')
+        }
       });
       if (error) throw error;
       try {
@@ -244,7 +247,11 @@
         if (user) await sb.from('activity_log').insert({ actor_id: user.id, action:'user_invited', target_type:'email', target_id:email, details:{ role } });
       } catch(_){}
       closeModal('inviteModal'); toast('✉️ Invitation sent to ' + email);
-    } catch(e){ alert('Invite error: ' + e.message); }
+    } catch(e){
+      const msg = (e && (e.message || e.error_description || e.msg || JSON.stringify(e))) || 'unknown';
+      console.error('[invite]', e);
+      alert('Invite error: ' + msg);
+    }
   });
   window.setUserRole = async (id, role) => {
     try { const { error } = await sb.from('profiles').update({ role }).eq('id', id); if (error) throw error; toast(t('saved')); } catch(e){ toast(t('error')); }
