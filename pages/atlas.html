@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OmniRad — Atlas</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 :root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--viewer-bg:#000;--anno:#a3e635;--orient:#f59e0b;--measure:#f472b6}
 [data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--viewer-bg:#000}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
-body[dir="rtl"]{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
 a{text-decoration:none;color:inherit}
 .atlas{display:grid;grid-template-columns:260px 1fr 300px;height:calc(100vh - 56px)}
 .sidebar{background:var(--bg-e);border-inline-end:1px solid var(--border);overflow-y:auto;padding:14px 0}
@@ -92,7 +92,7 @@ a{text-decoration:none;color:inherit}
 .part.on{border-color:var(--acc);background:var(--acc-sub)}
 .part .dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .part .p-name{font-size:12px;font-weight:600;color:var(--text);flex:1;line-height:1.3}
-.part .p-ar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:var(--text-m);direction:rtl}
+.part .p-ar{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:var(--text-m);direction:rtl}
 .disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--border-s);font-size:10px;color:var(--text-m);line-height:1.6}
 /* Labels toggle */
 .labels-toggle{padding:5px 9px;font-size:9.5px;font-weight:700;letter-spacing:.05em;font-family:'IBM Plex Mono',monospace;background:transparent;border:1px solid var(--border);color:var(--text-s);cursor:pointer;border-radius:4px}
