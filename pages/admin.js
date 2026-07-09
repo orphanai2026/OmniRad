@@ -10,6 +10,15 @@
   let sb = null;
   let editingId = { mnemo:null, card:null, contrib:null };
 
+  // ─── Modal close (Cancel button, backdrop click, Esc key) ───
+  window.closeModal = function(id){ const el = document.getElementById(id); if (el) el.classList.remove('on'); };
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.classList && e.target.classList.contains('modal-bg')) e.target.classList.remove('on');
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') document.querySelectorAll('.modal-bg.on').forEach(m => m.classList.remove('on'));
+  });
+
   const ROLES = ['viewer','trial','contributor','reviewer','admin'];
   const ROLE_BADGE = { viewer:'viewer', trial:'pending', contributor:'contrib', reviewer:'contrib', admin:'admin' };
   function roleBadgeClass(r){ return ROLE_BADGE[r || 'viewer'] || 'viewer'; }
@@ -230,9 +239,10 @@
         options: { emailRedirectTo: location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html') }
       });
       if (error) throw error;
-      // Optimistically insert a placeholder profile with the desired role
-      // (row is created via trigger on signup; we can update role after they join)
-      await sb.from('activity_log').insert({ actor_id:(await sb.auth.getUser()).data.user.id, action:'user_invited', target_type:'email', target_id:email, details:{ role } }).catch(()=>{});
+      try {
+        const { data: { user } } = await sb.auth.getUser();
+        if (user) await sb.from('activity_log').insert({ actor_id: user.id, action:'user_invited', target_type:'email', target_id:email, details:{ role } });
+      } catch(_){}
       closeModal('inviteModal'); toast('✉️ Invitation sent to ' + email);
     } catch(e){ alert('Invite error: ' + e.message); }
   });
