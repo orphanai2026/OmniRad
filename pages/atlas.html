@@ -160,6 +160,12 @@ a{text-decoration:none;color:inherit}
         <button class="tb" id="btnInvert" title="Invert" data-i18n="tools.invert">INVERT</button>
         <button class="tb" id="btnOverlay" title="Toggle overlays" data-i18n="tools.overlay">OVLY</button>
         <button class="tb" id="btnClear" title="Clear measurements" data-i18n="tools.clear">CLR</button>
+        <button class="tb" id="btnRotate" title="Rotate 90° (R)">↻ 90°</button>
+        <button class="tb" id="btnFlipH" title="Flip horizontal (H)">↔ FLIP</button>
+        <button class="tb" id="btnFlipV" title="Flip vertical (V)">↕ FLIP</button>
+        <button class="tb" id="btnMag" title="Magnifier lens (M)">🔍 MAG</button>
+        <button class="tb" id="btnFull" title="Fullscreen (F)">⛶ FULL</button>
+        <button class="tb" id="btnSnap" title="Save screenshot (S)">💾 SAVE</button>
         <button class="tb" id="btnReset" title="Reset view" data-i18n="tools.reset">RESET</button>
       </div>
     </div>
@@ -295,33 +301,54 @@ const state = {
   overlays: true,
   labelsOn: true,
   zoom: 1, panX: 0, panY: 0,
+  rotate: 0, flipH: false, flipV: false,
   ww: 300, wl: 150,
+  magnifier: false, magPos: null,
   img: null,
   imgCache: {},
   measurements: [] // { type, points:[{x,y}...] }, in canvas coords
+};
+const isAr = () => (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
+/* Arabic descriptions + region translations for content i18n */
+const DESC_AR = {
+  brain:'عضو الجهاز العصبي المركزي داخل القحف. أفضل تقييم بالرنين المغناطيسي لتفاصيل النسيج، والأشعة المقطعية أول خط للنزيف الحاد أو الرضّ.',
+  neck:'العمود الرقبي، مجرى الهواء، الدرقية والأوعية.',
+  thorax:'جدار الصدر، المنصف، والقلب والرئة.',
+  abdomen:'رؤية شاملة للبطن تشمل الأعضاء الصلبة، الأمعاء، والأوعية.',
+  liver:'أكبر عضو صلب في البطن، الربع العلوي الأيمن أسفل الحجاب الحاجز الأيمن.',
+  kidney:'خلف الصفاق، اليمنى أخفض من اليسرى، مدى T12–L3. القشرة واللب والحويضة.',
+  spleen:'الربع العلوي الأيسر، خلف المعدة، بمحاذاة الأضلاع 9–11.',
+  bladder:'الحوض الأمامي خلف الارتفاق العاني.',
+  bone:'نافذة العظم على CT — تفاصيل العظم التربيقي مقابل القشري.'
+};
+const REGION_AR = {
+  'Head & CNS':'الرأس والجهاز العصبي','Head & Neck':'الرأس والرقبة','Chest':'الصدر',
+  'Abdomen':'البطن','Pelvis':'الحوض','Musculoskeletal':'الجهاز العضلي الهيكلي'
 };
 
 /* ─────── Sidebar ─────── */
 function renderSidebar(filter){
   const list = $('structList'); list.innerHTML = '';
   const q = (filter||'').trim().toLowerCase();
+  const ar = isAr();
   let currentRegion = '';
   S.forEach(s=>{
     if (q && !(s.en.toLowerCase().includes(q) || s.ar.includes(q))) return;
     if (s.region !== currentRegion){
       currentRegion = s.region;
-      const h = document.createElement('div'); h.className = 'struct-region'; h.textContent = s.region;
+      const h = document.createElement('div'); h.className = 'struct-region'; h.textContent = ar ? (REGION_AR[s.region]||s.region) : s.region;
       list.appendChild(h);
     }
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.dataset.id = s.id;
     a.className = s.id === state.structId ? 'on' : '';
-    a.innerHTML = `<span class="struct-icon">${s.icon || '🔸'}</span><span>${s.en}</span>`;
+    a.innerHTML = `<span class="struct-icon">${s.icon || '🔸'}</span><span>${ar ? s.ar : s.en}</span>`;
     a.addEventListener('click', ()=> selectStructure(s.id));
     li.appendChild(a); list.appendChild(li);
   });
 }
+window.addEventListener('omnirad-lang', ()=>{ renderSidebar($('search') && $('search').value); renderInfo(); });
 
 /* ─────── Modality tabs (hybrid: enabled + coming-soon disabled) ─────── */
 function renderModBar(){
@@ -359,21 +386,25 @@ function renderSubPicker(){
 function currentStruct(){ return S.find(s=>s.id===state.structId); }
 function renderInfo(){
   const st = currentStruct(); if (!st) return;
-  $('infoTitle').textContent = st.en + ' · ' + st.ar;
-  $('infoSub').textContent = st.region;
+  const ar = isAr();
+  $('infoTitle').textContent = ar ? (st.ar + ' · ' + st.en) : (st.en + ' · ' + st.ar);
+  $('infoSub').textContent = ar ? (REGION_AR[st.region]||st.region) : st.region;
   const spk = $('titleSpeaker'); spk.innerHTML = ''; if (window.OmniRadSpeak) spk.appendChild(OmniRadSpeak.button(st.en));
   $('infoMod').textContent = state.modality || '—';
   $('infoPlane').textContent = state.plane || '—';
   $('infoVar').textContent = state.variant || '—';
   $('infoWL').textContent = state.ww + ' / ' + state.wl;
-  $('infoDesc').textContent = st.desc || '';
+  const desc = ar ? (DESC_AR[st.id] || st.desc || '') : (st.desc || '');
+  const descEl = $('infoDesc'); descEl.textContent = desc; descEl.setAttribute('dir', ar ? 'rtl' : 'ltr');
   // parts list
   const list = PARTS[state.structId] || [];
   $('partCount').textContent = list.length ? '(' + list.length + ')' : '';
   const w = $('parts'); w.innerHTML = '';
   list.forEach(p=>{
     const row = document.createElement('div'); row.className = 'part';
-    row.innerHTML = `<span class="dot" style="background:${p.color}"></span><div style="flex:1"><div class="p-name">${p.en}</div><div class="p-ar">${p.ar}</div></div>`;
+    const primary = ar ? p.ar : p.en;
+    const secondary = ar ? p.en : p.ar;
+    row.innerHTML = `<span class="dot" style="background:${p.color}"></span><div style="flex:1"><div class="p-name">${primary}</div><div class="p-ar">${secondary}</div></div>`;
     if (window.OmniRadSpeak) row.appendChild(OmniRadSpeak.button(p.en));
     w.appendChild(row);
   });
@@ -427,8 +458,12 @@ function draw(){
   if (!state.img) return;
   const scale = Math.min(w/state.img.width, h/state.img.height) * state.zoom;
   const iw = state.img.width * scale, ih = state.img.height * scale;
-  const x = (w-iw)/2 + state.panX, y = (h-ih)/2 + state.panY;
-  ctx.drawImage(state.img, x, y, iw, ih);
+  ctx.save();
+  ctx.translate(w/2 + state.panX, h/2 + state.panY);
+  ctx.rotate(state.rotate * Math.PI / 180);
+  ctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
+  ctx.drawImage(state.img, -iw/2, -ih/2, iw, ih);
+  ctx.restore();
   try {
     const id = ctx.getImageData(0, 0, w, h); const d = id.data;
     const minV = state.wl - state.ww/2, maxV = state.wl + state.ww/2;
@@ -576,6 +611,30 @@ $('btnInvert').addEventListener('click', ()=>{ state.invert = !state.invert; $('
 $('btnOverlay').addEventListener('click', ()=>{ state.overlays = !state.overlays; document.querySelectorAll('.anno,.orient-mark,.scale-bar').forEach(el=>el.style.display = state.overlays ? '' : 'none'); $('btnOverlay').classList.toggle('on', !state.overlays); });
 $('btnClear').addEventListener('click', ()=>{ state.measurements = []; drawMeasurements(); });
 $('btnReset').addEventListener('click', ()=> loadCurrent());
+$('btnRotate').addEventListener('click', ()=>{ state.rotate = (state.rotate + 90) % 360; draw(); });
+$('btnFlipH').addEventListener('click', ()=>{ state.flipH = !state.flipH; draw(); });
+$('btnFlipV').addEventListener('click', ()=>{ state.flipV = !state.flipV; draw(); });
+$('btnMag').addEventListener('click', ()=>{ state.magnifier = !state.magnifier; $('btnMag').classList.toggle('on', state.magnifier); draw(); });
+$('btnFull').addEventListener('click', ()=>{ const el = document.querySelector('.main'); if (!document.fullscreenElement) el.requestFullscreen && el.requestFullscreen(); else document.exitFullscreen && document.exitFullscreen(); });
+$('btnSnap').addEventListener('click', ()=>{
+  const st = currentStruct();
+  const name = (st ? st.id : 'atlas') + '_' + state.modality + '_' + state.plane + '_' + state.variant + '_' + Date.now() + '.png';
+  const a = document.createElement('a'); a.href = cv.toDataURL('image/png'); a.download = name.replace(/\s+/g,'_'); a.click();
+});
+window.addEventListener('keydown', (e)=>{
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+  const k = e.key.toLowerCase();
+  const map = { w:'wl', z:'zoom', p:'pan', l:'measure', a:'angle', o:'probe' };
+  if (map[k]){ const b = document.querySelector('[data-tool="'+map[k]+'"]'); if (b) b.click(); }
+  else if (k === 'r'){ state.rotate = (state.rotate + 90) % 360; draw(); }
+  else if (k === 'h'){ state.flipH = !state.flipH; draw(); }
+  else if (k === 'v'){ state.flipV = !state.flipV; draw(); }
+  else if (k === 'm'){ $('btnMag').click(); }
+  else if (k === 'f'){ $('btnFull').click(); }
+  else if (k === 's' && !e.ctrlKey && !e.metaKey){ $('btnSnap').click(); }
+  else if (k === 'i'){ $('btnInvert').click(); }
+  else if (k === 'escape'){ state.measurements = []; drawMeasurements(); }
+});
 $('btnLabels').addEventListener('click', ()=>{ state.labelsOn = !state.labelsOn; $('btnLabels').classList.toggle('on', state.labelsOn); $('btnLabels').textContent = 'LABELS: ' + (state.labelsOn ? 'ON' : 'OFF'); $('parts').style.display = state.labelsOn ? '' : 'none'; });
 
 /* Preset windows */
