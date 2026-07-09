@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-<!-- ════════════════════════════════════════════════════
-     OmniRad — index.html (reorganized)
-     Cleaner IA: core (Atlas/Compare) foregrounded, secondary items grouped,
-     lighter nav, single hero action, modality strip instead of mosaic.
-     Vanilla JS · self-contained · no build tools
-     ════════════════════════════════════════════════════ -->
+<!-- OmniRad — index.html (uses shared nav + i18n) -->
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -12,115 +7,41 @@
 <meta name="description" content="OmniRad — Multimodal Radiologic Anatomy Platform">
 <title>OmniRad — Multimodal Radiologic Anatomy</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root,[data-theme="dark"]{
   --bg:#080e14; --bg-s:#0c1520; --bg-e:#101e2a; --bg-ov:#162030;
   --text:#e8f0f5; --text-s:rgba(232,240,245,0.65); --text-m:rgba(232,240,245,0.38);
-  --acc:#2dd4c8; --acc-dim:rgba(45,212,200,0.55); --acc-sub:rgba(45,212,200,0.10); --acc-glow:rgba(45,212,200,0.15);
+  --acc:#2dd4c8; --acc-dim:rgba(45,212,200,0.55); --acc-sub:rgba(45,212,200,0.10);
   --border:rgba(45,212,200,0.12); --border-s:rgba(232,240,245,0.08);
   --nav-bg:rgba(8,14,20,0.92); --acc-ink:#08100e;
-  --r:6px; --r-lg:10px; --nav-h:56px;
+  --r:6px; --r-lg:10px; --onav-h:56px;
 }
 [data-theme="dim"]{
   --bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;
   --text:#0f1e2a;--text-s:rgba(15,30,42,0.65);--text-m:rgba(15,30,42,0.42);
-  --acc:oklch(0.46 0.17 195);--acc-dim:oklch(0.40 0.14 195);
-  --acc-sub:rgba(45,180,170,0.12);--border:rgba(45,180,170,0.2);--border-s:rgba(15,30,42,0.14);
+  --acc:#0b6b64;--acc-dim:rgba(11,107,100,0.55);
+  --acc-sub:rgba(11,107,100,0.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,0.1);
   --nav-bg:rgba(237,242,248,0.92); --acc-ink:#ffffff;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
-body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;padding-top:var(--onav-h);
   background-image:linear-gradient(180deg, var(--bg) 0%, rgba(8,14,20,0.92) 20%, rgba(8,14,20,0.92) 72%, var(--bg) 96%), url('images/home/skeleton_bg.png');
   background-size:100% 100%, cover; background-position:center; background-repeat:no-repeat; background-attachment:fixed;}
-[data-theme="dim"] body{
-  background-image:linear-gradient(180deg, var(--bg) 0%, rgba(221,228,236,0.93) 15%, rgba(221,228,236,0.93) 78%, var(--bg) 97%), url('images/home/skeleton_bg.png');
-  filter:none;}
+[data-theme="dim"] body{background-image:linear-gradient(180deg, var(--bg) 0%, rgba(221,228,236,0.93) 15%, rgba(221,228,236,0.93) 78%, var(--bg) 97%), url('images/home/skeleton_bg.png');filter:none;}
+body[dir="rtl"]{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif;}
 a{text-decoration:none;color:inherit;}
 img{display:block;}
 
-/* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);
-  background:var(--nav-bg);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 24px;gap:20px;
-  z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
-.nav-logo{display:flex;align-items:center;gap:9px;flex-shrink:0;}
-.nav-logo-mark{width:30px;height:30px;background:var(--acc);border-radius:7px;display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--acc-ink);letter-spacing:-0.02em;flex-shrink:0;}
-.nav-logo-name{font-weight:700;font-size:16px;letter-spacing:-0.02em;color:var(--text);}
-.nav-logo-name span{color:var(--acc);}
-.nav-links{display:flex;align-items:center;gap:4px;flex:1;list-style:none;}
-.nav-links>li{position:relative;}
-.nav-links a,.nav-group-btn{
-  font-size:13px;font-weight:500;color:var(--text-s);
-  padding:8px 13px;border-radius:var(--r);white-space:nowrap;
-  transition:color .15s,background .15s;display:flex;align-items:center;gap:6px;
-  background:none;border:none;cursor:pointer;font-family:inherit;}
-.nav-links a:hover,.nav-group-btn:hover{color:var(--text);background:var(--bg-ov);}
-.nav-links a.active{color:var(--acc);background:var(--acc-sub);}
-.nav-links a.core{color:var(--text);font-weight:600;}
-.nav-links a.core.active{color:var(--acc);}
-.nav-icon{font-size:14px;opacity:0.85;}
-.nav-sep{width:1px;height:22px;background:var(--border-s);margin:0 4px;}
-.chev{font-size:9px;opacity:.6;margin-inline-start:1px;}
-/* dropdown */
-.nav-drop{position:absolute;top:calc(100% + 6px);inset-inline-start:0;min-width:210px;
-  background:var(--bg-e);border:1px solid var(--border);border-radius:var(--r-lg);
-  padding:6px;box-shadow:0 12px 34px -12px rgba(0,0,0,.6);
-  opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210;}
-.nav-group:hover .nav-drop,.nav-group:focus-within .nav-drop{opacity:1;visibility:visible;transform:translateY(0);}
-.nav-drop a{display:flex;flex-direction:column;gap:1px;padding:9px 11px;border-radius:var(--r);align-items:flex-start;}
-.nav-drop a .d-t{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px;}
-.nav-drop a .d-s{font-size:11px;color:var(--text-m);padding-inline-start:21px;}
-.nav-drop a:hover{background:var(--acc-sub);}
-.nav-drop a:hover .d-t{color:var(--acc);}
-
-.nav-end{display:flex;align-items:center;gap:9px;margin-left:auto;flex-shrink:0;}
-.edu-badge{font-size:10px;padding:5px 10px;border-radius:var(--r);border:1px solid var(--border-s);color:var(--text-m);display:flex;align-items:center;gap:5px;white-space:nowrap;}
-.icon-btn{width:32px;height:32px;border-radius:var(--r);background:var(--bg-ov);border:1px solid var(--border);color:var(--text);cursor:pointer;display:grid;place-items:center;font-size:15px;flex-shrink:0;transition:color .15s,background .15s,border-color .15s;}
-.icon-btn:hover{color:var(--acc);border-color:var(--acc-dim);background:var(--acc-sub);}
-/* user menu */
-.user-wrap{position:relative;}
-.user-area{display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 9px;border-radius:var(--r);transition:background .15s;}
-.user-area:hover{background:var(--bg-ov);}
-.user-ava{width:28px;height:28px;border-radius:50%;background:var(--acc-sub);border:1.5px solid var(--acc-dim);display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--acc);}
-.user-name{font-size:12px;color:var(--text-s);}
-.user-chevron{font-size:10px;color:var(--text-m);}
-.user-drop{position:absolute;top:calc(100% + 6px);inset-inline-end:0;min-width:200px;
-  background:var(--bg-e);border:1px solid var(--border);border-radius:var(--r-lg);padding:6px;
-  box-shadow:0 12px 34px -12px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210;}
-.user-wrap:hover .user-drop,.user-wrap:focus-within .user-drop{opacity:1;visibility:visible;transform:translateY(0);}
-.user-drop a{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--r);font-size:13px;color:var(--text-s);}
-.user-drop a:hover{background:var(--acc-sub);color:var(--acc);}
-.user-drop .ud-sep{height:1px;background:var(--border-s);margin:5px 4px;}
-
-.hamburger{display:none;flex-direction:column;justify-content:center;gap:4px;width:32px;height:32px;padding:6px;border-radius:var(--r);background:var(--bg-ov);border:1px solid var(--border-s);cursor:pointer;}
-.hamburger span{display:block;width:100%;height:1.5px;background:var(--text-s);border-radius:2px;transition:all .2s;}
-.hamburger.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
-.hamburger.open span:nth-child(2){opacity:0;}
-.hamburger.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg);}
-.mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:var(--bg-e);border-bottom:1px solid var(--border);z-index:199;padding:14px 22px 22px;max-height:calc(100vh - var(--nav-h));overflow-y:auto;}
-.mobile-menu.open{display:block;}
-.mm-group{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:14px 12px 6px;}
-.mobile-menu ul{list-style:none;display:flex;flex-direction:column;gap:2px;}
-.mobile-menu a{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:var(--r);font-size:14px;color:var(--text-s);transition:all .15s;}
-.mobile-menu a:hover,.mobile-menu a.active{color:var(--acc);background:var(--acc-sub);}
-
-/* ── PAGE ── */
-.page{padding-top:var(--nav-h);}
-
-/* ── HERO ── */
-.hero{position:relative;overflow:hidden;min-height:calc(92vh - var(--nav-h));
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  gap:26px;padding:60px 32px 40px;max-width:1000px;margin:0 auto;}
-.hero>*{position:relative;z-index:1;}
-.hero-eyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;}
+.hero{position:relative;overflow:hidden;min-height:calc(92vh - var(--onav-h));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:60px 32px 40px;max-width:1000px;margin:0 auto;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;}
 .hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--acc-dim);}
-.hero-h1{position:relative;z-index:1;font-size:clamp(2.6rem,6vw,4.4rem);font-weight:700;line-height:1.05;letter-spacing:-0.04em;color:var(--text);text-shadow:0 2px 20px rgba(0,0,0,.15);}
+.hero-h1{font-size:clamp(2.6rem,6vw,4.4rem);font-weight:700;line-height:1.05;letter-spacing:-0.04em;color:var(--text);text-shadow:0 2px 20px rgba(0,0,0,.15);}
 .hero-h1 .acc{color:var(--acc);}
-.hero-desc{position:relative;z-index:1;font-size:16px;color:var(--text-s);line-height:1.75;max-width:58ch;}
+.hero-desc{font-size:16px;color:var(--text-s);line-height:1.75;max-width:58ch;}
 .hero-desc strong{color:var(--text);font-weight:600;}
-.hero-cta{position:relative;z-index:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
+.hero-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
 .btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r);background:var(--acc);color:var(--acc-ink);font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-primary:hover{background:rgba(45,212,200,0.85);transform:translateY(-1px);}
 .btn-primary svg{width:17px;height:17px;}
@@ -128,22 +49,19 @@ img{display:block;}
 .btn-secondary:hover{border-color:var(--acc-dim);color:var(--acc);background:var(--acc-sub);}
 .btn-secondary svg{width:17px;height:17px;}
 
-/* ── MODALITY STRIP ── */
 .mod-strip-wrap{max-width:1100px;margin:0 auto;padding:0 32px 56px;}
 .mod-strip-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;text-align:center;margin-bottom:18px;}
 .mod-strip{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
-.mod-pill{display:flex;flex-direction:column;align-items:center;gap:9px;padding:16px 8px;border-radius:var(--r-lg);
-  background:var(--bg-e);border:1px solid var(--border-s);transition:border-color .2s,transform .2s,background .2s;cursor:pointer;}
+.mod-pill{display:flex;flex-direction:column;align-items:center;gap:9px;padding:16px 8px;border-radius:var(--r-lg);background:var(--bg-e);border:1px solid var(--border-s);transition:.2s;cursor:pointer;}
 .mod-pill:hover{border-color:var(--acc-dim);transform:translateY(-2px);background:var(--bg-ov);}
 .mod-pill-thumb{width:100%;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#030810;}
 .mod-pill-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
 .mod-pill:hover .mod-pill-thumb img{transform:scale(1.06);}
 .mod-pill-name{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.02em;font-family:'IBM Plex Mono',monospace;}
 
-/* ── STATS BAR ── */
 .stats-bar{background:var(--bg-s);border-top:1px solid var(--border-s);}
 .stats-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);}
-.stat-cell{padding:20px 28px;border-right:1px solid var(--border-s);display:flex;align-items:center;gap:14px;transition:background .15s;}
+.stat-cell{padding:20px 28px;border-right:1px solid var(--border-s);display:flex;align-items:center;gap:14px;transition:.15s;}
 .stat-cell:last-child{border-right:none;}
 .stat-cell:hover{background:var(--bg-e);}
 .stat-icon-wrap{width:44px;height:44px;border-radius:50%;background:var(--acc-sub);border:1px solid var(--border);display:grid;place-items:center;flex-shrink:0;}
@@ -152,25 +70,6 @@ img{display:block;}
 .stat-label{font-size:12px;color:var(--acc);font-weight:600;margin-top:1px;}
 .stat-sub{font-size:11px;color:var(--text-m);margin-top:2px;}
 
-/* ── ABOUT (unified with base design system) ── */
-.about-sec{display:none;max-width:1000px;margin:0 auto;padding:56px 32px 72px;}
-.about-sec.show{display:block;}
-.ab-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:18px;}
-.ab-eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim);}
-.about-h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.1;letter-spacing:-0.03em;margin-bottom:14px;}
-.about-h2 .acc{color:var(--acc);}
-.about-lead{font-size:16px;color:var(--text-s);line-height:1.8;max-width:64ch;margin-bottom:16px;}
-.about-lead-ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;font-size:15px;color:var(--text-m);line-height:1.9;max-width:64ch;margin:0 0 40px auto;border-right:2px solid var(--acc-dim);padding-right:14px;}
-.about-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:44px;}
-.about-card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:var(--r-lg);padding:20px;}
-.about-card h3{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:9px;}
-.about-card p{font-size:13px;color:var(--text-s);line-height:1.7;}
-.about-card .ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;color:var(--text-m);font-size:12.5px;margin-top:6px;}
-.about-owner{border-top:1px solid var(--border-s);padding-top:28px;text-align:center;}
-.about-owner .name{font-size:15px;font-weight:600;color:var(--text);}
-.about-owner .role{font-size:12px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-top:4px;letter-spacing:.04em;}
-
-/* ── FOOTER ── */
 footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;flex-wrap:wrap;gap:12px;}
 .footer-logo{display:flex;align-items:center;gap:8px;}
 .footer-mark{width:22px;height:22px;background:var(--acc);border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--acc-ink);}
@@ -181,245 +80,68 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border-s);border-radius:3px;}
 
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .nav-links{display:none;}
-  .hamburger{display:flex;}
-  .edu-badge{display:none;}
-  .mod-strip{grid-template-columns:repeat(4,1fr);}
-  .stats-inner{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:768px){
-  .hero{padding:44px 22px 32px;min-height:auto;}
-  .user-name{display:none;}
-  footer{flex-direction:column;align-items:flex-start;}
-}
-@media(max-width:520px){
-  .mod-strip{grid-template-columns:repeat(2,1fr);}
-  .stats-inner{grid-template-columns:1fr;}
-  .stat-cell{border-right:none;border-bottom:1px solid var(--border-s);}
-}
+@media(max-width:900px){ .mod-strip{grid-template-columns:repeat(4,1fr);} .stats-inner{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:768px){ .hero{padding:44px 22px 32px;min-height:auto;} footer{flex-direction:column;align-items:flex-start;} }
+@media(max-width:520px){ .mod-strip{grid-template-columns:repeat(2,1fr);} .stats-inner{grid-template-columns:1fr;} .stat-cell{border-right:none;border-bottom:1px solid var(--border-s);} }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;}}
 </style>
 
 <script src="modules/i18n.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="modules/supabase.js"></script>
-<script>OmniRadAuth.guard();</script>
+<script src="modules/omnirad-nav.js" data-base=""></script>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav">
-  <a href="index.html" class="nav-logo">
-    <div class="nav-logo-mark">OR</div>
-    <span class="nav-logo-name">Omni<span>Rad</span></span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="pages/atlas.html" class="core"><span class="nav-icon">📖</span>Atlas</a></li>
-    <li><a href="pages/comparison.html" class="core"><span class="nav-icon">⚖</span>Compare</a></li>
-    <li class="nav-sep" aria-hidden="true"></li>
-    <li class="nav-group">
-      <button class="nav-group-btn" aria-haspopup="true"><span class="nav-icon">🎓</span>Learn<span class="chev">▾</span></button>
-      <div class="nav-drop">
-        <a href="pages/mnemonics.html"><span class="d-t">📚 Mnemonics</span><span class="d-s">Memory techniques · AR/EN</span></a>
-        <a href="pages/daily.html"><span class="d-t">🧠 Daily Challenge</span><span class="d-s">Quiz + leaderboard</span></a>
-        <a href="pages/srs.html"><span class="d-t">📊 My Progress</span><span class="d-s">Spaced repetition</span></a>
-      </div>
-    </li>
-    <li class="nav-group">
-      <button class="nav-group-btn" aria-haspopup="true"><span class="nav-icon">🛠</span>Tools<span class="chev">▾</span></button>
-      <div class="nav-drop">
-        <a href="pages/ai-chat.html"><span class="d-t">✦ AI Assistant</span><span class="d-s">Radiology-scoped chat</span></a>
-        <a href="pages/clinic.html"><span class="d-t">🏥 Clinic</span><span class="d-s">Applied cases</span></a>
-      </div>
-    </li>
-  </ul>
-  <div class="nav-end">
-    <span class="edu-badge">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      Educational use only
-    </span>
-    <button class="icon-btn" id="themeBtn" title="Toggle theme">☀</button>
-    <div class="user-wrap">
-      <div class="user-area" id="navUserArea" tabindex="0">
-        <div class="user-ava" id="navUserAva">DA</div>
-        <span class="user-name" id="navUserName">Dr. Dany</span>
-        <span class="user-chevron">▾</span>
-      </div>
-      <div class="user-drop">
-        <a href="#about" id="aboutNavLink">ℹ️ About · حول المنصة</a>
-        <div class="ud-sep"></div>
-        <a href="pages/auth.html" id="navSignOut">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-          Sign Out
-        </a>
-      </div>
+<main>
+  <section class="hero">
+    <div class="hero-eyebrow" data-i18n="home.eyebrow">Radiologic Anatomy Platform</div>
+    <h1 class="hero-h1"><span data-i18n="home.h1a">Every structure.</span><br><span class="acc" data-i18n="home.h1b">Every modality.</span> <span data-i18n="home.h1c">One place.</span></h1>
+    <p class="hero-desc" data-i18n="home.desc">
+      Explore any anatomical structure across CT, MRI, Ultrasound, <strong>X-Ray</strong>,
+      Nuclear Medicine and more — and compare them side by side, the way radiologists actually see them.
+    </p>
+    <div class="hero-cta">
+      <a href="pages/atlas.html" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span data-i18n="home.openAtlas">Open Atlas</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="pages/comparison.html" class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l-3 4 3 4M19 8l3 4-3 4"/></svg>
+        <span data-i18n="home.compare">Compare Modalities</span>
+      </a>
     </div>
-    <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-</nav>
+  </section>
 
-<!-- Mobile menu -->
-<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <div class="mm-group">Explore</div>
-  <ul>
-    <li><a href="pages/atlas.html">📖 Atlas</a></li>
-    <li><a href="pages/comparison.html">⚖ Compare</a></li>
-  </ul>
-  <div class="mm-group">Learn</div>
-  <ul>
-    <li><a href="pages/mnemonics.html">📚 Mnemonics</a></li>
-    <li><a href="pages/daily.html">🧠 Daily Challenge</a></li>
-    <li><a href="pages/srs.html">📊 My Progress</a></li>
-  </ul>
-  <div class="mm-group">Tools</div>
-  <ul>
-    <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
-    <li><a href="pages/clinic.html">🏥 Clinic</a></li>
-  </ul>
-  <div class="mm-group">Account</div>
-  <ul>
-    <li><a href="#about">ℹ️ About · حول المنصة</a></li>
-    <li><a href="pages/auth.html">🔐 Sign Out</a></li>
-  </ul>
-</div>
-
-<div class="page">
-<main id="mainView">
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow" data-i18n="home.eyebrow">Radiologic Anatomy Platform</div>
-  <h1 class="hero-h1"><span data-i18n="home.h1a">Every structure.</span><br><span class="acc" data-i18n="home.h1b">Every modality.</span> <span data-i18n="home.h1c">One place.</span></h1>
-  <p class="hero-desc" data-i18n="home.desc">
-    Explore any anatomical structure across CT, MRI, Ultrasound, <strong>X-Ray</strong>,
-    Nuclear Medicine and more — and compare them side by side, the way radiologists actually see them.
-  </p>
-  <div class="hero-cta">
-    <a href="pages/atlas.html" class="btn-primary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      <span data-i18n="home.openAtlas">Open Atlas</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
-    <a href="pages/comparison.html" class="btn-secondary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l-3 4 3 4M19 8l3 4-3 4"/></svg>
-      <span data-i18n="home.compare">Compare Modalities</span>
-    </a>
-  </div>
-</section>
-
-<!-- MODALITY STRIP -->
-<div class="mod-strip-wrap">
-  <div class="mod-strip-label" data-i18n="home.browseBy">Browse by modality</div>
-  <div class="mod-strip">
-    <a href="pages/atlas.html?modality=ct" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ct_abdomen.png" alt="CT"></div><span class="mod-pill-name">CT</span></a>
-    <a href="pages/atlas.html?modality=mri" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mri_brain.png" alt="MRI"></div><span class="mod-pill-name">MRI</span></a>
-    <a href="pages/atlas.html?modality=us" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ultrasound.png" alt="US"></div><span class="mod-pill-name">US</span></a>
-    <a href="pages/atlas.html?modality=xray" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/chest_xray.png" alt="X-Ray"></div><span class="mod-pill-name">X-RAY</span></a>
-    <a href="pages/atlas.html?modality=nm" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png" alt="NM"></div><span class="mod-pill-name">NM</span></a>
-    <a href="pages/atlas.html?modality=angio" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/angiography.png" alt="Angio"></div><span class="mod-pill-name">ANGIO</span></a>
-    <a href="pages/atlas.html?modality=mammo" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mammography.png" alt="Mammo"></div><span class="mod-pill-name">MAMMO</span></a>
-    <a href="pages/atlas.html?modality=pet" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png" alt="PET"></div><span class="mod-pill-name">PET</span></a>
-  </div>
-</div>
-
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat-cell">
-      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-      <div><div class="stat-val">8</div><div class="stat-label">Imaging Modalities</div><div class="stat-sub">Comprehensive coverage</div></div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-      <div><div class="stat-val">AR / EN</div><div class="stat-label">Bilingual Support</div><div class="stat-sub">Arabic &amp; English</div></div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-      <div><div class="stat-val">SM-2</div><div class="stat-label">Spaced Repetition</div><div class="stat-sub">Science-based learning</div></div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div>
-      <div><div class="stat-val">17+</div><div class="stat-label">Anatomical Structures</div><div class="stat-sub">And growing</div></div>
+  <div class="mod-strip-wrap">
+    <div class="mod-strip-label" data-i18n="home.browseBy">Browse by modality</div>
+    <div class="mod-strip">
+      <a href="pages/atlas.html?modality=ct"    class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ct_abdomen.png"   alt="CT"></div><span class="mod-pill-name">CT</span></a>
+      <a href="pages/atlas.html?modality=mri"   class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mri_brain.png"    alt="MRI"></div><span class="mod-pill-name">MRI</span></a>
+      <a href="pages/atlas.html?modality=us"    class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ultrasound.png"   alt="US"></div><span class="mod-pill-name">US</span></a>
+      <a href="pages/atlas.html?modality=xray"  class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/chest_xray.png"   alt="X-Ray"></div><span class="mod-pill-name">X-RAY</span></a>
+      <a href="pages/atlas.html?modality=nm"    class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png"  alt="NM"></div><span class="mod-pill-name">NM</span></a>
+      <a href="pages/atlas.html?modality=angio" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/angiography.png"  alt="Angio"></div><span class="mod-pill-name">ANGIO</span></a>
+      <a href="pages/atlas.html?modality=mammo" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mammography.png"  alt="Mammo"></div><span class="mod-pill-name">MAMMO</span></a>
+      <a href="pages/atlas.html?modality=pet"   class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png"  alt="PET"></div><span class="mod-pill-name">PET</span></a>
     </div>
   </div>
-</div>
 
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div><div class="stat-val">8</div><div class="stat-label">Modalities</div><div class="stat-sub">CT · MRI · US · X-Ray · NM · PET · Angio · Mammo</div></div></div>
+      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div><div class="stat-val">AR / EN</div><div class="stat-label">Bilingual</div><div class="stat-sub">Arabic &amp; English</div></div></div>
+      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><div class="stat-val">SM-2</div><div class="stat-label">Spaced repetition</div><div class="stat-sub">Science-based learning</div></div></div>
+      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div><div><div class="stat-val">Live</div><div class="stat-label">Growing</div><div class="stat-sub">New structures added regularly</div></div></div>
+    </div>
+  </div>
 </main>
-
-<!-- ABOUT (unified design system) -->
-<section class="about-sec" id="about">
-  <div class="ab-eyebrow">About · حول المنصة</div>
-  <h2 class="about-h2">See anatomy the way <span class="acc">radiologists</span> see it.</h2>
-  <p class="about-lead">OmniRad is a multimodal radiologic anatomy platform — explore the same structure across every imaging modality, compare them side by side, and train your eye with bilingual labels, mnemonics and spaced repetition.</p>
-  <p class="about-lead-ar">منصة التشريح الإشعاعي متعدد الأنماط — استكشف نفس البنية عبر كل تقنيات التصوير وقارنها جنباً إلى جنب، مع تسميات ثنائية اللغة وتقنيات حفظ ومراجعة متباعدة.</p>
-  <div class="about-cards">
-    <div class="about-card"><h3>⚖ Multimodal comparison</h3><p>Compare 2–8 modalities of one structure at once.</p><p class="ar">مقارنة عدة تقنيات لبنية واحدة</p></div>
-    <div class="about-card"><h3>🎨 Colorization</h3><p>Toggle real grayscale vs. educational color.</p><p class="ar">تبديل التدرّج الرمادي والتلوين التعليمي</p></div>
-    <div class="about-card"><h3>🌐 Bilingual</h3><p>Full Arabic &amp; English throughout.</p><p class="ar">دعم كامل بالعربية والإنجليزية</p></div>
-    <div class="about-card"><h3>🧠 Spaced repetition</h3><p>SM-2 tracks true long-term retention.</p><p class="ar">مراجعة متباعدة لترسيخ التعلّم</p></div>
-  </div>
-  <div class="about-owner">
-    <div class="name">Mohammed Saeed Alzahrani</div>
-    <div class="role">Radiologic Sciences · OmniRad · 2026</div>
-  </div>
-</section>
 
 <footer>
   <div class="footer-logo"><div class="footer-mark">OR</div><span class="footer-name">OmniRad — v3.9</span></div>
-  <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
+  <span class="footer-meta">© 2026 · <span data-i18n="common.educational">Educational use only</span></span>
 </footer>
 
-</div>
-
-<script>
-// hamburger
-const hBtn=document.getElementById('hamburgerBtn');
-const mMenu=document.getElementById('mobileMenu');
-hBtn.addEventListener('click',()=>{
-  const open=mMenu.classList.toggle('open');
-  hBtn.classList.toggle('open',open);
-  hBtn.setAttribute('aria-expanded',open);
-  mMenu.setAttribute('aria-hidden',!open);
-});
-mMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
-  mMenu.classList.remove('open');hBtn.classList.remove('open');
-}));
-document.addEventListener('click',e=>{
-  if(!hBtn.contains(e.target)&&!mMenu.contains(e.target)){mMenu.classList.remove('open');hBtn.classList.remove('open');}
-});
-
-// theme
-const html=document.documentElement;
-const btn=document.getElementById('themeBtn');
-const ICONS={dark:'☀',dim:'☾'};
-const saved=localStorage.getItem('omnirad-theme')||'dark';
-html.dataset.theme=saved;btn.textContent=ICONS[saved];
-btn.addEventListener('click',()=>{
-  const next=html.dataset.theme==='dark'?'dim':'dark';
-  html.dataset.theme=next;btn.textContent=ICONS[next];
-  localStorage.setItem('omnirad-theme',next);
-});
-
-// about toggle
-(function(){
-  const link=document.getElementById('aboutNavLink');
-  const sec=document.getElementById('about');
-  const main=document.getElementById('mainView');
-  if(!link||!sec||!main)return;
-  function toggle(e){
-    if(e)e.preventDefault();
-    const isOpen=sec.classList.contains('show');
-    if(isOpen){sec.classList.remove('show');main.style.display='';}
-    else{sec.classList.add('show');main.style.display='none';}
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-  link.addEventListener('click',toggle);
-  const mAbout=document.querySelector('.mobile-menu a[href="#about"]');
-  if(mAbout)mAbout.addEventListener('click',toggle);
-})();
-
-if(window.OmniRadAuth&&OmniRadAuth.updateNav)OmniRadAuth.updateNav();
-</script>
 </body>
 </html>
