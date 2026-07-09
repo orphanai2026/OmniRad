@@ -6,163 +6,167 @@
 <title>OmniRad — Atlas</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-:root,[data-theme="dark"]{
-  --bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;
-  --text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);
-  --acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);
-  --border:rgba(45,212,200,.12);--border-s:rgba(232,240,245,.08);
-  --nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;
-  --viewer-bg:#000;--viewer-anno:#a3e635;--viewer-orient:#f59e0b;
-}
-[data-theme="dim"]{
-  --bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;
-  --text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);
-  --acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);
-  --border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);
-  --nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;
-  --viewer-bg:#000;
-}
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--viewer-bg:#000;--anno:#a3e635;--orient:#f59e0b;--measure:#f472b6}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--viewer-bg:#000}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-font-smoothing:antialiased}
-body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;padding-top:var(--onav-h,56px)}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
 body[dir="rtl"]{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
 a{text-decoration:none;color:inherit}
-
-/* Atlas layout: [sidebar][main][info] */
-.atlas{display:grid;grid-template-columns:280px 1fr 320px;height:calc(100vh - 56px);gap:0}
-
-/* ─────── SIDEBAR — structures ─────── */
+.atlas{display:grid;grid-template-columns:260px 1fr 300px;height:calc(100vh - 56px)}
 .sidebar{background:var(--bg-e);border-inline-end:1px solid var(--border);overflow-y:auto;padding:14px 0}
-.side-head{padding:6px 18px 12px;display:flex;flex-direction:column;gap:8px}
-.side-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
+.side-head{padding:6px 16px 12px}
+.side-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
 .side-search{width:100%;padding:8px 10px;background:var(--bg-s);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:13px}
 .side-search:focus{outline:none;border-color:var(--acc)}
 .struct-list{list-style:none;padding:6px 0}
-.struct-list li a{display:flex;align-items:center;gap:9px;padding:10px 18px;font-size:13px;color:var(--text-s);border-inline-start:2px solid transparent;transition:all .15s;cursor:pointer}
+.struct-region{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:14px 16px 6px;font-family:'IBM Plex Mono',monospace}
+.struct-list li a{display:flex;align-items:center;gap:9px;padding:9px 16px;font-size:13px;color:var(--text-s);border-inline-start:2px solid transparent;transition:.15s;cursor:pointer}
 .struct-list li a:hover{background:var(--bg-ov);color:var(--text)}
 .struct-list li a.on{background:var(--acc-sub);color:var(--acc);border-inline-start-color:var(--acc);font-weight:600}
 .struct-icon{width:22px;height:22px;border-radius:5px;background:var(--bg-ov);display:grid;place-items:center;font-size:12px;flex-shrink:0}
 .struct-list li a.on .struct-icon{background:var(--acc-sub);color:var(--acc)}
-.struct-region{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:14px 18px 6px;font-family:'IBM Plex Mono',monospace}
-
-/* ─────── MAIN — viewer ─────── */
 .main{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
-
-/* Modality tabs */
-.mod-bar{display:flex;gap:2px;padding:12px 20px 0;overflow-x:auto;border-bottom:1px solid var(--border-s)}
-.mod-tab{padding:9px 15px;font-size:12px;font-weight:600;background:transparent;color:var(--text-s);border:none;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;letter-spacing:.03em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;white-space:nowrap;transition:.15s}
-.mod-tab:hover{color:var(--text)}
+/* Modality tabs (hybrid) */
+.mod-bar{display:flex;gap:2px;padding:10px 18px 0;overflow-x:auto;border-bottom:1px solid var(--border-s)}
+.mod-tab{padding:8px 14px;font-size:12px;font-weight:700;background:transparent;color:var(--text-s);border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;border-bottom:2px solid transparent;letter-spacing:.05em;white-space:nowrap;transition:.15s}
+.mod-tab:hover:not(:disabled){color:var(--text)}
 .mod-tab.on{color:var(--acc);border-bottom-color:var(--acc)}
-.mod-tab .mod-count{font-size:9px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--bg-ov);color:var(--text-m);margin-inline-start:4px}
-.mod-tab.on .mod-count{background:var(--acc-sub);color:var(--acc)}
-
-/* Viewer toolbar */
-.tool-bar{display:flex;align-items:center;gap:14px;padding:10px 20px;background:var(--bg-e);border-bottom:1px solid var(--border-s);flex-wrap:wrap}
-.tool-group{display:flex;align-items:center;gap:4px;padding:0 10px;border-inline-end:1px solid var(--border-s);height:26px}
-.tool-group:last-child{border-inline-end:none}
-.tool-lbl{font-size:9.5px;font-weight:700;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-inline-end:6px}
-.tool-btn{padding:4px 9px;font-size:11px;font-weight:600;background:transparent;border:1px solid var(--border);color:var(--text-s);cursor:pointer;border-radius:4px;font-family:inherit;transition:.12s;font-family:'IBM Plex Mono',monospace}
-.tool-btn:hover{color:var(--acc);border-color:var(--acc-dim)}
-.tool-btn.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
-.tool-value{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);min-width:56px;text-align:center;padding:3px 7px;background:var(--bg-s);border-radius:3px}
-
-/* Viewer canvas area */
+.mod-tab:disabled{opacity:.35;cursor:not-allowed;position:relative}
+.mod-tab:disabled::after{content:'coming soon';font-size:8px;color:var(--text-m);position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);letter-spacing:0;font-weight:600;text-transform:none}
+/* Plane/variant sub-picker */
+.sub-picker{display:flex;gap:12px;align-items:center;padding:8px 18px;background:var(--bg-e);border-bottom:1px solid var(--border-s);flex-wrap:wrap}
+.sub-lbl{font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
+.sub-picker select{padding:5px 9px;background:var(--bg-s);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600}
+.sub-picker select:focus{outline:none;border-color:var(--acc)}
+/* Tool bar */
+.tool-bar{display:flex;align-items:center;gap:10px;padding:8px 18px;background:var(--bg-e);border-bottom:1px solid var(--border-s);flex-wrap:wrap}
+.tg{display:flex;align-items:center;gap:3px;padding:0 8px;border-inline-end:1px solid var(--border-s);height:26px}
+.tg:last-child{border-inline-end:none}
+.tl{font-size:9.5px;font-weight:700;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-inline-end:5px}
+.tb{padding:4px 8px;font-size:10.5px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--text-s);cursor:pointer;border-radius:4px;font-family:'IBM Plex Mono',monospace;transition:.12s;letter-spacing:.03em}
+.tb:hover{color:var(--acc);border-color:var(--acc-dim)}
+.tb.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.tv{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text);min-width:48px;text-align:center;padding:2px 6px;background:var(--bg-s);border-radius:3px}
+/* Viewer */
 .viewer{flex:1;position:relative;background:var(--viewer-bg);display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none}
 .viewer canvas{max-width:100%;max-height:100%;cursor:crosshair;image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges}
-.viewer.dragging canvas{cursor:grabbing}
+.viewer.dragging{cursor:grabbing}
 .viewer.tool-zoom canvas{cursor:zoom-in}
 .viewer.tool-pan canvas{cursor:grab}
 .viewer.tool-wl canvas{cursor:ns-resize}
-
-/* Corner annotations — DICOM style */
-.anno{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.4;color:var(--viewer-anno);text-shadow:0 0 4px rgba(0,0,0,.9);pointer-events:none;white-space:nowrap}
-.anno-tl{top:12px;inset-inline-start:14px}
-.anno-tr{top:12px;inset-inline-end:14px;text-align:end}
-.anno-bl{bottom:12px;inset-inline-start:14px}
-.anno-br{bottom:12px;inset-inline-end:14px;text-align:end}
-.orient-mark{position:absolute;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--viewer-orient);text-shadow:0 0 4px rgba(0,0,0,.9);pointer-events:none}
-.orient-r{top:50%;inset-inline-start:12px;transform:translateY(-50%)}
-.orient-l{top:50%;inset-inline-end:12px;transform:translateY(-50%)}
-.orient-a{top:12px;inset-inline-start:50%;transform:translateX(-50%)}
-.orient-p{bottom:12px;inset-inline-start:50%;transform:translateX(-50%)}
-.scale-bar{position:absolute;bottom:38px;inset-inline-end:14px;color:var(--viewer-anno);text-shadow:0 0 4px rgba(0,0,0,.9);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:end;pointer-events:none}
-.scale-bar-line{width:80px;height:2px;background:var(--viewer-anno);margin-inline-start:auto;margin-bottom:2px}
-
+.viewer.tool-measure canvas{cursor:crosshair}
+.viewer.tool-angle canvas{cursor:crosshair}
+.viewer.tool-probe canvas{cursor:crosshair}
+/* Overlay layer (measurements / labels) */
+.overlay{position:absolute;inset:0;pointer-events:none}
+/* Corner annotations DICOM-style */
+.anno{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.4;color:var(--anno);text-shadow:0 0 4px rgba(0,0,0,.9);pointer-events:none;white-space:nowrap}
+.anno-tl{top:10px;inset-inline-start:12px}
+.anno-tr{top:10px;inset-inline-end:12px;text-align:end}
+.anno-bl{bottom:10px;inset-inline-start:12px}
+.anno-br{bottom:10px;inset-inline-end:12px;text-align:end}
+.orient-mark{position:absolute;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--orient);text-shadow:0 0 4px rgba(0,0,0,.9);pointer-events:none}
+.orient-r{top:50%;inset-inline-start:10px;transform:translateY(-50%)}
+.orient-l{top:50%;inset-inline-end:10px;transform:translateY(-50%)}
+.orient-a{top:10px;inset-inline-start:50%;transform:translateX(-50%)}
+.orient-p{bottom:10px;inset-inline-start:50%;transform:translateX(-50%)}
+.scale-bar{position:absolute;bottom:34px;inset-inline-end:12px;color:var(--anno);text-shadow:0 0 4px rgba(0,0,0,.9);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:end;pointer-events:none}
+.scale-bar-line{width:80px;height:2px;background:var(--anno);margin-inline-start:auto;margin-bottom:2px}
 .viewer-empty{color:var(--text-m);font-size:14px;text-align:center;padding:40px}
-.viewer-empty svg{width:64px;height:64px;stroke:var(--text-m);stroke-width:1;fill:none;margin-bottom:16px}
-
-/* ─────── INFO panel ─────── */
-.info{background:var(--bg-e);border-inline-start:1px solid var(--border);padding:18px 20px;overflow-y:auto}
-.info h2{font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
-.info .info-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-m);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
-.info h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin:18px 0 6px;font-family:'IBM Plex Mono',monospace}
-.info p{font-size:13px;color:var(--text-s);line-height:1.65}
-.info .kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--border-s);font-size:12px}
-.info .kv:last-child{border-bottom:none}
-.info .kv .k{color:var(--text-m);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
-.info .kv .v{color:var(--text);font-weight:600;text-align:end;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
-.disc{margin-top:20px;padding-top:14px;border-top:1px solid var(--border-s);font-size:10.5px;color:var(--text-m);line-height:1.6}
-
+.viewer-empty svg{width:60px;height:60px;stroke:var(--text-m);stroke-width:1;fill:none;margin-bottom:14px}
+/* Info panel */
+.info{background:var(--bg-e);border-inline-start:1px solid var(--border);padding:16px 18px;overflow-y:auto}
+.info-title-row{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.info h2{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.info-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-m);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.info h3{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin:16px 0 6px;font-family:'IBM Plex Mono',monospace;display:flex;justify-content:space-between;align-items:center}
+.info p{font-size:12.5px;color:var(--text-s);line-height:1.65}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--border-s);font-size:11.5px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--text-m);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}
+.kv .v{color:var(--text);font-weight:600;text-align:end;font-family:'IBM Plex Mono',monospace;font-size:11px}
+/* Parts list */
+.parts{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.part{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border-s);border-radius:6px;background:var(--bg-s);cursor:pointer;transition:.12s}
+.part:hover{border-color:var(--acc-dim);background:var(--acc-sub)}
+.part.on{border-color:var(--acc);background:var(--acc-sub)}
+.part .dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.part .p-name{font-size:12px;font-weight:600;color:var(--text);flex:1;line-height:1.3}
+.part .p-ar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10.5px;color:var(--text-m);direction:rtl}
+.disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--border-s);font-size:10px;color:var(--text-m);line-height:1.6}
+/* Labels toggle */
+.labels-toggle{padding:5px 9px;font-size:9.5px;font-weight:700;letter-spacing:.05em;font-family:'IBM Plex Mono',monospace;background:transparent;border:1px solid var(--border);color:var(--text-s);cursor:pointer;border-radius:4px}
+.labels-toggle.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+/* Speaker button in headings */
+.omr-speak-btn{background:transparent!important;border:none!important;color:var(--acc)!important;width:24px!important;height:24px!important;padding:0!important;cursor:pointer;flex-shrink:0}
+.omr-speak-btn:hover{background:var(--acc-sub)!important;border-radius:5px}
 /* Responsive */
-@media(max-width:1180px){
-  .atlas{grid-template-columns:230px 1fr 280px}
-}
+@media(max-width:1180px){ .atlas{grid-template-columns:220px 1fr 270px} }
 @media(max-width:900px){
   .atlas{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;height:auto;overflow:visible}
   body{overflow:auto;height:auto;min-height:100vh}
-  .sidebar{max-height:220px;border-inline-end:none;border-bottom:1px solid var(--border)}
+  .sidebar{max-height:200px;border-inline-end:none;border-bottom:1px solid var(--border)}
   .info{border-inline-start:none;border-top:1px solid var(--border)}
   .viewer{height:60vh}
 }
-
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border-s);border-radius:3px}
 </style>
 </head>
 <body>
-
 <div class="atlas">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="side-head">
-      <div class="side-title" id="lblStruct">Anatomical structures</div>
-      <input class="side-search" id="search" placeholder="Search structures…">
+      <div class="side-title">Anatomical structures</div>
+      <input class="side-search" id="search" placeholder="Search…">
     </div>
     <ul class="struct-list" id="structList"></ul>
   </aside>
 
-  <!-- MAIN VIEWER -->
   <section class="main">
     <div class="mod-bar" id="modBar"></div>
-
+    <div class="sub-picker">
+      <span class="sub-lbl">Plane</span>
+      <select id="planeSel"></select>
+      <span class="sub-lbl">Variant</span>
+      <select id="varSel"></select>
+      <span style="flex:1"></span>
+      <button class="labels-toggle on" id="btnLabels">LABELS: ON</button>
+    </div>
     <div class="tool-bar">
-      <div class="tool-group">
-        <span class="tool-lbl">Tool</span>
-        <button class="tool-btn on" data-tool="wl" title="Window / Level (drag vertically)">WL</button>
-        <button class="tool-btn" data-tool="zoom" title="Zoom (drag vertically)">ZOOM</button>
-        <button class="tool-btn" data-tool="pan" title="Pan">PAN</button>
+      <div class="tg"><span class="tl">Tool</span>
+        <button class="tb on" data-tool="wl" title="Window / Level">WL</button>
+        <button class="tb"    data-tool="zoom" title="Zoom">ZOOM</button>
+        <button class="tb"    data-tool="pan"  title="Pan">PAN</button>
+        <button class="tb"    data-tool="measure" title="Measure">RULER</button>
+        <button class="tb"    data-tool="angle" title="Angle">ANGLE</button>
+        <button class="tb"    data-tool="probe" title="Pixel probe">PROBE</button>
       </div>
-      <div class="tool-group">
-        <span class="tool-lbl">WW</span>
-        <span class="tool-value" id="valWW">—</span>
-        <span class="tool-lbl">WL</span>
-        <span class="tool-value" id="valWL">—</span>
+      <div class="tg"><span class="tl">Preset</span>
+        <select id="presetSel" style="padding:4px 7px;background:var(--bg-s);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700">
+          <option value="">Custom</option>
+          <option value="brain">Brain (80/40)</option>
+          <option value="soft">Soft tissue (400/40)</option>
+          <option value="abd">Abdomen (400/60)</option>
+          <option value="lung">Lung (1500/-600)</option>
+          <option value="bone">Bone (2000/400)</option>
+          <option value="mri">MRI (280/120)</option>
+        </select>
       </div>
-      <div class="tool-group">
-        <span class="tool-lbl">Zoom</span>
-        <span class="tool-value" id="valZoom">1.00×</span>
-      </div>
-      <div class="tool-group">
-        <button class="tool-btn" id="btnInvert" title="Invert grayscale">INVERT</button>
-        <button class="tool-btn" id="btnGrid" title="Toggle overlays">OVERLAY</button>
-        <button class="tool-btn" id="btnReset" title="Reset view">RESET</button>
+      <div class="tg"><span class="tl">WW</span><span class="tv" id="valWW">—</span><span class="tl">WL</span><span class="tv" id="valWL">—</span></div>
+      <div class="tg"><span class="tl">Zoom</span><span class="tv" id="valZoom">1.00×</span></div>
+      <div class="tg">
+        <button class="tb" id="btnInvert" title="Invert">INVERT</button>
+        <button class="tb" id="btnOverlay" title="Toggle overlays">OVLY</button>
+        <button class="tb" id="btnClear"   title="Clear measurements">CLR</button>
+        <button class="tb" id="btnReset"   title="Reset view">RESET</button>
       </div>
     </div>
 
     <div class="viewer tool-wl" id="viewer">
       <canvas id="cv"></canvas>
-      <!-- Corner annotations (DICOM-style) -->
+      <svg class="overlay" id="ovl" width="100%" height="100%" preserveAspectRatio="none"></svg>
       <div class="anno anno-tl" id="anTL"></div>
       <div class="anno anno-tr" id="anTR"></div>
       <div class="anno anno-bl" id="anBL"></div>
@@ -171,326 +175,422 @@ a{text-decoration:none;color:inherit}
       <div class="orient-mark orient-l">L</div>
       <div class="orient-mark orient-a">A</div>
       <div class="orient-mark orient-p">P</div>
-      <div class="scale-bar" id="scaleBar">
-        <div class="scale-bar-line"></div>
-        <div>~5 cm</div>
-      </div>
-      <div class="viewer-empty" id="empty">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg>
-        <div>Choose a structure to begin</div>
+      <div class="scale-bar" id="scaleBar"><div class="scale-bar-line"></div><div>~5 cm</div></div>
+      <div class="viewer-empty" id="empty" style="display:none">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        <div id="emptyText">Image not available yet.</div>
       </div>
     </div>
   </section>
 
-  <!-- INFO -->
   <aside class="info" id="info">
-    <h2 id="infoTitle">OmniRad Atlas</h2>
+    <div class="info-title-row"><h2 id="infoTitle">OmniRad Atlas</h2><span id="titleSpeaker"></span></div>
     <div class="info-sub" id="infoSub">Radiologic anatomy · bilingual</div>
-
-    <h3 id="lblStudy">Study</h3>
+    <h3>Study</h3>
     <div class="kv"><span class="k">Modality</span><span class="v" id="infoMod">—</span></div>
-    <div class="kv"><span class="k">Sequence</span><span class="v" id="infoSeq">—</span></div>
     <div class="kv"><span class="k">Plane</span><span class="v" id="infoPlane">—</span></div>
-    <div class="kv"><span class="k">View</span><span class="v" id="infoView">—</span></div>
-
-    <h3 id="lblAbout">About this structure</h3>
-    <p id="infoDesc">Select any structure from the sidebar to see its representation across imaging modalities.</p>
-
-    <div class="disc" id="disc">
-      ⚕️ Educational tool — not for diagnosis or clinical use.<br>
-      © 2026 OmniRad Platform. All rights reserved.
-    </div>
+    <div class="kv"><span class="k">Variant</span><span class="v" id="infoVar">—</span></div>
+    <div class="kv"><span class="k">WW / WL</span><span class="v" id="infoWL">—</span></div>
+    <h3>About</h3>
+    <p id="infoDesc">Select a structure to begin.</p>
+    <h3>Anatomical parts <span id="partCount" style="color:var(--text-m);font-weight:400"></span></h3>
+    <div class="parts" id="parts"></div>
+    <div class="disc">⚕️ Educational only — not for diagnosis or clinical use.<br>© 2026 OmniRad Platform.</div>
   </aside>
 </div>
 
-<!-- Supabase + shared nav + auth -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
-
+<script src="../modules/structures.js"></script>
+<script src="../modules/speak.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   OMNIRAD ATLAS — data & viewer
-   ─────────────────────────────────────────────────────────────
-   Structures + modalities are locally declared (fast bootstrap);
-   in Phase 2 we will read approved images from Supabase via
-   OmniRadAuth.listApprovedImages().
+   Anatomical parts per structure (bilingual, teaching-oriented).
+   Each part has a color for the segmentation legend + a normalized
+   bounding box hint (0-1 space) so future overlays can highlight it.
    ═══════════════════════════════════════════════════════════════ */
+const PARTS = {
+  brain: [
+    { en:'Frontal lobe', ar:'الفص الجبهي', color:'#f472b6' },
+    { en:'Parietal lobe', ar:'الفص الجداري', color:'#60a5fa' },
+    { en:'Temporal lobe', ar:'الفص الصدغي', color:'#fbbf24' },
+    { en:'Occipital lobe', ar:'الفص القذالي', color:'#4ade80' },
+    { en:'Lateral ventricles', ar:'البطينات الجانبية', color:'#22d3ee' },
+    { en:'Basal ganglia', ar:'العقد القاعدية', color:'#a78bfa' },
+    { en:'Cerebellum', ar:'المخيخ', color:'#f87171' },
+    { en:'Brainstem', ar:'جذع الدماغ', color:'#facc15' }
+  ],
+  liver: [
+    { en:'Right lobe', ar:'الفص الأيمن', color:'#f472b6' },
+    { en:'Left lobe', ar:'الفص الأيسر', color:'#60a5fa' },
+    { en:'Caudate lobe', ar:'الفص المذنب', color:'#fbbf24' },
+    { en:'Portal vein', ar:'الوريد البابي', color:'#4ade80' },
+    { en:'Hepatic veins', ar:'الأوردة الكبدية', color:'#22d3ee' },
+    { en:'Hepatic artery', ar:'الشريان الكبدي', color:'#f87171' }
+  ],
+  kidney: [
+    { en:'Cortex', ar:'القشرة', color:'#f472b6' },
+    { en:'Medulla', ar:'اللب', color:'#fbbf24' },
+    { en:'Renal pelvis', ar:'حويضة الكلية', color:'#22d3ee' },
+    { en:'Renal pyramids', ar:'الأهرام الكلوية', color:'#a78bfa' },
+    { en:'Ureteropelvic junction', ar:'وصل الحالب بالحويضة', color:'#4ade80' }
+  ],
+  spleen: [
+    { en:'Parenchyma', ar:'المتن', color:'#f472b6' },
+    { en:'Splenic hilum', ar:'سرة الطحال', color:'#22d3ee' },
+    { en:'Splenic artery', ar:'الشريان الطحالي', color:'#f87171' },
+    { en:'Splenic vein', ar:'الوريد الطحالي', color:'#60a5fa' }
+  ],
+  bladder: [
+    { en:'Dome', ar:'القبة', color:'#60a5fa' },
+    { en:'Trigone', ar:'المثلث', color:'#fbbf24' },
+    { en:'Detrusor muscle', ar:'العضلة الدافعة', color:'#f472b6' },
+    { en:'Ureteric orifices', ar:'فتحتا الحالب', color:'#22d3ee' }
+  ],
+  thorax: [
+    { en:'Right lung', ar:'الرئة اليمنى', color:'#f472b6' },
+    { en:'Left lung', ar:'الرئة اليسرى', color:'#60a5fa' },
+    { en:'Heart', ar:'القلب', color:'#f87171' },
+    { en:'Aorta', ar:'الأبهر', color:'#fbbf24' },
+    { en:'Mediastinum', ar:'المنصف', color:'#a78bfa' }
+  ],
+  abdomen: [
+    { en:'Liver', ar:'الكبد', color:'#f472b6' },
+    { en:'Spleen', ar:'الطحال', color:'#60a5fa' },
+    { en:'Kidneys', ar:'الكليتان', color:'#fbbf24' },
+    { en:'Pancreas', ar:'البنكرياس', color:'#a78bfa' },
+    { en:'Aorta', ar:'الأبهر', color:'#f87171' },
+    { en:'IVC', ar:'الوريد الأجوف السفلي', color:'#22d3ee' }
+  ],
+  neck: [
+    { en:'Cervical spine', ar:'العمود الرقبي', color:'#f472b6' },
+    { en:'Thyroid gland', ar:'الغدة الدرقية', color:'#fbbf24' },
+    { en:'Trachea', ar:'الرغامى', color:'#22d3ee' },
+    { en:'Carotid artery', ar:'الشريان السباتي', color:'#f87171' },
+    { en:'Jugular vein', ar:'الوريد الوداجي', color:'#60a5fa' }
+  ],
+  bone: [
+    { en:'Cortex', ar:'القشرة', color:'#f472b6' },
+    { en:'Trabecular bone', ar:'العظم التربيقي', color:'#fbbf24' },
+    { en:'Medullary cavity', ar:'التجويف النقوي', color:'#22d3ee' },
+    { en:'Cortical margin', ar:'الحافة القشرية', color:'#4ade80' }
+  ]
+};
+/* All possible modalities we teach — used to render greyed "coming soon" tabs. */
+const ALL_MODALITIES = ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'];
 
-const STRUCTURES = [
-  // Head & Neck
-  { id:'brain',   region:'Head & Neck',  en:'Brain',      ar:'الدماغ',   icon:'🧠',
-    modalities:[
-      { id:'MRI T2', path:'../images/structures/brain/mri_t2_original.png',  plane:'Axial', ww:280, wl:120 },
-      { id:'MRI PD', path:'../images/structures/brain/mri_pd_original.png',  plane:'Axial', ww:220, wl:110 },
-      { id:'MRI T1', path:'../images/structures/brain/mri_original.png',     plane:'Axial', ww:300, wl:150 }
-    ],
-    desc:'Central nervous system organ in the cranial vault. Best evaluated with MRI for parenchymal detail and CT for acute hemorrhage / trauma.' },
-  { id:'neck', region:'Head & Neck', en:'Neck', ar:'الرقبة', icon:'💠',
-    modalities:[
-      { id:'MRI T2', path:'../images/structures/neck/mri_t2_original.png', plane:'Sagittal', ww:260, wl:110 },
-      { id:'MRI T1', path:'../images/structures/neck/mri_original.png',    plane:'Sagittal', ww:280, wl:140 }
-    ],
-    desc:'Complex anatomy including cervical spine, airway, thyroid, and vascular structures. MRI excels at soft tissue detail.' },
+const $ = id => document.getElementById(id);
+const S = window.OMNIRAD_STRUCTURES;
+const U = window.OMNIRAD_STRUCT_UTIL;
 
-  // Chest
-  { id:'thorax', region:'Chest', en:'Thorax', ar:'الصدر', icon:'🫁',
-    modalities:[
-      { id:'MRI T2', path:'../images/structures/thorax/mri_t2_original.png', plane:'Axial', ww:300, wl:120 },
-      { id:'MRI T1', path:'../images/structures/thorax/mri_original.png',    plane:'Axial', ww:280, wl:130 }
-    ],
-    desc:'Chest wall, mediastinum, and cardiothoracic structures.' },
-
-  // Abdomen
-  { id:'abdomen', region:'Abdomen', en:'Abdomen (general)', ar:'البطن', icon:'🫃',
-    modalities:[
-      { id:'MRI T2', path:'../images/structures/abdomen/mri_t2_original.png', plane:'Axial', ww:280, wl:110 },
-      { id:'MRI T1', path:'../images/structures/abdomen/mri_original.png',    plane:'Axial', ww:260, wl:140 }
-    ],
-    desc:'Global abdominal view showing solid organs, bowel, and vasculature.' },
-  { id:'liver', region:'Abdomen', en:'Liver', ar:'الكبد', icon:'🫘',
-    modalities:[
-      { id:'CT (original)', path:'../images/structures/liver/ct_original.png', plane:'Axial', ww:150, wl:60 },
-      { id:'CT (colored)',  path:'../images/structures/liver/ct_colored.png',  plane:'Axial', ww:250, wl:128, colored:true }
-    ],
-    desc:'Largest solid abdominal organ. RUQ, beneath the right hemidiaphragm.' },
-  { id:'kidney', region:'Abdomen', en:'Kidney', ar:'الكلية', icon:'🫘',
-    modalities:[
-      { id:'CT (original)', path:'../images/structures/kidney/ct_original.png', plane:'Axial', ww:170, wl:60 },
-      { id:'CT (colored)',  path:'../images/structures/kidney/ct_colored.png',  plane:'Axial', ww:250, wl:128, colored:true }
-    ],
-    desc:'Retroperitoneal, right lower than left. T12–L3 span. Cortex + medulla with pelvis draining to ureter.' },
-  { id:'spleen', region:'Abdomen', en:'Spleen', ar:'الطحال', icon:'🫘',
-    modalities:[
-      { id:'MRI (original)', path:'../images/structures/spleen/mri_original.png', plane:'Axial', ww:220, wl:100 },
-      { id:'MRI (colored)',  path:'../images/structures/spleen/mri_colored.png',  plane:'Axial', ww:250, wl:128, colored:true }
-    ],
-    desc:'LUQ, behind stomach, along ribs 9–11.' },
-  { id:'bladder', region:'Pelvis', en:'Urinary bladder', ar:'المثانة', icon:'🫘',
-    modalities:[
-      { id:'CT (original)', path:'../images/structures/bladder/ct_original.png', plane:'Axial', ww:200, wl:70 },
-      { id:'CT (colored)',  path:'../images/structures/bladder/ct_colored.png',  plane:'Axial', ww:250, wl:128, colored:true }
-    ],
-    desc:'Anterior pelvis, behind pubic symphysis.' },
-
-  // Musculoskeletal
-  { id:'bone', region:'Musculoskeletal', en:'Bone', ar:'العظم', icon:'🦴',
-    modalities:[
-      { id:'CT (original)', path:'../images/structures/bone/ct_original.png', plane:'Axial', ww:2000, wl:400 },
-      { id:'CT (colored)',  path:'../images/structures/bone/ct_colored.png',  plane:'Axial', ww:2000, wl:400, colored:true }
-    ],
-    desc:'Bone window on CT — trabecular vs cortical detail.' }
-];
-
-/* ─────── State ─────── */
-const S = {
-  structId: null,
-  modIdx: 0,
-  tool: 'wl',           // wl | zoom | pan
+const state = {
+  structId: 'brain',
+  modality: '',
+  plane: '',
+  variant: '',
+  tool: 'wl',
   invert: false,
   overlays: true,
+  labelsOn: true,
   zoom: 1, panX: 0, panY: 0,
   ww: 300, wl: 150,
-  img: null,            // HTMLImageElement
-  imgCache: {}
+  img: null,
+  imgCache: {},
+  measurements: [] // { type, points:[{x,y}...] }, in canvas coords
 };
 
-/* ─────── DOM ─────── */
-const $ = (id) => document.getElementById(id);
-const cv = $('cv'), ctx = cv.getContext('2d');
-const viewer = $('viewer');
-
-/* ─────── Sidebar rendering ─────── */
+/* ─────── Sidebar ─────── */
 function renderSidebar(filter){
   const list = $('structList'); list.innerHTML = '';
   const q = (filter||'').trim().toLowerCase();
   let currentRegion = '';
-  STRUCTURES.forEach(s=>{
+  S.forEach(s=>{
     if (q && !(s.en.toLowerCase().includes(q) || s.ar.includes(q))) return;
-    if (s.region !== currentRegion) {
+    if (s.region !== currentRegion){
       currentRegion = s.region;
-      const h = document.createElement('div');
-      h.className = 'struct-region';
-      h.textContent = s.region;
+      const h = document.createElement('div'); h.className = 'struct-region'; h.textContent = s.region;
       list.appendChild(h);
     }
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.dataset.id = s.id;
-    a.className = s.id === S.structId ? 'on' : '';
-    a.innerHTML = `<span class="struct-icon">${s.icon}</span><span>${s.en}</span>`;
-    a.addEventListener('click', () => selectStructure(s.id));
+    a.className = s.id === state.structId ? 'on' : '';
+    a.innerHTML = `<span class="struct-icon">${s.icon || '🔸'}</span><span>${s.en}</span>`;
+    a.addEventListener('click', ()=> selectStructure(s.id));
     li.appendChild(a); list.appendChild(li);
   });
 }
 
-/* ─────── Modality bar ─────── */
+/* ─────── Modality tabs (hybrid: enabled + coming-soon disabled) ─────── */
 function renderModBar(){
   const bar = $('modBar'); bar.innerHTML = '';
-  const st = currentStruct(); if (!st) return;
-  st.modalities.forEach((m,i)=>{
+  const available = U.modalitiesFor(state.structId);
+  ALL_MODALITIES.forEach(mod => {
     const btn = document.createElement('button');
-    btn.className = 'mod-tab' + (i === S.modIdx ? ' on' : '');
-    btn.innerHTML = m.id;
-    btn.addEventListener('click', () => selectModality(i));
+    btn.className = 'mod-tab' + (mod === state.modality ? ' on' : '');
+    btn.textContent = mod;
+    if (available.includes(mod)) {
+      btn.addEventListener('click', ()=>{ state.modality = mod; state.plane = ''; state.variant = ''; renderModBar(); renderSubPicker(); loadCurrent(); });
+    } else {
+      btn.disabled = true;
+    }
     bar.appendChild(btn);
   });
 }
 
-function currentStruct(){ return STRUCTURES.find(s=>s.id===S.structId); }
-function currentMod(){ const st = currentStruct(); return st ? st.modalities[S.modIdx] : null; }
+/* ─────── Plane + Variant selects ─────── */
+function renderSubPicker(){
+  const planes = U.planesFor(state.structId, state.modality);
+  const planeSel = $('planeSel'); planeSel.innerHTML = '';
+  planes.forEach(p=>{ const o = document.createElement('option'); o.value = p; o.textContent = p; if (p===state.plane) o.selected = true; planeSel.appendChild(o); });
+  if (!planes.includes(state.plane)) state.plane = planes[0] || '';
+  planeSel.onchange = e => { state.plane = e.target.value; state.variant = ''; renderSubPicker(); loadCurrent(); };
+
+  const variants = U.variantsFor(state.structId, state.modality, state.plane);
+  const varSel = $('varSel'); varSel.innerHTML = '';
+  variants.forEach(v=>{ const o = document.createElement('option'); o.value = v.variant; o.textContent = v.variant; if (v.variant===state.variant) o.selected = true; varSel.appendChild(o); });
+  if (!variants.some(v=>v.variant===state.variant)) state.variant = (variants[0] && variants[0].variant) || '';
+  varSel.onchange = e => { state.variant = e.target.value; loadCurrent(); };
+}
+
+/* ─────── Info panel + parts list ─────── */
+function currentStruct(){ return S.find(s=>s.id===state.structId); }
+function renderInfo(){
+  const st = currentStruct(); if (!st) return;
+  $('infoTitle').textContent = st.en + ' · ' + st.ar;
+  $('infoSub').textContent = st.region;
+  const spk = $('titleSpeaker'); spk.innerHTML = ''; if (window.OmniRadSpeak) spk.appendChild(OmniRadSpeak.button(st.en));
+  $('infoMod').textContent = state.modality || '—';
+  $('infoPlane').textContent = state.plane || '—';
+  $('infoVar').textContent = state.variant || '—';
+  $('infoWL').textContent = state.ww + ' / ' + state.wl;
+  $('infoDesc').textContent = st.desc || '';
+  // parts list
+  const list = PARTS[state.structId] || [];
+  $('partCount').textContent = list.length ? '(' + list.length + ')' : '';
+  const w = $('parts'); w.innerHTML = '';
+  list.forEach(p=>{
+    const row = document.createElement('div'); row.className = 'part';
+    row.innerHTML = `<span class="dot" style="background:${p.color}"></span><div style="flex:1"><div class="p-name">${p.en}</div><div class="p-ar">${p.ar}</div></div>`;
+    if (window.OmniRadSpeak) row.appendChild(OmniRadSpeak.button(p.en));
+    w.appendChild(row);
+  });
+}
 
 /* ─────── Selection ─────── */
 function selectStructure(id){
-  S.structId = id;
-  S.modIdx = 0;
-  renderSidebar($('search').value);
-  renderModBar();
-  loadCurrent();
-}
-function selectModality(i){
-  S.modIdx = i;
-  renderModBar();
+  state.structId = id;
+  const av = U.modalitiesFor(id);
+  state.modality = av[0] || '';
+  state.plane = ''; state.variant = '';
+  renderSidebar($('search').value); renderModBar(); renderSubPicker();
   loadCurrent();
 }
 
-/* ─────── Image loading ─────── */
+/* ─────── Load current image ─────── */
 function loadCurrent(){
-  const m = currentMod(); const st = currentStruct();
-  if (!m || !st) return;
+  const img = U.findImage(state.structId, state.modality, state.plane, state.variant);
+  if (!img){ state.img = null; $('empty').style.display = 'block'; $('emptyText').textContent = 'No image for this combination yet.'; renderInfo(); draw(); return; }
   $('empty').style.display = 'none';
-  // reset view for this modality
-  S.zoom = 1; S.panX = 0; S.panY = 0;
-  S.ww = m.ww || 300; S.wl = m.wl || 150;
-  S.invert = false;
-
-  // annotations
-  $('anTL').innerHTML = `<strong>${st.en}</strong><br>${m.id}`;
-  $('anTR').innerHTML = `OmniRad · Atlas<br>${m.plane || 'Axial'}`;
-  $('anBL').innerHTML = `WW: <span id="anWW">${S.ww}</span><br>WL: <span id="anWL">${S.wl}</span>`;
-  $('anBR').innerHTML = `Zoom: <span id="anZ">${S.zoom.toFixed(2)}×</span><br>Educational only`;
-
-  // info panel
-  $('infoTitle').textContent = st.en + ' · ' + st.ar;
-  $('infoSub').textContent = st.region;
-  $('infoMod').textContent = m.id.split(' ')[0];
-  $('infoSeq').textContent = m.id.split(' ').slice(1).join(' ') || '—';
-  $('infoPlane').textContent = m.plane || 'Axial';
-  $('infoView').textContent = m.colored ? 'Educational (colored)' : 'Native';
-  $('infoDesc').textContent = st.desc || '';
-
-  const cached = S.imgCache[m.path];
-  if (cached && cached.complete) {
-    S.img = cached; refreshValues(); draw();
-    return;
-  }
-  const img = new Image(); img.crossOrigin = 'anonymous';
-  img.onload = () => { S.img = img; S.imgCache[m.path] = img; refreshValues(); draw(); };
-  img.onerror = () => { S.img = null; ctx.clearRect(0,0,cv.width,cv.height); $('empty').style.display='block'; $('empty').innerHTML = 'Image not available — check <code>' + m.path + '</code>'; };
-  img.src = m.path;
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  state.ww = img.ww; state.wl = img.wl; state.invert = false;
+  state.measurements = [];
+  $('valWW').textContent = state.ww; $('valWL').textContent = state.wl; $('valZoom').textContent = '1.00×';
+  const st = currentStruct();
+  $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · ${state.variant}`;
+  $('anTR').innerHTML = `OmniRad · Atlas<br>${state.modality} · ${state.plane}`;
+  $('anBL').innerHTML = `WW: <span id="anWW">${state.ww}</span><br>WL: <span id="anWL">${state.wl}</span>`;
+  $('anBR').innerHTML = `Zoom: <span id="anZ">1.00×</span><br>Educational only`;
+  const cached = state.imgCache[img.path];
+  const done = (el)=>{ state.img = el; renderInfo(); draw(); };
+  if (cached && cached.complete) return done(cached);
+  const el = new Image(); el.crossOrigin = 'anonymous';
+  el.onload = ()=>{ state.imgCache[img.path] = el; done(el); };
+  el.onerror = ()=>{ state.img = null; $('empty').style.display='block'; $('emptyText').innerHTML = 'Image not available yet.<br><code style="font-size:11px;color:var(--text-m)">' + img.path + '</code>'; renderInfo(); draw(); };
+  el.src = img.path;
 }
 
-/* ─────── Drawing pipeline: WW/WL + pan + zoom ─────── */
+/* ─────── Canvas fit + draw ─────── */
+const cv = $('cv'), ctx = cv.getContext('2d');
+const viewer = $('viewer');
 function fitCanvas(){
   const rect = viewer.getBoundingClientRect();
-  const size = Math.min(rect.width, rect.height) - 40;
+  const size = Math.min(rect.width, rect.height) - 32;
   cv.width  = Math.max(300, Math.min(1024, size));
   cv.height = Math.max(300, Math.min(1024, size));
 }
 function draw(){
-  if (!S.img) return;
   const w = cv.width, h = cv.height;
   ctx.save(); ctx.fillStyle = '#000'; ctx.fillRect(0,0,w,h); ctx.restore();
-
-  // Fit image to canvas, then apply zoom + pan
-  const scale = Math.min(w / S.img.width, h / S.img.height) * S.zoom;
-  const iw = S.img.width * scale, ih = S.img.height * scale;
-  const x = (w - iw) / 2 + S.panX;
-  const y = (h - ih) / 2 + S.panY;
-  ctx.drawImage(S.img, x, y, iw, ih);
-
-  // Apply WW/WL via getImageData / putImageData
+  if (!state.img) return;
+  const scale = Math.min(w/state.img.width, h/state.img.height) * state.zoom;
+  const iw = state.img.width * scale, ih = state.img.height * scale;
+  const x = (w-iw)/2 + state.panX, y = (h-ih)/2 + state.panY;
+  ctx.drawImage(state.img, x, y, iw, ih);
   try {
-    const id = ctx.getImageData(0, 0, w, h);
-    const d = id.data;
-    const minV = S.wl - S.ww / 2, maxV = S.wl + S.ww / 2;
-    for (let i = 0; i < d.length; i += 4) {
-      // luminance-approx original intensity
+    const id = ctx.getImageData(0, 0, w, h); const d = id.data;
+    const minV = state.wl - state.ww/2, maxV = state.wl + state.ww/2;
+    for (let i = 0; i < d.length; i += 4){
       const g = (d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114);
       let v = (g - minV) / (maxV - minV);
       v = Math.max(0, Math.min(1, v));
-      if (S.invert) v = 1 - v;
+      if (state.invert) v = 1 - v;
       const out = Math.round(v * 255);
       d[i] = d[i+1] = d[i+2] = out;
     }
     ctx.putImageData(id, 0, 0);
-  } catch(e) { /* CORS or first paint — skip WL this frame */ }
+  } catch(e){}
+  drawMeasurements();
+  updateVals();
 }
-function refreshValues(){
-  $('valWW').textContent = S.ww;
-  $('valWL').textContent = S.wl;
-  $('valZoom').textContent = S.zoom.toFixed(2) + '×';
+function updateVals(){
   const anWW = $('anWW'), anWL = $('anWL'), anZ = $('anZ');
-  if (anWW) anWW.textContent = S.ww;
-  if (anWL) anWL.textContent = S.wl;
-  if (anZ)  anZ.textContent  = S.zoom.toFixed(2) + '×';
+  if (anWW) anWW.textContent = state.ww;
+  if (anWL) anWL.textContent = state.wl;
+  if (anZ)  anZ.textContent  = state.zoom.toFixed(2) + '×';
+  $('valWW').textContent = state.ww; $('valWL').textContent = state.wl; $('valZoom').textContent = state.zoom.toFixed(2) + '×';
+  $('infoWL').textContent = state.ww + ' / ' + state.wl;
 }
 
-/* ─────── Mouse interaction ─────── */
-let drag = null;
-viewer.addEventListener('mousedown', (e)=>{
-  if (!S.img) return;
-  drag = { x: e.clientX, y: e.clientY, ww: S.ww, wl: S.wl, zoom: S.zoom, panX: S.panX, panY: S.panY };
-  viewer.classList.add('dragging');
-});
-window.addEventListener('mouseup', ()=>{ drag = null; viewer.classList.remove('dragging'); });
-window.addEventListener('mousemove', (e)=>{
-  if (!drag) return;
-  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-  if (S.tool === 'wl'){
-    S.ww = Math.max(1, Math.round(drag.ww + dx * 2));
-    S.wl = Math.round(drag.wl + dy * 2);
-  } else if (S.tool === 'zoom'){
-    S.zoom = Math.max(0.25, Math.min(6, drag.zoom * (1 + dy * -0.005)));
-  } else if (S.tool === 'pan'){
-    S.panX = drag.panX + dx;
-    S.panY = drag.panY + dy;
-  }
-  refreshValues(); draw();
-});
-viewer.addEventListener('wheel', (e)=>{
-  e.preventDefault();
-  const delta = -Math.sign(e.deltaY) * 0.1;
-  S.zoom = Math.max(0.25, Math.min(6, S.zoom + delta));
-  refreshValues(); draw();
-}, { passive:false });
+/* ─────── Measurements (ruler / angle / probe) ─────── */
+function pxToImg(px, py){ // canvas px → image-domain (relative)
+  return { x: px, y: py };
+}
+function drawMeasurements(){
+  const svg = $('ovl');
+  // clear all except keep base svg
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  const NS = 'http://www.w3.org/2000/svg';
+  state.measurements.forEach(m => {
+    if (m.type === 'ruler' && m.points.length === 2){
+      const [a, b] = m.points;
+      const line = document.createElementNS(NS,'line');
+      line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+      line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+      line.setAttribute('stroke', '#f472b6'); line.setAttribute('stroke-width', '2');
+      svg.appendChild(line);
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const t = document.createElementNS(NS,'text');
+      t.setAttribute('x', (a.x + b.x) / 2 + 6);
+      t.setAttribute('y', (a.y + b.y) / 2 - 6);
+      t.setAttribute('fill', '#f472b6');
+      t.setAttribute('font-family', 'IBM Plex Mono, monospace');
+      t.setAttribute('font-size', '11');
+      t.setAttribute('style', 'text-shadow:0 0 4px #000');
+      t.textContent = dist.toFixed(1) + ' px';
+      svg.appendChild(t);
+    } else if (m.type === 'angle' && m.points.length === 3){
+      const [a, b, c] = m.points;
+      const NS = 'http://www.w3.org/2000/svg';
+      [[a,b],[b,c]].forEach(([p,q])=>{
+        const line = document.createElementNS(NS,'line');
+        line.setAttribute('x1', p.x); line.setAttribute('y1', p.y);
+        line.setAttribute('x2', q.x); line.setAttribute('y2', q.y);
+        line.setAttribute('stroke', '#22d3ee'); line.setAttribute('stroke-width', '2');
+        svg.appendChild(line);
+      });
+      const v1 = { x: a.x-b.x, y: a.y-b.y };
+      const v2 = { x: c.x-b.x, y: c.y-b.y };
+      const dot = v1.x*v2.x + v1.y*v2.y;
+      const m1 = Math.hypot(v1.x, v1.y), m2 = Math.hypot(v2.x, v2.y);
+      const ang = Math.acos(Math.max(-1, Math.min(1, dot/(m1*m2)))) * 180/Math.PI;
+      const t = document.createElementNS(NS,'text');
+      t.setAttribute('x', b.x + 8); t.setAttribute('y', b.y - 8);
+      t.setAttribute('fill', '#22d3ee'); t.setAttribute('font-family', 'IBM Plex Mono, monospace');
+      t.setAttribute('font-size', '11');
+      t.textContent = ang.toFixed(1) + '°';
+      svg.appendChild(t);
+    } else if (m.type === 'probe' && m.points.length === 1){
+      const p = m.points[0];
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', '5');
+      c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#a3e635'); c.setAttribute('stroke-width', '1.5');
+      svg.appendChild(c);
+      // read pixel value
+      try {
+        const img = ctx.getImageData(p.x, p.y, 1, 1).data;
+        const gray = Math.round(img[0]*0.299 + img[1]*0.587 + img[2]*0.114);
+        const t = document.createElementNS(NS,'text');
+        t.setAttribute('x', p.x + 10); t.setAttribute('y', p.y - 6);
+        t.setAttribute('fill', '#a3e635'); t.setAttribute('font-family', 'IBM Plex Mono, monospace'); t.setAttribute('font-size', '11');
+        t.textContent = 'g=' + gray;
+        svg.appendChild(t);
+      } catch(e){}
+    }
+  });
+}
 
-/* ─────── Toolbar wiring ─────── */
+/* ─────── Interactions ─────── */
+let drag = null, tmpMeasure = null;
+function localPt(e){
+  const r = cv.getBoundingClientRect();
+  const sx = cv.width / r.width, sy = cv.height / r.height;
+  return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sy };
+}
+cv.addEventListener('mousedown', (e)=>{
+  if (!state.img) return;
+  const p = localPt(e);
+  if (state.tool === 'wl' || state.tool === 'zoom' || state.tool === 'pan'){
+    drag = { x:e.clientX, y:e.clientY, ww:state.ww, wl:state.wl, zoom:state.zoom, panX:state.panX, panY:state.panY };
+    viewer.classList.add('dragging');
+  } else if (state.tool === 'measure'){
+    tmpMeasure = { type:'ruler', points:[p] };
+  } else if (state.tool === 'angle'){
+    if (!tmpMeasure) tmpMeasure = { type:'angle', points:[p] };
+    else { tmpMeasure.points.push(p); if (tmpMeasure.points.length === 3){ state.measurements.push(tmpMeasure); tmpMeasure = null; drawMeasurements(); } }
+  } else if (state.tool === 'probe'){
+    state.measurements.push({ type:'probe', points:[p] }); drawMeasurements();
+  }
+});
+window.addEventListener('mouseup', (e)=>{
+  if (drag){ drag = null; viewer.classList.remove('dragging'); }
+  if (tmpMeasure && tmpMeasure.type === 'ruler'){
+    tmpMeasure.points.push(localPt(e));
+    state.measurements.push(tmpMeasure); tmpMeasure = null; drawMeasurements();
+  }
+});
+window.addEventListener('mousemove', (e)=>{
+  if (drag){
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (state.tool === 'wl'){ state.ww = Math.max(1, Math.round(drag.ww + dx * 2)); state.wl = Math.round(drag.wl + dy * 2); }
+    else if (state.tool === 'zoom'){ state.zoom = Math.max(0.25, Math.min(6, drag.zoom * (1 + dy * -0.005))); }
+    else if (state.tool === 'pan'){ state.panX = drag.panX + dx; state.panY = drag.panY + dy; }
+    draw();
+  }
+});
+cv.addEventListener('wheel', (e)=>{ e.preventDefault(); const d = -Math.sign(e.deltaY)*0.1; state.zoom = Math.max(0.25, Math.min(6, state.zoom + d)); draw(); }, { passive:false });
+
 document.querySelectorAll('[data-tool]').forEach(b=>{
   b.addEventListener('click', ()=>{
     document.querySelectorAll('[data-tool]').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on');
-    S.tool = b.dataset.tool;
-    viewer.classList.remove('tool-wl','tool-zoom','tool-pan');
-    viewer.classList.add('tool-' + S.tool);
+    b.classList.add('on'); state.tool = b.dataset.tool;
+    viewer.classList.remove('tool-wl','tool-zoom','tool-pan','tool-measure','tool-angle','tool-probe');
+    viewer.classList.add('tool-' + state.tool);
+    tmpMeasure = null;
   });
 });
-$('btnInvert').addEventListener('click', ()=>{ S.invert = !S.invert; $('btnInvert').classList.toggle('on', S.invert); draw(); });
-$('btnGrid').addEventListener('click',   ()=>{ S.overlays = !S.overlays; document.querySelectorAll('.anno,.orient-mark,.scale-bar').forEach(e=>e.style.display = S.overlays ? '' : 'none'); $('btnGrid').classList.toggle('on', !S.overlays); });
-$('btnReset').addEventListener('click',  ()=>{ loadCurrent(); });
+$('btnInvert').addEventListener('click', ()=>{ state.invert = !state.invert; $('btnInvert').classList.toggle('on', state.invert); draw(); });
+$('btnOverlay').addEventListener('click', ()=>{ state.overlays = !state.overlays; document.querySelectorAll('.anno,.orient-mark,.scale-bar').forEach(el=>el.style.display = state.overlays ? '' : 'none'); $('btnOverlay').classList.toggle('on', !state.overlays); });
+$('btnClear').addEventListener('click', ()=>{ state.measurements = []; drawMeasurements(); });
+$('btnReset').addEventListener('click', ()=> loadCurrent());
+$('btnLabels').addEventListener('click', ()=>{ state.labelsOn = !state.labelsOn; $('btnLabels').classList.toggle('on', state.labelsOn); $('btnLabels').textContent = 'LABELS: ' + (state.labelsOn ? 'ON' : 'OFF'); $('parts').style.display = state.labelsOn ? '' : 'none'; });
 
-/* ─────── Search ─────── */
+/* Preset windows */
+$('presetSel').addEventListener('change', (e)=>{
+  const p = { brain:[80,40], soft:[400,40], abd:[400,60], lung:[1500,-600], bone:[2000,400], mri:[280,120] }[e.target.value];
+  if (p){ state.ww = p[0]; state.wl = p[1]; draw(); }
+});
+
 $('search').addEventListener('input', (e)=> renderSidebar(e.target.value));
 
-/* ─────── Bootstrap ─────── */
-function onResize(){ fitCanvas(); if (S.img) draw(); }
+/* Bootstrap */
+function onResize(){ fitCanvas(); if (state.img) draw(); }
 window.addEventListener('resize', onResize);
 onResize();
 renderSidebar();
-// Auto-select first structure (brain)
-selectStructure(STRUCTURES[0].id);
-
-/* ─────── Language / theme handled by omnirad-nav.js ─────── */
+selectStructure('brain');
 </script>
 </body>
 </html>

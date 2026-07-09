@@ -112,9 +112,9 @@ a{text-decoration:none;color:inherit}
 const STRUCTURES = [
   { id:'brain', en:'Brain · الدماغ', desc:'Central nervous system organ. Best evaluated with MRI for parenchymal detail and CT for acute hemorrhage.',
     modalities:[
-      { id:'MRI T2', path:'../images/structures/brain/mri_t2_original.png', ww:280, wl:120 },
-      { id:'MRI T1', path:'../images/structures/brain/mri_original.png',    ww:300, wl:150 },
-      { id:'MRI PD', path:'../images/structures/brain/mri_pd_original.png', ww:220, wl:110 }
+      { id:'MRI T2', path:'../images/structures/brain/mri_t2_original.png', plane:'Axial', ww:280, wl:120 },
+      { id:'MRI T1', path:'../images/structures/brain/mri_original.png',    plane:'Axial', ww:300, wl:150 },
+      { id:'MRI PD', path:'../images/structures/brain/mri_pd_original.png', plane:'Axial', ww:220, wl:110 }
     ]},
   { id:'neck', en:'Neck · الرقبة', desc:'Cervical spine, airway, thyroid and vascular structures.',
     modalities:[
@@ -211,7 +211,8 @@ function renderGrid(){
     if (!m){ pane.innerHTML = '<span>Empty pane — pick another modality</span>'; grid.appendChild(pane); continue; }
     pane.innerHTML = `
       <div class="pane-head">
-        <span class="pane-name">${m.id}</span>
+        <select class="pane-mod-sel" style="background:transparent;border:1px solid var(--acc-dim);color:var(--acc);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;letter-spacing:.03em;pointer-events:auto;cursor:pointer;max-width:180px">
+        </select>
         <span class="pane-sub">${m.plane || 'Axial'}</span>
       </div>
       <canvas></canvas>
@@ -221,6 +222,23 @@ function renderGrid(){
       <div class="anno anno-br">Zoom <span class="v-zoom">1.00×</span></div>
     `;
     grid.appendChild(pane);
+    // populate pane-specific modality selector (all modalities of the current structure)
+    const modSel = pane.querySelector('.pane-mod-sel');
+    st.modalities.forEach(mo => {
+      const opt = document.createElement('option');
+      opt.value = mo.id; opt.textContent = mo.id;
+      if (mo.id === m.id) opt.selected = true;
+      modSel.appendChild(opt);
+    });
+    modSel.addEventListener('change', (e) => {
+      const newMod = st.modalities.find(mo => mo.id === e.target.value);
+      if (!newMod) return;
+      p.mod = newMod; p.modId = newMod.id;
+      p.ww = newMod.ww || 300; p.wl = newMod.wl || 150;
+      p.zoom = 1; p.panX = 0; p.panY = 0;
+      pane.querySelector('.pane-sub').textContent = newMod.plane || 'Axial';
+      loadPane(p);
+    });
     const cvs = pane.querySelector('canvas');
     const p = {
       modId: m.id, mod: m,
