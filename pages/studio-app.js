@@ -171,13 +171,14 @@
       sel.innerHTML = opts.map(o => `<option value="${o.v}">${label(o)}</option>`).join('');
       sel.value = state.s[k];
     });
-    // Anatomy datalists from anatomy-dict
-    const dict = window.OMNIRAD_ANATOMY || {};
-    const all = dict.all || [];
-    $('anat-all').innerHTML = all.map(e => `<option value="${e.en}">${e.ar || ''}</option>`).join('');
-    const region = state.s.region;
-    const regionEntries = region ? all.filter(e => (e.region||'').toLowerCase() === region.toLowerCase() || e.parent === region) : all;
-    $('anat-region').innerHTML = regionEntries.map(e => `<option value="${e.en}">${e.ar || ''}</option>`).join('');
+    // Anatomy datalists from ANATOMY_DICT [en, ar, region]
+    const dict = window.ANATOMY_DICT || [];
+    $('anat-all').innerHTML = dict.map(row => `<option value="${row[0]}">${row[1] || ''} · ${row[2] || ''}</option>`).join('');
+    const region = (state.s.region || '').trim();
+    const regionEntries = region
+      ? dict.filter(row => (row[2] || '').toLowerCase() === region.toLowerCase() || (row[2] || '').toLowerCase().includes(region.toLowerCase()))
+      : dict;
+    $('anat-region').innerHTML = regionEntries.map(row => `<option value="${row[0]}">${row[1] || ''}</option>`).join('');
     qa('input[data-key]').forEach(inp => {
       const k = inp.dataset.key;
       if (inp.type === 'checkbox') inp.checked = !!state.s[k]; else if (state.s[k] != null) inp.value = state.s[k];

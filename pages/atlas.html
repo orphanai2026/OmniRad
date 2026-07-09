@@ -119,7 +119,9 @@ a{text-decoration:none;color:inherit}
   <aside class="sidebar">
     <div class="side-head">
       <div class="side-title" data-i18n="atlas.structures">Anatomical structures</div>
-      <input class="side-search" id="search" placeholder="Search…" data-i18n-placeholder="common.search">
+      <input class="side-search" id="search" placeholder="Search…" data-i18n-placeholder="common.search" list="anat-dict">
+      <datalist id="anat-dict"></datalist>
+      <div id="searchHint" style="margin-top:6px;font-size:10.5px;color:var(--text-m);line-height:1.5;display:none;padding:0 2px"></div>
     </div>
     <ul class="struct-list" id="structList"></ul>
   </aside>
@@ -323,8 +325,44 @@ const DESC_AR = {
 };
 const REGION_AR = {
   'Head & CNS':'الرأس والجهاز العصبي','Head & Neck':'الرأس والرقبة','Chest':'الصدر',
-  'Abdomen':'البطن','Pelvis':'الحوض','Musculoskeletal':'الجهاز العضلي الهيكلي'
+  'Abdomen':'البطن','Pelvis':'الحوض','Musculoskeletal':'الجهاز العضلي الهيكلي',
+  'Spine':'العمود الفقري','Upper limb':'الطرف العلوي','Lower limb':'الطرف السفلي'
 };
+/* Arabic desc extension for expanded structures */
+Object.assign(DESC_AR, {
+  cerebellum:'المخيخ وجذع الدماغ في الحفرة الخلفية. الرنين هو الأنسب.',
+  ventricles:'التجاويف المملوءة بالسائل الدماغي الشوكي: البطينان الجانبيان والثالث والرابع + القناة.',
+  skull:'قحف الرأس وقاعدة الجمجمة.',
+  orbits:'مقلة العين، الدهون خلف المقلة، العضلات خارج المقلة، والعصب البصري.',
+  'paranasal-sinuses':'الجيوب الفكية والغربالية والجبهية والوتدية.',
+  'temporal-bone':'الصخر، العظيمات، القوقعة، القنوات نصف الدائرية، القناة السمعية الباطنة.',
+  thyroid:'غدة الفراشة الصمّاء الأمامية للرغامى.',
+  larynx:'الأحبال الصوتية، فوق المزمار، المزمار، تحت المزمار.',
+  lungs:'اليمنى (٣ فصوص) + اليسرى (فصّان) مع الشجرة القصبية.',
+  mediastinum:'حجرة الصدر المركزية: القلب، الأوعية الكبرى، الغدة الزعترية، العقد اللمفية، المريء.',
+  heart:'مضخّة عضلية رباعية الحجرات. تُقيّم بالإيكو والرنين القلبي وCTA للتاجيات.',
+  'thoracic-aorta':'الأبهر الصاعد والقوس والنازل. يُقيّم بـCTA/MRA.',
+  breast:'نسيج غدي + دهني ليفي. الفحص = ماموغرام ± موجات ± رنين.',
+  gallbladder:'المرارة + القنوات داخل وخارج الكبد.',
+  pancreas:'خلف الصفاق — الرأس والجسم والذيل.',
+  adrenals:'فوق كل كلية — قشرة + لبّ.',
+  stomach:'عضو على شكل J — الفؤاد والقاع والجسم والغار والبواب.',
+  'small-bowel':'الاثنا عشر، الصائم، اللفائفي.',
+  colon:'الصاعد والمستعرض والنازل والسيني.',
+  'abdominal-aorta':'الأبهر النازل تحت الحجاب، يتفرّع عند L4.',
+  prostate:'المناطق المحيطية والانتقالية والمركزية. mpMRI هو المعيار.',
+  uterus:'أعضاء الحوض الأنثوية. الموجات أول خط، الرنين للتفاصيل.',
+  rectum:'الجزء الطرفي من الجهاز الهضمي، عضلات قاع الحوض.',
+  cspine:'الفقرات C1–C7، الحبل، الأقراص.',
+  tspine:'الفقرات T1–T12.',
+  lspine:'الفقرات L1–L5 + الأقراص الفقرية.',
+  shoulder:'المفصل الحقاني العضدي والكفة المدورة.',
+  elbow:'المفاصل العضدية الزندية والعضدية الكعبرية.',
+  'wrist-hand':'عظام الرسغ والمشط والسلاميات.',
+  hip:'مفصل الرأس الفخذي مع الحُقّ.',
+  knee:'الفخذ–الظنبوب–الرضفة، الغضاريف الهلالية، الأربطة المتصالبة والجانبية.',
+  'ankle-foot':'مفصل الظنبوب الكاحلي، عظام الرسغ والمشط.'
+});
 
 /* ─────── Sidebar ─────── */
 function renderSidebar(filter){
@@ -643,7 +681,50 @@ $('presetSel').addEventListener('change', (e)=>{
   if (p){ state.ww = p[0]; state.wl = p[1]; draw(); }
 });
 
-$('search').addEventListener('input', (e)=> renderSidebar(e.target.value));
+$('search').addEventListener('input', (e)=>{
+  const val = (e.target.value || '').trim();
+  renderSidebar(val);
+  // Autocomplete from anatomy dictionary
+  const dict = window.ANATOMY_DICT || [];
+  const dl = $('anat-dict');
+  if (val.length >= 1){
+    const ql = val.toLowerCase();
+    const hits = dict.filter(row => (row[0]||'').toLowerCase().includes(ql) || (row[1]||'').includes(val)).slice(0, 30);
+    dl.innerHTML = hits.map(h => `<option value="${h[0]}">${h[1]||''} · ${h[2]||''}</option>`).join('');
+  } else {
+    dl.innerHTML = '';
+  }
+  // If search exactly matches a dict term, try to redirect to the closest structure
+  const exact = dict.find(row => (row[0]||'').toLowerCase() === val.toLowerCase() || row[1] === val);
+  const hint = $('searchHint');
+  if (exact){
+    const target = mapDictToStructure(exact);
+    if (target){
+      selectStructure(target.id);
+      hint.style.display = 'block';
+      hint.textContent = (isAr() ? 'أقرب عضو متاح: ' : 'Closest available structure: ') + (isAr() ? target.ar : target.en);
+    } else {
+      hint.style.display = 'block';
+      hint.textContent = isAr() ? `«${exact[1]}» ضمن القاموس — لم يُضف بعد إلى Atlas.` : `"${exact[0]}" is in the dictionary but not yet added to Atlas.`;
+    }
+  } else {
+    hint.style.display = 'none';
+  }
+});
+/* Map an anatomy-dict entry [EN, AR, region] to the nearest structure in the atlas. */
+function mapDictToStructure(row){
+  const en = (row[0]||'').toLowerCase(), ar = row[1]||'', region = row[2]||'';
+  // Direct match
+  const exact = S.find(s => s.en.toLowerCase() === en || s.ar === ar);
+  if (exact) return exact;
+  // Substring match
+  const partial = S.find(s => en.includes(s.en.toLowerCase()) || s.en.toLowerCase().includes(en));
+  if (partial) return partial;
+  // Region fallback
+  const regionMap = { Head:'brain', Neck:'neck', Chest:'thorax', Abdomen:'abdomen', Pelvis:'bladder', 'Spine':'lspine', 'Upper limb':'shoulder', 'Lower limb':'knee', 'Musculoskeletal':'bone' };
+  const fallback = regionMap[region];
+  return fallback ? S.find(s => s.id === fallback) : null;
+}
 
 /* Bootstrap */
 function onResize(){ fitCanvas(); if (state.img) draw(); }

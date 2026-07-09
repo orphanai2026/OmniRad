@@ -74,8 +74,29 @@ const state = { structId:(S[0]&&S[0].id)||'brain', cols:2, sync:true, cells:[], 
 
 (function(){
   const sel = $('selStruct');
-  sel.innerHTML = S.map(s => `<option value="${s.id}">${s.en} · ${s.ar}</option>`).join('');
-  sel.value = state.structId;
+  const REGION_AR = {
+    'Head & CNS':'الرأس والجهاز العصبي','Head & Neck':'الرأس والرقبة','Chest':'الصدر',
+    'Abdomen':'البطن','Pelvis':'الحوض','Musculoskeletal':'الجهاز العضلي الهيكلي',
+    'Spine':'العمود الفقري','Upper limb':'الطرف العلوي','Lower limb':'الطرف السفلي'
+  };
+  const isAr = () => (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
+  function rebuild(){
+    const ar = isAr();
+    const groups = {};
+    S.forEach(s => { const k = s.region || 'Other'; (groups[k] = groups[k] || []).push(s); });
+    const order = ['Head & CNS','Head & Neck','Chest','Abdomen','Pelvis','Spine','Upper limb','Lower limb','Musculoskeletal'];
+    const keys = Object.keys(groups).sort((a,b)=>{
+      const ia = order.indexOf(a), ib = order.indexOf(b);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+    sel.innerHTML = keys.map(k => {
+      const label = ar ? (REGION_AR[k] || k) : k;
+      return `<optgroup label="${label}">` + groups[k].map(s => `<option value="${s.id}">${ar ? s.ar : s.en} · ${ar ? s.en : s.ar}</option>`).join('') + `</optgroup>`;
+    }).join('');
+    sel.value = state.structId;
+  }
+  rebuild();
+  window.addEventListener('omnirad-lang', rebuild);
   sel.addEventListener('change', e=>{ state.structId = e.target.value; renderGrid(); updateDesc(); });
 })();
 function structure(){ return S.find(s=>s.id===state.structId) || S[0]; }
