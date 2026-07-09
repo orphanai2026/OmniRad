@@ -27,9 +27,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;padding-top:var(--onav-h);
-  background-image:linear-gradient(180deg, var(--bg) 0%, rgba(8,14,20,0.92) 20%, rgba(8,14,20,0.92) 72%, var(--bg) 96%), url('images/home/skeleton_bg.png');
-  background-size:100% 100%, cover; background-position:center; background-repeat:no-repeat; background-attachment:fixed;}
-[data-theme="dim"] body{background-image:linear-gradient(180deg, var(--bg) 0%, rgba(221,228,236,0.93) 15%, rgba(221,228,236,0.93) 78%, var(--bg) 97%), url('images/home/skeleton_bg.png');filter:none;}
+  background:radial-gradient(ellipse at top,rgba(45,212,200,.05),transparent 60%),radial-gradient(ellipse at bottom,rgba(203,164,58,.04),transparent 60%),var(--bg);}
+[data-theme="dim"] body{background:radial-gradient(ellipse at top,rgba(11,107,100,.06),transparent 60%),var(--bg);filter:none;}
 body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif;}
 a{text-decoration:none;color:inherit;}
 img{display:block;}
@@ -54,9 +53,8 @@ img{display:block;}
 .mod-strip{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
 .mod-pill{display:flex;flex-direction:column;align-items:center;gap:9px;padding:16px 8px;border-radius:var(--r-lg);background:var(--bg-e);border:1px solid var(--border-s);transition:.2s;cursor:pointer;}
 .mod-pill:hover{border-color:var(--acc-dim);transform:translateY(-2px);background:var(--bg-ov);}
-.mod-pill-thumb{width:100%;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#030810;}
-.mod-pill-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
-.mod-pill:hover .mod-pill-thumb img{transform:scale(1.06);}
+.mod-pill-thumb{width:100%;aspect-ratio:1;border-radius:8px;background:linear-gradient(135deg,var(--bg-e),var(--bg-ov));display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--acc);letter-spacing:.04em;border:1px solid var(--border-s);transition:.2s}
+.mod-pill:hover .mod-pill-thumb{border-color:var(--acc-dim);color:var(--acc);transform:scale(1.02)}
 .mod-pill-name{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.02em;font-family:'IBM Plex Mono',monospace;}
 
 .stats-bar{background:var(--bg-s);border-top:1px solid var(--border-s);}
@@ -117,14 +115,14 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
   <div class="mod-strip-wrap">
     <div class="mod-strip-label" data-i18n="home.browseBy">Browse by modality</div>
     <div class="mod-strip">
-      <a href="pages/atlas.html?modality=ct"    class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ct_abdomen.png"   alt="CT"></div><span class="mod-pill-name">CT</span></a>
-      <a href="pages/atlas.html?modality=mri"   class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mri_brain.png"    alt="MRI"></div><span class="mod-pill-name">MRI</span></a>
-      <a href="pages/atlas.html?modality=us"    class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ultrasound.png"   alt="US"></div><span class="mod-pill-name">US</span></a>
-      <a href="pages/atlas.html?modality=xray"  class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/chest_xray.png"   alt="X-Ray"></div><span class="mod-pill-name">X-RAY</span></a>
-      <a href="pages/atlas.html?modality=nm"    class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png"  alt="NM"></div><span class="mod-pill-name">NM</span></a>
-      <a href="pages/atlas.html?modality=angio" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/angiography.png"  alt="Angio"></div><span class="mod-pill-name">ANGIO</span></a>
-      <a href="pages/atlas.html?modality=mammo" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mammography.png"  alt="Mammo"></div><span class="mod-pill-name">MAMMO</span></a>
-      <a href="pages/atlas.html?modality=pet"   class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png"  alt="PET"></div><span class="mod-pill-name">PET</span></a>
+      <a href="pages/atlas.html?modality=ct"    class="mod-pill"><div class="mod-pill-thumb">CT</div><span class="mod-pill-name">CT</span></a>
+      <a href="pages/atlas.html?modality=mri"   class="mod-pill"><div class="mod-pill-thumb">MRI</div><span class="mod-pill-name">MRI</span></a>
+      <a href="pages/atlas.html?modality=us"    class="mod-pill"><div class="mod-pill-thumb">US</div><span class="mod-pill-name">US</span></a>
+      <a href="pages/atlas.html?modality=xray"  class="mod-pill"><div class="mod-pill-thumb">X-R</div><span class="mod-pill-name">X-RAY</span></a>
+      <a href="pages/atlas.html?modality=nm"    class="mod-pill"><div class="mod-pill-thumb">NM</div><span class="mod-pill-name">NM</span></a>
+      <a href="pages/atlas.html?modality=angio" class="mod-pill"><div class="mod-pill-thumb">AG</div><span class="mod-pill-name">ANGIO</span></a>
+      <a href="pages/atlas.html?modality=mammo" class="mod-pill"><div class="mod-pill-thumb">MG</div><span class="mod-pill-name">MAMMO</span></a>
+      <a href="pages/atlas.html?modality=pet"   class="mod-pill"><div class="mod-pill-thumb">PET</div><span class="mod-pill-name">PET</span></a>
     </div>
   </div>
 
