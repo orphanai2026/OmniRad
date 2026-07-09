@@ -66,6 +66,8 @@
     '.onav-end{display:flex;align-items:center;gap:9px;margin-left:auto;flex-shrink:0}',
     '.onav-edu{font-size:10px;padding:5px 10px;border-radius:6px;border:1px solid var(--border-s,rgba(232,240,245,.08));color:var(--text-m,rgba(232,240,245,.38));display:flex;align-items:center;gap:5px;white-space:nowrap}',
     '.onav-ib{width:32px;height:32px;border-radius:6px;background:var(--bg-ov,#162030);border:1px solid var(--border-s,rgba(232,240,245,.08));color:var(--text-m,rgba(232,240,245,.38));cursor:pointer;display:grid;place-items:center;font-size:13px;flex-shrink:0;transition:color .15s}',
+    '.onav-lang{width:auto!important;min-width:64px;padding:0 12px;font-size:11px;font-weight:700;font-family:inherit;letter-spacing:.02em;color:var(--text,#e8f0f5);gap:5px}',
+    'body[dir="rtl"] .onav-lang{font-size:12px;letter-spacing:0}',
     '.onav-ib:hover{color:var(--acc,#2dd4c8)}',
     '.onav-uw{position:relative}',
     '.onav-ua{display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 9px;border-radius:6px;transition:background .15s}',
@@ -115,7 +117,7 @@
     '<ul class="onav-links">' + coreHTML + '<li class="onav-sep" aria-hidden="true"></li>' + groupHTML + '</ul>' +
     '<div class="onav-end">' +
       '<span class="onav-edu"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n="common.educational">Educational use only</span></span>' +
-      '<button class="onav-ib" id="onavLang" title="Language">🌐</button>' +
+      '<button class="onav-ib onav-lang" id="onavLang" title="Language">🌐</button>' +
       '<button class="onav-ib" id="onavTheme" title="Toggle theme">☀</button>' +
       '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">DA</div><span class="onav-un" id="onavName">Dr. Dany</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
         '<div class="onav-udrop"><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
