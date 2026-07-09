@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Admin Console</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--ok:#4ade80;--warn:#f59e0b;--err:#f87171;--pending:#fbbf24}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--ok:#0e8f4a;--warn:#b45309;--err:#c53030;--pending:#a16207}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{text-decoration:none;color:inherit}
+
+.admin{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+@media (max-width:820px){.admin{grid-template-columns:1fr}}
+.side{background:var(--bg-e);border-inline-end:1px solid var(--border);padding:14px 0}
+.side-h{padding:8px 18px 12px;font-size:10px;font-weight:800;color:var(--text-m);letter-spacing:.14em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.side-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;color:var(--text-s);border-inline-start:3px solid transparent;font-size:13.5px;font-weight:600;transition:.12s}
+.side-item:hover{color:var(--text);background:var(--bg-ov)}
+.side-item.on{color:var(--acc);background:var(--acc-sub);border-inline-start-color:var(--acc)}
+.side-item .ico{font-size:15px}
+
+.main{padding:26px 30px 60px;overflow-y:auto}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.lead{color:var(--text-s);font-size:13.5px;line-height:1.65;margin-bottom:24px;max-width:60ch}
+
+/* Access gate */
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px}
+
+/* Sections */
+.section{display:none}
+.section.on{display:block}
+.section-card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.section-head h2{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.btn{padding:8px 14px;background:var(--acc);color:var(--acc-ink);border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;transition:.14s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+.btn.ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn.small{padding:5px 10px;font-size:11px}
+.btn.danger{background:var(--err);color:#fff}
+.btn.warn{background:var(--warn);color:#fff}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:start;padding:9px 10px;border-bottom:1px solid var(--border-s)}
+th{font-size:10.5px;font-weight:800;color:var(--text-m);letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+tr:hover td{background:var(--bg-ov)}
+
+/* Dashboard tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:20px}
+.tile{background:var(--bg-e);border:1px solid var(--border-s);border-radius:12px;padding:16px}
+.tile .k{font-size:10.5px;color:var(--text-m);letter-spacing:.1em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
+.tile .v{font-size:26px;font-weight:800;color:var(--acc)}
+.tile .sub{font-size:11px;color:var(--text-m);margin-top:3px}
+
+/* Forms */
+.f{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
+.f label{font-weight:700;font-size:11px;color:var(--text-s);letter-spacing:.02em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.f input,.f select,.f textarea{padding:9px 11px;background:var(--bg-s);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--acc)}
+.f textarea{resize:vertical;min-height:70px;font-family:'IBM Plex Sans',sans-serif}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media(max-width:640px){.f2{grid-template-columns:1fr}}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:22px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:15px;font-weight:800;margin-bottom:14px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.badge.admin{background:rgba(45,212,200,.18);color:var(--acc)}
+.badge.contrib{background:rgba(74,222,128,.18);color:var(--ok)}
+.badge.viewer{background:var(--bg-ov);color:var(--text-m)}
+.badge.pending{background:rgba(251,191,36,.18);color:var(--pending)}
+.badge.approved{background:rgba(74,222,128,.18);color:var(--ok)}
+.badge.rejected{background:rgba(248,113,113,.18);color:var(--err)}
+
+.empty{padding:36px;text-align:center;color:var(--text-m);font-size:13px}
+.toast{position:fixed;bottom:20px;inset-inline-end:20px;background:var(--acc);color:var(--acc-ink);padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;z-index:70;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transform:translateY(20px);transition:.24s}
+.toast.on{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Access gate -->
+<div id="gate" class="gate">
+  <div class="icon">🛡️</div>
+  <h2 id="gateTitle">Checking access…</h2>
+  <p id="gateMsg">Verifying your role.</p>
+  <a id="gateCta" class="cta" href="auth.html" style="display:none">Sign in</a>
+</div>
+
+<div id="app" class="admin" style="display:none">
+  <!-- Sidebar -->
+  <aside class="side">
+    <div class="side-h" data-i18n="admin.sections">Sections</div>
+    <div class="side-item on" data-tab="dash"><span class="ico">📊</span><span data-i18n="admin.dash">Dashboard</span></div>
+    <div class="side-item"       data-tab="users"><span class="ico">👥</span><span data-i18n="admin.users">Users</span></div>
+    <div class="side-item"       data-tab="library"><span class="ico">🖼️</span><span data-i18n="admin.library">Images</span></div>
+    <div class="side-item"       data-tab="mnemo"><span class="ico">📚</span><span>Mnemonics</span></div>
+    <div class="side-item"       data-tab="cards"><span class="ico">🃏</span><span data-i18n="admin.cards">Cards</span></div>
+    <div class="side-item"       data-tab="contrib"><span class="ico">👨‍⚕️</span><span data-i18n="admin.contrib">Contributors</span></div>
+    <div class="side-item"       data-tab="contacts"><span class="ico">📩</span><span data-i18n="admin.contacts">Messages</span></div>
+    <div class="side-item"       data-tab="settings"><span class="ico">⚙️</span><span data-i18n="admin.settings">Settings</span></div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="eyebrow">OmniRad · Admin Console</div>
+    <h1 id="secTitle" data-i18n="admin.dash">Dashboard</h1>
+    <p class="lead" id="secLead" data-i18n="admin.dashLead">Platform overview — content and user activity.</p>
+
+    <!-- DASHBOARD -->
+    <section id="secDash" class="section on">
+      <div class="tiles" id="tiles"></div>
+    </section>
+
+    <!-- USERS -->
+    <section id="secUsers" class="section">
+      <div class="section-card">
+        <div class="section-head"><h2 data-i18n="admin.users">Users</h2></div>
+        <div id="usersTable"></div>
+      </div>
+    </section>
+
+    <!-- LIBRARY (cloud) -->
+    <section id="secLibrary" class="section">
+      <div class="section-card">
+        <div class="section-head"><h2 data-i18n="admin.library">Generated Images</h2></div>
+        <div id="imagesTable"></div>
+      </div>
+    </section>
+
+    <!-- MNEMONICS -->
+    <section id="secMnemo" class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Mnemonics</h2>
+          <button class="btn" onclick="openMnemoModal()">➕ Add mnemonic</button>
+        </div>
+        <div id="mnemoTable"></div>
+      </div>
+    </section>
+
+    <!-- CARDS -->
+    <section id="secCards" class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <h2 data-i18n="admin.cards">Learning Cards</h2>
+          <button class="btn" onclick="openCardModal()">➕ Add card</button>
+        </div>
+        <div id="cardsTable"></div>
+      </div>
+    </section>
+
+    <!-- CONTRIBUTORS -->
+    <section id="secContrib" class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <h2 data-i18n="admin.contrib">Contributors</h2>
+          <button class="btn" onclick="openContribModal()">➕ Add contributor</button>
+        </div>
+        <div id="contribTable"></div>
+      </div>
+    </section>
+
+    <!-- CONTACTS -->
+    <section id="secContacts" class="section">
+      <div class="section-card">
+        <div class="section-head"><h2 data-i18n="admin.contacts">Incoming Messages</h2></div>
+        <div id="contactsTable"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="secSettings" class="section">
+      <div class="section-card">
+        <div class="section-head"><h2 data-i18n="admin.settings">Platform Settings</h2></div>
+        <p style="color:var(--text-s);font-size:13px;line-height:1.7">Subscription plans, feature flags, and platform-wide switches will live here. Coming in a follow-up phase.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Mnemonic modal -->
+<div class="modal-bg" id="mnemoModal"><div class="modal">
+  <h3 id="mnemoModalTitle">Add mnemonic</h3>
+  <div class="f2"><div class="f"><label>Title EN</label><input id="mnTitleEn"></div><div class="f"><label>Title AR</label><input id="mnTitleAr" dir="rtl"></div></div>
+  <div class="f2"><div class="f"><label>Phrase EN</label><input id="mnPhraseEn" placeholder="e.g. Some Lovers Try Positions"></div><div class="f"><label>Phrase AR</label><input id="mnPhraseAr" dir="rtl"></div></div>
+  <div class="f2"><div class="f"><label>Structure ID (optional)</label><input id="mnStruct" placeholder="e.g. wrist-hand"></div><div class="f"><label>Region</label><input id="mnRegion" placeholder="e.g. Upper limb"></div></div>
+  <div class="f"><label>Letters (JSON array)</label><textarea id="mnLetters" placeholder='[{"letter":"S","means_en":"Scaphoid","means_ar":"الزورقي"}]'></textarea></div>
+  <div class="f"><label>Explanation EN</label><textarea id="mnExplEn"></textarea></div>
+  <div class="f"><label>Explanation AR</label><textarea id="mnExplAr" dir="rtl"></textarea></div>
+  <div class="modal-actions">
+    <button class="btn ghost" onclick="closeModal('mnemoModal')">Cancel</button>
+    <button class="btn" id="mnSave">Save</button>
+  </div>
+</div></div>
+
+<!-- Card modal -->
+<div class="modal-bg" id="cardModal"><div class="modal">
+  <h3 id="cardModalTitle">Add learning card</h3>
+  <div class="f2"><div class="f"><label>Card type</label><select id="cdType"><option value="flash">Flashcard</option><option value="mcq">Multiple choice</option><option value="image">Image-based</option></select></div><div class="f"><label>Difficulty (1-5)</label><input type="number" id="cdLevel" min="1" max="5" value="1"></div></div>
+  <div class="f2"><div class="f"><label>Structure ID</label><input id="cdStruct" placeholder="e.g. brain"></div><div class="f"><label>Modality</label><input id="cdMod" placeholder="e.g. CT"></div></div>
+  <div class="f2"><div class="f"><label>Plane</label><input id="cdPlane" placeholder="Axial / Coronal / Sagittal"></div><div class="f"><label>Variant</label><input id="cdVariant" placeholder="T2 / bone / soft"></div></div>
+  <div class="f"><label>Prompt EN</label><textarea id="cdPromptEn"></textarea></div>
+  <div class="f"><label>Prompt AR</label><textarea id="cdPromptAr" dir="rtl"></textarea></div>
+  <div class="f"><label>Answer EN</label><textarea id="cdAnsEn"></textarea></div>
+  <div class="f"><label>Answer AR</label><textarea id="cdAnsAr" dir="rtl"></textarea></div>
+  <div class="f"><label>Options (MCQ only, JSON)</label><textarea id="cdOptions" placeholder='[{"text_en":"A","text_ar":"أ","correct":true}]'></textarea></div>
+  <div class="modal-actions">
+    <button class="btn ghost" onclick="closeModal('cardModal')">Cancel</button>
+    <button class="btn" id="cdSave">Save</button>
+  </div>
+</div></div>
+
+<!-- Contributor modal -->
+<div class="modal-bg" id="contribModal"><div class="modal">
+  <h3 id="contribModalTitle">Add contributor</h3>
+  <div class="f2"><div class="f"><label>Name EN</label><input id="coNameEn"></div><div class="f"><label>Name AR</label><input id="coNameAr" dir="rtl"></div></div>
+  <div class="f2"><div class="f"><label>Role EN</label><input id="coRoleEn"></div><div class="f"><label>Role AR</label><input id="coRoleAr" dir="rtl"></div></div>
+  <div class="f"><label>Bio EN</label><textarea id="coBioEn"></textarea></div>
+  <div class="f"><label>Bio AR</label><textarea id="coBioAr" dir="rtl"></textarea></div>
+  <div class="f2"><div class="f"><label>Link</label><input id="coLink"></div><div class="f"><label>Sort order</label><input type="number" id="coSort" value="100"></div></div>
+  <div class="modal-actions">
+    <button class="btn ghost" onclick="closeModal('contribModal')">Cancel</button>
+    <button class="btn" id="coSave">Save</button>
+  </div>
+</div></div>
+
+<div id="toast" class="toast">Saved</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="./admin.js"></script>
+</body>
+</html>
