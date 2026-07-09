@@ -65,11 +65,12 @@ a{text-decoration:none;color:inherit}
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script src="../modules/structures.js"></script>
 <script src="../modules/viewer.js"></script>
+<script src="../modules/omnirad-cloud.js"></script>
 <script>
 const S = window.OMNIRAD_STRUCTURES || [];
 const U = window.OMNIRAD_STRUCT_UTIL || {};
 const $ = id => document.getElementById(id);
-const state = { structId:(S[0]&&S[0].id)||'brain', cols:2, sync:true, cells:[] };
+const state = { structId:(S[0]&&S[0].id)||'brain', cols:2, sync:true, cells:[], cloudCache:{} };
 
 (function(){
   const sel = $('selStruct');
@@ -149,8 +150,30 @@ function fillSelects(c){
   c.varSel.onchange = e => { c.variant = e.target.value; loadCell(c); };
 }
 
-function loadCell(c){
+async function loadCell(c){
   const st = structure();
+  // Prefer approved cloud image; fall back to bundled structures.js
+  let cloudUrl = null;
+  try {
+    if (window.OmniRadCloud) {
+      const key = st.id + '|' + c.modality + '|' + c.plane + '|' + c.variant;
+      let row = state.cloudCache[key];
+      if (!row){
+        const rows = await OmniRadCloud.fetchApproved({ structId: st.id, modality: c.modality, plane: c.plane, sequence: c.variant, limit: 1 });
+        row = rows[0]; if (row) state.cloudCache[key] = row;
+      }
+      if (row && row.image_path) cloudUrl = await OmniRadCloud.signedUrl(row.image_path, 3600);
+    }
+  } catch(e){ console.warn('[compare] cloud lookup', e); }
+
+  if (cloudUrl){
+    c.viewer.load(cloudUrl, {
+      ww: 300, wl: 150,
+      title: `${c.modality} · ${c.plane}`, subtitle: `${c.variant} · ☁ approved`,
+      name: `${st.id}_${c.modality}_${c.plane}_${c.variant}`
+    });
+    return;
+  }
   const img = U.findImage(st.id, c.modality, c.plane, c.variant);
   if (!img){ c.viewer.load('', { title:`${c.modality} · ${c.plane}`, subtitle: c.variant }); return; }
   c.viewer.load(img.path, {
