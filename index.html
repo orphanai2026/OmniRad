@@ -202,6 +202,7 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;}}
 </style>
 
+<script src="modules/i18n.js"></script>
 <script src="modules/supabase.js"></script>
 <script>OmniRadAuth.guard();</script>
 </head>
@@ -288,28 +289,28 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">Radiologic Anatomy Platform</div>
-  <h1 class="hero-h1">Every structure.<br><span class="acc">Every modality.</span> One place.</h1>
-  <p class="hero-desc">
+  <div class="hero-eyebrow" data-i18n="home.eyebrow">Radiologic Anatomy Platform</div>
+  <h1 class="hero-h1"><span data-i18n="home.h1a">Every structure.</span><br><span class="acc" data-i18n="home.h1b">Every modality.</span> <span data-i18n="home.h1c">One place.</span></h1>
+  <p class="hero-desc" data-i18n="home.desc">
     Explore any anatomical structure across CT, MRI, Ultrasound, <strong>X-Ray</strong>,
     Nuclear Medicine and more — and compare them side by side, the way radiologists actually see them.
   </p>
   <div class="hero-cta">
     <a href="pages/atlas.html" class="btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      Open Atlas
+      <span data-i18n="home.openAtlas">Open Atlas</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
     <a href="pages/comparison.html" class="btn-secondary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l-3 4 3 4M19 8l3 4-3 4"/></svg>
-      Compare Modalities
+      <span data-i18n="home.compare">Compare Modalities</span>
     </a>
   </div>
 </section>
 
 <!-- MODALITY STRIP -->
 <div class="mod-strip-wrap">
-  <div class="mod-strip-label">Browse by modality</div>
+  <div class="mod-strip-label" data-i18n="home.browseBy">Browse by modality</div>
   <div class="mod-strip">
     <a href="pages/atlas.html?modality=ct" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ct_abdomen.png" alt="CT"></div><span class="mod-pill-name">CT</span></a>
     <a href="pages/atlas.html?modality=mri" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mri_brain.png" alt="MRI"></div><span class="mod-pill-name">MRI</span></a>
