@@ -146,8 +146,8 @@ tr:hover td{background:var(--bg-ov)}
     <section id="secMnemo" class="section">
       <div class="section-card">
         <div class="section-head">
-          <h2>Mnemonics</h2>
-          <button class="btn" onclick="openMnemoModal()">➕ Add mnemonic</button>
+          <h2 data-i18n="admin.mnemo">Mnemonics</h2>
+          <button class="btn" onclick="openMnemoModal()" data-i18n="admin.addMnemo">➕ Add mnemonic</button>
         </div>
         <div id="mnemoTable"></div>
       </div>
@@ -158,7 +158,7 @@ tr:hover td{background:var(--bg-ov)}
       <div class="section-card">
         <div class="section-head">
           <h2 data-i18n="admin.cards">Learning Cards</h2>
-          <button class="btn" onclick="openCardModal()">➕ Add card</button>
+          <button class="btn" onclick="openCardModal()" data-i18n="admin.addCard">➕ Add card</button>
         </div>
         <div id="cardsTable"></div>
       </div>
@@ -169,7 +169,7 @@ tr:hover td{background:var(--bg-ov)}
       <div class="section-card">
         <div class="section-head">
           <h2 data-i18n="admin.contrib">Contributors</h2>
-          <button class="btn" onclick="openContribModal()">➕ Add contributor</button>
+          <button class="btn" onclick="openContribModal()" data-i18n="admin.addContrib">➕ Add contributor</button>
         </div>
         <div id="contribTable"></div>
       </div>
@@ -195,47 +195,47 @@ tr:hover td{background:var(--bg-ov)}
 
 <!-- Mnemonic modal -->
 <div class="modal-bg" id="mnemoModal"><div class="modal">
-  <h3 id="mnemoModalTitle">Add mnemonic</h3>
-  <div class="f2"><div class="f"><label>Title EN</label><input id="mnTitleEn"></div><div class="f"><label>Title AR</label><input id="mnTitleAr" dir="rtl"></div></div>
-  <div class="f2"><div class="f"><label>Phrase EN</label><input id="mnPhraseEn" placeholder="e.g. Some Lovers Try Positions"></div><div class="f"><label>Phrase AR</label><input id="mnPhraseAr" dir="rtl"></div></div>
-  <div class="f2"><div class="f"><label>Structure ID (optional)</label><input id="mnStruct" placeholder="e.g. wrist-hand"></div><div class="f"><label>Region</label><input id="mnRegion" placeholder="e.g. Upper limb"></div></div>
-  <div class="f"><label>Letters (JSON array)</label><textarea id="mnLetters" placeholder='[{"letter":"S","means_en":"Scaphoid","means_ar":"الزورقي"}]'></textarea></div>
-  <div class="f"><label>Explanation EN</label><textarea id="mnExplEn"></textarea></div>
-  <div class="f"><label>Explanation AR</label><textarea id="mnExplAr" dir="rtl"></textarea></div>
+  <h3 id="mnemoModalTitle" data-i18n="mod.addMnemo">Add mnemonic</h3>
+  <div class="f2"><div class="f"><label data-i18n="lbl.titleEn">Title EN</label><input id="mnTitleEn"></div><div class="f"><label data-i18n="lbl.titleAr">Title AR</label><input id="mnTitleAr" dir="rtl"></div></div>
+  <div class="f2"><div class="f"><label data-i18n="lbl.phraseEn">Phrase EN</label><input id="mnPhraseEn" placeholder="e.g. Some Lovers Try Positions"></div><div class="f"><label data-i18n="lbl.phraseAr">Phrase AR</label><input id="mnPhraseAr" dir="rtl"></div></div>
+  <div class="f2"><div class="f"><label data-i18n="lbl.structId">Structure ID (optional)</label><input id="mnStruct" placeholder="e.g. wrist-hand"></div><div class="f"><label data-i18n="lbl.region">Region</label><input id="mnRegion" placeholder="e.g. Upper limb"></div></div>
+  <div class="f"><label data-i18n="lbl.letters">Letters (JSON array)</label><textarea id="mnLetters" placeholder='[{"letter":"S","means_en":"Scaphoid","means_ar":"الزورقي"}]'></textarea></div>
+  <div class="f"><label data-i18n="lbl.explEn">Explanation EN</label><textarea id="mnExplEn"></textarea></div>
+  <div class="f"><label data-i18n="lbl.explAr">Explanation AR</label><textarea id="mnExplAr" dir="rtl"></textarea></div>
   <div class="modal-actions">
-    <button class="btn ghost" onclick="closeModal('mnemoModal')">Cancel</button>
-    <button class="btn" id="mnSave">Save</button>
+    <button class="btn ghost" onclick="closeModal('mnemoModal')" data-i18n="mod.cancel">Cancel</button>
+    <button class="btn" id="mnSave" data-i18n="mod.save">Save</button>
   </div>
 </div></div>
 
 <!-- Card modal -->
 <div class="modal-bg" id="cardModal"><div class="modal">
-  <h3 id="cardModalTitle">Add learning card</h3>
-  <div class="f2"><div class="f"><label>Card type</label><select id="cdType"><option value="flash">Flashcard</option><option value="mcq">Multiple choice</option><option value="image">Image-based</option></select></div><div class="f"><label>Difficulty (1-5)</label><input type="number" id="cdLevel" min="1" max="5" value="1"></div></div>
-  <div class="f2"><div class="f"><label>Structure ID</label><input id="cdStruct" placeholder="e.g. brain"></div><div class="f"><label>Modality</label><input id="cdMod" placeholder="e.g. CT"></div></div>
-  <div class="f2"><div class="f"><label>Plane</label><input id="cdPlane" placeholder="Axial / Coronal / Sagittal"></div><div class="f"><label>Variant</label><input id="cdVariant" placeholder="T2 / bone / soft"></div></div>
-  <div class="f"><label>Prompt EN</label><textarea id="cdPromptEn"></textarea></div>
-  <div class="f"><label>Prompt AR</label><textarea id="cdPromptAr" dir="rtl"></textarea></div>
-  <div class="f"><label>Answer EN</label><textarea id="cdAnsEn"></textarea></div>
-  <div class="f"><label>Answer AR</label><textarea id="cdAnsAr" dir="rtl"></textarea></div>
-  <div class="f"><label>Options (MCQ only, JSON)</label><textarea id="cdOptions" placeholder='[{"text_en":"A","text_ar":"أ","correct":true}]'></textarea></div>
+  <h3 id="cardModalTitle" data-i18n="mod.addCard">Add learning card</h3>
+  <div class="f2"><div class="f"><label data-i18n="lbl.cardType">Card type</label><select id="cdType"><option value="flash">Flashcard</option><option value="mcq">Multiple choice</option><option value="image">Image-based</option></select></div><div class="f"><label data-i18n="lbl.difficulty">Difficulty (1-5)</label><input type="number" id="cdLevel" min="1" max="5" value="1"></div></div>
+  <div class="f2"><div class="f"><label data-i18n="lbl.structIdReq">Structure ID</label><input id="cdStruct" placeholder="e.g. brain"></div><div class="f"><label data-i18n="lbl.modality">Modality</label><input id="cdMod" placeholder="e.g. CT"></div></div>
+  <div class="f2"><div class="f"><label data-i18n="lbl.plane">Plane</label><input id="cdPlane" placeholder="Axial / Coronal / Sagittal"></div><div class="f"><label data-i18n="lbl.variant">Variant</label><input id="cdVariant" placeholder="T2 / bone / soft"></div></div>
+  <div class="f"><label data-i18n="lbl.promptEn">Prompt EN</label><textarea id="cdPromptEn"></textarea></div>
+  <div class="f"><label data-i18n="lbl.promptAr">Prompt AR</label><textarea id="cdPromptAr" dir="rtl"></textarea></div>
+  <div class="f"><label data-i18n="lbl.answerEn">Answer EN</label><textarea id="cdAnsEn"></textarea></div>
+  <div class="f"><label data-i18n="lbl.answerAr">Answer AR</label><textarea id="cdAnsAr" dir="rtl"></textarea></div>
+  <div class="f"><label data-i18n="lbl.optionsMcq">Options (MCQ only, JSON)</label><textarea id="cdOptions" placeholder='[{"text_en":"A","text_ar":"أ","correct":true}]'></textarea></div>
   <div class="modal-actions">
-    <button class="btn ghost" onclick="closeModal('cardModal')">Cancel</button>
-    <button class="btn" id="cdSave">Save</button>
+    <button class="btn ghost" onclick="closeModal('cardModal')" data-i18n="mod.cancel">Cancel</button>
+    <button class="btn" id="cdSave" data-i18n="mod.save">Save</button>
   </div>
 </div></div>
 
 <!-- Contributor modal -->
 <div class="modal-bg" id="contribModal"><div class="modal">
-  <h3 id="contribModalTitle">Add contributor</h3>
-  <div class="f2"><div class="f"><label>Name EN</label><input id="coNameEn"></div><div class="f"><label>Name AR</label><input id="coNameAr" dir="rtl"></div></div>
-  <div class="f2"><div class="f"><label>Role EN</label><input id="coRoleEn"></div><div class="f"><label>Role AR</label><input id="coRoleAr" dir="rtl"></div></div>
-  <div class="f"><label>Bio EN</label><textarea id="coBioEn"></textarea></div>
-  <div class="f"><label>Bio AR</label><textarea id="coBioAr" dir="rtl"></textarea></div>
-  <div class="f2"><div class="f"><label>Link</label><input id="coLink"></div><div class="f"><label>Sort order</label><input type="number" id="coSort" value="100"></div></div>
+  <h3 id="contribModalTitle" data-i18n="mod.addContrib">Add contributor</h3>
+  <div class="f2"><div class="f"><label data-i18n="lbl.nameEn">Name EN</label><input id="coNameEn"></div><div class="f"><label data-i18n="lbl.nameAr">Name AR</label><input id="coNameAr" dir="rtl"></div></div>
+  <div class="f2"><div class="f"><label data-i18n="lbl.roleEn">Role EN</label><input id="coRoleEn"></div><div class="f"><label data-i18n="lbl.roleAr">Role AR</label><input id="coRoleAr" dir="rtl"></div></div>
+  <div class="f"><label data-i18n="lbl.bioEn">Bio EN</label><textarea id="coBioEn"></textarea></div>
+  <div class="f"><label data-i18n="lbl.bioAr">Bio AR</label><textarea id="coBioAr" dir="rtl"></textarea></div>
+  <div class="f2"><div class="f"><label data-i18n="lbl.link">Link</label><input id="coLink"></div><div class="f"><label data-i18n="lbl.sortOrder">Sort order</label><input type="number" id="coSort" value="100"></div></div>
   <div class="modal-actions">
-    <button class="btn ghost" onclick="closeModal('contribModal')">Cancel</button>
-    <button class="btn" id="coSave">Save</button>
+    <button class="btn ghost" onclick="closeModal('contribModal')" data-i18n="mod.cancel">Cancel</button>
+    <button class="btn" id="coSave" data-i18n="mod.save">Save</button>
   </div>
 </div></div>
 
