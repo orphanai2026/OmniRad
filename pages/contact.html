@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Contact</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--ok:#4ade80;--err:#f87171}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--ok:#0e8f4a;--err:#c53030}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:40px 24px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:var(--text-s);font-size:14px;line-height:1.65;margin-bottom:26px}
+.info-card{background:var(--bg-e);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:22px}
+.info-card .kv{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border-s);font-size:13.5px}
+.info-card .kv:last-child{border-bottom:none}
+.info-card .k{font-size:10px;font-weight:700;color:var(--text-m);letter-spacing:.11em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.info-card .v{color:var(--acc);font-weight:600;font-family:'IBM Plex Mono',monospace}
+.form{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:22px}
+.form h2{font-size:16px;font-weight:700;margin-bottom:14px}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:11px;font-weight:600;color:var(--text-m);margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.f input,.f textarea{width:100%;padding:11px 13px;background:var(--bg-s);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;resize:vertical}
+.f input:focus,.f textarea:focus{outline:none;border-color:var(--acc)}
+.btn{width:100%;padding:12px;background:var(--acc);color:var(--acc-ink);border:none;border-radius:9px;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;margin-top:6px}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:wait}
+.msg{margin-top:12px;padding:10px 12px;border-radius:8px;font-size:13px;display:none}
+.msg.ok{background:rgba(74,222,128,.12);color:var(--ok);border:1px solid rgba(74,222,128,.35);display:block}
+.msg.err{background:rgba(248,113,113,.12);color:var(--err);border:1px solid rgba(248,113,113,.35);display:block}
+.disc{margin-top:24px;padding-top:16px;border-top:1px solid var(--border-s);font-size:11px;color:var(--text-m);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow" data-i18n="common.contact">Contact</div>
+  <h1>Get in touch.</h1>
+  <p class="sub">Questions, partnership requests, radiologist review inquiries, or feedback — send us a message.</p>
+
+  <div class="info-card">
+    <div class="kv"><span class="k">Founder</span><span class="v">Mohammed Saeed Alzahrani</span></div>
+    <div class="kv"><span class="k">Email</span><span class="v"><a href="mailto:omniradai@gmail.com" style="color:var(--acc);text-decoration:none">omniradai@gmail.com</a></span></div>
+    <div class="kv"><span class="k">Platform</span><span class="v">OmniRad · v1.0</span></div>
+  </div>
+
+  <div class="form">
+    <h2>Send a message</h2>
+    <div class="f"><label>Your name</label><input id="fName" required></div>
+    <div class="f"><label>Your email</label><input id="fEmail" type="email" required></div>
+    <div class="f"><label>Subject</label><input id="fSubject" placeholder="e.g. Radiology review inquiry"></div>
+    <div class="f"><label>Message</label><textarea id="fMessage" rows="6" required></textarea></div>
+    <button class="btn" id="btnSend" onclick="send()">Send message</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="disc">⚕️ © 2026 OmniRad Platform. All rights reserved.<br>Educational tool — not for diagnosis or clinical use.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script>
+const $ = id => document.getElementById(id);
+function showMsg(text, kind){ const el = $('msg'); el.textContent = text; el.className = 'msg ' + kind; }
+async function send(){
+  const name = $('fName').value.trim();
+  const email = $('fEmail').value.trim();
+  const subject = $('fSubject').value.trim();
+  const message = $('fMessage').value.trim();
+  if (!name || !email || !message) return showMsg('Please fill required fields.', 'err');
+  const btn = $('btnSend'); btn.disabled = true;
+  try {
+    if (!window.OmniRadAuth) throw new Error('Backend not loaded');
+    const { error } = await OmniRadAuth.client.from('contacts').insert({
+      name, email, subject: subject || null, message,
+      locale: (window.OmniRadI18n && OmniRadI18n.lang) || 'en'
+    });
+    if (error) throw error;
+    showMsg('✓ Message sent. We\'ll reply to ' + email + '.', 'ok');
+    ['fName','fEmail','fSubject','fMessage'].forEach(id => $(id).value = '');
+  } catch(e){ showMsg('Error: ' + e.message, 'err'); }
+  finally { btn.disabled = false; }
+}
+</script>
+</body>
+</html>

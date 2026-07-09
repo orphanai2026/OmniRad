@@ -109,16 +109,16 @@ function render(){
     <div class="card" id="thecard">
       <div class="front">
         <div class="q">${c.q}</div>
-        <button class="flip-btn" onclick="doFlip()">Show answer</button>
+        <button class="flip-btn" onclick="doFlip()" data-i18n="srs.showAnswer">Show answer</button>
       </div>
       <div class="back">
         <div class="q">${c.q}</div>
         <div class="a">${c.a}<div class="ar">${c.ar || ''}</div></div>
         <div class="rate">
-          <button class="r0" onclick="rate(0)">Again</button>
-          <button onclick="rate(1)">Hard</button>
-          <button onclick="rate(2)">Good</button>
-          <button class="r3" onclick="rate(3)">Easy</button>
+          <button class="r0" onclick="rate(0)" data-i18n="srs.again">Again</button>
+          <button onclick="rate(1)" data-i18n="srs.hard">Hard</button>
+          <button onclick="rate(2)" data-i18n="srs.good">Good</button>
+          <button class="r3" onclick="rate(3)" data-i18n="srs.easy">Easy</button>
         </div>
       </div>
     </div>`;

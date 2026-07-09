@@ -118,8 +118,8 @@ a{text-decoration:none;color:inherit}
 <div class="atlas">
   <aside class="sidebar">
     <div class="side-head">
-      <div class="side-title">Anatomical structures</div>
-      <input class="side-search" id="search" placeholder="Search…">
+      <div class="side-title" data-i18n="atlas.structures">Anatomical structures</div>
+      <input class="side-search" id="search" placeholder="Search…" data-i18n-placeholder="common.search">
     </div>
     <ul class="struct-list" id="structList"></ul>
   </aside>
@@ -127,23 +127,23 @@ a{text-decoration:none;color:inherit}
   <section class="main">
     <div class="mod-bar" id="modBar"></div>
     <div class="sub-picker">
-      <span class="sub-lbl">Plane</span>
+      <span class="sub-lbl" data-i18n="atlas.plane">Plane</span>
       <select id="planeSel"></select>
-      <span class="sub-lbl">Variant</span>
+      <span class="sub-lbl" data-i18n="atlas.variant">Variant</span>
       <select id="varSel"></select>
       <span style="flex:1"></span>
-      <button class="labels-toggle on" id="btnLabels">LABELS: ON</button>
+      <button class="labels-toggle on" id="btnLabels" data-i18n="atlas.labelsOn">LABELS: ON</button>
     </div>
     <div class="tool-bar">
-      <div class="tg"><span class="tl">Tool</span>
-        <button class="tb on" data-tool="wl" title="Window / Level">WL</button>
-        <button class="tb"    data-tool="zoom" title="Zoom">ZOOM</button>
-        <button class="tb"    data-tool="pan"  title="Pan">PAN</button>
-        <button class="tb"    data-tool="measure" title="Measure">RULER</button>
-        <button class="tb"    data-tool="angle" title="Angle">ANGLE</button>
-        <button class="tb"    data-tool="probe" title="Pixel probe">PROBE</button>
+      <div class="tg"><span class="tl" data-i18n="atlas.tool">Tool</span>
+        <button class="tb on" data-tool="wl" title="Window / Level" data-i18n="tools.wl">WL</button>
+        <button class="tb"    data-tool="zoom" title="Zoom" data-i18n="tools.zoom">ZOOM</button>
+        <button class="tb"    data-tool="pan"  title="Pan" data-i18n="tools.pan">PAN</button>
+        <button class="tb"    data-tool="measure" title="Measure" data-i18n="tools.measure">RULER</button>
+        <button class="tb"    data-tool="angle" title="Angle" data-i18n="tools.angle">ANGLE</button>
+        <button class="tb"    data-tool="probe" title="Pixel probe" data-i18n="tools.probe">PROBE</button>
       </div>
-      <div class="tg"><span class="tl">Preset</span>
+      <div class="tg"><span class="tl" data-i18n="atlas.preset">Preset</span>
         <select id="presetSel" style="padding:4px 7px;background:var(--bg-s);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700">
           <option value="">Custom</option>
           <option value="brain">Brain (80/40)</option>
@@ -157,10 +157,10 @@ a{text-decoration:none;color:inherit}
       <div class="tg"><span class="tl">WW</span><span class="tv" id="valWW">—</span><span class="tl">WL</span><span class="tv" id="valWL">—</span></div>
       <div class="tg"><span class="tl">Zoom</span><span class="tv" id="valZoom">1.00×</span></div>
       <div class="tg">
-        <button class="tb" id="btnInvert" title="Invert">INVERT</button>
-        <button class="tb" id="btnOverlay" title="Toggle overlays">OVLY</button>
-        <button class="tb" id="btnClear"   title="Clear measurements">CLR</button>
-        <button class="tb" id="btnReset"   title="Reset view">RESET</button>
+        <button class="tb" id="btnInvert" title="Invert" data-i18n="tools.invert">INVERT</button>
+        <button class="tb" id="btnOverlay" title="Toggle overlays" data-i18n="tools.overlay">OVLY</button>
+        <button class="tb" id="btnClear" title="Clear measurements" data-i18n="tools.clear">CLR</button>
+        <button class="tb" id="btnReset" title="Reset view" data-i18n="tools.reset">RESET</button>
       </div>
     </div>
 
@@ -186,20 +186,21 @@ a{text-decoration:none;color:inherit}
   <aside class="info" id="info">
     <div class="info-title-row"><h2 id="infoTitle">OmniRad Atlas</h2><span id="titleSpeaker"></span></div>
     <div class="info-sub" id="infoSub">Radiologic anatomy · bilingual</div>
-    <h3>Study</h3>
+    <h3 data-i18n="atlas.study">Study</h3>
     <div class="kv"><span class="k">Modality</span><span class="v" id="infoMod">—</span></div>
     <div class="kv"><span class="k">Plane</span><span class="v" id="infoPlane">—</span></div>
     <div class="kv"><span class="k">Variant</span><span class="v" id="infoVar">—</span></div>
     <div class="kv"><span class="k">WW / WL</span><span class="v" id="infoWL">—</span></div>
-    <h3>About</h3>
-    <p id="infoDesc">Select a structure to begin.</p>
-    <h3>Anatomical parts <span id="partCount" style="color:var(--text-m);font-weight:400"></span></h3>
+    <h3 data-i18n="atlas.about">About</h3>
+    <p id="infoDesc"><span data-i18n="atlas.chooseStruct">Select a structure to begin.</span></p>
+    <h3 data-i18n-title="atlas.parts">Anatomical parts <span id="partCount" style="color:var(--text-m);font-weight:400"></span></h3>
     <div class="parts" id="parts"></div>
     <div class="disc">⚕️ Educational only — not for diagnosis or clinical use.<br>© 2026 OmniRad Platform.</div>
   </aside>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script src="../modules/structures.js"></script>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Contributors</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:40px 24px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
+.lead{color:var(--text-s);font-size:14.5px;line-height:1.7;max-width:60ch;margin-bottom:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:26px}
+.card{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:22px;position:relative}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc-dim));display:grid;place-items:center;font-weight:700;font-size:22px;color:var(--acc-ink);margin-bottom:14px}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.name{font-size:16px;font-weight:700;margin-bottom:4px}
+.name-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:14px;color:var(--text-s);margin-bottom:8px}
+.role{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:10px}
+.bio{font-size:12.5px;color:var(--text-s);line-height:1.65}
+.bio-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:12px;color:var(--text-m);margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-s)}
+.admin-actions{position:absolute;top:12px;inset-inline-end:12px;display:flex;gap:6px}
+.admin-actions button{background:transparent;border:1px solid var(--border-s);color:var(--text-m);padding:4px 8px;font-size:10px;border-radius:4px;cursor:pointer;font-family:'IBM Plex Mono',monospace}
+.admin-actions button:hover{color:var(--acc);border-color:var(--acc-dim)}
+.admin-bar{background:var(--acc-sub);border:1px solid var(--acc-dim);border-radius:12px;padding:14px 18px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.admin-bar .lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace}
+.btn-add{padding:9px 16px;background:var(--acc);color:var(--acc-ink);border:none;border-radius:8px;font-family:inherit;font-weight:700;cursor:pointer;font-size:13px}
+.btn-add:hover{transform:translateY(-1px)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:300;padding:24px}
+.modal.open{display:flex}
+.modal-card{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:26px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-card h2{font-size:18px;font-weight:700;margin-bottom:16px}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:11px;font-weight:600;color:var(--text-m);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.f input,.f textarea{width:100%;padding:9px 11px;background:var(--bg-s);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:13.5px}
+.f input:focus,.f textarea:focus{outline:none;border-color:var(--acc)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.btn-cancel{padding:8px 16px;background:transparent;border:1px solid var(--border);color:var(--text-s);border-radius:6px;font-family:inherit;font-weight:600;cursor:pointer}
+.btn-save{padding:8px 16px;background:var(--acc);border:none;color:var(--acc-ink);border-radius:6px;font-family:inherit;font-weight:700;cursor:pointer}
+.empty{text-align:center;padding:60px 20px;color:var(--text-m);font-size:14px}
+.disc{margin-top:24px;padding-top:16px;border-top:1px solid var(--border-s);font-size:11px;color:var(--text-m);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow" data-i18n="common.contributors">Contributors</div>
+  <h1>The people building OmniRad.</h1>
+  <p class="lead">Curated list of contributors — radiologists, educators and developers helping shape the platform. All copyright remains with OmniRad; contributors are recognized for their intellectual contribution.</p>
+
+  <div id="adminBar" style="display:none" class="admin-bar">
+    <span class="lbl">Admin controls</span>
+    <button class="btn-add" onclick="openModal()">➕ Add contributor</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="disc">⚕️ © 2026 OmniRad Platform · All concept, design and reproduction rights reserved.</div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <h2 id="modalTitle">Add contributor</h2>
+    <div class="f"><label>Name (English)</label><input id="fNameEn"></div>
+    <div class="f"><label>Name (Arabic)</label><input id="fNameAr" dir="rtl"></div>
+    <div class="f"><label>Role (English)</label><input id="fRoleEn" placeholder="e.g. Radiology Reviewer"></div>
+    <div class="f"><label>Role (Arabic)</label><input id="fRoleAr" dir="rtl" placeholder="مثال: مراجع أشعة"></div>
+    <div class="f"><label>Bio (English, optional)</label><textarea id="fBioEn" rows="2"></textarea></div>
+    <div class="f"><label>Bio (Arabic, optional)</label><textarea id="fBioAr" rows="2" dir="rtl"></textarea></div>
+    <div class="f"><label>Link (optional)</label><input id="fLink" placeholder="https://…"></div>
+    <div class="f"><label>Sort order</label><input id="fSort" type="number" value="100"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveContributor()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script>
+const $ = id => document.getElementById(id);
+let editingId = null, isAdmin = false;
+
+function initials(name){
+  return name.split(' ').slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
+}
+
+async function load(){
+  const isAr = (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
+  if (window.OmniRadAuth) {
+    try { isAdmin = await OmniRadAuth.isAdmin(); } catch(_){}
+  }
+  $('adminBar').style.display = isAdmin ? 'flex' : 'none';
+
+  let data = [];
+  if (window.OmniRadAuth && OmniRadAuth.client) {
+    const { data: rows, error } = await OmniRadAuth.client
+      .from('contributors').select('*').eq('active', true).order('sort_order');
+    if (!error) data = rows || [];
+  }
+
+  const grid = $('grid'); grid.innerHTML = '';
+  if (data.length === 0){
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">' +
+      (isAdmin ? 'No contributors yet. Click "Add contributor" to add one.'
+               : 'The contributors list is being prepared. Check back soon.') +
+      '</div>';
+    return;
+  }
+  data.forEach(c => {
+    const d = document.createElement('div'); d.className = 'card';
+    d.innerHTML = `
+      <div class="avatar">${c.avatar_url ? '<img src="'+c.avatar_url+'">' : initials(c.name_en || c.name_ar || '?')}</div>
+      <div class="name">${c.name_en || ''}</div>
+      <div class="name-ar">${c.name_ar || ''}</div>
+      <div class="role">${isAr ? (c.role_ar||c.role_en||'') : (c.role_en||c.role_ar||'')}</div>
+      ${(c.bio_en || c.bio_ar) ? `<div class="bio">${c.bio_en||''}${c.bio_ar ? '<div class="bio-ar">'+c.bio_ar+'</div>' : ''}</div>` : ''}
+      ${isAdmin ? `<div class="admin-actions"><button onclick="editRow('${c.id}')">EDIT</button><button onclick="deleteRow('${c.id}')">DEL</button></div>` : ''}
+    `;
+    grid.appendChild(d);
+  });
+}
+
+function openModal(){ editingId = null; $('modalTitle').textContent = 'Add contributor';
+  ['fNameEn','fNameAr','fRoleEn','fRoleAr','fBioEn','fBioAr','fLink'].forEach(id=>$(id).value=''); $('fSort').value=100;
+  $('modal').classList.add('open'); }
+function closeModal(){ $('modal').classList.remove('open'); }
+
+async function editRow(id){
+  const { data } = await OmniRadAuth.client.from('contributors').select('*').eq('id', id).single();
+  if (!data) return;
+  editingId = id;
+  $('modalTitle').textContent = 'Edit contributor';
+  $('fNameEn').value = data.name_en || ''; $('fNameAr').value = data.name_ar || '';
+  $('fRoleEn').value = data.role_en || ''; $('fRoleAr').value = data.role_ar || '';
+  $('fBioEn').value  = data.bio_en  || ''; $('fBioAr').value  = data.bio_ar  || '';
+  $('fLink').value = data.link || ''; $('fSort').value = data.sort_order || 100;
+  $('modal').classList.add('open');
+}
+
+async function saveContributor(){
+  const row = {
+    name_en: $('fNameEn').value.trim(),
+    name_ar: $('fNameAr').value.trim(),
+    role_en: $('fRoleEn').value.trim() || null,
+    role_ar: $('fRoleAr').value.trim() || null,
+    bio_en:  $('fBioEn').value.trim()  || null,
+    bio_ar:  $('fBioAr').value.trim()  || null,
+    link:    $('fLink').value.trim()   || null,
+    sort_order: parseInt($('fSort').value) || 100,
+    active: true
+  };
+  if (!row.name_en || !row.name_ar) return alert('Name (both languages) is required.');
+  try {
+    if (editingId){
+      const { error } = await OmniRadAuth.client.from('contributors').update(row).eq('id', editingId);
+      if (error) throw error;
+    } else {
+      const { error } = await OmniRadAuth.client.from('contributors').insert(row);
+      if (error) throw error;
+    }
+    closeModal(); load();
+  } catch(e){ alert('Save error: ' + e.message); }
+}
+
+async function deleteRow(id){
+  if (!confirm('Delete this contributor?')) return;
+  try {
+    const { error } = await OmniRadAuth.client.from('contributors').delete().eq('id', id);
+    if (error) throw error;
+    load();
+  } catch(e){ alert('Delete error: ' + e.message); }
+}
+
+window.addEventListener('omnirad-lang', load);
+load();
+</script>
+</body>
+</html>

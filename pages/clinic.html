@@ -106,11 +106,11 @@ function renderCases(){
     d.innerHTML = `
       <div class="case-head">
         <div class="case-title">${c.title}</div>
-        <div class="case-tag ${c.urgency}">${c.urgency}</div>
+        <div class="case-tag ${c.urgency}">${c.urgency==="urgent"?(window.OmniRadI18n?OmniRadI18n.t("clinic.urgent"):"urgent"):(window.OmniRadI18n?OmniRadI18n.t("clinic.elective"):"elective")}</div>
       </div>
       <div class="case-vitals">${c.vitals.map(v=>'<span>'+v+'</span>').join('')}</div>
       <div class="case-body">${c.body}</div>
-      <div class="case-mod">Recommended imaging → <strong>${c.mod}</strong> · ACR ${c.acr}/9</div>`;
+      <div class="case-mod"><span data-i18n="clinic.recommended">Recommended imaging</span> → <strong>${c.mod}</strong> · ACR ${c.acr}/9</div>`;
     w.appendChild(d);
   });
 }
