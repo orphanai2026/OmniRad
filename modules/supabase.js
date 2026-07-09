@@ -1,311 +1,183 @@
-/* ════════════════════════════════════════════════════
-   OmniRad — modules/supabase.js
-   Purpose: Supabase client — Auth, SRS sync, preferences, daily scores, streaks
-   ════════════════════════════════════════════════════ */
-/**
- * OmniRad — Supabase Connection Module
- * Task #14 — User Accounts Backend
- *
- * INSTRUCTIONS: Replace the two constants below with your actual values.
- * SUPABASE_URL  → https://lmbdtktjeggischpqnkw.supabase.co
- * SUPABASE_KEY  → your Publishable key from Supabase → Settings → API
- */
+/* ═══════════════════════════════════════════════════════════════
+   OmniRad — Supabase client module
+   ─────────────────────────────────────────────────────────────
+   Single source of truth for auth + client used by both:
+     • the OmniRad website (public + admin views)
+     • the Prompt Studio authoring tool
+   Depends on: @supabase/supabase-js v2 (loaded via CDN in HTML)
+   Loads with:
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+     <script src="modules/supabase.js"></script>
+   ═══════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
 
-const SUPABASE_URL = 'https://lmbdtktjeggischpqnkw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtYmR0a3RqZWdnaXNjaHBxbmt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MjQ1NTUsImV4cCI6MjA5ODIwMDU1NX0.xr2WO9lJHajYj8Tsysap2FBKmiRSWWvc6PWmnnbObjc'; // ← ضع الـ publishable key هنا
+  const SUPABASE_URL = 'https://lmbdtktjeggischpqnkw.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_LBZk8ASNqCwZw4SSnYtPeQ_N2NbHMpl';
+  const STORAGE_BUCKET = 'omnirad-images';
+  const TOKEN_KEY = 'omnirad_token';
+  const PROFILE_KEY = 'omnirad_profile';
 
-// ─── Core Request Helper ──────────────────────────────────────────────────────
-
-async function sbFetch(path, options = {}) {
-  const url = `${SUPABASE_URL}${path}`;
-  const token = sbGetToken();
-  const headers = {
-    'apikey': SUPABASE_KEY,
-    'Content-Type': 'application/json',
-    ...options.headers
-  };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  let res = await fetch(url, { ...options, headers });
-  let data = res.status === 204 ? null : await res.json();
-
-  // Root cause fix (Issue #52): a stale/expired user session token stored in
-  // localStorage was being attached to EVERY request (including public anon
-  // reads like loadStructuresData), so Supabase rejected them with
-  // "JWT expired" even though the anon apikey itself was perfectly valid.
-  // If that happens, drop the dead token and retry once as anon.
-  if (!res.ok && token && res.status === 401 && /jwt expired/i.test(data?.message || '')) {
-    sbClearToken();
-    const anonHeaders = { ...headers };
-    delete anonHeaders['Authorization'];
-    res = await fetch(url, { ...options, headers: anonHeaders });
-    data = res.status === 204 ? null : await res.json();
+  if (!global.supabase || !global.supabase.createClient) {
+    console.warn('[OmniRad] supabase-js not loaded. Load the CDN script before this file.');
+    return;
   }
 
-  if (!res.ok) throw new Error(data?.error_description || data?.message || 'Request failed');
-  return data;
-}
-
-// ─── Token Management ─────────────────────────────────────────────────────────
-
-function sbGetToken()    { return localStorage.getItem('omnirad_token'); }
-function sbSetToken(t)   { localStorage.setItem('omnirad_token', t); }
-function sbClearToken()  { localStorage.removeItem('omnirad_token'); localStorage.removeItem('omnirad_user'); }
-function sbGetUser()     { try { return JSON.parse(localStorage.getItem('omnirad_user')); } catch { return null; } }
-function sbSetUser(u)    { localStorage.setItem('omnirad_user', JSON.stringify(u)); }
-
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-
-async function sbSignUp(email, password, fullName) {
-  const data = await sbFetch('/auth/v1/signup', {
-    method: 'POST',
-    body: JSON.stringify({ email, password, options: { data: { full_name: fullName } } })
+  const client = global.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: TOKEN_KEY }
   });
-  if (data.access_token) { sbSetToken(data.access_token); sbSetUser(data.user); }
-  return data;
-}
 
-async function sbSignIn(email, password) {
-  const data = await sbFetch('/auth/v1/token?grant_type=password', {
-    method: 'POST',
-    body: JSON.stringify({ email, password })
-  });
-  if (data.access_token) { sbSetToken(data.access_token); sbSetUser(data.user); }
-  return data;
-}
+  const OmniRadAuth = {
+    client,
+    _profile: null,
 
-async function sbSignOut() {
-  try {
-    await sbFetch('/auth/v1/logout', { method: 'POST' });
-  } catch (_) {}
-  sbClearToken();
-}
+    async signUp(email, password, displayName) {
+      const { data, error } = await client.auth.signUp({
+        email, password,
+        options: { data: { display_name: displayName || '' } }
+      });
+      if (error) throw error;
+      return data;
+    },
 
-async function sbGetSession() {
-  const token = sbGetToken();
-  if (!token) return null;
-  try {
-    const data = await sbFetch('/auth/v1/user');
-    sbSetUser(data);
-    return data;
-  } catch {
-    sbClearToken();
-    return null;
-  }
-}
+    async signIn(email, password) {
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await this.loadProfile();
+      return data;
+    },
 
-// ─── SRS Progress ─────────────────────────────────────────────────────────────
+    async signOut() {
+      await client.auth.signOut();
+      this._profile = null;
+      try { localStorage.removeItem(PROFILE_KEY); } catch (_) {}
+    },
 
-async function sbGetSRSProgress() {
-  return sbFetch('/rest/v1/srs_progress?select=*', {
-    headers: { 'Prefer': 'return=representation' }
-  });
-}
+    async currentUser() {
+      const { data } = await client.auth.getUser();
+      return data.user || null;
+    },
 
-async function sbUpsertSRSCard(card) {
-  const user = sbGetUser();
-  if (!user) throw new Error('Not authenticated');
-  return sbFetch('/rest/v1/srs_progress', {
-    method: 'POST',
-    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-    body: JSON.stringify({ ...card, user_id: user.id })
-  });
-}
+    async loadProfile() {
+      const user = await this.currentUser();
+      if (!user) { this._profile = null; return null; }
+      const { data, error } = await client.from('profiles').select('*').eq('id', user.id).single();
+      if (error) { console.warn('[OmniRad] loadProfile error:', error.message); return null; }
+      this._profile = data;
+      try { localStorage.setItem(PROFILE_KEY, JSON.stringify(data)); } catch (_) {}
+      return data;
+    },
 
-// ─── User Preferences ─────────────────────────────────────────────────────────
+    async profile() {
+      if (this._profile) return this._profile;
+      try {
+        const cached = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+        if (cached) this._profile = cached;
+      } catch (_) {}
+      return this._profile || await this.loadProfile();
+    },
 
-async function sbGetPreferences() {
-  const rows = await sbFetch('/rest/v1/user_preferences?select=*&limit=1');
-  return rows?.[0] || { language: 'en', theme: 'dark' };
-}
+    async role() {
+      const p = await this.profile();
+      return (p && p.role) || 'viewer';
+    },
 
-async function sbSavePreferences(prefs) {
-  const user = sbGetUser();
-  if (!user) throw new Error('Not authenticated');
-  return sbFetch('/rest/v1/user_preferences', {
-    method: 'POST',
-    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-    body: JSON.stringify({ ...prefs, user_id: user.id, updated_at: new Date().toISOString() })
-  });
-}
+    async isAdmin()      { return (await this.role()) === 'admin'; },
+    async isContributor(){ const r = await this.role(); return r === 'admin' || r === 'contributor'; },
 
-// ─── Daily Challenge ──────────────────────────────────────────────────────────
+    /* Route guard — call at top of protected pages */
+    async guard(opts) {
+      opts = opts || {};
+      const user = await this.currentUser();
+      const authPath = opts.authPath || 'pages/auth.html';
+      if (!user) { location.href = authPath; return false; }
+      if (opts.role) {
+        const r = await this.role();
+        const allowed = Array.isArray(opts.role) ? opts.role.includes(r) : opts.role === r;
+        if (!allowed) { location.href = opts.deniedPath || 'index.html'; return false; }
+      }
+      return true;
+    },
 
-async function sbSubmitDailyScore(score, timeSeconds) {
-  const user = sbGetUser();
-  if (!user) throw new Error('Not authenticated');
-  const today = new Date().toISOString().split('T')[0];
-  const result = await sbFetch('/rest/v1/daily_scores', {
-    method: 'POST',
-    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-    body: JSON.stringify({
-      user_id:        user.id,
-      challenge_date: today,
-      score:          score,
-      time_seconds:   timeSeconds,
-      answered_at:    new Date().toISOString()
-    })
-  });
-  // تحديث الـ streak تلقائياً بعد الإجابة
-  if (score > 0) await sbUpdateStreak();
-  return result;
-}
+    /* Signed URL helper for private image delivery (~1 h) */
+    async imageUrl(path, expiresIn) {
+      expiresIn = expiresIn || 3600;
+      const { data, error } = await client.storage.from(STORAGE_BUCKET).createSignedUrl(path, expiresIn);
+      if (error) throw error;
+      return data.signedUrl;
+    },
 
-async function sbGetMyDailyScore(date) {
-  const today = date || new Date().toISOString().split('T')[0];
-  const rows = await sbFetch(
-    `/rest/v1/daily_scores?challenge_date=eq.${today}&select=*&limit=1`
-  );
-  return rows?.[0] || null;
-}
+    /* Upload a Blob/File to a deterministic path */
+    async uploadImage(structureId, modality, plane, blob, ext) {
+      ext = ext || 'png';
+      const stamp = Date.now();
+      const path = `${structureId}/${modality}/${plane || 'na'}/${stamp}.${ext}`;
+      const { error } = await client.storage.from(STORAGE_BUCKET).upload(path, blob, { contentType: 'image/' + ext });
+      if (error) throw error;
+      return path;
+    },
 
-async function sbGetLeaderboard(limit = 20) {
-  // يقرأ من الـ view العامة — لا يحتاج auth
-  return sbFetch(
-    `/rest/v1/leaderboard?select=display_name,total_score,days_played,current_streak,longest_streak&limit=${limit}`
-  );
-}
+    /* Submit a generated image row (goes to review queue) */
+    async submitImage(row) {
+      const user = await this.currentUser();
+      if (!user) throw new Error('Not signed in');
+      const payload = Object.assign({}, row, { uploaded_by: user.id, status: row.status || 'review' });
+      const { data, error } = await client.from('generated_images').insert(payload).select().single();
+      if (error) throw error;
+      await client.from('image_review_log').insert({ image_id: data.id, actor: user.id, action: 'submit' });
+      return data;
+    },
 
-// ─── Streaks ──────────────────────────────────────────────────────────────────
+    /* Admin: approve / reject */
+    async approveImage(imageId, note) {
+      const user = await this.currentUser();
+      const { data, error } = await client.from('generated_images')
+        .update({ status: 'approved', reviewed_by: user.id, reviewed_at: new Date().toISOString(), review_note: note || null })
+        .eq('id', imageId).select().single();
+      if (error) throw error;
+      await client.from('image_review_log').insert({ image_id: imageId, actor: user.id, action: 'approve', note });
+      return data;
+    },
+    async rejectImage(imageId, note) {
+      const user = await this.currentUser();
+      const { data, error } = await client.from('generated_images')
+        .update({ status: 'rejected', reviewed_by: user.id, reviewed_at: new Date().toISOString(), review_note: note || null })
+        .eq('id', imageId).select().single();
+      if (error) throw error;
+      await client.from('image_review_log').insert({ image_id: imageId, actor: user.id, action: 'reject', note });
+      return data;
+    },
 
-async function sbGetMyStreak() {
-  const user = sbGetUser();
-  if (!user) return { current_streak: 0, longest_streak: 0, last_activity: null };
-  const rows = await sbFetch(
-    `/rest/v1/streaks?user_id=eq.${user.id}&select=*&limit=1`
-  );
-  return rows?.[0] || { current_streak: 0, longest_streak: 0, last_activity: null };
-}
+    /* Public: list approved images for atlas / comparison */
+    async listApprovedImages(structureId, modality) {
+      let q = client.from('generated_images').select('*').eq('status', 'approved');
+      if (structureId) q = q.eq('structure_id', structureId);
+      if (modality)    q = q.eq('modality', modality);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
 
-async function sbUpdateStreak() {
-  const user = sbGetUser();
-  if (!user) return;
-
-  const today     = new Date().toISOString().split('T')[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
-  const current = await sbGetMyStreak();
-  const last    = current.last_activity;
-
-  // لا تُكرر التحديث في نفس اليوم
-  if (last === today) return current;
-
-  const newStreak  = (last === yesterday) ? (current.current_streak + 1) : 1;
-  const newLongest = Math.max(newStreak, current.longest_streak || 0);
-
-  return sbFetch('/rest/v1/streaks', {
-    method: 'POST',
-    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-    body: JSON.stringify({
-      user_id:         user.id,
-      current_streak:  newStreak,
-      longest_streak:  newLongest,
-      last_activity:   today,
-      updated_at:      new Date().toISOString()
-    })
-  });
-}
-
-
-// ─── Content: Structures (Task #26 frontend wiring) ───────────────────────────
-
-async function sbGetStructures() {
-  const rows = await sbFetch(
-    '/rest/v1/structures?select=id,category,en,ar,latin,' +
-    'structure_descriptions(lang,description),' +
-    'structure_facts(fact_en,sort_order),' +
-    'structure_mnemonics(title_en,title_ar,body_en,body_ar,ref),' +
-    'structure_imaging_notes(modality,note),' +
-    'structure_related!structure_related_structure_id_fkey(related_structure_id)' +
-    '&status=eq.published&order=en.asc'
-  );
-  return rows.map(r => {
-    const descEn = (r.structure_descriptions.find(d => d.lang === 'en') || {}).description || '';
-    const descAr = (r.structure_descriptions.find(d => d.lang === 'ar') || {}).description || '';
-    const facts = [...r.structure_facts]
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map(f => f.fact_en);
-    const imaging = {};
-    r.structure_imaging_notes.forEach(n => { imaging[n.modality] = n.note; });
-    const mnemonics = r.structure_mnemonics.map(m => ({
-      title: m.title_en, en: m.body_en, ar: m.body_ar, ref: m.ref
-    }));
-    const related = r.structure_related.map(x => x.related_structure_id);
-    return {
-      id: r.id, cat: r.category, en: r.en, ar: r.ar, latin: r.latin,
-      descEn, descAr, facts, imaging, mnemonics, related
-    };
-  });
-}
-
-
-async function sbGetStructureList() {
-  const rows = await sbFetch(
-    '/rest/v1/structures?select=id,category,en,ar&status=eq.published&order=en.asc'
-  );
-  return rows;
-}
-
-// ─── Export ───────────────────────────────────────────────────────────────────
-
-window.OmniRadAuth = {
-  signUp:     sbSignUp,
-  signIn:     sbSignIn,
-  signOut:    sbSignOut,
-  getSession: sbGetSession,
-  getUser:    sbGetUser,
-  getToken:   sbGetToken
-};
-
-window.OmniRadDB = {
-  getSRSProgress:   sbGetSRSProgress,
-  upsertSRSCard:    sbUpsertSRSCard,
-  getPreferences:   sbGetPreferences,
-  savePreferences:  sbSavePreferences,
-  submitDailyScore: sbSubmitDailyScore,
-  getMyDailyScore:  sbGetMyDailyScore,
-  getLeaderboard:   sbGetLeaderboard,
-  getMyStreak:      sbGetMyStreak,
-  updateStreak:     sbUpdateStreak,
-  getStructures:    sbGetStructures,
-  getStructureList: sbGetStructureList
-};
-
-// ─── Auth Guard ───────────────────────────────────────────────────────────────
-// Usage: call authGuard() at top of every protected page
-async function sbAuthGuard() {
-  const user = sbGetUser();
-  const token = sbGetToken();
-  if (!user || !token) {
-    const base = window.location.pathname.includes('/pages/') ? '../' : '';
-    const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
-    window.location.replace(base + 'pages/auth.html?returnTo=' + returnTo);
-    return false;
-  }
-  return true;
-}
-
-// ─── Sign Out ─────────────────────────────────────────────────────────────────
-async function sbSignOutAndRedirect() {
-  await sbSignOut();
-  const base = window.location.pathname.includes('/pages/') ? '../' : '';
-  window.location.replace(base + 'pages/auth.html');
-}
-
-// ─── Nav Sign Out Button updater ──────────────────────────────────────────────
-function sbUpdateNavAuth() {
-  const user = sbGetUser();
-  const signInLinks = document.querySelectorAll('a[href*="auth.html"]');
-  signInLinks.forEach(link => {
-    if (user) {
-      link.textContent = '🔓 Sign Out';
-      link.removeAttribute('href');
-      link.style.cursor = 'pointer';
-      link.onclick = (e) => { e.preventDefault(); sbSignOutAndRedirect(); };
+    /* Update the unified nav's user chip after login */
+    updateNav() {
+      const nameEl = document.getElementById('onavName') || document.getElementById('navUserName');
+      const avaEl  = document.getElementById('onavAva')  || document.getElementById('navUserAva');
+      const p = this._profile;
+      if (nameEl && p) nameEl.textContent = p.display_name || p.email || 'User';
+      if (avaEl && p) {
+        const initials = (p.display_name || p.email || 'U').trim().split(/\s+/).slice(0, 2).map(x => x[0]?.toUpperCase() || '').join('') || 'U';
+        avaEl.textContent = initials;
+      }
     }
-  });
-}
+  };
 
-window.OmniRadAuth.guard      = sbAuthGuard;
-window.OmniRadAuth.signOutNav = sbSignOutAndRedirect;
-window.OmniRadAuth.updateNav  = sbUpdateNavAuth;
+  // Auto-load profile if session exists
+  (async () => {
+    try {
+      const user = await OmniRadAuth.currentUser();
+      if (user) { await OmniRadAuth.loadProfile(); OmniRadAuth.updateNav(); }
+    } catch (_) {}
+  })();
+
+  global.OmniRadAuth = OmniRadAuth;
+})(window);
