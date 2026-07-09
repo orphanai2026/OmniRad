@@ -36,6 +36,7 @@
       'admin.settings':'Settings','admin.settingsLead':'Platform-wide switches.',
       'admin.access':'Access Matrix','admin.accessLead':'Five roles, from most restrictive to most privileged. Change any user\'s role from the Users tab.',
       'admin.activity':'Activity Log','admin.activityLead':'Audit trail of role changes and administrative actions (last 200 events).',
+      'admin.recentActivity':'Recent activity',
       'admin.invite':'Invite user','admin.searchUsers':'Search by name or email…',
       'empty.activity':'No activity yet.',
       'col.when':'When','col.actor':'Actor','col.action':'Action',
@@ -74,6 +75,7 @@
       'admin.settings':'الإعدادات','admin.settingsLead':'خيارات على مستوى المنصّة.',
       'admin.access':'خريطة الصلاحيات','admin.accessLead':'خمسة أدوار من الأقل إلى الأعلى صلاحية. غيّر دور أي مستخدم من تبويب المستخدمين.',
       'admin.activity':'سجل النشاط','admin.activityLead':'سجل تدقيق لتغييرات الأدوار والإجراءات الإدارية (آخر 200 حدث).',
+      'admin.recentActivity':'آخر النشاطات',
       'admin.invite':'دعوة مستخدم','admin.searchUsers':'بحث بالاسم أو الإيميل…',
       'empty.activity':'لا يوجد نشاط بعد.',
       'col.when':'الوقت','col.actor':'المُنفّذ','col.action':'الإجراء',
@@ -157,29 +159,83 @@
   }
 
   /* ─── Dashboard ─── */
+  let dashRange = 30; // days
+  function bucketDays(rows, field, days){
+    // Return array of {label, count} for the last N days
+    const now = Date.now(); const day = 24*3600*1000;
+    const out = []; const start = now - (days-1)*day;
+    const buckets = {};
+    for (let i=0;i<days;i++){ const d = new Date(start + i*day); buckets[d.toISOString().slice(0,10)] = 0; }
+    rows.forEach(r => { const d = new Date(r[field]).toISOString().slice(0,10); if (d in buckets) buckets[d]++; });
+    Object.keys(buckets).sort().forEach(k => out.push({ label:k, count:buckets[k] }));
+    return out;
+  }
+  function sparkline(values, color){
+    const w=110, h=32; const max=Math.max(1,...values); const step=w/(values.length-1||1);
+    let d = `M0,${h-(values[0]/max)*h}`;
+    values.forEach((v,i)=>{ d += ` L${i*step},${h-(v/max)*h}`; });
+    const area = d + ` L${w},${h} L0,${h} Z`;
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="margin-top:8px;display:block"><path d="${area}" fill="${color}22"/><path d="${d}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
   async function loadDashboard(){
     const tiles = $('tiles');
+    // Range selector chips (wire once)
+    const secDash = $('secDash');
+    if (secDash && !secDash.dataset.wired){
+      const bar = document.createElement('div');
+      bar.style.cssText='display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px';
+      bar.innerHTML = ['7','30','90'].map(d=>`<button data-range="${d}" class="btn ghost small" style="padding:5px 12px;font-size:11px;font-weight:700${(+d===dashRange)?';background:var(--acc);color:var(--acc-ink);border-color:var(--acc)':''}">${d}d</button>`).join('') +
+        '<span style="flex:1"></span>' +
+        '<button id="qaInvite" class="btn small" style="font-size:11px">✉️ '+t('admin.invite')+'</button>';
+      secDash.insertBefore(bar, tiles);
+      bar.addEventListener('click', e=>{ const b=e.target.closest('[data-range]'); if(!b) return; dashRange=+b.dataset.range; bar.querySelectorAll('[data-range]').forEach(x=>{ const on=+x.dataset.range===dashRange; x.style.background=on?'var(--acc)':''; x.style.color=on?'var(--acc-ink)':''; x.style.borderColor=on?'var(--acc)':''; }); loadDashboard(); });
+      const qa=document.getElementById('qaInvite'); if(qa) qa.addEventListener('click', ()=> window.openInviteModal && window.openInviteModal());
+      secDash.dataset.wired='1';
+    }
     tiles.innerHTML = '<div class="empty">'+t('empty.loading')+'</div>';
     try {
-      const [u, img, mn, cd, co, ct] = await Promise.all([
-        sb.from('profiles').select('role', { count:'exact', head:false }),
-        sb.from('generated_images').select('status', { head:false }),
-        sb.from('mnemonics').select('id', { count:'exact', head:true }),
-        sb.from('cards').select('id', { count:'exact', head:true }),
-        sb.from('contributors').select('id', { count:'exact', head:true }),
-        sb.from('contacts').select('read', { head:false })
+      const since = new Date(Date.now() - dashRange*24*3600*1000).toISOString();
+      const [u, img, mn, cd, co, ct, act] = await Promise.all([
+        sb.from('profiles').select('role, created_at'),
+        sb.from('generated_images').select('status, created_at'),
+        sb.from('mnemonics').select('id, created_at', { count:'exact', head:false }),
+        sb.from('cards').select('id, created_at', { count:'exact', head:false }),
+        sb.from('profiles').select('id', { count:'exact', head:true }).eq('show_on_contributors', true).in('role',['contributor','reviewer','admin']),
+        sb.from('contacts').select('read, created_at'),
+        sb.from('activity_log').select('*').order('created_at',{ ascending:false }).limit(8)
       ]);
       const roles = (u.data||[]).reduce((m,r)=>{ m[r.role]=(m[r.role]||0)+1; return m; }, {});
       const imgStat = (img.data||[]).reduce((m,r)=>{ m[r.status]=(m[r.status]||0)+1; return m; }, {});
       const unread = (ct.data||[]).filter(r=>!r.read).length;
+
+      const spUsers = bucketDays((u.data||[]).filter(r=>new Date(r.created_at)>=new Date(since)), 'created_at', dashRange).map(x=>x.count);
+      const spImages = bucketDays((img.data||[]).filter(r=>new Date(r.created_at)>=new Date(since)), 'created_at', dashRange).map(x=>x.count);
+      const spContacts = bucketDays((ct.data||[]).filter(r=>new Date(r.created_at)>=new Date(since)), 'created_at', dashRange).map(x=>x.count);
+
       tiles.innerHTML = `
-        <div class="tile"><div class="k">${t('tile.totalUsers')}</div><div class="v">${u.data?u.data.length:'—'}</div><div class="sub">${t('tile.admins')} ${roles.admin||0} · ${t('tile.contribs')} ${roles.contributor||0} · ${t('tile.viewers')} ${roles.viewer||0}</div></div>
-        <div class="tile"><div class="k">${t('tile.approvedImages')}</div><div class="v">${imgStat.approved||0}</div><div class="sub">${t('tile.pending')} ${imgStat.pending||0} · ${t('tile.rejected')} ${imgStat.rejected||0}</div></div>
-        <div class="tile"><div class="k">${t('tile.mnemonics')}</div><div class="v">${mn.count||0}</div></div>
-        <div class="tile"><div class="k">${t('tile.cards')}</div><div class="v">${cd.count||0}</div></div>
+        <div class="tile"><div class="k">${t('tile.totalUsers')}</div><div class="v">${u.data?u.data.length:'—'}</div><div class="sub">${t('tile.admins')} ${roles.admin||0} · ${t('tile.contribs')} ${roles.contributor||0} · ${t('tile.viewers')} ${roles.viewer||0}</div>${sparkline(spUsers,'#2dd4c8')}</div>
+        <div class="tile"><div class="k">${t('tile.approvedImages')}</div><div class="v">${imgStat.approved||0}</div><div class="sub">${t('tile.pending')} ${imgStat.pending||0} · ${t('tile.rejected')} ${imgStat.rejected||0}</div>${sparkline(spImages,'#4ade80')}</div>
+        <div class="tile"><div class="k">${t('tile.mnemonics')}</div><div class="v">${(mn.data||[]).length}</div></div>
+        <div class="tile"><div class="k">${t('tile.cards')}</div><div class="v">${(cd.data||[]).length}</div></div>
         <div class="tile"><div class="k">${t('tile.contributors')}</div><div class="v">${co.count||0}</div></div>
-        <div class="tile"><div class="k">${t('tile.unread')}</div><div class="v">${unread}</div><div class="sub">${t('tile.total')} ${ct.data?ct.data.length:0}</div></div>
+        <div class="tile"><div class="k">${t('tile.unread')}</div><div class="v">${unread}</div><div class="sub">${t('tile.total')} ${ct.data?ct.data.length:0}</div>${sparkline(spContacts,'#f472b6')}</div>
       `;
+
+      // Recent activity feed
+      let feed = document.getElementById('activityFeed');
+      if (!feed){
+        feed = document.createElement('div'); feed.id='activityFeed';
+        feed.style.cssText='margin-top:20px;background:var(--bg-e);border:1px solid var(--border-s);border-radius:12px;padding:16px';
+        secDash.appendChild(feed);
+      }
+      const items = (act.data||[]).map(r=>{
+        const when = new Date(r.created_at).toLocaleString('en-GB');
+        const desc = r.action==='role_change'
+          ? `${(r.details&&r.details.email)||r.target_id}: ${(r.details&&r.details.before)||'?'} → ${(r.details&&r.details.after)||'?'}`
+          : r.action==='user_invited' ? `invited ${r.target_id}` : r.action;
+        return `<div style="padding:8px 0;border-bottom:1px dashed var(--border-s);display:flex;justify-content:space-between;gap:12px"><span style="font-size:12.5px">${desc}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-m);white-space:nowrap">${when}</span></div>`;
+      }).join('') || '<div class="empty" style="padding:14px">'+t('empty.activity')+'</div>';
+      feed.innerHTML = '<div style="font-size:11px;font-weight:800;color:var(--acc);letter-spacing:.1em;text-transform:uppercase;font-family:\'IBM Plex Mono\',monospace;margin-bottom:10px">🕒 '+t('admin.recentActivity')+'</div>'+items;
     } catch(e){ tiles.innerHTML = '<div class="empty">Error loading dashboard: '+e.message+'</div>'; }
   }
 
