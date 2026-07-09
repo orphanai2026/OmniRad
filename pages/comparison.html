@@ -6,8 +6,8 @@
 <title>OmniRad — Comparison</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--viewer-bg:#000;--anno:#a3e635;--orient:#f59e0b}
-[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;--viewer-bg:#000}
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--nav-bg:rgba(237,242,248,.92);--acc-ink:#fff}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
 body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
@@ -21,7 +21,6 @@ a{text-decoration:none;color:inherit}
 .chip:hover{color:var(--acc);border-color:var(--acc-dim)}
 .chip.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
 .info-tag{margin-inline-start:auto;font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
-
 .grid{padding:14px 20px 24px;display:grid;gap:10px}
 .grid.cols-1{grid-template-columns:1fr}
 .grid.cols-2{grid-template-columns:repeat(2,1fr)}
@@ -29,20 +28,11 @@ a{text-decoration:none;color:inherit}
 .grid.cols-4{grid-template-columns:repeat(4,1fr)}
 @media(max-width:1280px){.grid.cols-3,.grid.cols-4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:720px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
-
-.pane{position:relative;background:var(--viewer-bg);border-radius:8px;overflow:hidden;aspect-ratio:1/1;user-select:none;border:1px solid var(--border-s)}
-.pane-toolbar{position:absolute;top:0;left:0;right:0;padding:8px 10px;background:linear-gradient(180deg,rgba(0,0,0,.65),transparent);z-index:3;display:flex;gap:6px;flex-wrap:wrap;pointer-events:auto}
-.pane-sel{background:rgba(8,14,20,.7);border:1px solid var(--acc-dim);color:var(--acc);font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:.03em;cursor:pointer;max-width:120px}
-.pane-sel:focus{outline:none;border-color:var(--acc)}
-.pane canvas{display:block;width:100%;height:100%;cursor:ns-resize;image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges}
-.anno{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--anno);text-shadow:0 0 3px rgba(0,0,0,.9);pointer-events:none;line-height:1.4}
-.anno-bl{bottom:6px;left:8px}
-.anno-br{bottom:6px;right:8px;text-align:right}
-.orient{position:absolute;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:var(--orient);text-shadow:0 0 3px rgba(0,0,0,.9);pointer-events:none}
-.orient-r{top:50%;left:6px;transform:translateY(-50%)}
-.orient-l{top:50%;right:6px;transform:translateY(-50%)}
-.pane-not-found{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:'IBM Plex Mono',monospace}
-
+.cell{display:flex;flex-direction:column;background:var(--bg-e);border:1px solid var(--border-s);border-radius:10px;overflow:hidden;min-height:520px}
+.cell-head{padding:6px 8px;background:rgba(0,0,0,.35);display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--border-s)}
+.cell-head select{background:var(--bg-s);border:1px solid var(--acc-dim);color:var(--acc);font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:4px;cursor:pointer;max-width:130px}
+.cell-head select:focus{outline:none;border-color:var(--acc)}
+.cell-body{flex:1;display:flex}
 .desc-bar{padding:14px 20px;background:var(--bg-e);border-top:1px solid var(--border-s);font-size:13.5px;color:var(--text-s);line-height:1.7}
 .desc-bar strong{color:var(--acc)}
 .disc{padding:14px 20px 24px;font-size:11px;color:var(--text-m);text-align:center;line-height:1.7}
@@ -59,15 +49,14 @@ a{text-decoration:none;color:inherit}
     <button class="chip" data-cols="4">4×</button>
   </div>
   <div class="strip-grp"><span class="strip-lbl" data-i18n="compare.sync">Sync</span>
-    <button class="chip on" id="btnSync" data-i18n="compare.sync" title="Synchronize WW/WL/Zoom across panes">LINK</button>
+    <button class="chip on" id="btnSync" title="Synchronize WW/WL/Zoom across panes">LINK</button>
   </div>
   <div class="info-tag" data-i18n="common.educational">⚕️ Educational only</div>
 </div>
 
 <div class="grid cols-2" id="grid"></div>
 
-<div class="desc-bar" id="descBar"><strong>OmniRad</strong> <span data-i18n="compare.h1"> — pick a structure. Each pane lets you pick modality · plane · variant independently — compare CT vs MRI vs US of the same organ side by side.</span></div>
-
+<div class="desc-bar" id="descBar"><strong>OmniRad</strong> <span> — pick a structure. Each pane lets you pick modality · plane · variant independently.</span></div>
 <div class="disc">⚕️ Educational tool — not for diagnosis or clinical use.<br>© 2026 OmniRad Platform.</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -75,34 +64,22 @@ a{text-decoration:none;color:inherit}
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script src="../modules/structures.js"></script>
+<script src="../modules/viewer.js"></script>
 <script>
 const S = window.OMNIRAD_STRUCTURES || [];
 const U = window.OMNIRAD_STRUCT_UTIL || {};
 const $ = id => document.getElementById(id);
+const state = { structId:(S[0]&&S[0].id)||'brain', cols:2, sync:true, cells:[] };
 
-const state = {
-  structId: (S[0] && S[0].id) || 'brain',
-  cols: 2,
-  sync: true,
-  imgCache: {},
-  panes: []   // one per grid cell
-};
-
-/* Populate structure select */
 (function(){
   const sel = $('selStruct');
   sel.innerHTML = S.map(s => `<option value="${s.id}">${s.en} · ${s.ar}</option>`).join('');
   sel.value = state.structId;
   sel.addEventListener('change', e=>{ state.structId = e.target.value; renderGrid(); updateDesc(); });
 })();
-
 function structure(){ return S.find(s=>s.id===state.structId) || S[0]; }
-function updateDesc(){
-  const st = structure();
-  $('descBar').innerHTML = `<strong>${st.en} · ${st.ar}</strong> — ${st.desc || ''}`;
-}
+function updateDesc(){ const st = structure(); $('descBar').innerHTML = `<strong>${st.en} · ${st.ar}</strong> — ${st.desc || ''}`; }
 
-/* Cols */
 document.querySelectorAll('[data-cols]').forEach(b=>{
   b.addEventListener('click', ()=>{
     document.querySelectorAll('[data-cols]').forEach(x=>x.classList.remove('on'));
@@ -110,153 +87,80 @@ document.querySelectorAll('[data-cols]').forEach(b=>{
     renderGrid();
   });
 });
-$('btnSync').addEventListener('click', ()=>{ state.sync = !state.sync; $('btnSync').classList.toggle('on', state.sync); });
+$('btnSync').addEventListener('click', ()=>{
+  state.sync = !state.sync; $('btnSync').classList.toggle('on', state.sync);
+  renderGrid();
+});
 
-/* Build panes */
 function renderGrid(){
   const grid = $('grid'); grid.className = 'grid cols-' + state.cols;
-  grid.innerHTML = ''; state.panes = [];
-  const n = state.cols;
+  // destroy old viewers
+  state.cells.forEach(c => { try { c.viewer.destroy(); } catch(e){} });
+  grid.innerHTML = ''; state.cells = [];
   const st = structure();
   const mods = U.modalitiesFor(st.id);
-  // Default modality per pane: rotate through available modalities so panes start diverse
-  for (let i = 0; i < n; i++){
+  for (let i = 0; i < state.cols; i++){
     const modality = mods[i % mods.length] || mods[0] || '';
     const planes = U.planesFor(st.id, modality);
     const plane = planes[0] || '';
     const variants = U.variantsFor(st.id, modality, plane);
     const variant = (variants[0] && variants[0].variant) || '';
-    createPane(grid, { modality, plane, variant });
+    makeCell(grid, i, { modality, plane, variant });
   }
-  requestAnimationFrame(fitAll);
 }
 
-function createPane(grid, init){
-  const st = structure();
-  const pane = document.createElement('div'); pane.className = 'pane';
-  pane.innerHTML = `
-    <div class="pane-toolbar">
-      <select class="pane-sel pane-mod"></select>
-      <select class="pane-sel pane-plane"></select>
-      <select class="pane-sel pane-var"></select>
+function makeCell(grid, i, init){
+  const cell = document.createElement('div'); cell.className = 'cell';
+  cell.innerHTML = `
+    <div class="cell-head">
+      <select class="c-mod"></select>
+      <select class="c-plane"></select>
+      <select class="c-var"></select>
     </div>
-    <canvas></canvas>
-    <div class="orient orient-r">R</div>
-    <div class="orient orient-l">L</div>
-    <div class="anno anno-bl">WW <span class="v-ww">—</span> · WL <span class="v-wl">—</span></div>
-    <div class="anno anno-br">Zoom <span class="v-zoom">1.00×</span></div>
-    <div class="pane-not-found" style="display:none">Image not available.<br>Upload the file to enable this view.</div>
-  `;
-  grid.appendChild(pane);
-  const p = {
-    pane,
-    canvas: pane.querySelector('canvas'),
-    ctx: pane.querySelector('canvas').getContext('2d'),
-    modSel: pane.querySelector('.pane-mod'),
-    planeSel: pane.querySelector('.pane-plane'),
-    varSel: pane.querySelector('.pane-var'),
-    notFound: pane.querySelector('.pane-not-found'),
-    modality: init.modality, plane: init.plane, variant: init.variant,
-    ww: 300, wl: 150, zoom: 1, panX: 0, panY: 0, img: null,
-    elWW: pane.querySelector('.v-ww'),
-    elWL: pane.querySelector('.v-wl'),
-    elZoom: pane.querySelector('.v-zoom')
+    <div class="cell-body"></div>`;
+  grid.appendChild(cell);
+  const body = cell.querySelector('.cell-body');
+  const linkKey = state.sync ? ('cmp-'+state.structId) : null;
+  const viewer = OmniRadViewer.create(body, { compact:false, linkKey });
+  const c = {
+    cell, viewer,
+    modSel: cell.querySelector('.c-mod'),
+    planeSel: cell.querySelector('.c-plane'),
+    varSel: cell.querySelector('.c-var'),
+    modality: init.modality, plane: init.plane, variant: init.variant
   };
-  state.panes.push(p);
-
-  fillPaneSelects(p);
-  wirePaneInteractions(p);
-  loadPane(p);
+  state.cells.push(c);
+  fillSelects(c);
+  loadCell(c);
 }
 
-function fillPaneSelects(p){
+function fillSelects(c){
   const st = structure();
   const mods = U.modalitiesFor(st.id);
-  p.modSel.innerHTML = mods.map(m => `<option value="${m}"${m===p.modality?' selected':''}>${m}</option>`).join('');
-  const planes = U.planesFor(st.id, p.modality);
-  if (!planes.includes(p.plane)) p.plane = planes[0] || '';
-  p.planeSel.innerHTML = planes.map(pl => `<option value="${pl}"${pl===p.plane?' selected':''}>${pl}</option>`).join('');
-  const variants = U.variantsFor(st.id, p.modality, p.plane);
-  if (!variants.some(v=>v.variant===p.variant)) p.variant = (variants[0] && variants[0].variant) || '';
-  p.varSel.innerHTML = variants.map(v => `<option value="${v.variant}"${v.variant===p.variant?' selected':''}>${v.variant}</option>`).join('');
-  p.modSel.onchange = e => { p.modality = e.target.value; fillPaneSelects(p); loadPane(p); };
-  p.planeSel.onchange = e => { p.plane = e.target.value; fillPaneSelects(p); loadPane(p); };
-  p.varSel.onchange = e => { p.variant = e.target.value; loadPane(p); };
+  c.modSel.innerHTML = mods.map(m=>`<option value="${m}"${m===c.modality?' selected':''}>${m}</option>`).join('');
+  const planes = U.planesFor(st.id, c.modality);
+  if (!planes.includes(c.plane)) c.plane = planes[0] || '';
+  c.planeSel.innerHTML = planes.map(pl=>`<option value="${pl}"${pl===c.plane?' selected':''}>${pl}</option>`).join('');
+  const vars = U.variantsFor(st.id, c.modality, c.plane);
+  if (!vars.some(v=>v.variant===c.variant)) c.variant = (vars[0]&&vars[0].variant)||'';
+  c.varSel.innerHTML = vars.map(v=>`<option value="${v.variant}"${v.variant===c.variant?' selected':''}>${v.variant}</option>`).join('');
+  c.modSel.onchange = e => { c.modality = e.target.value; fillSelects(c); loadCell(c); };
+  c.planeSel.onchange = e => { c.plane = e.target.value; fillSelects(c); loadCell(c); };
+  c.varSel.onchange = e => { c.variant = e.target.value; loadCell(c); };
 }
 
-function wirePaneInteractions(p){
-  let drag = null;
-  p.canvas.addEventListener('mousedown', e=>{ drag = { x:e.clientX, y:e.clientY, ww:p.ww, wl:p.wl }; });
-  window.addEventListener('mouseup', ()=>{ drag = null; });
-  p.canvas.addEventListener('mousemove', e=>{
-    if (!drag) return;
-    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    const nWW = Math.max(1, Math.round(drag.ww + dx * 2));
-    const nWL = Math.round(drag.wl + dy * 2);
-    if (state.sync) state.panes.forEach(q=>{ q.ww = nWW; q.wl = nWL; drawPane(q); refreshPane(q); });
-    else { p.ww = nWW; p.wl = nWL; drawPane(p); refreshPane(p); }
-  });
-  p.canvas.addEventListener('wheel', e=>{
-    e.preventDefault();
-    const d = -Math.sign(e.deltaY) * 0.1;
-    const upd = z => Math.max(0.25, Math.min(6, z + d));
-    if (state.sync) state.panes.forEach(q=>{ q.zoom = upd(q.zoom); drawPane(q); refreshPane(q); });
-    else { p.zoom = upd(p.zoom); drawPane(p); refreshPane(p); }
-  }, { passive:false });
-}
-
-function loadPane(p){
+function loadCell(c){
   const st = structure();
-  const img = U.findImage(st.id, p.modality, p.plane, p.variant);
-  if (!img){ p.img = null; p.notFound.style.display='flex'; p.notFound.textContent = 'No image entry'; drawPane(p); return; }
-  p.ww = img.ww || 300; p.wl = img.wl || 150; p.zoom = 1; p.panX = 0; p.panY = 0;
-  const done = el => { p.img = el; p.notFound.style.display='none'; drawPane(p); refreshPane(p); };
-  const cached = state.imgCache[img.path];
-  if (cached && cached.complete) return done(cached);
-  const el = new Image(); el.crossOrigin = 'anonymous';
-  el.onload = ()=>{ state.imgCache[img.path] = el; done(el); };
-  el.onerror = ()=>{ p.img = null; p.notFound.style.display='flex'; p.notFound.innerHTML = 'Image not available yet.<br><span style="opacity:.6;font-size:10px">' + img.path + '</span>'; drawPane(p); };
-  el.src = img.path;
-}
-
-function fitAll(){
-  state.panes.forEach(p=>{
-    const r = p.canvas.parentElement.getBoundingClientRect();
-    const s = Math.max(200, Math.min(r.width, r.height));
-    p.canvas.width = s; p.canvas.height = s;
-    drawPane(p);
+  const img = U.findImage(st.id, c.modality, c.plane, c.variant);
+  if (!img){ c.viewer.load('', { title:`${c.modality} · ${c.plane}`, subtitle: c.variant }); return; }
+  c.viewer.load(img.path, {
+    ww: img.ww || 300, wl: img.wl || 150,
+    title: `${c.modality} · ${c.plane}`, subtitle: c.variant,
+    name: `${st.id}_${c.modality}_${c.plane}_${c.variant}`
   });
 }
-window.addEventListener('resize', fitAll);
 
-function drawPane(p){
-  const w = p.canvas.width, h = p.canvas.height, ctx = p.ctx;
-  ctx.fillStyle = '#000'; ctx.fillRect(0,0,w,h);
-  if (!p.img) return;
-  const scale = Math.min(w/p.img.width, h/p.img.height) * p.zoom;
-  const iw = p.img.width * scale, ih = p.img.height * scale;
-  const x = (w-iw)/2 + p.panX, y = (h-ih)/2 + p.panY;
-  ctx.drawImage(p.img, x, y, iw, ih);
-  try {
-    const id = ctx.getImageData(0,0,w,h); const d = id.data;
-    const minV = p.wl - p.ww/2, maxV = p.wl + p.ww/2;
-    for (let i = 0; i < d.length; i += 4){
-      const g = d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114;
-      let v = (g - minV) / (maxV - minV);
-      v = Math.max(0, Math.min(1, v));
-      const out = Math.round(v * 255);
-      d[i] = d[i+1] = d[i+2] = out;
-    }
-    ctx.putImageData(id, 0, 0);
-  } catch(e){}
-}
-function refreshPane(p){
-  p.elWW.textContent = p.ww;
-  p.elWL.textContent = p.wl;
-  p.elZoom.textContent = p.zoom.toFixed(2) + '×';
-}
-
-/* Bootstrap */
+window.addEventListener('omnirad-lang', updateDesc);
 updateDesc();
 renderGrid();
 </script>
