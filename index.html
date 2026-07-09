@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <!-- ════════════════════════════════════════════════════
-     OmniRad — index.html
-     Purpose: Main landing page — hero, modality cards, multimodal comparison preview, stats bar
+     OmniRad — index.html (reorganized)
+     Cleaner IA: core (Atlas/Compare) foregrounded, secondary items grouped,
+     lighter nav, single hero action, modality strip instead of mosaic.
      Vanilla JS · self-contained · no build tools
      ════════════════════════════════════════════════════ -->
 <html lang="en" data-theme="dark">
@@ -14,388 +15,189 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root,[data-theme="dark"]{
-  --bg:         #080e14;
-  --bg-s:       #0c1520;
-  --bg-e:       #101e2a;
-  --bg-ov:      #162030;
-  --text:       #e8f0f5;
-  --text-s:     rgba(232,240,245,0.65);
-  --text-m:     rgba(232,240,245,0.38);
-  --acc:        #2dd4c8;
-  --acc-dim:    rgba(45,212,200,0.55);
-  --acc-sub:    rgba(45,212,200,0.10);
-  --acc-glow:   rgba(45,212,200,0.15);
-  --border:     rgba(45,212,200,0.12);
-  --border-s:   rgba(232,240,245,0.08);
-  --r:          6px;
-  --r-lg:       10px;
-  --nav-h:      52px;
+  --bg:#080e14; --bg-s:#0c1520; --bg-e:#101e2a; --bg-ov:#162030;
+  --text:#e8f0f5; --text-s:rgba(232,240,245,0.65); --text-m:rgba(232,240,245,0.38);
+  --acc:#2dd4c8; --acc-dim:rgba(45,212,200,0.55); --acc-sub:rgba(45,212,200,0.10); --acc-glow:rgba(45,212,200,0.15);
+  --border:rgba(45,212,200,0.12); --border-s:rgba(232,240,245,0.08);
+  --nav-bg:rgba(8,14,20,0.92); --acc-ink:#08100e;
+  --r:6px; --r-lg:10px; --nav-h:56px;
 }
 [data-theme="dim"]{
   --bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;
   --text:#0f1e2a;--text-s:rgba(15,30,42,0.65);--text-m:rgba(15,30,42,0.42);
   --acc:oklch(0.46 0.17 195);--acc-dim:oklch(0.40 0.14 195);
-  --acc-sub:rgba(45,180,170,0.12);--border:rgba(45,180,170,0.2);--border-s:rgba(15,30,42,0.1);
+  --acc-sub:rgba(45,180,170,0.12);--border:rgba(45,180,170,0.2);--border-s:rgba(15,30,42,0.14);
+  --nav-bg:rgba(237,242,248,0.92); --acc-ink:#ffffff;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
-body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;
+  background-image:linear-gradient(180deg, var(--bg) 0%, rgba(8,14,20,0.92) 20%, rgba(8,14,20,0.92) 72%, var(--bg) 96%), url('images/home/skeleton_bg.png');
+  background-size:100% 100%, cover; background-position:center; background-repeat:no-repeat; background-attachment:fixed;}
+[data-theme="dim"] body{
+  background-image:linear-gradient(180deg, var(--bg) 0%, rgba(221,228,236,0.93) 15%, rgba(221,228,236,0.93) 78%, var(--bg) 97%), url('images/home/skeleton_bg.png');
+  filter:none;}
 a{text-decoration:none;color:inherit;}
 img{display:block;}
 
 /* ── NAV ── */
-.nav{
-  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
-  background:rgba(8,14,20,0.92);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 20px;gap:0;
-  z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-}
-.nav-logo{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-right:16px;}
-.nav-logo-mark{
-  width:28px;height:28px;background:var(--acc);border-radius:6px;
-  display:grid;place-items:center;font-weight:700;font-size:11px;
-  color:#08100e;letter-spacing:-0.02em;flex-shrink:0;
-}
-.nav-logo-name{font-weight:700;font-size:15px;letter-spacing:-0.02em;color:var(--text);}
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  background:var(--nav-bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:20px;
+  z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.nav-logo{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.nav-logo-mark{width:30px;height:30px;background:var(--acc);border-radius:7px;display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--acc-ink);letter-spacing:-0.02em;flex-shrink:0;}
+.nav-logo-name{font-weight:700;font-size:16px;letter-spacing:-0.02em;color:var(--text);}
 .nav-logo-name span{color:var(--acc);}
-.nav-links{display:flex;align-items:center;gap:1px;flex:1;overflow:hidden;list-style:none;}
-.nav-links a{
-  font-size:12px;font-weight:500;color:var(--text-s);
-  padding:5px 9px;border-radius:var(--r);white-space:nowrap;
-  transition:color .15s,background .15s;display:flex;align-items:center;gap:5px;
-}
-.nav-links a:hover{color:var(--text);background:var(--bg-ov);}
-.nav-links a.active{color:var(--acc);background:var(--acc-sub);border-bottom:1.5px solid var(--acc);}
-.nav-icon{font-size:13px;opacity:0.8;}
-.nav-end{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
-.btn-signout{
-  display:flex;align-items:center;gap:5px;
-  font-size:11px;font-weight:500;padding:5px 12px;border-radius:var(--r);
-  background:var(--acc-sub);border:1px solid var(--acc-dim);color:var(--acc);
-  cursor:pointer;transition:all .15s;
-}
-.btn-signout:hover{background:var(--acc);color:#08100e;}
-.edu-badge{
-  font-size:10px;padding:4px 9px;border-radius:var(--r);
-  border:1px solid var(--border-s);color:var(--text-m);
-  display:flex;align-items:center;gap:4px;white-space:nowrap;
-}
-.user-area{
-  display:flex;align-items:center;gap:6px;cursor:pointer;
-  padding:3px 8px;border-radius:var(--r);transition:background .15s;
-}
+.nav-links{display:flex;align-items:center;gap:4px;flex:1;list-style:none;}
+.nav-links>li{position:relative;}
+.nav-links a,.nav-group-btn{
+  font-size:13px;font-weight:500;color:var(--text-s);
+  padding:8px 13px;border-radius:var(--r);white-space:nowrap;
+  transition:color .15s,background .15s;display:flex;align-items:center;gap:6px;
+  background:none;border:none;cursor:pointer;font-family:inherit;}
+.nav-links a:hover,.nav-group-btn:hover{color:var(--text);background:var(--bg-ov);}
+.nav-links a.active{color:var(--acc);background:var(--acc-sub);}
+.nav-links a.core{color:var(--text);font-weight:600;}
+.nav-links a.core.active{color:var(--acc);}
+.nav-icon{font-size:14px;opacity:0.85;}
+.nav-sep{width:1px;height:22px;background:var(--border-s);margin:0 4px;}
+.chev{font-size:9px;opacity:.6;margin-inline-start:1px;}
+/* dropdown */
+.nav-drop{position:absolute;top:calc(100% + 6px);inset-inline-start:0;min-width:210px;
+  background:var(--bg-e);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:6px;box-shadow:0 12px 34px -12px rgba(0,0,0,.6);
+  opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210;}
+.nav-group:hover .nav-drop,.nav-group:focus-within .nav-drop{opacity:1;visibility:visible;transform:translateY(0);}
+.nav-drop a{display:flex;flex-direction:column;gap:1px;padding:9px 11px;border-radius:var(--r);align-items:flex-start;}
+.nav-drop a .d-t{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px;}
+.nav-drop a .d-s{font-size:11px;color:var(--text-m);padding-inline-start:21px;}
+.nav-drop a:hover{background:var(--acc-sub);}
+.nav-drop a:hover .d-t{color:var(--acc);}
+
+.nav-end{display:flex;align-items:center;gap:9px;margin-left:auto;flex-shrink:0;}
+.edu-badge{font-size:10px;padding:5px 10px;border-radius:var(--r);border:1px solid var(--border-s);color:var(--text-m);display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.icon-btn{width:32px;height:32px;border-radius:var(--r);background:var(--bg-ov);border:1px solid var(--border);color:var(--text);cursor:pointer;display:grid;place-items:center;font-size:15px;flex-shrink:0;transition:color .15s,background .15s,border-color .15s;}
+.icon-btn:hover{color:var(--acc);border-color:var(--acc-dim);background:var(--acc-sub);}
+/* user menu */
+.user-wrap{position:relative;}
+.user-area{display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 9px;border-radius:var(--r);transition:background .15s;}
 .user-area:hover{background:var(--bg-ov);}
-.user-ava{
-  width:26px;height:26px;border-radius:50%;
-  background:var(--acc-sub);border:1.5px solid var(--acc-dim);
-  display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--acc);
-}
-.user-name{font-size:11px;color:var(--text-s);}
+.user-ava{width:28px;height:28px;border-radius:50%;background:var(--acc-sub);border:1.5px solid var(--acc-dim);display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--acc);}
+.user-name{font-size:12px;color:var(--text-s);}
 .user-chevron{font-size:10px;color:var(--text-m);}
-.theme-btn{
-  width:30px;height:30px;border-radius:var(--r);background:var(--bg-ov);
-  border:1px solid var(--border-s);color:var(--text-m);cursor:pointer;
-  display:grid;place-items:center;font-size:13px;flex-shrink:0;transition:color .15s;
-}
-.theme-btn:hover{color:var(--acc);}
-.hamburger{
-  display:none;flex-direction:column;justify-content:center;gap:4px;
-  width:30px;height:30px;padding:5px;border-radius:var(--r);
-  background:var(--bg-ov);border:1px solid var(--border-s);cursor:pointer;
-}
+.user-drop{position:absolute;top:calc(100% + 6px);inset-inline-end:0;min-width:200px;
+  background:var(--bg-e);border:1px solid var(--border);border-radius:var(--r-lg);padding:6px;
+  box-shadow:0 12px 34px -12px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210;}
+.user-wrap:hover .user-drop,.user-wrap:focus-within .user-drop{opacity:1;visibility:visible;transform:translateY(0);}
+.user-drop a{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--r);font-size:13px;color:var(--text-s);}
+.user-drop a:hover{background:var(--acc-sub);color:var(--acc);}
+.user-drop .ud-sep{height:1px;background:var(--border-s);margin:5px 4px;}
+
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:4px;width:32px;height:32px;padding:6px;border-radius:var(--r);background:var(--bg-ov);border:1px solid var(--border-s);cursor:pointer;}
 .hamburger span{display:block;width:100%;height:1.5px;background:var(--text-s);border-radius:2px;transition:all .2s;}
 .hamburger.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
 .hamburger.open span:nth-child(2){opacity:0;}
 .hamburger.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg);}
-.mobile-menu{
-  display:none;position:fixed;top:var(--nav-h);left:0;right:0;
-  background:var(--bg-e);border-bottom:1px solid var(--border);
-  z-index:199;padding:12px 20px 20px;
-}
+.mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:var(--bg-e);border-bottom:1px solid var(--border);z-index:199;padding:14px 22px 22px;max-height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .mobile-menu.open{display:block;}
+.mm-group{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:14px 12px 6px;}
 .mobile-menu ul{list-style:none;display:flex;flex-direction:column;gap:2px;}
-.mobile-menu a{display:block;padding:10px 12px;border-radius:var(--r);font-size:14px;color:var(--text-s);transition:all .15s;}
-.mobile-menu a:hover{color:var(--acc);background:var(--acc-sub);}
+.mobile-menu a{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:var(--r);font-size:14px;color:var(--text-s);transition:all .15s;}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--acc);background:var(--acc-sub);}
 
 /* ── PAGE ── */
 .page{padding-top:var(--nav-h);}
 
 /* ── HERO ── */
-.hero{
-  position:relative;overflow:hidden;
-  min-height:calc(100vh - var(--nav-h));
-  display:grid;grid-template-columns:1fr 1fr;
-  align-items:center;gap:40px;
-  padding:48px 48px 56px;
-  max-width:1400px;margin:0 auto;
-}
-
-/* Skeleton background */
-.hero-bg{
-  position:absolute;top:0;bottom:0;
-  left:50%;transform:translateX(-50%);
-  width:55%;
-  pointer-events:none;z-index:0;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0.13;
-}
-.hero-bg img{
-  width:100%;height:100%;object-fit:contain;
-  filter:brightness(0.9) saturate(0.6);
-}
-/* subtle teal glow over skeleton */
-.hero-bg::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 70% at 50% 45%, rgba(45,212,200,0.08) 0%, transparent 70%);
-}
-
-/* ── HERO LEFT ── */
-.hero-left{position:relative;z-index:1;display:flex;flex-direction:column;gap:22px;}
-.hero-eyebrow{
-  display:flex;align-items:center;gap:10px;
-  font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--acc);font-family:'IBM Plex Mono',monospace;
-}
-.hero-eyebrow::before{content:'';width:22px;height:1px;background:var(--acc);flex-shrink:0;}
-.hero-h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:700;line-height:1.08;letter-spacing:-0.04em;color:var(--text);}
+.hero{position:relative;overflow:hidden;min-height:calc(92vh - var(--nav-h));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  gap:26px;padding:60px 32px 40px;max-width:1000px;margin:0 auto;}
+.hero>*{position:relative;z-index:1;}
+.hero-eyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--acc-dim);}
+.hero-h1{position:relative;z-index:1;font-size:clamp(2.6rem,6vw,4.4rem);font-weight:700;line-height:1.05;letter-spacing:-0.04em;color:var(--text);text-shadow:0 2px 20px rgba(0,0,0,.15);}
 .hero-h1 .acc{color:var(--acc);}
-.hero-desc{
-  font-size:15px;color:var(--text-s);line-height:1.75;max-width:44ch;
-}
+.hero-desc{position:relative;z-index:1;font-size:16px;color:var(--text-s);line-height:1.75;max-width:58ch;}
 .hero-desc strong{color:var(--text);font-weight:600;}
-.hero-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.btn-primary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:11px 22px;border-radius:var(--r);
-  background:var(--acc);color:#07110e;
-  font-size:14px;font-weight:600;border:none;cursor:pointer;
-  transition:all .15s;white-space:nowrap;
-}
+.hero-cta{position:relative;z-index:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r);background:var(--acc);color:var(--acc-ink);font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-primary:hover{background:rgba(45,212,200,0.85);transform:translateY(-1px);}
-.btn-primary svg{width:16px;height:16px;}
-.btn-secondary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 20px;border-radius:var(--r);
-  background:transparent;color:var(--text-s);
-  font-size:14px;font-weight:500;
-  border:1px solid rgba(232,240,245,0.2);cursor:pointer;
-  transition:all .15s;white-space:nowrap;
-}
+.btn-primary svg{width:17px;height:17px;}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:var(--r);background:transparent;color:var(--text-s);font-size:15px;font-weight:500;border:1px solid rgba(232,240,245,0.2);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-secondary:hover{border-color:var(--acc-dim);color:var(--acc);background:var(--acc-sub);}
-.btn-secondary svg{width:16px;height:16px;}
+.btn-secondary svg{width:17px;height:17px;}
 
-/* ── HERO RIGHT ── */
-.hero-right{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:10px;}
-
-/* Featured card — Multimodal Comparison */
-.card-featured{
-  grid-column:1 / 3;grid-row:1 / 2;
-  background:var(--bg-e);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:18px;
-  display:flex;align-items:center;gap:16px;
-  transition:border-color .2s;
-  position:relative;overflow:hidden;
-}
-.card-featured:hover{border-color:var(--acc-dim);}
-.card-featured-left{flex:1;}
-.card-featured-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;}
-.modal-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
-.modal-chip{
-  font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;
-  background:var(--bg-ov);border:1px solid var(--border);
-  color:var(--acc);font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;
-}
-.card-featured-sub{font-size:12px;color:var(--text-m);}
-.card-featured-img{
-  width:130px;height:100px;border-radius:8px;overflow:hidden;
-  border:1px solid var(--border);flex-shrink:0;
-  display:flex;position:relative;
-}
-.card-featured-img img{
-  width:50%;height:100%;object-fit:cover;
-}
-.card-featured-img img:last-child{
-  filter:hue-rotate(200deg) saturate(0.8);
-  opacity:0.85;
-}
-.card-featured-img::after{
-  content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
-  background:var(--acc);box-shadow:0 0 6px var(--acc);
-}
-
-/* Modality cards */
-.mod-card{
-  background:var(--bg-e);border:1px solid var(--border-s);
-  border-radius:var(--r-lg);overflow:hidden;
-  display:flex;flex-direction:column;
-  cursor:pointer;transition:border-color .2s,transform .2s;
-  text-decoration:none;
-}
-.mod-card:hover{border-color:var(--acc-dim);transform:translateY(-2px);}
-.mod-card-img{
-  width:100%;aspect-ratio:4/3;overflow:hidden;
-  background:#030810;position:relative;flex-shrink:0;
-}
-.mod-card-img img{
-  width:100%;height:100%;object-fit:cover;
-  transition:transform .3s;
-}
-.mod-card:hover .mod-card-img img{transform:scale(1.05);}
-.mod-card-info{padding:10px 12px;}
-.mod-card-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.01em;}
-.mod-card-full{font-size:11px;color:var(--text-m);margin-top:2px;}
-
-/* CT card spans full right column row 1 */
-.card-ct{
-  grid-column:3 / 4;grid-row:1 / 2;
-  background:var(--bg-e);border:1px solid var(--border-s);
-  border-radius:var(--r-lg);overflow:hidden;
-  display:flex;flex-direction:column;cursor:pointer;
-  transition:border-color .2s,transform .2s;text-decoration:none;
-}
-.card-ct:hover{border-color:var(--acc-dim);transform:translateY(-2px);}
-.card-ct-img{width:100%;flex:1;overflow:hidden;background:#030810;min-height:140px;}
-.card-ct-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
-.card-ct:hover .card-ct-img img{transform:scale(1.05);}
-.card-ct-info{padding:10px 12px;}
-.card-ct-name{font-size:14px;font-weight:700;color:var(--text);}
-.card-ct-full{font-size:11px;color:var(--text-m);margin-top:2px;}
+/* ── MODALITY STRIP ── */
+.mod-strip-wrap{max-width:1100px;margin:0 auto;padding:0 32px 56px;}
+.mod-strip-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;text-align:center;margin-bottom:18px;}
+.mod-strip{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
+.mod-pill{display:flex;flex-direction:column;align-items:center;gap:9px;padding:16px 8px;border-radius:var(--r-lg);
+  background:var(--bg-e);border:1px solid var(--border-s);transition:border-color .2s,transform .2s,background .2s;cursor:pointer;}
+.mod-pill:hover{border-color:var(--acc-dim);transform:translateY(-2px);background:var(--bg-ov);}
+.mod-pill-thumb{width:100%;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#030810;}
+.mod-pill-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.mod-pill:hover .mod-pill-thumb img{transform:scale(1.06);}
+.mod-pill-name{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.02em;font-family:'IBM Plex Mono',monospace;}
 
 /* ── STATS BAR ── */
-.stats-bar{
-  background:var(--bg-s);border-top:1px solid var(--border-s);
-}
-.stats-inner{
-  max-width:1400px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(4,1fr);
-}
-.stat-cell{
-  padding:18px 28px;border-right:1px solid var(--border-s);
-  display:flex;align-items:center;gap:14px;
-  transition:background .15s;
-}
+.stats-bar{background:var(--bg-s);border-top:1px solid var(--border-s);}
+.stats-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);}
+.stat-cell{padding:20px 28px;border-right:1px solid var(--border-s);display:flex;align-items:center;gap:14px;transition:background .15s;}
 .stat-cell:last-child{border-right:none;}
 .stat-cell:hover{background:var(--bg-e);}
-.stat-icon-wrap{
-  width:44px;height:44px;border-radius:50%;
-  background:var(--acc-sub);border:1px solid var(--border);
-  display:grid;place-items:center;flex-shrink:0;
-}
+.stat-icon-wrap{width:44px;height:44px;border-radius:50%;background:var(--acc-sub);border:1px solid var(--border);display:grid;place-items:center;flex-shrink:0;}
 .stat-icon-wrap svg{width:22px;height:22px;color:var(--acc);}
 .stat-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.03em;line-height:1.1;}
 .stat-label{font-size:12px;color:var(--acc);font-weight:600;margin-top:1px;}
 .stat-sub{font-size:11px;color:var(--text-m);margin-top:2px;}
 
-/* ── ABOUT SECTION (preserved) ── */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600&display=swap');
-.ab-wrap{font-family:'IBM Plex Sans',sans-serif;background:#0b0e14;color:#e8edf5;overflow:hidden;position:relative;}
-.ab-ar{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',sans-serif;direction:rtl;text-align:right;}
-.ab-ambient{position:absolute;pointer-events:none;z-index:0;top:0;left:0;right:0;height:680px;overflow:hidden;}
-.ab-scanlines{position:absolute;inset:0;background-image:linear-gradient(rgba(45,212,200,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(45,212,200,.013) 1px,transparent 1px);background-size:60px 60px;}
-.ab-r{position:absolute;border-radius:50%;}
-.ab-r1{width:560px;height:560px;top:-210px;left:-120px;border:1px solid rgba(45,212,200,.05);}
-.ab-r2{width:360px;height:360px;top:-80px;left:25px;border:1px solid rgba(45,212,200,.08);}
-.ab-r3{width:820px;height:820px;top:-400px;right:-260px;border:1px solid rgba(45,212,200,.03);}
-.ab-dot{position:absolute;width:3px;height:3px;border-radius:50%;background:#2dd4c8;}
-.ab-hero{position:relative;z-index:1;padding:3.5rem 3rem 0;}
-.ab-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:3.5rem;}
-.ab-logo-unit{display:flex;align-items:center;gap:12px;}
-.ab-or-box{width:42px;height:42px;background:#2dd4c8;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ab-or-text{font-family:'IBM Plex Sans',sans-serif;font-size:.85rem;font-weight:600;color:#0b0e14;letter-spacing:-.01em;}
-.ab-brand-name{font-family:'IBM Plex Sans',sans-serif;font-size:1.35rem;font-weight:400;color:#ffffff;letter-spacing:-.01em;}
-.ab-brand-sub{font-size:.6rem;font-family:'IBM Plex Mono',monospace;color:#3d4558;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
-.ab-npills{display:flex;gap:6px;}
-.ab-npill{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(255,255,255,.12);border-radius:2px;color:#8a94aa;}
-.ab-npill.on{border-color:#2dd4c8;color:#2dd4c8;background:rgba(45,212,200,.08);}
-.ab-hcontent{display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start;padding-bottom:3rem;}
-.ab-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(45,212,200,.7);margin-bottom:1.2rem;display:flex;align-items:center;gap:.75rem;}
-.ab-eyebrow::before{content:'';display:block;width:24px;height:1px;background:#2dd4c8;}
-.ab-hl-en{font-size:2.7rem;font-weight:200;line-height:1.1;letter-spacing:-.04em;color:#e8edf5;margin-bottom:.65rem;}
-.ab-hl-en .ab-acc{font-weight:500;color:#2dd4c8;font-style:italic;}
-.ab-hl-en .ab-dim{color:#8a94aa;}
-.ab-hl-ar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:1.3rem;font-weight:300;line-height:1.6;color:#8a94aa;direction:rtl;text-align:right;margin-bottom:2rem;border-right:2px solid rgba(45,212,200,.18);padding-right:.8rem;}
-.ab-mod-row{display:flex;flex-wrap:wrap;gap:0;}
-.ab-mod{font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:400;letter-spacing:.05em;color:#3d4558;padding:5px 12px;border:1px solid rgba(255,255,255,.07);border-right:none;cursor:default;}
-.ab-mod:last-child{border-right:1px solid rgba(255,255,255,.07);}
-.ab-mod.lit{color:#2dd4c8;border-color:rgba(45,212,200,.28);background:rgba(45,212,200,.08);}
-.ab-art{display:flex;align-items:center;justify-content:center;padding-top:.5rem;}
-.ab-sband{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);}
-.ab-sc{padding:1.6rem 1.75rem;border-right:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;}
-.ab-sc:last-child{border-right:none;}
-.ab-sc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#2dd4c8,transparent);opacity:0;transition:opacity .3s;}
-.ab-sc:hover::before{opacity:1;}
-.ab-snum{font-family:'IBM Plex Mono',monospace;font-size:2.1rem;font-weight:300;color:#2dd4c8;letter-spacing:-.05em;line-height:1;margin-bottom:.35rem;}
-.ab-sen{font-size:.73rem;color:#8a94aa;margin-bottom:.18rem;}
-.ab-sar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.7rem;color:#3d4558;direction:rtl;text-align:right;}
-.ab-sec{position:relative;z-index:1;padding:2.75rem 3rem;border-bottom:1px solid rgba(255,255,255,.07);}
-.ab-sechd{display:grid;grid-template-columns:1fr 1fr;align-items:center;margin-bottom:2rem;padding-bottom:.9rem;border-bottom:1px solid rgba(255,255,255,.07);}
-.ab-secen{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(45,212,200,.7);}
-.ab-secar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.73rem;color:#3d4558;direction:rtl;text-align:right;}
-.ab-rmphases{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);}
-.ab-rmp{background:#0f1319;padding:1.5rem 1.35rem;position:relative;}
-.ab-rmdot{position:absolute;top:-7px;left:1.35rem;width:13px;height:13px;border-radius:2px;display:flex;align-items:center;justify-content:center;}
-.ab-rmdot-in{width:5px;height:5px;border-radius:1px;}
-.ab-live-bg{background:rgba(45,200,120,.22);}.ab-live-bg .ab-rmdot-in{background:#2dc878;}
-.ab-next-bg{background:rgba(45,212,200,.18);}.ab-next-bg .ab-rmdot-in{background:#2dd4c8;}
-.ab-fut-bg{background:rgba(130,100,220,.18);}.ab-fut-bg .ab-rmdot-in{background:#8264dc;}
-.ab-rmpt{margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid rgba(255,255,255,.07);}
-.ab-rmpten{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;}
-.ab-rmptar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.7rem;color:#3d4558;direction:rtl;text-align:right;margin-top:.18rem;}
-.ab-live-c{color:#2dc878;}.ab-next-c{color:#2dd4c8;}.ab-fut-c{color:#8264dc;}
-.ab-rmi{padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.ab-rmi:last-child{border-bottom:none;padding-bottom:0;}
-.ab-rmrow{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.12rem;}
-.ab-rmb{width:4px;height:4px;border-radius:50%;margin-top:5px;flex-shrink:0;}
-.ab-lb{background:#2dc878;}.ab-nb{background:#2dd4c8;}.ab-fb{background:#8264dc;}
-.ab-rmen{font-size:.76rem;color:#e8edf5;line-height:1.4;}
-.ab-rmar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.71rem;color:#3d4558;direction:rtl;text-align:right;padding-right:.54rem;margin-top:.08rem;}
-.ab-closer{position:relative;z-index:1;padding:3.5rem 3rem;text-align:center;overflow:hidden;}
-.ab-cglow{position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 50% 50%,rgba(45,212,200,.04) 0%,transparent 70%);pointer-events:none;}
-.ab-cen{font-size:1.5rem;font-weight:200;line-height:1.45;letter-spacing:-.025em;color:#e8edf5;max-width:460px;margin:0 auto .5rem;}
-.ab-cen strong{color:#2dd4c8;font-weight:400;}
-.ab-car{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:1rem;font-weight:300;color:#8a94aa;direction:rtl;margin-bottom:2.25rem;line-height:1.7;}
-.ab-cmeta{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#3d4558;display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;}
-.ab-csep{display:block;width:1px;height:10px;background:rgba(255,255,255,.12);}
+/* ── ABOUT (unified with base design system) ── */
+.about-sec{display:none;max-width:1000px;margin:0 auto;padding:56px 32px 72px;}
+.about-sec.show{display:block;}
+.ab-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:18px;}
+.ab-eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim);}
+.about-h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.1;letter-spacing:-0.03em;margin-bottom:14px;}
+.about-h2 .acc{color:var(--acc);}
+.about-lead{font-size:16px;color:var(--text-s);line-height:1.8;max-width:64ch;margin-bottom:16px;}
+.about-lead-ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;font-size:15px;color:var(--text-m);line-height:1.9;max-width:64ch;margin:0 0 40px auto;border-right:2px solid var(--acc-dim);padding-right:14px;}
+.about-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:44px;}
+.about-card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:var(--r-lg);padding:20px;}
+.about-card h3{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:9px;}
+.about-card p{font-size:13px;color:var(--text-s);line-height:1.7;}
+.about-card .ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;color:var(--text-m);font-size:12.5px;margin-top:6px;}
+.about-owner{border-top:1px solid var(--border-s);padding-top:28px;text-align:center;}
+.about-owner .name{font-size:15px;font-weight:600;color:var(--text);}
+.about-owner .role{font-size:12px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-top:4px;letter-spacing:.04em;}
 
 /* ── FOOTER ── */
-footer{
-  padding:20px 48px;border-top:1px solid var(--border-s);
-  display:flex;align-items:center;justify-content:space-between;
-  max-width:1400px;margin:0 auto;flex-wrap:wrap;gap:12px;
-}
-.footer-logo{display:flex;align-items:center;gap:7px;}
-.footer-mark{width:20px;height:20px;background:var(--acc);border-radius:4px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#07110e;}
+footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;flex-wrap:wrap;gap:12px;}
+.footer-logo{display:flex;align-items:center;gap:8px;}
+.footer-mark{width:22px;height:22px;background:var(--acc);border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--acc-ink);}
 .footer-name{font-size:13px;font-weight:600;color:var(--text-s);}
 .footer-meta{font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar{width:6px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border-s);border-radius:3px;}
 
 /* ── RESPONSIVE ── */
-@media(max-width:1100px){
-  .hero{grid-template-columns:1fr;padding:40px 32px 48px;gap:36px;min-height:auto;}
-  .hero-right{max-width:600px;}
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .edu-badge{display:none;}
+  .mod-strip{grid-template-columns:repeat(4,1fr);}
   .stats-inner{grid-template-columns:repeat(2,1fr);}
-  footer{padding:20px 32px;}
 }
 @media(max-width:768px){
-  .nav-links,.edu-badge{display:none;}
-  .hamburger{display:flex;}
-  .hero{padding:32px 20px 40px;}
-  .hero-h1{font-size:2.2rem;}
-  .hero-right{grid-template-columns:1fr 1fr;}
-  .card-featured{grid-column:1/3;}
-  .card-ct{grid-column:1/3;}
-  .stats-inner{grid-template-columns:1fr 1fr;}
-  footer{padding:16px 20px;flex-direction:column;align-items:flex-start;}
+  .hero{padding:44px 22px 32px;min-height:auto;}
+  .user-name{display:none;}
+  footer{flex-direction:column;align-items:flex-start;}
 }
-@media(max-width:480px){
-  .hero-right{grid-template-columns:1fr;}
-  .card-featured,.card-ct{grid-column:1/2;}
+@media(max-width:520px){
+  .mod-strip{grid-template-columns:repeat(2,1fr);}
   .stats-inner{grid-template-columns:1fr;}
+  .stat-cell{border-right:none;border-bottom:1px solid var(--border-s);}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;}}
 </style>
@@ -412,349 +214,165 @@ footer{
     <span class="nav-logo-name">Omni<span>Rad</span></span>
   </a>
   <ul class="nav-links">
-    <li><a href="index.html" class="active"><span class="nav-icon">🏠</span>Home</a></li>
-    <li><a href="pages/atlas.html"><span class="nav-icon">📖</span>Atlas</a></li>
-    <li><a href="pages/comparison.html"><span class="nav-icon">⚖</span>Compare</a></li>
-    <li><a href="pages/mnemonics.html"><span class="nav-icon">📚</span>Mnemonics</a></li>
-    <li><a href="pages/srs.html"><span class="nav-icon">📊</span>My Progress</a></li>
-    <li><a href="pages/clinic.html"><span class="nav-icon">🏥</span>Clinic</a></li>
-    <li><a href="pages/ai-chat.html"><span class="nav-icon">✦</span>AI Assistant</a></li>
-    <li><a href="pages/daily.html"><span class="nav-icon">🧠</span>Daily Challenge</a></li>
-    <li><a href="#about" id="aboutNavLink">حول المنصة</a></li>
+    <li><a href="pages/atlas.html" class="core"><span class="nav-icon">📖</span>Atlas</a></li>
+    <li><a href="pages/comparison.html" class="core"><span class="nav-icon">⚖</span>Compare</a></li>
+    <li class="nav-sep" aria-hidden="true"></li>
+    <li class="nav-group">
+      <button class="nav-group-btn" aria-haspopup="true"><span class="nav-icon">🎓</span>Learn<span class="chev">▾</span></button>
+      <div class="nav-drop">
+        <a href="pages/mnemonics.html"><span class="d-t">📚 Mnemonics</span><span class="d-s">Memory techniques · AR/EN</span></a>
+        <a href="pages/daily.html"><span class="d-t">🧠 Daily Challenge</span><span class="d-s">Quiz + leaderboard</span></a>
+        <a href="pages/srs.html"><span class="d-t">📊 My Progress</span><span class="d-s">Spaced repetition</span></a>
+      </div>
+    </li>
+    <li class="nav-group">
+      <button class="nav-group-btn" aria-haspopup="true"><span class="nav-icon">🛠</span>Tools<span class="chev">▾</span></button>
+      <div class="nav-drop">
+        <a href="pages/ai-chat.html"><span class="d-t">✦ AI Assistant</span><span class="d-s">Radiology-scoped chat</span></a>
+        <a href="pages/clinic.html"><span class="d-t">🏥 Clinic</span><span class="d-s">Applied cases</span></a>
+      </div>
+    </li>
   </ul>
   <div class="nav-end">
-    <a href="pages/auth.html" class="btn-signout" id="navSignOut">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-      Sign Out
-    </a>
     <span class="edu-badge">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Educational use only
     </span>
-    <div class="user-area" id="navUserArea">
-      <div class="user-ava" id="navUserAva">DA</div>
-      <span class="user-name" id="navUserName">Dr. Dany</span>
-      <span class="user-chevron">▾</span>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☀</button>
+    <div class="user-wrap">
+      <div class="user-area" id="navUserArea" tabindex="0">
+        <div class="user-ava" id="navUserAva">DA</div>
+        <span class="user-name" id="navUserName">Dr. Dany</span>
+        <span class="user-chevron">▾</span>
+      </div>
+      <div class="user-drop">
+        <a href="#about" id="aboutNavLink">ℹ️ About · حول المنصة</a>
+        <div class="ud-sep"></div>
+        <a href="pages/auth.html" id="navSignOut">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Sign Out
+        </a>
+      </div>
     </div>
-    <button class="theme-btn" id="themeBtn" title="Toggle theme">☀</button>
-    <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
 <!-- Mobile menu -->
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <div class="mm-group">Explore</div>
   <ul>
-    <li><a href="index.html">🏠 Home</a></li>
     <li><a href="pages/atlas.html">📖 Atlas</a></li>
     <li><a href="pages/comparison.html">⚖ Compare</a></li>
+  </ul>
+  <div class="mm-group">Learn</div>
+  <ul>
     <li><a href="pages/mnemonics.html">📚 Mnemonics</a></li>
-    <li><a href="pages/srs.html">📊 My Progress</a></li>
-    <li><a href="pages/clinic.html">🏥 Clinic</a></li>
-    <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
     <li><a href="pages/daily.html">🧠 Daily Challenge</a></li>
-    <li><a href="pages/auth.html">🔐 Sign In</a></li>
-    <li><a href="#about">حول المنصة</a></li>
+    <li><a href="pages/srs.html">📊 My Progress</a></li>
+  </ul>
+  <div class="mm-group">Tools</div>
+  <ul>
+    <li><a href="pages/ai-chat.html">✦ AI Assistant</a></li>
+    <li><a href="pages/clinic.html">🏥 Clinic</a></li>
+  </ul>
+  <div class="mm-group">Account</div>
+  <ul>
+    <li><a href="#about">ℹ️ About · حول المنصة</a></li>
+    <li><a href="pages/auth.html">🔐 Sign Out</a></li>
   </ul>
 </div>
 
 <div class="page">
-<main>
+<main id="mainView">
 
 <!-- HERO -->
 <section class="hero">
-
-  <!-- Skeleton background -->
-  <div class="hero-bg">
-    <img src="images/home/skeleton_bg.png" alt="" aria-hidden="true">
-  </div>
-
-  <!-- Left: text -->
-  <div class="hero-left">
-    <div class="hero-eyebrow">Radiologic Anatomy Platform</div>
-    <h1 class="hero-h1">
-      Every structure.<br>
-      <span class="acc">Every modality.</span><br>
-      One place.
-    </h1>
-    <p class="hero-desc">
-      Explore anatomical structures across CT, MRI, Ultrasound,
-      <strong>X-Ray</strong>, Nuclear Medicine, Mammography and more — with
-      professional tools, colorization training, and spaced repetition
-      built in.
-    </p>
-    <div class="hero-cta">
-      <a href="pages/atlas.html" class="btn-primary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Open Atlas
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="pages/comparison.html" class="btn-secondary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-        Try Comparison
-      </a>
-    </div>
-  </div>
-
-  <!-- Right: card grid -->
-  <div class="hero-right">
-
-    <!-- Featured: Multimodal Comparison -->
-    <a href="pages/comparison.html" class="card-featured">
-      <div class="card-featured-left">
-        <div class="card-featured-title">Multimodal Comparison</div>
-        <div class="modal-chips">
-          <span class="modal-chip">CT</span>
-          <span class="modal-chip">MRI</span>
-          <span class="modal-chip">US</span>
-          <span class="modal-chip">X-RAY</span>
-        </div>
-        <div class="card-featured-sub">Select 2–8 modalities,<br>compare side by side</div>
-      </div>
-      <div class="card-featured-img">
-        <img src="images/home/ct_abdomen.png" alt="CT scan">
-        <img src="images/home/mri_brain.png" alt="MRI scan">
-      </div>
+  <div class="hero-eyebrow">Radiologic Anatomy Platform</div>
+  <h1 class="hero-h1">Every structure.<br><span class="acc">Every modality.</span> One place.</h1>
+  <p class="hero-desc">
+    Explore any anatomical structure across CT, MRI, Ultrasound, <strong>X-Ray</strong>,
+    Nuclear Medicine and more — and compare them side by side, the way radiologists actually see them.
+  </p>
+  <div class="hero-cta">
+    <a href="pages/atlas.html" class="btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Open Atlas
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
-
-    <!-- CT card -->
-    <a href="pages/atlas.html?modality=ct" class="card-ct">
-      <div class="card-ct-img">
-        <img src="images/home/ct_abdomen.png" alt="CT Abdomen">
-      </div>
-      <div class="card-ct-info">
-        <div class="card-ct-name">CT</div>
-        <div class="card-ct-full">Computed Tomography</div>
-      </div>
+    <a href="pages/comparison.html" class="btn-secondary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l-3 4 3 4M19 8l3 4-3 4"/></svg>
+      Compare Modalities
     </a>
-
-    <!-- MRI -->
-    <a href="pages/atlas.html?modality=mri" class="mod-card">
-      <div class="mod-card-img">
-        <img src="images/home/mri_brain.png" alt="MRI Brain">
-      </div>
-      <div class="mod-card-info">
-        <div class="mod-card-name">MRI</div>
-        <div class="mod-card-full">Magnetic Resonance Imaging</div>
-      </div>
-    </a>
-
-    <!-- US -->
-    <a href="pages/atlas.html?modality=us" class="mod-card">
-      <div class="mod-card-img">
-        <img src="images/home/ultrasound.png" alt="Ultrasound">
-      </div>
-      <div class="mod-card-info">
-        <div class="mod-card-name">US</div>
-        <div class="mod-card-full">Ultrasound Imaging</div>
-      </div>
-    </a>
-
-    <!-- X-RAY -->
-    <a href="pages/atlas.html?modality=xray" class="mod-card">
-      <div class="mod-card-img">
-        <img src="images/home/chest_xray.png" alt="Chest X-Ray">
-      </div>
-      <div class="mod-card-info">
-        <div class="mod-card-name">X-RAY</div>
-        <div class="mod-card-full">Radiography</div>
-      </div>
-    </a>
-
-    <!-- NM -->
-    <a href="pages/atlas.html?modality=nm" class="mod-card">
-      <div class="mod-card-img">
-        <img src="images/home/nm_skeleton.png" alt="Nuclear Medicine">
-      </div>
-      <div class="mod-card-info">
-        <div class="mod-card-name">NM</div>
-        <div class="mod-card-full">Nuclear Medicine</div>
-      </div>
-    </a>
-
-    <!-- ANGIO -->
-    <a href="pages/atlas.html?modality=angio" class="mod-card">
-      <div class="mod-card-img">
-        <img src="images/home/angiography.png" alt="Angiography">
-      </div>
-      <div class="mod-card-info">
-        <div class="mod-card-name">ANGIO</div>
-        <div class="mod-card-full">Angiography</div>
-      </div>
-    </a>
-
-    <!-- MAMMO -->
-    <a href="pages/atlas.html?modality=mammo" class="mod-card">
-      <div class="mod-card-img">
-        <img src="images/home/mammography.png" alt="Mammography">
-      </div>
-      <div class="mod-card-info">
-        <div class="mod-card-name">MAMMO</div>
-        <div class="mod-card-full">Mammography</div>
-      </div>
-    </a>
-
   </div>
 </section>
+
+<!-- MODALITY STRIP -->
+<div class="mod-strip-wrap">
+  <div class="mod-strip-label">Browse by modality</div>
+  <div class="mod-strip">
+    <a href="pages/atlas.html?modality=ct" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ct_abdomen.png" alt="CT"></div><span class="mod-pill-name">CT</span></a>
+    <a href="pages/atlas.html?modality=mri" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mri_brain.png" alt="MRI"></div><span class="mod-pill-name">MRI</span></a>
+    <a href="pages/atlas.html?modality=us" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/ultrasound.png" alt="US"></div><span class="mod-pill-name">US</span></a>
+    <a href="pages/atlas.html?modality=xray" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/chest_xray.png" alt="X-Ray"></div><span class="mod-pill-name">X-RAY</span></a>
+    <a href="pages/atlas.html?modality=nm" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png" alt="NM"></div><span class="mod-pill-name">NM</span></a>
+    <a href="pages/atlas.html?modality=angio" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/angiography.png" alt="Angio"></div><span class="mod-pill-name">ANGIO</span></a>
+    <a href="pages/atlas.html?modality=mammo" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/mammography.png" alt="Mammo"></div><span class="mod-pill-name">MAMMO</span></a>
+    <a href="pages/atlas.html?modality=pet" class="mod-pill"><div class="mod-pill-thumb"><img src="images/home/nm_skeleton.png" alt="PET"></div><span class="mod-pill-name">PET</span></a>
+  </div>
+</div>
 
 <!-- STATS BAR -->
 <div class="stats-bar">
   <div class="stats-inner">
     <div class="stat-cell">
-      <div class="stat-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      </div>
-      <div>
-        <div class="stat-val">8</div>
-        <div class="stat-label">Imaging Modalities</div>
-        <div class="stat-sub">Comprehensive coverage</div>
-      </div>
+      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <div><div class="stat-val">8</div><div class="stat-label">Imaging Modalities</div><div class="stat-sub">Comprehensive coverage</div></div>
     </div>
     <div class="stat-cell">
-      <div class="stat-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      </div>
-      <div>
-        <div class="stat-val">AR / EN</div>
-        <div class="stat-label">Bilingual Support</div>
-        <div class="stat-sub">Arabic &amp; English</div>
-      </div>
+      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div><div class="stat-val">AR / EN</div><div class="stat-label">Bilingual Support</div><div class="stat-sub">Arabic &amp; English</div></div>
     </div>
     <div class="stat-cell">
-      <div class="stat-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-      </div>
-      <div>
-        <div class="stat-val">SM-2</div>
-        <div class="stat-label">Spaced Repetition</div>
-        <div class="stat-sub">Science-based learning</div>
-      </div>
+      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <div><div class="stat-val">SM-2</div><div class="stat-label">Spaced Repetition</div><div class="stat-sub">Science-based learning</div></div>
     </div>
     <div class="stat-cell">
-      <div class="stat-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <div>
-        <div class="stat-val">Phase 3</div>
-        <div class="stat-label">Learning Progress</div>
-        <div class="stat-sub">Track your journey</div>
-      </div>
+      <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div><div class="stat-val">17+</div><div class="stat-label">Anatomical Structures</div><div class="stat-sub">And growing</div></div>
     </div>
   </div>
 </div>
 
 </main>
 
-<footer>
-  <div class="footer-logo">
-    <div class="footer-mark">OR</div>
-    <span class="footer-name">OmniRad — v3.9</span>
+<!-- ABOUT (unified design system) -->
+<section class="about-sec" id="about">
+  <div class="ab-eyebrow">About · حول المنصة</div>
+  <h2 class="about-h2">See anatomy the way <span class="acc">radiologists</span> see it.</h2>
+  <p class="about-lead">OmniRad is a multimodal radiologic anatomy platform — explore the same structure across every imaging modality, compare them side by side, and train your eye with bilingual labels, mnemonics and spaced repetition.</p>
+  <p class="about-lead-ar">منصة التشريح الإشعاعي متعدد الأنماط — استكشف نفس البنية عبر كل تقنيات التصوير وقارنها جنباً إلى جنب، مع تسميات ثنائية اللغة وتقنيات حفظ ومراجعة متباعدة.</p>
+  <div class="about-cards">
+    <div class="about-card"><h3>⚖ Multimodal comparison</h3><p>Compare 2–8 modalities of one structure at once.</p><p class="ar">مقارنة عدة تقنيات لبنية واحدة</p></div>
+    <div class="about-card"><h3>🎨 Colorization</h3><p>Toggle real grayscale vs. educational color.</p><p class="ar">تبديل التدرّج الرمادي والتلوين التعليمي</p></div>
+    <div class="about-card"><h3>🌐 Bilingual</h3><p>Full Arabic &amp; English throughout.</p><p class="ar">دعم كامل بالعربية والإنجليزية</p></div>
+    <div class="about-card"><h3>🧠 Spaced repetition</h3><p>SM-2 tracks true long-term retention.</p><p class="ar">مراجعة متباعدة لترسيخ التعلّم</p></div>
   </div>
+  <div class="about-owner">
+    <div class="name">Mohammed Saeed Alzahrani</div>
+    <div class="role">Radiologic Sciences · OmniRad · 2026</div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo"><div class="footer-mark">OR</div><span class="footer-name">OmniRad — v3.9</span></div>
   <span class="footer-meta">Educational use only · Mohammed Saeed Alzahrani · 2026</span>
 </footer>
-
-<!-- ABOUT SECTION (preserved) -->
-<section id="about" style="display:none;">
-<div class="ab-wrap">
-<div class="ab-ambient">
-  <div class="ab-scanlines"></div>
-  <div class="ab-r ab-r1"></div><div class="ab-r ab-r2"></div><div class="ab-r ab-r3"></div>
-  <div class="ab-dot" style="top:110px;left:270px;opacity:.35;"></div>
-  <div class="ab-dot" style="top:310px;left:510px;opacity:.20;"></div>
-  <div class="ab-dot" style="top:75px;right:190px;opacity:.28;"></div>
-</div>
-<div class="ab-hero">
-  <div class="ab-nav">
-    <div class="ab-logo-unit">
-      <div class="ab-or-box"><span class="ab-or-text">OR</span></div>
-      <div><div class="ab-brand-name">OmniRad</div><div class="ab-brand-sub">منصة التشريح الإشعاعي</div></div>
-    </div>
-    <div class="ab-npills">
-      <div class="ab-npill">v3.9</div>
-      <div class="ab-npill">Phase 3</div>
-      <div class="ab-npill on">About · حول</div>
-    </div>
-  </div>
-  <div class="ab-hcontent">
-    <div>
-      <div class="ab-eyebrow">Multimodal Radiologic Anatomy · منصة التشريح الإشعاعي متعدد الأنماط</div>
-      <div class="ab-hl-en">See anatomy the way<br><span class="ab-acc">radiologists</span> <span class="ab-dim">actually</span><br><span class="ab-acc">see it.</span></div>
-      <div class="ab-hl-ar ab-ar">شاهد التشريح كما يراه أخصائيو الأشعة —<br>بكل نمط تصوير، وبلغتك.</div>
-      <div class="ab-mod-row">
-        <div class="ab-mod lit">CT</div><div class="ab-mod lit">MRI</div><div class="ab-mod lit">US</div>
-        <div class="ab-mod">X-Ray</div><div class="ab-mod">NM</div>
-        <div class="ab-mod">Angio</div><div class="ab-mod">Mammo</div><div class="ab-mod">PET</div>
-      </div>
-    </div>
-    <div class="ab-art">
-      <svg viewBox="0 0 320 320" width="280" height="280" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="160" cy="160" r="154" stroke="rgba(45,212,200,0.10)" stroke-width="1"/>
-        <circle cx="160" cy="160" r="134" stroke="rgba(45,212,200,0.06)" stroke-width="1"/>
-        <ellipse cx="160" cy="165" rx="90" ry="80" fill="#0f1319" stroke="rgba(45,212,200,0.22)" stroke-width="1"/>
-        <path d="M96 138 Q118 122 162 124 Q182 127 187 145 Q189 163 183 172 Q172 182 152 182 Q128 182 110 172 Q92 158 96 138Z" fill="rgba(180,110,50,0.28)" stroke="rgba(200,130,70,0.55)" stroke-width="1"/>
-        <ellipse cx="208" cy="150" rx="21" ry="18" fill="rgba(140,70,190,0.28)" stroke="rgba(160,90,210,0.50)" stroke-width="1"/>
-        <ellipse cx="204" cy="183" rx="12" ry="17" fill="rgba(220,140,40,0.22)" stroke="rgba(240,160,60,0.45)" stroke-width="1"/>
-        <ellipse cx="117" cy="183" rx="12" ry="17" fill="rgba(220,140,40,0.22)" stroke="rgba(240,160,60,0.45)" stroke-width="1"/>
-      </svg>
-    </div>
-  </div>
-</div>
-<div class="ab-sband">
-  <div class="ab-sc"><div class="ab-snum">17+</div><div class="ab-sen">Anatomical structures</div><div class="ab-sar">بنية تشريحية</div></div>
-  <div class="ab-sc"><div class="ab-snum">8</div><div class="ab-sen">Imaging modalities</div><div class="ab-sar">نمط تصوير</div></div>
-  <div class="ab-sc"><div class="ab-snum">AR/EN</div><div class="ab-sen">Fully bilingual</div><div class="ab-sar">ثنائي اللغة</div></div>
-  <div class="ab-sc"><div class="ab-snum">v3.9</div><div class="ab-sen">Phase 3 active</div><div class="ab-sar">المرحلة ٣ نشطة</div></div>
-</div>
-<div class="ab-sec">
-  <div class="ab-sechd"><div class="ab-secen">Roadmap · خارطة الطريق</div><div class="ab-secar">مراحل التطوير المعتمدة</div></div>
-  <div class="ab-rmphases">
-    <div class="ab-rmp">
-      <div class="ab-rmdot ab-live-bg"><div class="ab-rmdot-in"></div></div>
-      <div class="ab-rmpt"><div class="ab-rmpten ab-live-c">Phase 1–3 · Live now</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Smart Atlas — 17 structures</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">8-modality comparison engine</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">SRS — SM-2 algorithm</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">AI Assistant AR/EN</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">Daily Challenge + Leaderboard</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-lb"></div><div class="ab-rmen">User accounts + Supabase sync</div></div></div>
-    </div>
-    <div class="ab-rmp">
-      <div class="ab-rmdot ab-next-bg"><div class="ab-rmdot-in"></div></div>
-      <div class="ab-rmpt"><div class="ab-rmpten ab-next-c">Sprint #1 CT · Coming</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Full-body CT — TCIA + VHP</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">MedSAM2 organ segmentation</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">AR + EN labels on real images</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Latin terminology tab + TTS</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-nb"></div><div class="ab-rmen">Official launch after CT sprint</div></div></div>
-    </div>
-    <div class="ab-rmp">
-      <div class="ab-rmdot ab-fut-bg"><div class="ab-rmdot-in"></div></div>
-      <div class="ab-rmpt"><div class="ab-rmpten ab-fut-c">Phase 4 · Future</div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">MRI, US, X-Ray sprints</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">e-Anatomy API partnership</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Hospital imaging partnerships</div></div></div>
-      <div class="ab-rmi"><div class="ab-rmrow"><div class="ab-rmb ab-fb"></div><div class="ab-rmen">Mobile app — iOS and Android</div></div></div>
-    </div>
-  </div>
-</div>
-<div class="ab-closer">
-  <div class="ab-cglow"></div>
-  <div class="ab-cen">Built by a student.<br>For students who want to see anatomy<br>the way <strong>it actually looks.</strong></div>
-  <div class="ab-car ab-ar">بُني من طالب، لطلاب يريدون رؤية التشريح<br>كما هو فعلاً — بكل وضوح، وبلغتهم.</div>
-  <div class="ab-cmeta">
-    <span>Mohammed Saeed Alzahrani</span><span class="ab-csep"></span>
-    <span>Radiologic Sciences</span><span class="ab-csep"></span>
-    <span>orphanai2026.github.io/OmniRad</span><span class="ab-csep"></span>
-    <span>v3.9 · 2026</span>
-  </div>
-</div>
-</div>
-</section>
 
 </div>
 
 <script>
+// hamburger
 const hBtn=document.getElementById('hamburgerBtn');
 const mMenu=document.getElementById('mobileMenu');
 hBtn.addEventListener('click',()=>{
@@ -767,41 +385,40 @@ mMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
   mMenu.classList.remove('open');hBtn.classList.remove('open');
 }));
 document.addEventListener('click',e=>{
-  if(!hBtn.contains(e.target)&&!mMenu.contains(e.target)){
-    mMenu.classList.remove('open');hBtn.classList.remove('open');
-  }
+  if(!hBtn.contains(e.target)&&!mMenu.contains(e.target)){mMenu.classList.remove('open');hBtn.classList.remove('open');}
 });
 
+// theme
 const html=document.documentElement;
 const btn=document.getElementById('themeBtn');
 const ICONS={dark:'☀',dim:'☾'};
-const LABELS={dark:'Switch to dim mode',dim:'Switch to dark mode'};
 const saved=localStorage.getItem('omnirad-theme')||'dark';
 html.dataset.theme=saved;btn.textContent=ICONS[saved];
-btn.setAttribute('aria-label',LABELS[saved]);
 btn.addEventListener('click',()=>{
   const next=html.dataset.theme==='dark'?'dim':'dark';
   html.dataset.theme=next;btn.textContent=ICONS[next];
-  btn.setAttribute('aria-label',LABELS[next]);
   localStorage.setItem('omnirad-theme',next);
 });
 
+// about toggle
 (function(){
   const link=document.getElementById('aboutNavLink');
   const sec=document.getElementById('about');
-  const main=document.querySelector('main');
+  const main=document.getElementById('mainView');
   if(!link||!sec||!main)return;
-  link.addEventListener('click',function(e){
-    e.preventDefault();
-    const isOpen=sec.style.display!=='none';
-    if(isOpen){sec.style.display='none';main.style.display='';link.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});}
-    else{main.style.display='none';sec.style.display='block';link.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
-  });
-  const mobileAbout=document.querySelector('.mobile-menu a[href="#about"]');
-  if(mobileAbout)mobileAbout.addEventListener('click',function(e){e.preventDefault();link.click();});
+  function toggle(e){
+    if(e)e.preventDefault();
+    const isOpen=sec.classList.contains('show');
+    if(isOpen){sec.classList.remove('show');main.style.display='';}
+    else{sec.classList.add('show');main.style.display='none';}
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  link.addEventListener('click',toggle);
+  const mAbout=document.querySelector('.mobile-menu a[href="#about"]');
+  if(mAbout)mAbout.addEventListener('click',toggle);
 })();
 
-OmniRadAuth.updateNav();
+if(window.OmniRadAuth&&OmniRadAuth.updateNav)OmniRadAuth.updateNav();
 </script>
 </body>
 </html>
