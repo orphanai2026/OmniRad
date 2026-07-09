@@ -30,9 +30,9 @@
       { href: 'pages/ai-chat.html',    icon: '✦', title: 'AI Assistant',     sub: 'Radiology-scoped chat', i18n:'nav.aiChat' },
       { href: 'pages/clinic.html',     icon: '🏥', title: 'Clinic',           sub: 'Applied cases',        i18n:'nav.clinic' }
     ]},
-    { icon: '🔒', label: 'Admin', i18n:'nav.admin', role:['admin','contributor'], items: [
-      { href: 'pages/studio.html',    icon: '🎨', title: 'Studio',       sub: 'Prompt authoring',       i18n:'nav.studio', role:['admin','contributor'] },
-      { href: 'pages/admin.html',     icon: '🛡', title: 'Admin Console', sub: 'Users, content, review', i18n:'nav.adminConsole', role:['admin'] }
+    { icon: '🔒', label: 'Admin', i18n:'nav.admin', role:['admin','contributor','reviewer'], items: [
+      { href: 'pages/studio.html',    icon: '🎨', title: 'Studio',       sub: 'Prompt authoring',       i18n:'nav.studio', role:['admin','contributor','reviewer'] },
+      { href: 'pages/admin.html',     icon: '🛡', title: 'Admin Console', sub: 'Users, content, review', i18n:'nav.adminConsole', role:['admin','reviewer'] }
     ]}
   ];
 
@@ -127,7 +127,7 @@
       '<button class="onav-ib onav-lang" id="onavLang" title="Language">🌐</button>' +
       '<button class="onav-ib" id="onavTheme" title="Toggle theme">☀</button>' +
       '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">…</div><span class="onav-un" id="onavName">…</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
-        '<div class="onav-udrop"><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
+        '<div class="onav-udrop"><a href="' + abs('pages/profile.html') + '" data-i18n="common.profile">👤 My Profile</a><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
       '</div>' +
       '<button class="onav-ham" id="onavHam" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>' +
     '</div>';
@@ -187,11 +187,22 @@
         var nameEl = document.getElementById('onavName');
         var avaEl = document.getElementById('onavAva');
         if (!session){ if(nameEl) nameEl.textContent='Guest'; if(avaEl) avaEl.textContent='?'; return; }
-        const { data:profile } = await OmniRadAuth.client.from('profiles').select('display_name, email, role').eq('id', session.user.id).maybeSingle();
+        const { data:profile } = await OmniRadAuth.client.from('profiles').select('display_name, email, role, avatar_url').eq('id', session.user.id).maybeSingle();
         const name = (profile && (profile.display_name || (profile.email||'').split('@')[0])) || session.user.email || 'User';
         if (nameEl) nameEl.textContent = name;
         const initials = name.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
-        if (avaEl) avaEl.textContent = initials;
+        if (avaEl){
+          const url = profile && profile.avatar_url;
+          if (url && url.startsWith('preset:')){
+            const svg = window.__omniradPresets && window.__omniradPresets[url.slice(7)];
+            if (svg) avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
+            else avaEl.textContent = initials;
+          } else if (url){
+            avaEl.innerHTML = '<img src="'+url+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+          } else {
+            avaEl.textContent = initials;
+          }
+        }
         const role = (profile && profile.role) || 'viewer';
         document.querySelectorAll('[data-nav-role]').forEach(function(el){
           const allowed = (el.getAttribute('data-nav-role')||'').split(',');
