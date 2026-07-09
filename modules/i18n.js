@@ -117,6 +117,63 @@
                       ar:'⚕️ أداة تعليمية — ليست للتشخيص أو الاستخدام السريري.' },
       full:         { en:'Generated images and prompts are for illustrative educational use only — not for diagnosis or treatment, and must not inform any clinical decision or patient care.',
                       ar:'الصور والبرومبتات المُولَّدة لأغراض توضيحية تعليمية فقط، وليست للتشخيص أو العلاج، ولا يجوز الاعتماد عليها في أي قرار سريري أو رعاية مريض.' }
+    },
+    mnemonics: {
+      title:        { en:'Mnemonics',           ar:'تقنيات الذاكرة' },
+      h1:           { en:'Learn anatomy the way it sticks.', ar:'تعلّم التشريح بطريقة تُثبّته في ذاكرتك.' },
+      lead:         { en:'Bilingual mnemonics for radiologic anatomy — quick memory aids that make it easier to recognize structures.',
+                      ar:'تقنيات ذاكرة ثنائية اللغة للتشريح الإشعاعي — مساعِدات سريعة تُسهِّل التعرّف على البنى.' },
+      all:          { en:'All',                 ar:'الكل' }
+    },
+    daily: {
+      title:        { en:'Daily challenge',     ar:'التحدّي اليومي' },
+      h1:           { en:'One case a day.',     ar:'حالة واحدة كل يوم.' },
+      streak:       { en:'Streak',              ar:'السلسلة' },
+      answered:     { en:'Answered',            ar:'أُجيب' },
+      accuracy:     { en:'Accuracy',            ar:'الدقّة' },
+      check:        { en:'Check answer',        ar:'تحقّق من الإجابة' }
+    },
+    srs: {
+      title:        { en:'Spaced repetition',   ar:'المراجعة المتباعدة' },
+      h1:           { en:'Study to remember, not to cram.', ar:'ادرس لتتذكّر، لا لتحفظ سريعاً.' },
+      lead:         { en:'Cards you struggle with come back sooner, easy ones spread further apart. That is how you build durable knowledge.',
+                      ar:'البطاقات التي تصعب عليك تعود أسرع، والسهلة تتباعد أكثر. هكذا تبني معرفة راسخة.' },
+      due:          { en:'Due today',           ar:'مستحقّ اليوم' },
+      total:        { en:'Total cards',         ar:'إجمالي البطاقات' },
+      streakDays:   { en:'Streak (days)',       ar:'السلسلة (أيام)' },
+      showAnswer:   { en:'Show answer',         ar:'أظهر الإجابة' },
+      again:        { en:'Again',               ar:'أعد' },
+      hard:         { en:'Hard',                ar:'صعبة' },
+      good:         { en:'Good',                ar:'جيدة' },
+      easy:         { en:'Easy',                ar:'سهلة' },
+      allCaught:    { en:'All caught up ✨',     ar:'تم إنهاء الجولة ✨' }
+    },
+    progress: {
+      title:        { en:'My progress',         ar:'تقدّمي' },
+      h1:           { en:'Your learning at a glance.', ar:'تعلّمك في لمحة.' },
+      srsSeen:      { en:'SRS cards seen',      ar:'بطاقات المراجعة' },
+      srsDue:       { en:'SRS due today',       ar:'مستحقة اليوم' },
+      dailyPct:     { en:'Daily accuracy',      ar:'دقّة التحدّي اليومي' },
+      currentStreak:{ en:'Current streak',      ar:'السلسلة الحالية' },
+      byMastery:    { en:'SRS by mastery',      ar:'المراجعة حسب الإتقان' },
+      activity:     { en:'Recent activity',     ar:'النشاط الأخير' }
+    },
+    chat: {
+      title:        { en:'AI Assistant',        ar:'مساعد الذكاء الاصطناعي' },
+      h1:           { en:'Ask anything about radiologic anatomy.', ar:'اسأل عن أي شيء في التشريح الإشعاعي.' },
+      sub:          { en:'Bilingual · educational answers only · never for clinical decisions.',
+                      ar:'ثنائي اللغة · إجابات تعليمية فقط · لا يُستخدم لقرارات سريرية.' },
+      placeholder:  { en:'Type a question…',    ar:'اكتب سؤالاً…' },
+      send:         { en:'Send',                ar:'إرسال' }
+    },
+    clinic: {
+      title:        { en:'Clinic · applied cases', ar:'العيادة · حالات تطبيقية' },
+      h1:           { en:'Practice how radiologists think.', ar:'تدرَّب على تفكير اختصاصي الأشعة.' },
+      lead:         { en:'Structured clinical vignettes with the imaging pathway. Read the case, pick the modality, review the reasoning — grounded in ACR appropriateness criteria.',
+                      ar:'حالات سريرية مُهيكَلة مع المسار التصويري. اقرأ الحالة، اختر المودلتي، وراجع المنطق — وفق معايير ACR للملاءمة.' },
+      recommended:  { en:'Recommended imaging', ar:'التصوير الموصى به' },
+      urgent:       { en:'urgent',              ar:'عاجل' },
+      elective:     { en:'elective',            ar:'اختياري' }
     }
   };
 
