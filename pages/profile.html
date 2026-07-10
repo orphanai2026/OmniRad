@@ -136,6 +136,37 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
     <button class="btn" id="btnSave" data-i18n="profile.save">💾 Save changes</button>
   </div>
   <div class="msg" id="msg"></div>
+
+  <!-- Danger zone -->
+  <div class="card" id="dangerZone" style="border-color:rgba(220,38,38,.35);background:linear-gradient(180deg,rgba(220,38,38,.04),transparent)">
+    <div class="section-t" style="color:#dc2626" data-i18n="profile.dangerZone">⚠️ Danger zone</div>
+    <div id="delNormal">
+      <div style="font-size:12.5px;color:var(--text-m);margin-bottom:12px;line-height:1.6" data-i18n="profile.deleteHint">Deleting your account disables it immediately and permanently removes it after 30 days. Sign back in any time before that to cancel.</div>
+      <button class="btn ghost" id="btnDeleteAcc" style="border-color:rgba(220,38,38,.5);color:#dc2626" data-i18n="profile.deleteBtn">🗑️ Delete my account</button>
+    </div>
+    <div id="delScheduled" style="display:none">
+      <div id="delScheduledMsg" style="font-size:13px;color:#dc2626;font-weight:600;margin-bottom:12px;line-height:1.6"></div>
+      <button class="btn" id="btnCancelDel" data-i18n="profile.cancelDel">↺ Cancel deletion request</button>
+    </div>
+  </div>
+
+  <!-- Deletion confirmation modal -->
+  <div class="modal-bg" id="delModal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999">
+    <div class="modal" style="background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:26px;max-width:440px;width:92%">
+      <h3 style="margin:0 0 10px;color:#dc2626;font-size:17px" data-i18n="profile.delTitle">⚠️ Delete your account?</h3>
+      <p style="font-size:13px;line-height:1.7;color:var(--text-m);margin:0 0 14px" data-i18n="profile.delWarn">Your account will be immediately disabled and permanently deleted 30 days from now. All your data (profile, notifications, avatar) will be erased. You can cancel at any time before the deadline by signing in.</p>
+      <label style="display:block;font-size:11.5px;font-weight:600;color:var(--text-s);margin-bottom:6px" data-i18n="profile.delReason">Reason (optional)</label>
+      <textarea id="delReason" rows="2" style="width:100%;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:9px;color:var(--text);font-size:13px;font-family:inherit;box-sizing:border-box"></textarea>
+      <label style="display:flex;align-items:flex-start;gap:8px;margin:14px 0;font-size:12.5px;color:var(--text-s);cursor:pointer;line-height:1.5">
+        <input type="checkbox" id="delConfirm" style="margin-top:3px">
+        <span data-i18n="profile.delAgree">I understand my account and data will be permanently deleted after 30 days.</span>
+      </label>
+      <div class="modal-actions" style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" id="delCancel" data-i18n="mod.cancel">Cancel</button>
+        <button class="btn" id="delConfirmBtn" disabled style="background:#dc2626;border-color:#dc2626;opacity:.5" data-i18n="profile.delConfirmBtn">Yes, delete my account</button>
+      </div>
+    </div>
+  </div>
   <div class="disc">⚕️ © 2026 OmniRad Platform. Educational only — not for diagnosis or clinical use.</div>
 </div>
 
@@ -164,6 +195,15 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.notifPrefs':'Notification preferences','profile.notifHint':'Choose what you receive and how. In-app notifications appear in the bell menu; email arrives at your address on record.',
       'profile.event':'Event','profile.inApp':'In-app','profile.email2':'Email',
       'ev.welcome':'Welcome message','ev.role_change':'My role changes','ev.image_approved':'My image approved','ev.new_user':'New user joined (admin only)','ev.contact_msg':'New contact message (admin only)',
+      'profile.dangerZone':'⚠️ Danger zone',
+      'profile.deleteHint':'Deleting your account disables it immediately and permanently removes it after 30 days. Sign back in any time before that to cancel.',
+      'profile.deleteBtn':'🗑️ Delete my account',
+      'profile.cancelDel':'↺ Cancel deletion request',
+      'profile.delTitle':'⚠️ Delete your account?',
+      'profile.delWarn':'Your account will be immediately disabled and permanently deleted 30 days from now. All your data (profile, notifications, avatar) will be erased. You can cancel at any time before the deadline by signing in.',
+      'profile.delReason':'Reason (optional)',
+      'profile.delAgree':'I understand my account and data will be permanently deleted after 30 days.',
+      'profile.delConfirmBtn':'Yes, delete my account',
       'profile.save':'💾 Save changes','profile.signOut':'Sign out',
       'profile.gateCheck':'Checking access…','profile.gateSignin':'Sign in required','profile.gateSigninMsg':'Sign in to view and edit your profile.',
       'profile.gateSigninBtn':'Sign in',
@@ -184,6 +224,15 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.notifPrefs':'تفضيلات الإشعارات','profile.notifHint':'اختر ما تستقبله وأين. الإشعارات داخل المنصّة تظهر في قائمة الجرس؛ الإيميل يصل إلى بريدك المسجّل.',
       'profile.event':'الحدث','profile.inApp':'داخل المنصّة','profile.email2':'إيميل',
       'ev.welcome':'رسالة الترحيب','ev.role_change':'تغيير دوري','ev.image_approved':'اعتماد صورتي','ev.new_user':'مستخدم جديد ينضم (للأدمن)','ev.contact_msg':'رسالة تواصل جديدة (للأدمن)',
+      'profile.dangerZone':'⚠️ منطقة الحذف',
+      'profile.deleteHint':'حذف حسابك يُعطّله فوراً ويحذفه نهائياً بعد 30 يوماً. يمكنك التراجع في أي وقت قبل انتهاء المدة بتسجيل الدخول.',
+      'profile.deleteBtn':'🗑️ حذف حسابي',
+      'profile.cancelDel':'↺ إلغاء طلب الحذف',
+      'profile.delTitle':'⚠️ حذف حسابك؟',
+      'profile.delWarn':'سيُعطَّل حسابك فوراً ويُحذف نهائياً بعد 30 يوماً من الآن. كل بياناتك (البروفايل، الإشعارات، الصورة) سيتم مسحها. يمكنك التراجع في أي وقت قبل الموعد بتسجيل الدخول.',
+      'profile.delReason':'السبب (اختياري)',
+      'profile.delAgree':'أفهم أن حسابي وبياناتي ستُحذف نهائياً بعد 30 يوماً.',
+      'profile.delConfirmBtn':'نعم، احذف حسابي',
       'profile.save':'💾 حفظ التغييرات','profile.signOut':'تسجيل الخروج',
       'profile.gateCheck':'التحقق من الصلاحية…','profile.gateSignin':'يلزم تسجيل الدخول','profile.gateSigninMsg':'سجّل الدخول لعرض بروفايلك وتعديله.',
       'profile.gateSigninBtn':'تسجيل الدخول',
@@ -218,6 +267,8 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   async function load(email){
     const { data, error } = await sb.from('profiles').select('*').eq('id', uid).maybeSingle();
     cur = data || {};
+    // ─── Deletion state ───
+    renderDeletionState();
     // Also load prefs
     try {
       const { data:p } = await sb.from('notification_prefs').select('prefs').eq('user_id', uid).maybeSingle();
