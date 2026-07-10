@@ -212,7 +212,9 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 
   function renderCard(row){
     const s = row.generation_sessions || {};
-    const url = row.storage_path ? sb.storage.from('pending').getPublicUrl(row.storage_path).data.publicUrl : '';
+    const url = row.storage_path
+      ? (row.storage_path.startsWith('http') ? row.storage_path : sb.storage.from('pending').getPublicUrl(row.storage_path).data.publicUrl)
+      : '';
     const showActions = currentStatus === 'pending';
     return `<div class="card" data-id="${row.id}">
       <div class="card-img">
