@@ -351,6 +351,68 @@
     }));
     $('btnReset').addEventListener('click', ()=>{ state.s = DEF(); populate(); render(); });
     $('btnHist').addEventListener('click', ()=>{ alert(isAr()?'حفظ السجل يأتي في المرحلة اللاحقة.':'History save coming in a later phase.'); });
+    $('btnGen') && $('btnGen').addEventListener('click', doGenerate);
+  }
+
+  /* ─── Generate & Send to Review ─── */
+  async function doGenerate(){
+    const sb = window.OmniRadAuth && window.OmniRadAuth.client;
+    if (!sb){ alert(isAr()?'يلزم تسجيل الدخول.':'Sign-in required.'); return; }
+    const b = build();
+    const s = state.s;
+    const btn = $('btnGen');
+    const box = $('genProgress'), bar = $('genProgressBar'), txt = $('genProgressText'), res = $('genResult');
+    btn.disabled = true; btn.style.opacity = '.5'; res.style.display='none'; box.style.display='block';
+    let elapsed = 0; const total = 60;
+    function setStep(msg, pct){ txt.textContent = msg; bar.style.width = pct+'%'; }
+    setStep(isAr()?'⏳ إنشاء الجلسة...':'⏳ Creating session...', 5);
+    let sessionId = null;
+    try {
+      const { data: sid, error: e1 } = await sb.rpc('create_generation_session', {
+        p_prompt_en: b.en, p_prompt_ar: b.ar,
+        p_negative: (s.negOn ? b.neg : null),
+        p_modality: s.modality, p_region: s.region || null, p_organ: s.organ || null,
+        p_plane: s.view || null, p_pathology: s.pathCase || null,
+        p_sequence: (s.modality==='MRI'? s.sequence : null),
+        p_slice_thickness: null,
+        p_extra: {}, p_model: 'fal-ai/flux/schnell'
+      });
+      if (e1) throw e1;
+      sessionId = sid;
+      setStep(isAr()?'📤 إرسال إلى fal.ai...':'📤 Submitting to fal.ai...', 15);
+      const { data: reqId, error: e2 } = await sb.rpc('session_submit', { p_session: sessionId });
+      if (e2) throw e2;
+
+      // Poll session_advance every 3s (server-side handles fetching from fal)
+      let attempts = 0;
+      while (attempts < 25){
+        await new Promise(r=>setTimeout(r, 3000));
+        attempts++; elapsed += 3;
+        const pct = Math.min(20 + Math.round(elapsed/total*70), 90);
+        setStep(isAr()?`⏳ التوليد جارٍ... ${elapsed}s`:`⏳ Generating... ${elapsed}s`, pct);
+        const { data: adv, error: eA } = await sb.rpc('session_advance', { p_session: sessionId });
+        if (eA) { console.warn('advance err', eA); continue; }
+        if (adv && adv.status === 'done' && adv.image_url){
+          setStep(isAr()?'✅ تم!':'✅ Done!', 100);
+          res.innerHTML = `<div style="text-align:center">
+            <img src="${adv.image_url}" style="max-width:100%;max-height:420px;border-radius:12px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+            <div style="margin-top:10px;font-size:12.5px;color:var(--text-s);line-height:1.6">${isAr()?'✅ الصورة أُضيفت إلى قائمة المراجعة. سيراجعها Reviewer قريباً.':'✅ Image added to Review Queue. A Reviewer will look at it shortly.'}</div>
+            <a href="review.html" style="display:inline-block;margin-top:10px;padding:8px 16px;background:var(--acc);color:var(--acc-ink);text-decoration:none;font-weight:700;font-size:12px;border-radius:8px">${isAr()?'📋 فتح قائمة المراجعة':'📋 Open Review Queue'}</a>
+          </div>`;
+          res.style.display = 'block';
+          btn.disabled = false; btn.style.opacity = '1';
+          return;
+        }
+        if (adv && adv.status === 'failed'){
+          throw new Error(adv.error || 'Generation failed');
+        }
+      }
+      throw new Error(isAr()?'انتهت المهلة':'Generation timed out');
+    } catch(err){
+      setStep((isAr()?'❌ خطأ: ':'❌ Error: ') + (err.message||err), 0);
+      bar.style.background = 'var(--err)';
+      btn.disabled = false; btn.style.opacity = '1';
+    }
   }
 
   function setTab(name){
