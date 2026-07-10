@@ -118,6 +118,19 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
     </label>
   </div>
 
+  <div class="card">
+    <div class="section-t" data-i18n="profile.notifPrefs">Notification preferences</div>
+    <div style="font-size:11.5px;color:var(--text-m);margin-bottom:12px;line-height:1.6" data-i18n="profile.notifHint">Choose what you receive and how. In-app notifications appear in the bell menu; email arrives at your address on record.</div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr>
+        <th style="text-align:start;padding:8px 8px;font-size:10.5px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace" data-i18n="profile.event">Event</th>
+        <th style="padding:8px;font-size:10.5px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">🔔 <span data-i18n="profile.inApp">In-app</span></th>
+        <th style="padding:8px;font-size:10.5px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">📧 <span data-i18n="profile.email2">Email</span></th>
+      </tr></thead>
+      <tbody id="prefsBody"></tbody>
+    </table></div>
+  </div>
+
   <div class="actions">
     <button class="btn ghost" id="btnSignOut" data-i18n="profile.signOut">Sign out</button>
     <button class="btn" id="btnSave" data-i18n="profile.save">💾 Save changes</button>
@@ -148,6 +161,9 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.uploading':'Uploading…','profile.uploadError':'Upload error: ',
       'profile.showTitle':'Show me on the Contributors page',
       'profile.showSub':'If your role permits (Contributor / Reviewer / Admin), your card will appear publicly.',
+      'profile.notifPrefs':'Notification preferences','profile.notifHint':'Choose what you receive and how. In-app notifications appear in the bell menu; email arrives at your address on record.',
+      'profile.event':'Event','profile.inApp':'In-app','profile.email2':'Email',
+      'ev.welcome':'Welcome message','ev.role_change':'My role changes','ev.image_approved':'My image approved','ev.new_user':'New user joined (admin only)','ev.contact_msg':'New contact message (admin only)',
       'profile.save':'💾 Save changes','profile.signOut':'Sign out',
       'profile.gateCheck':'Checking access…','profile.gateSignin':'Sign in required','profile.gateSigninMsg':'Sign in to view and edit your profile.',
       'profile.gateSigninBtn':'Sign in',
@@ -165,6 +181,9 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.uploading':'جارٍ الرفع…','profile.uploadError':'خطأ في الرفع: ',
       'profile.showTitle':'أظهرني في صفحة المساهمين',
       'profile.showSub':'إن سمح دورك (مساهم / مراجع / أدمن)، ستظهر بطاقتك للجمهور.',
+      'profile.notifPrefs':'تفضيلات الإشعارات','profile.notifHint':'اختر ما تستقبله وأين. الإشعارات داخل المنصّة تظهر في قائمة الجرس؛ الإيميل يصل إلى بريدك المسجّل.',
+      'profile.event':'الحدث','profile.inApp':'داخل المنصّة','profile.email2':'إيميل',
+      'ev.welcome':'رسالة الترحيب','ev.role_change':'تغيير دوري','ev.image_approved':'اعتماد صورتي','ev.new_user':'مستخدم جديد ينضم (للأدمن)','ev.contact_msg':'رسالة تواصل جديدة (للأدمن)',
       'profile.save':'💾 حفظ التغييرات','profile.signOut':'تسجيل الخروج',
       'profile.gateCheck':'التحقق من الصلاحية…','profile.gateSignin':'يلزم تسجيل الدخول','profile.gateSigninMsg':'سجّل الدخول لعرض بروفايلك وتعديله.',
       'profile.gateSigninBtn':'تسجيل الدخول',
@@ -199,6 +218,12 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   async function load(email){
     const { data, error } = await sb.from('profiles').select('*').eq('id', uid).maybeSingle();
     cur = data || {};
+    // Also load prefs
+    try {
+      const { data:p } = await sb.from('notification_prefs').select('prefs').eq('user_id', uid).maybeSingle();
+      cur._prefs = (p && p.prefs) || { welcome:{in_app:true,email:true}, role_change:{in_app:true,email:true}, image_approved:{in_app:true,email:true}, new_user:{in_app:true,email:false}, contact_msg:{in_app:true,email:true} };
+    } catch(e){ cur._prefs = {}; }
+    renderPrefs();
     const name = cur.display_name || (email||'').split('@')[0] || 'User';
     $('whoName').textContent = name;
     $('whoEmail').textContent = email || cur.email || '';
@@ -245,6 +270,30 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   $('btnSignOut').addEventListener('click', async () => {
     try { await sb.auth.signOut(); location.href = 'auth.html'; } catch(e){}
   });
+
+  function renderPrefs(){
+    const body = document.getElementById('prefsBody'); if (!body) return;
+    const events = ['welcome','role_change','image_approved','new_user','contact_msg'];
+    const p = cur._prefs || {};
+    body.innerHTML = events.map(k => {
+      const inApp = !!(p[k] && p[k].in_app);
+      const email = !!(p[k] && p[k].email);
+      return `<tr>
+        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s)">${t('ev.'+k)}</td>
+        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s);text-align:center"><input type="checkbox" data-ev="${k}" data-ch="in_app" ${inApp?'checked':''}></td>
+        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s);text-align:center"><input type="checkbox" data-ev="${k}" data-ch="email" ${email?'checked':''}></td>
+      </tr>`;
+    }).join('');
+    body.querySelectorAll('input[type="checkbox"][data-ev]').forEach(cb => cb.addEventListener('change', async () => {
+      const ev = cb.dataset.ev, ch = cb.dataset.ch;
+      cur._prefs[ev] = cur._prefs[ev] || {};
+      cur._prefs[ev][ch] = cb.checked;
+      try {
+        await sb.from('notification_prefs').upsert({ user_id: uid, prefs: cur._prefs }, { onConflict:'user_id' });
+        showMsg('ok', t('msg.saved'));
+      } catch(e){ showMsg('err', t('profile.uploadError') + e.message); }
+    }));
+  }
 
   /* ─── Preset radiology avatars ─── */
   const PRESETS = [
