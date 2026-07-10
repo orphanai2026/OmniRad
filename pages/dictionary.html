@@ -71,6 +71,7 @@ h1{font-size:clamp(1.8rem,3.6vw,2.3rem);font-weight:700;letter-spacing:-.02em;ma
 </head>
 <body>
 <div class="wrap">
+  <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:7px;color:var(--text-m);text-decoration:none;font-size:12.5px;font-weight:600;margin-bottom:14px;transition:color .15s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--text-m)'"><span style="font-size:15px">←</span><span data-i18n="dict.back">Back</span></a>
   <div class="eyebrow" data-i18n="dict.eyebrow">OmniRad · Reference</div>
   <h1 data-i18n="dict.title">Anatomical Dictionary</h1>
   <p class="lead" data-i18n="dict.lead">Bilingual anatomical terminology — the unified reference used across every page. Click any term to see details; hover for a quick tooltip.</p>
@@ -117,7 +118,8 @@ if (window.OmniRadI18n && OmniRadI18n.dicts){
     'dict.related':'Related structures','dict.substructures':'Substructures','dict.partOf':'Part of',
     'dict.noResults':'No terms match your search.',
     'nav.dictionary':'Dictionary',
-    'dict.moreInfo':'More info (Radiopaedia) ↗'
+    'dict.moreInfo':'More info (Radiopaedia) ↗',
+    'dict.back':'Back'
   });
   Object.assign(OmniRadI18n.dicts.ar, {
     'dict.eyebrow':'أومنيراد · مرجعية',
@@ -130,12 +132,13 @@ if (window.OmniRadI18n && OmniRadI18n.dicts){
     'dict.related':'أعضاء ذات صلة','dict.substructures':'أجزاء فرعية','dict.partOf':'جزء من',
     'dict.noResults':'لا توجد مصطلحات تطابق البحث.',
     'nav.dictionary':'القاموس',
-    'dict.moreInfo':'مزيد من المعلومات (Radiopaedia) ↗'
+    'dict.moreInfo':'مزيد من المعلومات (Radiopaedia) ↗',
+    'dict.back':'رجوع'
   });
   if (typeof OmniRadI18n.apply === 'function') OmniRadI18n.apply();
 }
 
-function tt(key, subs){ let s = (OmniRadI18n && OmniRadI18n.t) ? OmniRadI18n.t(key) : key; if (subs) Object.keys(subs).forEach(k => { s = s.replace('{'+k+'}', subs[k]); }); return s; }
+function tt(key, subs){ const I = window.OmniRadI18n; let s = (I && I.t) ? I.t(key) : key; if (subs) Object.keys(subs).forEach(k => { s = s.replace('{'+k+'}', subs[k]); }); return s; }
 
 function renderRegionFilter(){
   const box = document.getElementById('regionFilter');
