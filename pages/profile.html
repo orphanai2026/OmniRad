@@ -426,7 +426,9 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       const b = document.createElement('button');
       b.type = 'button';
       b.textContent = label;
-      b.style.cssText = 'padding:9px 14px;border-radius:9px;border:1.5px solid ' + (active ? 'var(--acc)' : 'var(--border-s)') + ';background:' + (active ? 'var(--acc)' : 'var(--bg-ov)') + ';color:' + (active ? 'var(--acc-ink)' : 'var(--text-s)') + ';font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s';
+      b.style.cssText = 'padding:9px 14px;border-radius:9px;border:1.5px solid ' + (active ? 'var(--acc)' : 'var(--border)') + ';background:' + (active ? 'var(--acc)' : 'transparent') + ';color:' + (active ? 'var(--acc-ink)' : 'var(--text)') + ';font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s';
+      b.addEventListener('mouseenter', ()=>{ if (!active) b.style.borderColor = 'var(--acc)'; });
+      b.addEventListener('mouseleave', ()=>{ if (!active) b.style.borderColor = 'var(--border)'; });
       b.addEventListener('click', onclick);
       return b;
     };
