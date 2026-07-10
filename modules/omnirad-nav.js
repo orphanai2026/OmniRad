@@ -126,6 +126,9 @@
       '<span class="onav-edu"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n="common.educational">Educational use only</span></span>' +
       '<button class="onav-ib onav-lang" id="onavLang" title="Language">🌐</button>' +
       '<button class="onav-ib" id="onavTheme" title="Toggle theme">☀</button>' +
+      '<div class="onav-uw" id="onavBellWrap" style="display:none;position:relative"><button class="onav-ib" id="onavBell" title="Notifications">🔔<span id="onavBellCount" style="position:absolute;top:-4px;inset-inline-end:-4px;background:var(--acc);color:var(--acc-ink);border-radius:999px;padding:1px 5px;font-size:9px;font-weight:800;display:none">0</span></button>' +
+        '<div class="onav-udrop" id="onavBellDrop" style="min-width:320px;max-height:60vh;overflow-y:auto;padding:6px"><div id="onavBellList" style="padding:8px;font-size:12px;color:var(--text-m);text-align:center">Loading…</div></div>' +
+      '</div>' +
       '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">…</div><span class="onav-un" id="onavName">…</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
         '<div class="onav-udrop"><a href="' + abs('pages/profile.html') + '" data-i18n="common.profile">👤 My Profile</a><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
       '</div>' +
@@ -213,6 +216,49 @@
     (function pollAuth(){
       if (window.OmniRadAuth && OmniRadAuth.client) return syncUser();
       setTimeout(pollAuth, 120);
+    })();
+
+    /* ─── Bell notifications ─── */
+    async function bellRender(){
+      if (!window.OmniRadAuth || !OmniRadAuth.client) return;
+      const bellWrap = document.getElementById('onavBellWrap');
+      const list = document.getElementById('onavBellList');
+      const count = document.getElementById('onavBellCount');
+      try {
+        const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
+        if (!session){ bellWrap.style.display = 'none'; return; }
+        bellWrap.style.display = 'inline-block';
+        const { data, error } = await OmniRadAuth.client.from('notifications')
+          .select('*').eq('user_id', session.user.id)
+          .order('created_at', { ascending:false }).limit(15);
+        if (error) throw error;
+        const unread = (data||[]).filter(n => !n.read_at).length;
+        count.textContent = unread; count.style.display = unread ? 'inline-block' : 'none';
+        if (!data || !data.length){ list.innerHTML = '<div style="padding:12px;color:var(--text-m);font-size:12px;text-align:center">No notifications</div>'; return; }
+        list.innerHTML = data.map(n => `
+          <a href="${n.link || '#'}" data-nid="${n.id}" data-read="${n.read_at?1:0}" style="display:flex;flex-direction:column;padding:9px 11px;border-radius:6px;text-decoration:none;color:var(--text-s);background:${n.read_at?'transparent':'var(--acc-sub)'}">
+            <div style="font-size:12.5px;font-weight:700;color:${n.read_at?'var(--text-s)':'var(--acc)'}">${n.title || n.kind}</div>
+            ${n.body ? `<div style="font-size:11.5px;color:var(--text-m);margin-top:2px">${n.body}</div>` : ''}
+            <div style="font-size:10px;color:var(--text-m);margin-top:4px;font-family:'IBM Plex Mono',monospace">${new Date(n.created_at).toLocaleString('en-GB')}</div>
+          </a>`).join('');
+        list.querySelectorAll('[data-nid]').forEach(a => a.addEventListener('click', async e => {
+          const id = a.dataset.nid;
+          if (a.dataset.read === '0'){ try { await OmniRadAuth.client.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', id); } catch(_){} bellRender(); }
+        }));
+      } catch(e){ console.warn('[bell]', e); list.innerHTML = '<div style="padding:12px;color:var(--err);font-size:11px">'+e.message+'</div>'; }
+    }
+    (async function subscribe(){
+      let tries = 0;
+      while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+      if (!window.OmniRadAuth) return;
+      bellRender();
+      try {
+        const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
+        if (!session) return;
+        OmniRadAuth.client.channel('notif-'+session.user.id)
+          .on('postgres_changes', { event:'INSERT', schema:'public', table:'notifications', filter:'user_id=eq.'+session.user.id }, () => bellRender())
+          .subscribe();
+      } catch(e){ console.warn('[bell subscribe]', e); }
     })();
     // hook into existing auth if present
     if (window.OmniRadAuth && typeof OmniRadAuth.updateNav === 'function') {
