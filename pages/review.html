@@ -249,8 +249,23 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 
   window.doApprove = async id => {
     try {
+      // 1) Look up pending row to get its storage_path
+      const { data: p, error: e1 } = await sb.from('pending_images').select('storage_path').eq('id', id).single();
+      if (e1) throw e1;
+      // 2) Physically copy the file from pending bucket to atlas (public) bucket
+      if (p && p.storage_path){
+        const { data: blob, error: eDl } = await sb.storage.from('pending').download(p.storage_path);
+        if (!eDl && blob){
+          const { error: eUp } = await sb.storage.from('atlas').upload(p.storage_path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
+          if (eUp) console.warn('[approve] atlas upload warning:', eUp);
+        } else if (eDl) {
+          console.warn('[approve] pending download warning:', eDl);
+        }
+      }
+      // 3) Insert the atlas_images row + mark pending as approved
       const { error } = await sb.rpc('approve_pending_image', { p_pending: id, p_notes: null });
-      if (error) throw error; toast(t('rev.approved.done')); loadList();
+      if (error) throw error;
+      toast(t('rev.approved.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   };
   window.openReject = id => {
