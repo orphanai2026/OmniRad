@@ -153,7 +153,7 @@ function render(struct){
       '<button type="button" class="omrt-btn" data-speak="en">🔊 ' + speakEnLbl + '</button>' +
       '<button type="button" class="omrt-btn" data-speak="ar">🔊 ' + speakArLbl + '</button>' +
       (onDict
-        ? '' // no self-link on the dictionary page
+        ? '<a class="omrt-btn primary" href="https://radiopaedia.org/search?q=' + encodeURIComponent(struct.en) + '" target="_blank" rel="noopener">' + (isAr?'مزيد من المعلومات ↗':'More info ↗') + '</a>'
         : (onAtlas
           ? '<button type="button" class="omrt-btn primary" data-focus="' + struct.id + '">' + focusHere + '</button>'
           : '<a class="omrt-btn primary" href="' + BASE + 'pages/dictionary.html?term=' + encodeURIComponent(struct.id) + '">' + openInDict + '</a>')) +
