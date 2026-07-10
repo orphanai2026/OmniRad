@@ -158,10 +158,16 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
       <div class="section-head"><span data-i18n="studio.sec3">Anatomy</span><span class="badge req" data-i18n="studio.required">Required</span></div>
       <div class="grid">
         <div class="f"><label data-i18n="fields.region">Anatomical region</label>
-          <input list="anat-all" data-key="region" placeholder="e.g. Chest / Head & CNS / Abdomen">
+          <select data-key="region" id="selRegion">
+            <option value="">— Select region —</option>
+          </select>
+          <input list="anat-all" data-key="regionCustom" id="inpRegionCustom" placeholder="Custom region…" style="display:none;margin-top:6px">
         </div>
         <div class="f"><label data-i18n="fields.organ">Organ</label>
-          <input list="anat-region" data-key="organ" placeholder="e.g. Lungs / Brain / Liver">
+          <select data-key="organ" id="selOrgan" disabled>
+            <option value="">— Select region first —</option>
+          </select>
+          <input list="anat-region" data-key="organCustom" id="inpOrganCustom" placeholder="Custom organ…" style="display:none;margin-top:6px">
         </div>
       </div>
       <div class="grid" style="margin-top:12px">
