@@ -185,7 +185,7 @@ const STRUCTURES = [
   /* ─────── Breast ─────── */
   { id:'breast',             en:'Breast',                    ar:'الثدي',                     region:'breast', parent:'', rank:'organ' },
   { id:'nipple-areola',      en:'Nipple-areola complex',     ar:'مركب الحلمة والهالة',       region:'breast', parent:'breast', rank:'substructure' },
-  { id:'axillary-lymph',     en:'Axillary lymph nodes',      ar:'العقد اللمفية الإبطية',     region:'breast', parent:'', rank:'organ' }
+  { id:'axillary-lymph',     en:'Axillary lymph nodes',      ar:'العقد اللمفية الإبطية',     region:'breast', parent:'', rank:'organ' },
 
   /* ═══ v1.5 additions — expanded coverage (regions × substructures) ═══ */
   /* ─── head-cns additions ─── */
