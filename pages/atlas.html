@@ -732,6 +732,58 @@ window.addEventListener('resize', onResize);
 onResize();
 renderSidebar();
 selectStructure('brain');
+
+/* ─── Overlay approved AI images from Supabase (Phase E) ─── */
+(async function loadApprovedFromDB(){
+  try {
+    let tries=0;
+    while(!(window.OmniRadAuth && OmniRadAuth.client) && tries<40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+    if (!window.OmniRadAuth) return;
+    const sb = OmniRadAuth.client;
+    const { data, error } = await sb.from('atlas_images')
+      .select('id,storage_path,modality,region,organ,plane,pathology,prompt_en,created_at')
+      .order('created_at', { ascending:false });
+    if (error){ console.warn('[atlas] approved fetch failed', error); return; }
+    if (!data || !data.length) return;
+    // Build index keyed on lowercase organ+modality+plane
+    const idx = {};
+    const pubBase = sb.storage.from('atlas').getPublicUrl('').data.publicUrl.replace(/\/$/,'');
+    data.forEach(r => {
+      const url = pubBase + '/' + r.storage_path;
+      const org = (r.organ||'').toLowerCase().trim();
+      const mod = (r.modality||'').toLowerCase().trim();
+      const pln = (r.plane||'').toLowerCase().trim();
+      const key = org + '|' + mod + '|' + pln;
+      if (!idx[key]) idx[key] = { url, meta:r };
+    });
+    window.__omniradApproved = idx;
+
+    // Wrap loadCurrent to prefer DB images
+    const origLoad = window.loadCurrent || loadCurrent;
+    window.loadCurrent = function(){
+      const st = currentStruct();
+      if (st){
+        const org = (st.en||'').toLowerCase().trim();
+        const mod = (state.modality||'').toLowerCase().trim();
+        const pln = (state.plane||'').toLowerCase().trim();
+        const hit = idx[org+'|'+mod+'|'+pln] || idx[org+'|'+mod+'|'] || idx[org+'|'+mod];
+        if (hit){
+          $('empty').style.display = 'none';
+          state.zoom = 1; state.panX = 0; state.panY = 0; state.invert = false; state.measurements = [];
+          const el = new Image(); el.crossOrigin = 'anonymous';
+          el.onload = ()=>{ state.img = el; renderInfo(); draw(); };
+          el.onerror = ()=>{ origLoad(); };
+          el.src = hit.url;
+          $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · AI-approved`;
+          return;
+        }
+      }
+      return origLoad();
+    };
+    // Refresh current view
+    if (typeof loadCurrent==='function') loadCurrent();
+  } catch(e){ console.warn('[atlas] approved overlay error', e); }
+})();
 </script>
 </body>
 </html>
