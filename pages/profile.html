@@ -295,6 +295,55 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
     $('fShow').checked = cur.show_on_contributors !== false;
   }
 
+  /* ─── Account deletion flow ─── */
+  function renderDeletionState(){
+    const normal = $('delNormal'), scheduled = $('delScheduled');
+    if (!normal || !scheduled) return;
+    if (cur && cur.deletion_at){
+      normal.style.display = 'none';
+      scheduled.style.display = '';
+      const d = new Date(cur.deletion_at);
+      const days = Math.max(0, Math.ceil((d - Date.now()) / 86400000));
+      $('delScheduledMsg').textContent = (window.OmniRadI18n && OmniRadI18n.lang==='ar')
+        ? `⚠️ حسابك مجدول للحذف النهائي في ${d.toLocaleString('ar-EG')} (بعد ${days} يوماً). سجّل الدخول قبل ذلك للتراجع.`
+        : `⚠️ Your account is scheduled for permanent deletion on ${d.toLocaleString('en-GB')} (in ${days} days). Cancel any time before then.`;
+    } else {
+      normal.style.display = '';
+      scheduled.style.display = 'none';
+    }
+  }
+  $('btnDeleteAcc') && $('btnDeleteAcc').addEventListener('click', () => {
+    $('delReason').value = ''; $('delConfirm').checked = false;
+    $('delConfirmBtn').disabled = true; $('delConfirmBtn').style.opacity = '.5';
+    $('delModal').style.display = 'flex';
+  });
+  $('delCancel') && $('delCancel').addEventListener('click', () => { $('delModal').style.display = 'none'; });
+  $('delConfirm') && $('delConfirm').addEventListener('change', e => {
+    $('delConfirmBtn').disabled = !e.target.checked;
+    $('delConfirmBtn').style.opacity = e.target.checked ? '1' : '.5';
+  });
+  $('delConfirmBtn') && $('delConfirmBtn').addEventListener('click', async () => {
+    try {
+      const { data, error } = await sb.rpc('request_account_deletion', { p_reason: $('delReason').value || null });
+      if (error) throw error;
+      cur.deletion_at = data; renderDeletionState();
+      $('delModal').style.display = 'none';
+      showMsg('ok', (window.OmniRadI18n && OmniRadI18n.lang==='ar')
+        ? 'تم جدولة حذف حسابك. سيصلك بريد للتأكيد.'
+        : 'Deletion scheduled. A confirmation email will be sent.');
+    } catch(e){ showMsg('err', 'Error: '+e.message); }
+  });
+  $('btnCancelDel') && $('btnCancelDel').addEventListener('click', async () => {
+    try {
+      const { error } = await sb.rpc('cancel_account_deletion');
+      if (error) throw error;
+      cur.deletion_at = null; renderDeletionState();
+      showMsg('ok', (window.OmniRadI18n && OmniRadI18n.lang==='ar')
+        ? 'تم إلغاء طلب الحذف.'
+        : 'Deletion request cancelled.');
+    } catch(e){ showMsg('err', 'Error: '+e.message); }
+  });
+
   $('btnSave').addEventListener('click', async () => {
     const patch = {
       display_name:      $('fNameEn').value.trim() || null,
