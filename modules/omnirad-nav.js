@@ -257,6 +257,27 @@
       while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
       if (!window.OmniRadAuth) return;
       bellRender();
+      // Mark all unread as read when the bell menu opens (hover / focus / touch)
+      const bellWrap = document.getElementById('onavBellWrap');
+      async function markAllRead(){
+        try {
+          const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
+          if (!session) return;
+          const res = await OmniRadAuth.client.from('notifications')
+            .update({ read_at: new Date().toISOString() })
+            .eq('user_id', session.user.id).is('read_at', null).select('id');
+          if (res && res.data && res.data.length) bellRender();
+        } catch(_){}
+      }
+      if (bellWrap){
+        let opened = false;
+        bellWrap.addEventListener('mouseenter', () => { if (!opened){ opened = true; markAllRead(); } });
+        bellWrap.addEventListener('mouseleave', () => { opened = false; });
+        bellWrap.addEventListener('focusin', markAllRead);
+        // touch: also mark on button tap
+        const bellBtn = document.getElementById('onavBell');
+        if (bellBtn) bellBtn.addEventListener('click', markAllRead);
+      }
       try {
         const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
         if (!session) return;
