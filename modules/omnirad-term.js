@@ -90,14 +90,37 @@ function position(anchor){
 }
 
 function speak(text, lang){
-  if (window.OmniRadSpeak && OmniRadSpeak.say) return OmniRadSpeak.say(text, { lang });
+  // Try Web Speech API with proper voice picking
+  if ('speechSynthesis' in window){
+    try {
+      const voices = speechSynthesis.getVoices();
+      let voice = null;
+      if (lang && lang.startsWith('ar')){
+        voice = voices.find(v => /^ar/i.test(v.lang) && /female|Salma|Zeina|Amina|Naayf/i.test(v.name))
+             || voices.find(v => /^ar/i.test(v.lang))
+             || null;
+      } else {
+        voice = voices.find(v => /^en/i.test(v.lang) && /female|Samantha|Karen|Google|Microsoft/i.test(v.name))
+             || voices.find(v => /^en/i.test(v.lang))
+             || null;
+      }
+      if (voice){
+        const u = new SpeechSynthesisUtterance(text);
+        u.voice = voice; u.lang = voice.lang; u.rate = 0.9;
+        speechSynthesis.cancel(); speechSynthesis.speak(u);
+        return;
+      }
+    } catch(e){ console.warn('speech synthesis failed', e); }
+  }
+  // Fallback: Google Translate TTS (unofficial, CORS-tolerant via <audio>)
   try {
-    const u = new SpeechSynthesisUtterance(text);
-    if (lang) u.lang = lang;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-  } catch(e){ console.warn('speech synthesis unavailable', e); }
+    const url = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(text) + '&tl=' + (lang || 'en').split('-')[0] + '&client=tw-ob';
+    const a = new Audio(url);
+    a.play().catch(err => console.warn('audio fallback failed', err));
+  } catch(e){ console.warn('all speech methods failed', e); }
 }
+// Warm-up voices list (Chrome loads asynchronously)
+if ('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); }
 
 function render(struct){
   const isAr = window.OmniRadI18n && OmniRadI18n.lang === 'ar';
@@ -106,9 +129,13 @@ function render(struct){
   const parent = struct.parent ? A.byId[struct.parent] : null;
   const parentLabel = parent ? (isAr ? parent.ar : parent.en) : '';
   const rankLabel = {organ:isAr?'عضو':'organ', substructure:isAr?'بنية فرعية':'substructure', compartment:isAr?'حيّز':'compartment'}[struct.rank] || struct.rank;
-  const speakEnLbl = isAr ? '▶ نطق EN' : '▶ Speak EN';
-  const speakArLbl = isAr ? '▶ نطق AR' : '▶ نطق';
+  const speakEnLbl = isAr ? 'نطق EN' : 'Speak EN';
+  const speakArLbl = isAr ? 'نطق AR' : 'نطق العربي';
+  const onAtlas = /\/atlas\.html/.test(location.pathname);
+  const onDict  = /\/dictionary\.html/.test(location.pathname);
+  const openInDict  = isAr ? 'افتح في القاموس ↗' : 'Open in Dictionary ↗';
   const openInAtlas = isAr ? 'افتح في الأطلس ↗' : 'Open in Atlas ↗';
+  const focusHere   = isAr ? '⎈ الانتقال إلى العضو' : '⎈ Focus this structure';
   const parentPrefix = isAr ? 'جزء من:' : 'Part of:';
   const source = A.reference;
 
@@ -125,7 +152,11 @@ function render(struct){
     '<div class="omrt-row">' +
       '<button type="button" class="omrt-btn" data-speak="en">🔊 ' + speakEnLbl + '</button>' +
       '<button type="button" class="omrt-btn" data-speak="ar">🔊 ' + speakArLbl + '</button>' +
-      '<a class="omrt-btn primary" href="' + BASE + 'pages/atlas.html?structure=' + encodeURIComponent(struct.id) + '">' + openInAtlas + '</a>' +
+      (onDict
+        ? '' // no self-link on the dictionary page
+        : (onAtlas
+          ? '<button type="button" class="omrt-btn primary" data-focus="' + struct.id + '">' + focusHere + '</button>'
+          : '<a class="omrt-btn primary" href="' + BASE + 'pages/dictionary.html?term=' + encodeURIComponent(struct.id) + '">' + openInDict + '</a>')) +
     '</div>' +
     '<div class="omrt-src">' + source + '</div>';
 
@@ -133,6 +164,11 @@ function render(struct){
   pop.querySelector('[data-speak="ar"]').addEventListener('click', () => speak(struct.ar, 'ar-SA'));
   const jump = pop.querySelector('[data-jump]');
   if (jump) jump.addEventListener('click', (e) => { e.preventDefault(); showTermById(jump.dataset.jump, currentAnchor); });
+  const focus = pop.querySelector('[data-focus]');
+  if (focus) focus.addEventListener('click', () => {
+    const id = focus.dataset.focus;
+    if (typeof window.selectStructure === 'function'){ window.selectStructure(id); pop.classList.remove('on'); }
+  });
 }
 
 function showTermById(termIdOrName, anchor){

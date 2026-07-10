@@ -17,9 +17,10 @@
 
   // Nav model — single source of truth for every page
   var CORE = [
-    { href: 'pages/atlas.html',       icon: '📖', label: 'Atlas',   i18n: 'nav.atlas' },
-    { href: 'pages/comparison.html',  icon: '⚖',  label: 'Compare', i18n: 'nav.compare' },
-    { href: 'pages/review.html',      icon: '📋', label: 'Review',  i18n: 'nav.review', role:'admin,reviewer' }
+    { href: 'pages/atlas.html',       icon: '📖', label: 'Atlas',      i18n: 'nav.atlas' },
+    { href: 'pages/dictionary.html',  icon: '🔠', label: 'Dictionary', i18n: 'nav.dictionary' },
+    { href: 'pages/comparison.html',  icon: '⚖',  label: 'Compare',    i18n: 'nav.compare' },
+    { href: 'pages/review.html',      icon: '📋', label: 'Review',     i18n: 'nav.review', role:'admin,reviewer' }
   ];
   var GROUPS = [
     { icon: '🎓', label: 'Learn', i18n:'nav.learn', items: [
