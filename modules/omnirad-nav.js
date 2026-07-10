@@ -128,6 +128,7 @@
     '<ul class="onav-links">' + coreHTML + '<li class="onav-sep" aria-hidden="true"></li>' + groupHTML + '</ul>' +
     '<div class="onav-end">' +
       '<span class="onav-edu"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n="common.educational">Educational use only</span></span>' +
+      '<button class="onav-ib" id="onavSearch" title="Search (Ctrl/⌘+K)" onclick="window.OmniRadSearch && OmniRadSearch.open()">🔎</button>' +
       '<button class="onav-ib onav-lang" id="onavLang" title="Language">🌐</button>' +
       '<button class="onav-ib" id="onavTheme" title="Toggle theme">☀</button>' +
       '<div class="onav-uw" id="onavBellWrap" style="display:none;position:relative"><button class="onav-ib" id="onavBell" title="Notifications">🔔<span id="onavBellCount" style="position:absolute;top:-4px;inset-inline-end:-4px;background:var(--acc);color:var(--acc-ink);border-radius:999px;padding:1px 5px;font-size:9px;font-weight:800;display:none">0</span></button>' +
