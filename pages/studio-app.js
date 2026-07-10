@@ -179,6 +179,48 @@
       ? dict.filter(row => (row[2] || '').toLowerCase() === region.toLowerCase() || (row[2] || '').toLowerCase().includes(region.toLowerCase()))
       : dict;
     $('anat-region').innerHTML = regionEntries.map(row => `<option value="${row[0]}">${row[1] || ''}</option>`).join('');
+
+    // Populate Region dropdown from unique row[2] values
+    const CUSTOM = '__custom__';
+    const uniqRegions = [...new Set(dict.map(r => r[2]).filter(Boolean))].sort();
+    const selR = $('selRegion');
+    if (selR){
+      selR.innerHTML = '<option value="">— ' + (ar?'اختر المنطقة':'Select region') + ' —</option>'
+        + uniqRegions.map(r => `<option value="${r}">${r}</option>`).join('')
+        + `<option value="${CUSTOM}">${ar?'✏️ إدخال يدوي…':'✏️ Custom…'}</option>`;
+      // If current value not in list, treat as custom
+      const cur = state.s.region || '';
+      if (cur && !uniqRegions.includes(cur)){
+        selR.value = CUSTOM;
+        const inpR = $('inpRegionCustom'); if (inpR){ inpR.style.display=''; inpR.value = cur; }
+      } else {
+        selR.value = cur;
+        const inpR = $('inpRegionCustom'); if (inpR){ inpR.style.display='none'; }
+      }
+    }
+    // Populate Organ dropdown filtered by region
+    const selO = $('selOrgan');
+    if (selO){
+      const scoped = region ? dict.filter(r => (r[2]||'') === region) : [];
+      if (!region){
+        selO.disabled = true;
+        selO.innerHTML = '<option value="">— ' + (ar?'اختر المنطقة أولاً':'Select region first') + ' —</option>';
+      } else {
+        selO.disabled = false;
+        selO.innerHTML = '<option value="">— ' + (ar?'اختر العضو':'Select organ') + ' —</option>'
+          + scoped.map(r => `<option value="${r[0]}">${ar?(r[1]||r[0]):r[0]}</option>`).join('')
+          + `<option value="${CUSTOM}">${ar?'✏️ إدخال يدوي…':'✏️ Custom…'}</option>`;
+        const cur = state.s.organ || '';
+        const inList = scoped.some(r => r[0] === cur);
+        if (cur && !inList){
+          selO.value = CUSTOM;
+          const inpO = $('inpOrganCustom'); if (inpO){ inpO.style.display=''; inpO.value = cur; }
+        } else {
+          selO.value = cur;
+          const inpO = $('inpOrganCustom'); if (inpO){ inpO.style.display='none'; }
+        }
+      }
+    }
     qa('input[data-key]').forEach(inp => {
       const k = inp.dataset.key;
       if (inp.type === 'checkbox') inp.checked = !!state.s[k]; else if (state.s[k] != null) inp.value = state.s[k];
@@ -227,7 +269,7 @@
   }
 
   /* ─── Prompt builder ─── */
-  function arOpt(k, v){ const o = (OPT[k]||[]).find(x=>x.v===v); return o ? o.ar : v; }
+  function arOpt(k, v){ const arr = OPT[k]; if (!Array.isArray(arr)) return v; const o = arr.find(x=>x.v===v); return o ? o.ar : v; }
   function build(){
     const s = state.s;
     const style = s.style.toLowerCase();
@@ -329,13 +371,30 @@
   function onChange(e){
     const el = e.target; const k = el.dataset.key; if (!k) return;
     const v = el.type === 'checkbox' ? el.checked : el.value;
+    const CUSTOM = '__custom__';
+    // Region select — handle custom-entry toggle
+    if (k === 'region'){
+      const inp = $('inpRegionCustom');
+      if (v === CUSTOM){ if (inp){ inp.style.display=''; inp.focus(); } render(); return; }
+      if (inp) inp.style.display = 'none';
+      state.s.region = v; state.s.organ = ''; populate(); render(); return;
+    }
+    if (k === 'regionCustom'){ state.s.region = v.trim(); state.s.organ = ''; populate(); render(); return; }
+    // Organ select — handle custom-entry toggle
+    if (k === 'organ'){
+      const inp = $('inpOrganCustom');
+      if (v === CUSTOM){ if (inp){ inp.style.display=''; inp.focus(); } render(); return; }
+      if (inp) inp.style.display = 'none';
+      state.s.organ = v; render(); return;
+    }
+    if (k === 'organCustom'){ state.s.organ = v.trim(); render(); return; }
+
     state.s[k] = v;
     if (k === 'modality'){ // reset view to sensible default for modality
       const avail = OPT.view[state.s.modality] || OPT.view._default;
       if (!avail.some(o=>o.v===state.s.view)) state.s.view = avail[0].v;
       populate();
     } else if (k === 'normalPath'){ populate(); }
-    else if (k === 'region'){ populate(); }
     render();
   }
 
