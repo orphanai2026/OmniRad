@@ -46,7 +46,16 @@
       'admin.gateDenied':'Admin only','admin.gateDeniedMsg':'Your account does not have admin rights.','admin.gateSigninBtn':'Sign in',
       'tile.totalUsers':'Total users','tile.approvedImages':'Approved images','tile.mnemonics':'Mnemonics','tile.cards':'Learning cards','tile.contributors':'Contributors','tile.unread':'Unread messages',
       'tile.admins':'Admins','tile.contribs':'Contrib','tile.viewers':'Viewers','tile.pending':'Pending','tile.rejected':'Rejected','tile.total':'Total',
-      'col.email':'Email','col.name':'Name','col.role':'Role','col.joined':'Joined','col.changeRole':'Change role',
+      'col.email':'Email','col.name':'Name','col.role':'Role','col.joined':'Joined','col.changeRole':'Change role','col.status':'Status',
+      'adm.active':'active','adm.disabled':'disabled','adm.scheduled':'scheduled',
+      'adm.restore':'Restore','adm.disable':'Disable','adm.delete':'Delete',
+      'adm.confirmDisable':'Disable this user? They will not be able to sign in until you restore them.',
+      'adm.confirmRestore':'Restore this user? They will regain full access.',
+      'adm.confirmDelete1':'⚠️ PERMANENTLY delete user %s and all their data? This CANNOT be undone.',
+      'adm.confirmDelete2':'Type DELETE (uppercase) to confirm:',
+      'adm.deleteCancelled':'Deletion cancelled.',
+      'adm.deleted':'User permanently deleted.',
+      'adm.protectedOwner':'🛡️ This account is the platform owner and is permanently protected.',
       'col.structure':'Structure','col.details':'Details','col.status':'Status','col.uploaded':'Uploaded','col.actions':'Actions',
       'col.title':'Title','col.phrase':'Phrase','col.prompt':'Prompt','col.type':'Type','col.level':'Lvl',
       'col.sort':'Sort','col.from':'From','col.message':'Message','col.received':'Received',
@@ -85,7 +94,16 @@
       'admin.gateDenied':'خاص بالأدمن','admin.gateDeniedMsg':'حسابك لا يملك صلاحيات إدارية.','admin.gateSigninBtn':'تسجيل الدخول',
       'tile.totalUsers':'مجموع المستخدمين','tile.approvedImages':'الصور المعتمدة','tile.mnemonics':'المخططات','tile.cards':'بطاقات التعليم','tile.contributors':'المساهمون','tile.unread':'رسائل غير مقروءة',
       'tile.admins':'أدمن','tile.contribs':'مساهم','tile.viewers':'مشاهد','tile.pending':'قيد المراجعة','tile.rejected':'مرفوضة','tile.total':'المجموع',
-      'col.email':'الإيميل','col.name':'الاسم','col.role':'الدور','col.joined':'تاريخ التسجيل','col.changeRole':'تغيير الدور',
+      'col.email':'الإيميل','col.name':'الاسم','col.role':'الدور','col.joined':'تاريخ التسجيل','col.changeRole':'تغيير الدور','col.status':'الحالة',
+      'adm.active':'نشط','adm.disabled':'معطّل','adm.scheduled':'مجدول للحذف',
+      'adm.restore':'استعادة','adm.disable':'تعطيل','adm.delete':'حذف نهائي',
+      'adm.confirmDisable':'تعطيل هذا المستخدم؟ لن يستطيع تسجيل الدخول حتى تستعيده.',
+      'adm.confirmRestore':'استعادة هذا المستخدم؟ سيسترجع كامل الوصول.',
+      'adm.confirmDelete1':'⚠️ حذف المستخدم %s وكل بياناته نهائياً؟ لا يمكن التراجع.',
+      'adm.confirmDelete2':'اكتب DELETE (بأحرف كبيرة) للتأكيد:',
+      'adm.deleteCancelled':'تم إلغاء الحذف.',
+      'adm.deleted':'تم حذف المستخدم نهائياً.',
+      'adm.protectedOwner':'🛡️ هذا الحساب هو مالك المنصّة ومحمي دائماً من الحذف.',
       'col.structure':'العضو','col.details':'التفاصيل','col.status':'الحالة','col.uploaded':'تاريخ الرفع','col.actions':'إجراءات',
       'col.title':'العنوان','col.phrase':'العبارة','col.prompt':'السؤال','col.type':'النوع','col.level':'المستوى',
       'col.sort':'ترتيب','col.from':'المرسل','col.message':'الرسالة','col.received':'وقت الورود',
@@ -259,17 +277,35 @@
       $('userSearch').addEventListener('input', e=>{ userSearchQuery = e.target.value.trim().toLowerCase(); loadUsers(); });
     }
     try {
-      let query = sb.from('profiles').select('id, email, display_name, role, created_at').order('created_at', { ascending:false }).limit(500);
+      let query = sb.from('profiles').select('id, email, display_name, role, created_at, disabled_at, deletion_at').order('created_at', { ascending:false }).limit(500);
       if (roleFilter !== 'all') query = query.eq('role', roleFilter);
       if (userSearchQuery) query = query.or(`email.ilike.%${userSearchQuery}%,display_name.ilike.%${userSearchQuery}%`);
       const { data, error } = await query;
       if (error) throw error;
       if (!data.length){ box.innerHTML = '<div class="empty">'+t('empty.users')+'</div>'; return; }
-      const rows = data.map(u => `
-        <tr>
+      const rows = data.map(u => {
+        const disabled = !!u.disabled_at;
+        const scheduled = !!u.deletion_at;
+        let statusBadge = `<span class="badge" style="background:rgba(45,212,200,.12);color:var(--acc)">${t('adm.active')||'active'}</span>`;
+        if (scheduled) {
+          const d = new Date(u.deletion_at);
+          const days = Math.max(0, Math.ceil((d - Date.now())/86400000));
+          statusBadge = `<span class="badge" style="background:rgba(220,38,38,.12);color:#dc2626" title="${d.toLocaleString('en-GB')}">${(t('adm.scheduled')||'scheduled')} · ${days}d</span>`;
+        } else if (disabled) {
+          statusBadge = `<span class="badge" style="background:rgba(200,150,50,.15);color:#d4a628">${t('adm.disabled')||'disabled'}</span>`;
+        }
+        const actions = [];
+        if (disabled || scheduled) {
+          actions.push(`<button class="btn ghost" style="padding:4px 9px;font-size:11px" onclick="adminToggleUser('${u.id}', false)">↺ ${t('adm.restore')||'Restore'}</button>`);
+        } else {
+          actions.push(`<button class="btn ghost" style="padding:4px 9px;font-size:11px" onclick="adminToggleUser('${u.id}', true)">⏸ ${t('adm.disable')||'Disable'}</button>`);
+        }
+        actions.push(`<button class="btn ghost" style="padding:4px 9px;font-size:11px;border-color:rgba(220,38,38,.5);color:#dc2626" onclick="adminHardDelete('${u.id}','${(u.email||'').replace(/'/g,"\\'")}')">🗑️ ${t('adm.delete')||'Delete'}</button>`);
+        return `<tr${disabled?' style="opacity:.6"':''}>
           <td>${u.email || '—'}</td>
           <td>${u.display_name || '—'}</td>
           <td><span class="badge ${roleBadgeClass(u.role)}">${u.role||'viewer'}</span></td>
+          <td>${statusBadge}</td>
           <td>${new Date(u.created_at).toLocaleDateString('en-GB')}</td>
           <td>
             <select onchange="setUserRole('${u.id}', this.value)" style="padding:5px 8px;background:var(--bg-s);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:11px">
@@ -280,37 +316,59 @@
               <option value="admin" ${u.role==='admin'?'selected':''}>admin</option>
             </select>
           </td>
-        </tr>`).join('');
-      box.innerHTML = `<table><thead><tr><th>${t('col.email')}</th><th>${t('col.name')}</th><th>${t('col.role')}</th><th>${t('col.joined')}</th><th>${t('col.changeRole')}</th></tr></thead><tbody>${rows}</tbody></table>`;
+          <td style="white-space:nowrap;display:flex;gap:5px">${actions.join('')}</td>
+        </tr>`;
+      }).join('');
+      box.innerHTML = `<table><thead><tr><th>${t('col.email')}</th><th>${t('col.name')}</th><th>${t('col.role')}</th><th>${t('col.status')||'Status'}</th><th>${t('col.joined')}</th><th>${t('col.changeRole')}</th><th>${t('col.actions')}</th></tr></thead><tbody>${rows}</tbody></table>`;
     } catch(e){ box.innerHTML = '<div class="empty">Error: '+e.message+'</div>'; }
   }
   window.openInviteModal = () => { $('invEmail').value=''; $('invRole').value='viewer'; $('inviteModal').classList.add('on'); };
   document.getElementById('invSend') && document.getElementById('invSend').addEventListener('click', async ()=>{
     const email = $('invEmail').value.trim(); const role = $('invRole').value;
     if (!email) return alert('Email required.');
+    const redirect = location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html');
     try {
-      // Supabase requires the anon key to send magic-link invitations via signInWithOtp
-      const { error } = await sb.auth.signInWithOtp({
+      const { data, error } = await sb.auth.signInWithOtp({
         email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html')
-        }
+        options: { shouldCreateUser: true, emailRedirectTo: redirect }
       });
-      if (error) throw error;
+      console.log('[invite response]', { data, error });
+      if (error) {
+        const em = error.message || error.error_description || error.msg;
+        const st = error.status || error.statusCode;
+        throw new Error((em || 'Supabase returned no message') + (st ? ' [status ' + st + ']' : ''));
+      }
       try {
         const { data: { user } } = await sb.auth.getUser();
         if (user) await sb.from('activity_log').insert({ actor_id: user.id, action:'user_invited', target_type:'email', target_id:email, details:{ role } });
       } catch(_){}
       closeModal('inviteModal'); toast('✉️ Invitation sent to ' + email);
     } catch(e){
-      const msg = (e && (e.message || e.error_description || e.msg || JSON.stringify(e))) || 'unknown';
+      const msg = (e && (e.message || e.error_description || e.msg)) || 'unknown (see console)';
       console.error('[invite]', e);
-      alert('Invite error: ' + msg);
+      alert('Invite error: ' + msg + '\n\nCheck browser console for details.');
     }
   });
   window.setUserRole = async (id, role) => {
     try { const { error } = await sb.from('profiles').update({ role }).eq('id', id); if (error) throw error; toast(t('saved')); } catch(e){ toast(t('error')); }
+  };
+  window.adminToggleUser = async (id, disable) => {
+    const label = disable ? (t('adm.confirmDisable')||'Disable this user? They will not be able to sign in.') : (t('adm.confirmRestore')||'Restore this user? They will regain access.');
+    if (!confirm(label)) return;
+    try { const { error } = await sb.rpc('admin_toggle_user', { p_user: id, p_disable: disable, p_reason: null }); if (error) throw error; toast(t('saved')); loadUsers(); } catch(e){ toast(e.message); }
+  };
+  window.adminHardDelete = async (id, email) => {
+    // Client-side owner protection (server-side also enforced)
+    if ((email||'').toLowerCase() === 'omniradai@gmail.com') {
+      alert(t('adm.protectedOwner')||'This account is the platform owner and is permanently protected.');
+      return;
+    }
+    const step1 = (t('adm.confirmDelete1')||'PERMANENTLY delete user %s and all their data? This CANNOT be undone.').replace('%s', email||id);
+    if (!confirm(step1)) return;
+    const step2 = t('adm.confirmDelete2')||'Type DELETE to confirm:';
+    const typed = prompt(step2);
+    if (typed !== 'DELETE') { toast(t('adm.deleteCancelled')||'Deletion cancelled.'); return; }
+    try { const { error } = await sb.rpc('hard_delete_user', { p_user: id }); if (error) throw error; toast(t('adm.deleted')||'User deleted.'); loadUsers(); } catch(e){ toast('Error: '+e.message); }
   };
 
   /* ─── Images ─── */
