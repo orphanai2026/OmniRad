@@ -351,6 +351,10 @@
     $('outEn').textContent = b.en;
     $('outAr').textContent = b.ar;
     $('outNeg').textContent = b.neg;
+    // Wire anatomical intelligence on the prompt output
+    if (window.OmniRadTerm && OmniRadTerm.linkText){
+      try { OmniRadTerm.linkText($('outEn')); OmniRadTerm.linkText($('outAr')); } catch(e){}
+    }
     $('negRow').style.display = state.s.negOn ? 'block' : 'none';
     $('fname').textContent = suggestedName();
     // Neg tag on copy buttons

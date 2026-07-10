@@ -104,7 +104,7 @@ const state = { structId:(S[0]&&S[0].id)||'brain', cols:2, sync:true, cells:[], 
   sel.addEventListener('change', e=>{ state.structId = e.target.value; renderGrid(); updateDesc(); });
 })();
 function structure(){ return S.find(s=>s.id===state.structId) || S[0]; }
-function updateDesc(){ const st = structure(); $('descBar').innerHTML = `<strong>${st.en} · ${st.ar}</strong> — ${st.desc || ''}`; }
+function updateDesc(){ const st = structure(); $('descBar').innerHTML = `<strong data-term="${st.id}">${st.en} · ${st.ar}</strong> — ${st.desc || ''}`; if (window.OmniRadTerm && OmniRadTerm.scan) OmniRadTerm.scan($('descBar')); }
 
 document.querySelectorAll('[data-cols]').forEach(b=>{
   b.addEventListener('click', ()=>{
