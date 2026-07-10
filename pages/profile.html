@@ -140,6 +140,9 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   <!-- Danger zone -->
   <div class="card" id="dangerZone" style="border-color:rgba(220,38,38,.35);background:linear-gradient(180deg,rgba(220,38,38,.04),transparent)">
     <div class="section-t" style="color:#dc2626" data-i18n="profile.dangerZone">⚠️ Danger zone</div>
+    <div id="delProtected" style="display:none">
+      <div style="font-size:13px;color:var(--acc);font-weight:600;line-height:1.6">🛡️ <span data-i18n="profile.protectedOwner">This account is the platform owner and is permanently protected from deletion.</span></div>
+    </div>
     <div id="delNormal">
       <div style="font-size:12.5px;color:var(--text-m);margin-bottom:12px;line-height:1.6" data-i18n="profile.deleteHint">Deleting your account disables it immediately and permanently removes it after 30 days. Sign back in any time before that to cancel.</div>
       <button class="btn ghost" id="btnDeleteAcc" style="border-color:rgba(220,38,38,.5);color:#dc2626" data-i18n="profile.deleteBtn">🗑️ Delete my account</button>
@@ -204,6 +207,7 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.delReason':'Reason (optional)',
       'profile.delAgree':'I understand my account and data will be permanently deleted after 30 days.',
       'profile.delConfirmBtn':'Yes, delete my account',
+      'profile.protectedOwner':'This account is the platform owner and is permanently protected from deletion.',
       'profile.save':'💾 Save changes','profile.signOut':'Sign out',
       'profile.gateCheck':'Checking access…','profile.gateSignin':'Sign in required','profile.gateSigninMsg':'Sign in to view and edit your profile.',
       'profile.gateSigninBtn':'Sign in',
@@ -233,6 +237,7 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.delReason':'السبب (اختياري)',
       'profile.delAgree':'أفهم أن حسابي وبياناتي ستُحذف نهائياً بعد 30 يوماً.',
       'profile.delConfirmBtn':'نعم، احذف حسابي',
+      'profile.protectedOwner':'هذا الحساب هو مالك المنصّة ومحمي دائماً من الحذف.',
       'profile.save':'💾 حفظ التغييرات','profile.signOut':'تسجيل الخروج',
       'profile.gateCheck':'التحقق من الصلاحية…','profile.gateSignin':'يلزم تسجيل الدخول','profile.gateSigninMsg':'سجّل الدخول لعرض بروفايلك وتعديله.',
       'profile.gateSigninBtn':'تسجيل الدخول',
@@ -297,8 +302,16 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
 
   /* ─── Account deletion flow ─── */
   function renderDeletionState(){
-    const normal = $('delNormal'), scheduled = $('delScheduled');
+    const normal = $('delNormal'), scheduled = $('delScheduled'), protectedDiv = $('delProtected');
     if (!normal || !scheduled) return;
+    const isOwner = (cur && (cur.email||'').toLowerCase() === 'omniradai@gmail.com');
+    if (isOwner){
+      normal.style.display = 'none';
+      scheduled.style.display = 'none';
+      if (protectedDiv) protectedDiv.style.display = '';
+      return;
+    }
+    if (protectedDiv) protectedDiv.style.display = 'none';
     if (cur && cur.deletion_at){
       normal.style.display = 'none';
       scheduled.style.display = '';
