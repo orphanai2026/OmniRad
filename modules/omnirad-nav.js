@@ -18,7 +18,8 @@
   // Nav model — single source of truth for every page
   var CORE = [
     { href: 'pages/atlas.html',       icon: '📖', label: 'Atlas',   i18n: 'nav.atlas' },
-    { href: 'pages/comparison.html',  icon: '⚖',  label: 'Compare', i18n: 'nav.compare' }
+    { href: 'pages/comparison.html',  icon: '⚖',  label: 'Compare', i18n: 'nav.compare' },
+    { href: 'pages/review.html',      icon: '📋', label: 'Review',  i18n: 'nav.review', role:'admin,reviewer' }
   ];
   var GROUPS = [
     { icon: '🎓', label: 'Learn', i18n:'nav.learn', items: [
@@ -105,7 +106,7 @@
     const attr = l.i18n ? ' data-i18n="'+l.i18n+'"' : '';
     return '<a href="' + abs(l.href) + '" class="' + (core ? 'core ' : '') + (isActive(l.href) ? 'active' : '') + '"><span class="onav-ic">' + l.icon + '</span><span' + attr + '>' + l.label + '</span></a>';
   }
-  var coreHTML = CORE.map(function (l) { return '<li>' + linkA(l, true) + '</li>'; }).join('');
+  var coreHTML = CORE.map(function (l) { var roleAttr = l.role ? ' data-nav-role="'+l.role+'"' : ''; return '<li' + roleAttr + '>' + linkA(l, true) + '</li>'; }).join('');
   var groupHTML = GROUPS.map(function (g) {
     var items = g.items.map(function (it) {
       const kAttr = it.i18n ? ' data-i18n="'+it.i18n+'"' : '';
@@ -138,7 +139,7 @@
   var mm = document.createElement('div');
   mm.className = 'onav-mm';
   mm.id = 'onavMM';
-  var mmCore = CORE.map(function (l) { return '<li><a href="' + abs(l.href) + '" class="' + (isActive(l.href) ? 'active' : '') + '">' + l.icon + ' ' + l.label + '</a></li>'; }).join('');
+  var mmCore = CORE.map(function (l) { var roleAttr = l.role ? ' data-nav-role="'+l.role+'"' : ''; return '<li' + roleAttr + '><a href="' + abs(l.href) + '" class="' + (isActive(l.href) ? 'active' : '') + '">' + l.icon + ' ' + l.label + '</a></li>'; }).join('');
   var mmGroups = GROUPS.map(function (g) {
     return '<div class="onav-mmg">' + g.label + '</div><ul>' + g.items.map(function (it) {
       return '<li><a href="' + abs(it.href) + '" class="' + (isActive(it.href) ? 'active' : '') + '">' + it.icon + ' ' + it.title + '</a></li>';
