@@ -235,12 +235,17 @@
         const unread = (data||[]).filter(n => !n.read_at).length;
         count.textContent = unread; count.style.display = unread ? 'inline-block' : 'none';
         if (!data || !data.length){ list.innerHTML = '<div style="padding:12px;color:var(--text-m);font-size:12px;text-align:center">No notifications</div>'; return; }
-        list.innerHTML = data.map(n => `
-          <a href="${n.link || '#'}" data-nid="${n.id}" data-read="${n.read_at?1:0}" style="display:flex;flex-direction:column;padding:9px 11px;border-radius:6px;text-decoration:none;color:var(--text-s);background:${n.read_at?'transparent':'var(--acc-sub)'}">
+        list.innerHTML = data.map(n => {
+          const link = n.link
+            ? (n.link.startsWith('http') ? n.link : (BASE + n.link.replace(/^\/+/, '')))
+            : '#';
+          return `
+          <a href="${link}" data-nid="${n.id}" data-read="${n.read_at?1:0}" style="display:flex;flex-direction:column;padding:9px 11px;border-radius:6px;text-decoration:none;color:var(--text-s);background:${n.read_at?'transparent':'var(--acc-sub)'}">
             <div style="font-size:12.5px;font-weight:700;color:${n.read_at?'var(--text-s)':'var(--acc)'}">${n.title || n.kind}</div>
             ${n.body ? `<div style="font-size:11.5px;color:var(--text-m);margin-top:2px">${n.body}</div>` : ''}
             <div style="font-size:10px;color:var(--text-m);margin-top:4px;font-family:'IBM Plex Mono',monospace">${new Date(n.created_at).toLocaleString('en-GB')}</div>
-          </a>`).join('');
+          </a>`;
+        }).join('');
         list.querySelectorAll('[data-nid]').forEach(a => a.addEventListener('click', async e => {
           const id = a.dataset.nid;
           if (a.dataset.read === '0'){ try { await OmniRadAuth.client.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', id); } catch(_){} bellRender(); }
