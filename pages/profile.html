@@ -119,6 +119,28 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   </div>
 
   <div class="card">
+    <div class="section-t" data-i18n="profile.typography">Reading preferences</div>
+    <div style="font-size:12px;color:var(--text-m);margin-bottom:14px;line-height:1.6" data-i18n="profile.typoHint">Adjust text size and typeface across the platform for comfortable reading.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--text-m);display:block;margin-bottom:8px" data-i18n="profile.textSize">Text size</label>
+        <div id="fontScaleGroup" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--text-m);display:block;margin-bottom:8px" data-i18n="profile.typeface">Typeface</label>
+        <div id="fontFamilyGroup" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:14px;background:var(--bg-ov);border:1px dashed var(--border-s);border-radius:10px">
+      <div style="font-size:11px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:6px" data-i18n="profile.preview">Preview</div>
+      <div style="font-size:var(--font-h2);font-weight:800;color:var(--text);line-height:1.2">Radiological anatomy · تشريح إشعاعي</div>
+      <div style="margin-top:6px;color:var(--text-s);line-height:1.6">Portal vein — الوريد البابي · Left renal artery — الشريان الكلوي الأيسر</div>
+    </div>
+  </div>
+
+  <div class="card">
     <div class="section-t" data-i18n="profile.notifPrefs">Notification preferences</div>
     <div style="font-size:11.5px;color:var(--text-m);margin-bottom:12px;line-height:1.6" data-i18n="profile.notifHint">Choose what you receive and how. In-app notifications appear in the bell menu; email arrives at your address on record.</div>
     <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
@@ -176,6 +198,7 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-typography.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>
 (function(){
@@ -196,6 +219,10 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.showTitle':'Show me on the Contributors page',
       'profile.showSub':'If your role permits (Contributor / Reviewer / Admin), your card will appear publicly.',
       'profile.notifPrefs':'Notification preferences','profile.notifHint':'Choose what you receive and how. In-app notifications appear in the bell menu; email arrives at your address on record.',
+      'profile.typography':'Reading preferences','profile.typoHint':'Adjust text size and typeface across the platform for comfortable reading.',
+      'profile.textSize':'Text size','profile.typeface':'Typeface','profile.preview':'Preview',
+      'fs.85':'Compact','fs.100':'Standard','fs.110':'Large','fs.125':'Extra large',
+      'ff.system':'System','ff.inter':'Inter','ff.sansarabic':'Arabic Sans','ff.serif':'Serif',
       'profile.event':'Event','profile.inApp':'In-app','profile.email2':'Email',
       'ev.welcome':'Welcome message','ev.role_change':'My role changes','ev.image_approved':'My image approved','ev.new_user':'New user joined (admin only)','ev.contact_msg':'New contact message (admin only)',
       'profile.dangerZone':'⚠️ Danger zone',
@@ -226,6 +253,10 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       'profile.showTitle':'أظهرني في صفحة المساهمين',
       'profile.showSub':'إن سمح دورك (مساهم / مراجع / أدمن)، ستظهر بطاقتك للجمهور.',
       'profile.notifPrefs':'تفضيلات الإشعارات','profile.notifHint':'اختر ما تستقبله وأين. الإشعارات داخل المنصّة تظهر في قائمة الجرس؛ الإيميل يصل إلى بريدك المسجّل.',
+      'profile.typography':'إعدادات القراءة','profile.typoHint':'اضبط حجم النص والخط لقراءة مريحة في كل المنصّة.',
+      'profile.textSize':'حجم النص','profile.typeface':'نوع الخط','profile.preview':'معاينة',
+      'fs.85':'مضغوط','fs.100':'قياسي','fs.110':'كبير','fs.125':'كبير جداً',
+      'ff.system':'النظام','ff.inter':'إنتر','ff.sansarabic':'عربي حديث','ff.serif':'سيريف',
       'profile.event':'الحدث','profile.inApp':'داخل المنصّة','profile.email2':'إيميل',
       'ev.welcome':'رسالة الترحيب','ev.role_change':'تغيير دوري','ev.image_approved':'اعتماد صورتي','ev.new_user':'مستخدم جديد ينضم (للأدمن)','ev.contact_msg':'رسالة تواصل جديدة (للأدمن)',
       'profile.dangerZone':'⚠️ منطقة الحذف',
@@ -280,6 +311,7 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       cur._prefs = (p && p.prefs) || { welcome:{in_app:true,email:true}, role_change:{in_app:true,email:true}, image_approved:{in_app:true,email:true}, new_user:{in_app:true,email:false}, contact_msg:{in_app:true,email:true} };
     } catch(e){ cur._prefs = {}; }
     renderPrefs();
+    renderTypography();
     const name = cur.display_name || (email||'').split('@')[0] || 'User';
     $('whoName').textContent = name;
     $('whoEmail').textContent = email || cur.email || '';
@@ -383,6 +415,27 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   $('btnSignOut').addEventListener('click', async () => {
     try { await sb.auth.signOut(); location.href = 'auth.html'; } catch(e){}
   });
+
+  function renderTypography(){
+    const scaleBox = document.getElementById('fontScaleGroup');
+    const famBox = document.getElementById('fontFamilyGroup');
+    if (!scaleBox || !window.OmniRadTypography) return;
+    const T = window.OmniRadTypography;
+    const curS = T.currentScale(), curF = T.currentFamily();
+    const chip = (label, val, active, onclick) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      b.style.cssText = 'padding:8px 13px;border-radius:8px;border:1.5px solid ' + (active ? 'var(--acc)' : 'var(--border-s)') + ';background:' + (active ? 'var(--acc)' : 'var(--bg-ov)') + ';color:' + (active ? 'var(--acc-ink)' : 'var(--text-s)') + ';font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit';
+      b.addEventListener('click', onclick);
+      return b;
+    };
+    scaleBox.innerHTML = '';
+    T.scales.forEach(s => scaleBox.appendChild(chip(t('fs.'+s) + ' · ' + s + '%', s, s===curS, () => { T.setScale(s); renderTypography(); })));
+    famBox.innerHTML = '';
+    T.families.forEach(f => famBox.appendChild(chip(t('ff.'+f), f, f===curF, () => { T.setFamily(f); renderTypography(); })));
+  }
+  window.addEventListener('omnirad-lang', renderTypography);
 
   function renderPrefs(){
     const body = document.getElementById('prefsBody'); if (!body) return;
