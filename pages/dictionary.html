@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Anatomical Dictionary · OmniRad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/omnirad-shell.css">
+<style>
+  body{padding-top:calc(var(--onav-h,56px) + 24px);padding-bottom:80px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  h1{font-size:var(--font-h1);font-weight:800;margin:0 0 4px;letter-spacing:-.01em}
+  .lead{color:var(--text-m);margin:0 0 22px;font-size:14px;line-height:1.6}
+  .ref{margin-top:10px;padding:11px 14px;background:var(--acc-sub);border:1px solid var(--acc-sub);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--acc);letter-spacing:.02em}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:24px 0}
+  .search{flex:1;min-width:280px;padding:12px 15px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14.5px;outline:none;transition:border-color .18s}
+  .search:focus{border-color:var(--acc)}
+  .region-filter{display:flex;gap:6px;flex-wrap:wrap}
+  .region-btn{padding:7px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-s);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s}
+  .region-btn:hover{border-color:var(--acc);color:var(--acc)}
+  .region-btn.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+  .region-block{margin:26px 0 6px}
+  .region-title{display:flex;align-items:center;gap:10px;padding:12px 15px;background:linear-gradient(90deg,var(--acc-sub) 0%,transparent 65%);border-inline-start:3px solid var(--acc);border-radius:10px;margin-bottom:12px}
+  .region-title h2{margin:0;font-size:16px;font-weight:800;color:var(--text)}
+  .region-title .count{background:var(--acc);color:var(--acc-ink);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800;font-family:'IBM Plex Mono',monospace;margin-inline-start:auto}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .term{padding:14px 15px;background:var(--panel);border:1px solid var(--border);border-radius:11px;transition:all .18s;cursor:pointer}
+  .term:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,212,200,.08)}
+  .term.on{border-color:var(--acc);background:var(--acc-sub)}
+  .term .en{font-size:15.5px;font-weight:800;color:var(--text);line-height:1.3;margin:0}
+  .term .ar{font-size:14px;font-weight:700;color:var(--text-s);margin:3px 0 0;direction:rtl;text-align:right}
+  .term .rank{margin-top:8px;font-size:10.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+  .term .parent{margin-top:4px;font-size:11.5px;color:var(--text-m)}
+  .term .parent a{color:var(--acc);text-decoration:none}
+  .empty{padding:60px 20px;text-align:center;color:var(--text-m)}
+  #detailPanel{position:fixed;top:calc(var(--onav-h,56px) + 12px);inset-inline-end:16px;width:340px;max-height:calc(100vh - var(--onav-h,56px) - 24px);overflow-y:auto;background:var(--panel);border:1.5px solid var(--acc);border-radius:14px;padding:18px 20px;box-shadow:0 16px 48px rgba(0,0,0,.3);display:none;z-index:50}
+  #detailPanel.on{display:block}
+  #detailPanel .close{position:absolute;top:10px;inset-inline-end:12px;background:transparent;border:0;color:var(--text-m);font-size:20px;cursor:pointer;line-height:1}
+  #detailPanel .close:hover{color:var(--acc)}
+  #detailPanel h3{margin:0 0 4px;font-size:18px;font-weight:800}
+  #detailPanel .ar-title{font-size:16px;font-weight:700;color:var(--text-s);direction:rtl;text-align:right;margin:0 0 12px}
+  #detailPanel .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  #detailPanel .chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--acc-sub);color:var(--acc)}
+  #detailPanel .chip.rank{background:transparent;color:var(--text-m);border:1px solid var(--border-s)}
+  #detailPanel .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  #detailPanel .btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text-s);cursor:pointer;text-decoration:none;transition:all .15s}
+  #detailPanel .btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-sub)}
+  #detailPanel .btn.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+  #detailPanel .sec-t{margin-top:16px;font-size:11px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;font-weight:700}
+  #detailPanel ul{list-style:none;padding:0;margin:6px 0 0}
+  #detailPanel li a{display:block;padding:6px 0;color:var(--text-s);text-decoration:none;border-bottom:1px dashed var(--border-s);font-size:13px}
+  #detailPanel li a:hover{color:var(--acc)}
+  @media (max-width:900px){ #detailPanel{position:static;width:auto;max-height:none;margin:20px 0} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 data-i18n="dict.title">Anatomical Dictionary</h1>
+  <p class="lead" data-i18n="dict.lead">Bilingual anatomical terminology — the unified reference used across every page of the platform. Click any term for details; hover for a quick tooltip.</p>
+  <div class="ref">TERMINOLOGY REFERENCE · Terminologia Anatomica (IFAA, 2019) + RadLex (RSNA)</div>
+
+  <div class="toolbar">
+    <input class="search" id="searchBox" placeholder="Search terms (English or Arabic)…" data-i18n-placeholder="dict.searchPh" autocomplete="off" spellcheck="false">
+    <div class="region-filter" id="regionFilter"></div>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<aside id="detailPanel">
+  <button class="close" onclick="closeDetail()">×</button>
+  <div id="detailContent"></div>
+</aside>
+
+<script src="../modules/data/anatomy-master.js"></script>
+<script src="../modules/omnirad-term.js"></script>
+<script src="../modules/omnirad-typography.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="../modules/i18n.js"></script>
+<script>
+const A = window.OMNIRAD_ANATOMY;
+const isAr = () => window.OmniRadI18n && OmniRadI18n.lang === 'ar';
+let activeRegion = 'all';
+let query = '';
+
+/* ─── i18n strings ─── */
+if (window.OmniRadI18n && OmniRadI18n.dicts){
+  Object.assign(OmniRadI18n.dicts.en, {
+    'dict.title':'Anatomical Dictionary',
+    'dict.lead':'Bilingual anatomical terminology — the unified reference used across every page of the platform. Click any term for details; hover for a quick tooltip.',
+    'dict.searchPh':'Search terms (English or Arabic)…',
+    'dict.all':'All','dict.showAll':'Show all regions',
+    'dict.related':'Related structures','dict.noResults':'No terms match your search.',
+    'nav.dictionary':'Dictionary'
+  });
+  Object.assign(OmniRadI18n.dicts.ar, {
+    'dict.title':'القاموس التشريحي',
+    'dict.lead':'المصطلحات التشريحية ثنائية اللغة — المرجعية الموحّدة المستخدمة في كل صفحات المنصّة. اضغط أي مصطلح للتفاصيل، وحوّم عليه للحصول على معلومات سريعة.',
+    'dict.searchPh':'ابحث بالإنجليزية أو العربية…',
+    'dict.all':'الكل','dict.showAll':'إظهار كل المناطق',
+    'dict.related':'أعضاء ذات صلة','dict.noResults':'لا توجد مصطلحات تطابق البحث.',
+    'nav.dictionary':'القاموس'
+  });
+  if (typeof OmniRadI18n.apply === 'function') OmniRadI18n.apply();
+}
+
+function speakOne(text, lang){ if (window.OmniRadTerm && OmniRadTerm.show) return; if ('speechSynthesis' in window){ try { const u = new SpeechSynthesisUtterance(text); u.lang = lang; u.rate = 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e){} } }
+
+function renderRegionFilter(){
+  const box = document.getElementById('regionFilter');
+  const ar = isAr();
+  const buttons = [{ id:'all', label: ar ? 'الكل' : 'All' }].concat(A.regions.map(r => ({ id: r.id, label: ar ? r.ar : r.en })));
+  box.innerHTML = buttons.map(b => `<button class="region-btn ${b.id===activeRegion?'on':''}" data-region="${b.id}">${b.label}</button>`).join('');
+  box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { activeRegion = b.dataset.region; renderRegionFilter(); renderResults(); }));
+}
+
+function renderResults(){
+  const ar = isAr();
+  const q = query.trim().toLowerCase();
+  const filtered = A.structures.filter(s => {
+    if (activeRegion !== 'all' && s.region !== activeRegion) return false;
+    if (!q) return true;
+    return s.en.toLowerCase().includes(q) || s.ar.includes(q) || (s.aliases||[]).some(a => a.toLowerCase().includes(q));
+  });
+  const container = document.getElementById('results');
+  if (!filtered.length){ container.innerHTML = '<div class="empty" data-i18n="dict.noResults">No terms match your search.</div>'; return; }
+  // Group by region
+  const groups = {};
+  filtered.forEach(s => { (groups[s.region] = groups[s.region] || []).push(s); });
+  let html = '';
+  A.regions.forEach(r => {
+    const items = groups[r.id]; if (!items || !items.length) return;
+    html += `<div class="region-block">
+      <div class="region-title">
+        <h2>${ar ? r.ar : r.en}</h2>
+        <span class="count">${items.length}</span>
+      </div>
+      <div class="grid">`;
+    items.forEach(s => {
+      const parent = s.parent ? A.byId[s.parent] : null;
+      html += `<div class="term" data-tid="${s.id}">
+        <div class="en">${s.en}</div>
+        <div class="ar">${s.ar}</div>
+        <div class="rank">${s.rank}${parent ? ' · '+(ar?parent.ar:parent.en) : ''}</div>
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+  container.querySelectorAll('.term').forEach(el => {
+    el.addEventListener('click', () => openDetail(el.dataset.tid));
+    el.addEventListener('mouseenter', () => { if (window.OmniRadTerm) OmniRadTerm.show(el.dataset.tid, el); });
+  });
+}
+
+function openDetail(id){
+  const s = A.byId[id]; if (!s) return;
+  const ar = isAr();
+  const region = A.regions.find(r => r.id === s.region);
+  const parent = s.parent ? A.byId[s.parent] : null;
+  const children = A.structures.filter(x => x.parent === s.id);
+  const siblings = A.structures.filter(x => x.region === s.region && x.parent === s.parent && x.id !== s.id).slice(0, 6);
+
+  const html = `
+    <h3 data-term="${s.id}">${s.en}</h3>
+    <div class="ar-title">${s.ar}</div>
+    <div class="meta">
+      <span class="chip">${ar ? region.ar : region.en}</span>
+      <span class="chip rank">${s.rank}</span>
+    </div>
+    ${parent ? `<div class="sec-t">${ar?'جزء من':'Part of'}</div><ul><li><a href="#" data-jump="${parent.id}">${ar?parent.ar:parent.en}</a></li></ul>` : ''}
+    <div class="row">
+      <button class="btn" onclick="speakBtn('en','${s.en.replace(/'/g,"\\'")}')">🔊 EN</button>
+      <button class="btn" onclick="speakBtn('ar','${s.ar.replace(/'/g,"\\'")}')">🔊 AR</button>
+      <a class="btn primary" href="atlas.html?structure=${encodeURIComponent(s.id)}">${ar?'افتح في الأطلس ↗':'Open in Atlas ↗'}</a>
+    </div>
+    ${children.length ? `<div class="sec-t">${ar?'الأجزاء الفرعية':'Substructures'}</div><ul>${children.map(c=>`<li><a href="#" data-jump="${c.id}">${ar?c.ar:c.en}</a></li>`).join('')}</ul>` : ''}
+    ${siblings.length ? `<div class="sec-t" data-i18n="dict.related">${ar?'أعضاء ذات صلة':'Related structures'}</div><ul>${siblings.map(sib=>`<li><a href="#" data-jump="${sib.id}">${ar?sib.ar:sib.en}</a></li>`).join('')}</ul>` : ''}
+  `;
+  document.getElementById('detailContent').innerHTML = html;
+  document.getElementById('detailPanel').classList.add('on');
+  document.querySelectorAll('.term').forEach(el => el.classList.toggle('on', el.dataset.tid === id));
+  document.querySelectorAll('#detailPanel [data-jump]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); openDetail(a.dataset.jump); }));
+  history.replaceState(null, '', '?term=' + encodeURIComponent(id));
+}
+window.openDetail = openDetail;
+window.closeDetail = () => {
+  document.getElementById('detailPanel').classList.remove('on');
+  document.querySelectorAll('.term').forEach(el => el.classList.remove('on'));
+  history.replaceState(null, '', location.pathname);
+};
+window.speakBtn = (lang, text) => {
+  if ('speechSynthesis' in window){
+    try {
+      const voices = speechSynthesis.getVoices();
+      const v = voices.find(vc => (lang==='ar' ? /^ar/i : /^en/i).test(vc.lang));
+      const u = new SpeechSynthesisUtterance(text);
+      if (v) u.voice = v;
+      u.lang = lang === 'ar' ? 'ar-SA' : 'en-US'; u.rate = 0.9;
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch(e){}
+  }
+};
+
+/* ─── Init ─── */
+document.getElementById('searchBox').addEventListener('input', e => { query = e.target.value; renderResults(); });
+window.addEventListener('omnirad-lang', () => { renderRegionFilter(); renderResults(); });
+renderRegionFilter();
+renderResults();
+
+// Deep-link support: ?term=xxx
+const params = new URLSearchParams(location.search);
+if (params.get('term')) setTimeout(() => openDetail(params.get('term')), 200);
+</script>
+</body>
+</html>
