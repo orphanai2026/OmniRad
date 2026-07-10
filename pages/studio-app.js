@@ -171,8 +171,14 @@
       sel.innerHTML = opts.map(o => `<option value="${o.v}">${label(o)}</option>`).join('');
       sel.value = state.s[k];
     });
-    // Anatomy datalists from ANATOMY_DICT [en, ar, region]
-    const dict = window.ANATOMY_DICT || [];
+    // Anatomy datalists from OMNIRAD_ANATOMY (unified master reference)
+    const A = window.OMNIRAD_ANATOMY;
+    const dict = A
+      ? A.structures.map(s => {
+          const reg = A.regions.find(r => r.id === s.region);
+          return [s.en, s.ar, reg ? reg.en : s.region];
+        })
+      : (window.ANATOMY_DICT || []); // fallback to legacy
     $('anat-all').innerHTML = dict.map(row => `<option value="${row[0]}">${row[1] || ''} · ${row[2] || ''}</option>`).join('');
     const region = (state.s.region || '').trim();
     const regionEntries = region
@@ -180,17 +186,19 @@
       : dict;
     $('anat-region').innerHTML = regionEntries.map(row => `<option value="${row[0]}">${row[1] || ''}</option>`).join('');
 
-    // Populate Region dropdown from unique row[2] values
+    // Region dropdown — prefer the unified 9 canonical regions from master
     const CUSTOM = '__custom__';
-    const uniqRegions = [...new Set(dict.map(r => r[2]).filter(Boolean))].sort();
+    const uniqRegions = A
+      ? A.regions.map(r => ({ v: r.en, ar: r.ar }))
+      : [...new Set(dict.map(r => r[2]).filter(Boolean))].sort().map(r => ({ v:r, ar:r }));
     const selR = $('selRegion');
     if (selR){
       selR.innerHTML = '<option value="">— ' + (ar?'اختر المنطقة':'Select region') + ' —</option>'
-        + uniqRegions.map(r => `<option value="${r}">${r}</option>`).join('')
+        + uniqRegions.map(r => `<option value="${r.v}">${ar ? r.ar : r.v}</option>`).join('')
         + `<option value="${CUSTOM}">${ar?'✏️ إدخال يدوي…':'✏️ Custom…'}</option>`;
-      // If current value not in list, treat as custom
       const cur = state.s.region || '';
-      if (cur && !uniqRegions.includes(cur)){
+      const inList = uniqRegions.some(r => r.v === cur);
+      if (cur && !inList){
         selR.value = CUSTOM;
         const inpR = $('inpRegionCustom'); if (inpR){ inpR.style.display=''; inpR.value = cur; }
       } else {
@@ -201,7 +209,7 @@
     // Populate Organ dropdown filtered by region
     const selO = $('selOrgan');
     if (selO){
-      const scoped = region ? dict.filter(r => (r[2]||'') === region) : [];
+      const scoped = region ? dict.filter(r => (r[2]||'').toLowerCase() === region.toLowerCase()) : [];
       if (!region){
         selO.disabled = true;
         selO.innerHTML = '<option value="">— ' + (ar?'اختر المنطقة أولاً':'Select region first') + ' —</option>';
@@ -456,7 +464,7 @@
           res.innerHTML = `<div style="text-align:center">
             <img src="${adv.image_url}" style="max-width:100%;max-height:420px;border-radius:12px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.4)">
             <div style="margin-top:10px;font-size:12.5px;color:var(--text-s);line-height:1.6">${isAr()?'✅ الصورة أُضيفت إلى قائمة المراجعة. سيراجعها Reviewer قريباً.':'✅ Image added to Review Queue. A Reviewer will look at it shortly.'}</div>
-            <a href="review.html" style="display:inline-block;margin-top:10px;padding:8px 16px;background:var(--acc);color:var(--acc-ink);text-decoration:none;font-weight:700;font-size:12px;border-radius:8px">${isAr()?'📋 فتح قائمة المراجعة':'📋 Open Review Queue'}</a>
+            <a href="./review.html" style="display:inline-block;margin-top:10px;padding:8px 16px;background:var(--acc);color:var(--acc-ink);text-decoration:none;font-weight:700;font-size:12px;border-radius:8px">${isAr()?'📋 فتح قائمة المراجعة':'📋 Open Review Queue'}</a>
           </div>`;
           res.style.display = 'block';
           btn.disabled = false; btn.style.opacity = '1';
