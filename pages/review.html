@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Review Queue</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--acc-ink:#08100e;--ok:#4ade80;--warn:#f59e0b;--err:#f87171;--pending:#fbbf24}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--warn:#b45309;--err:#c53030;--pending:#a16207}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 22px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.lead{color:var(--text-s);font-size:13.5px;line-height:1.65;margin-bottom:22px}
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px}
+.filters{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.chip{padding:7px 14px;background:var(--bg-s);border:1px solid var(--border);color:var(--text-s);border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.chip:hover{color:var(--text);border-color:var(--acc-dim)}
+.chip.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px}
+.card{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.card-img{aspect-ratio:1/1;background:var(--bg-s);position:relative;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.card-img .placeholder{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-m);font-size:12px}
+.badge{position:absolute;top:9px;inset-inline-start:9px;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(0,0,0,.6);color:#fff;font-family:'IBM Plex Mono',monospace}
+.card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.card-title{font-size:14px;font-weight:700}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{font-size:10.5px;padding:3px 8px;background:var(--bg-s);border:1px solid var(--border-s);border-radius:6px;color:var(--text-s);font-family:'IBM Plex Mono',monospace}
+.prompt{font-size:11.5px;color:var(--text-s);line-height:1.5;background:var(--bg-s);padding:9px 11px;border-radius:8px;max-height:80px;overflow:auto;font-family:'IBM Plex Mono',monospace;word-break:break-word}
+.actions{display:flex;gap:6px;margin-top:auto;padding-top:6px}
+.btn{padding:8px 12px;border:1px solid var(--border);background:var(--bg-s);color:var(--text);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;flex:1}
+.btn:hover{border-color:var(--acc)}
+.btn.ok{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.4);color:var(--ok)}
+.btn.ok:hover{background:rgba(74,222,128,.2)}
+.btn.warn{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.35);color:var(--warn)}
+.btn.warn:hover{background:rgba(251,191,36,.2)}
+.btn.err{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35);color:var(--err)}
+.btn.err:hover{background:rgba(248,113,113,.2)}
+.empty{text-align:center;padding:60px 20px;color:var(--text-m);font-size:13.5px;background:var(--bg-e);border:1px dashed var(--border);border-radius:12px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--acc);color:var(--acc-ink);padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:1000;display:none}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:900;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:22px;max-width:440px;width:100%}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.modal p{font-size:12.5px;color:var(--text-s);line-height:1.6;margin-bottom:14px}
+.modal label{display:block;font-size:11.5px;font-weight:600;color:var(--text-s);margin-bottom:6px}
+.modal select,.modal textarea{width:100%;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+</style>
+</head>
+<body>
+
+<div id="omnirad-nav-mount"></div>
+
+<div class="wrap">
+  <div id="gate" class="gate" style="display:none">
+    <div class="icon">🛡️</div>
+    <h2 id="gateTitle" data-i18n="rev.gateTitle">Reviewer access only</h2>
+    <p id="gateMsg" data-i18n="rev.gateMsg">This page is restricted to Reviewers and Administrators.</p>
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="eyebrow" data-i18n="rev.eyebrow">Review Queue</div>
+    <h1 data-i18n="rev.title">Pending Images</h1>
+    <p class="lead" data-i18n="rev.lead">AI-generated images awaiting your medical review. Approve, request revision, or reject with a reason. Every action notifies the uploader.</p>
+
+    <div class="filters">
+      <button class="chip on" data-status="pending" data-i18n="rev.pending">⏳ Pending</button>
+      <button class="chip" data-status="approved" data-i18n="rev.approved">✓ Approved</button>
+      <button class="chip" data-status="rejected" data-i18n="rev.rejected">✗ Rejected</button>
+      <button class="chip" data-status="revision" data-i18n="rev.revision">↺ Revision</button>
+    </div>
+
+    <div id="listBox"></div>
+  </div>
+</div>
+
+<!-- Reject modal -->
+<div class="modal-bg" id="rejectModal">
+  <div class="modal">
+    <h3 data-i18n="rev.rejectTitle">Reject image</h3>
+    <p data-i18n="rev.rejectHelp">Please provide a specific reason. The uploader will be notified.</p>
+    <label data-i18n="rev.reason">Reason</label>
+    <select id="rejReasonKind">
+      <option value="anatomy">Inaccurate anatomy</option>
+      <option value="artifact">Visual artifact / distortion</option>
+      <option value="mislabel">Mismatched metadata</option>
+      <option value="quality">Low technical quality</option>
+      <option value="policy">Policy / ethics concern</option>
+      <option value="duplicate">Duplicate of existing image</option>
+      <option value="other">Other</option>
+    </select>
+    <label data-i18n="rev.notes">Notes</label>
+    <textarea id="rejNotes" rows="3" placeholder="Optional details..."></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('rejectModal')" data-i18n="rev.cancel">Cancel</button>
+      <button class="btn err" id="rejConfirm" data-i18n="rev.rejectBtn">Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Revision modal -->
+<div class="modal-bg" id="revisionModal">
+  <div class="modal">
+    <h3 data-i18n="rev.revTitle">Request revision</h3>
+    <p data-i18n="rev.revHelp">The image will be sent back for improvement. Provide clear guidance.</p>
+    <label data-i18n="rev.notes">Notes</label>
+    <textarea id="revNotes" rows="4" placeholder="What needs to change?"></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('revisionModal')" data-i18n="rev.cancel">Cancel</button>
+      <button class="btn warn" id="revConfirm" data-i18n="rev.revBtn">Request revision</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-nav.js"></script>
+<script>
+(function(){
+  if (window.OmniRadI18n) OmniRadI18n.register({
+    en: {
+      'rev.eyebrow':'Review Queue','rev.title':'Pending Images',
+      'rev.lead':'AI-generated images awaiting your medical review. Approve, request revision, or reject with a reason. Every action notifies the uploader.',
+      'rev.pending':'⏳ Pending','rev.approved':'✓ Approved','rev.rejected':'✗ Rejected','rev.revision':'↺ Revision',
+      'rev.gateTitle':'Reviewer access only','rev.gateMsg':'This page is restricted to Reviewers and Administrators.',
+      'rev.rejectTitle':'Reject image','rev.rejectHelp':'Please provide a specific reason. The uploader will be notified.',
+      'rev.reason':'Reason','rev.notes':'Notes','rev.rejectBtn':'Reject','rev.cancel':'Cancel',
+      'rev.revTitle':'Request revision','rev.revHelp':'The image will be sent back for improvement. Provide clear guidance.',
+      'rev.revBtn':'Request revision',
+      'rev.approve':'✓ Approve','rev.reject':'✗ Reject','rev.reqRevision':'↺ Revision',
+      'rev.emptyPending':'No images awaiting review — 🎉',
+      'rev.emptyApproved':'No approved images yet.','rev.emptyRejected':'No rejected images.','rev.emptyRevision':'No revision requests.',
+      'rev.approved.done':'Image approved and published to Atlas.','rev.rejected.done':'Image rejected. Uploader notified.',
+      'rev.revision.done':'Revision requested. Uploader notified.','rev.err':'Error: ',
+    },
+    ar: {
+      'rev.eyebrow':'قائمة المراجعة','rev.title':'الصور قيد المراجعة',
+      'rev.lead':'الصور المُولَّدة تنتظر مراجعتك الطبية. اعتمد أو اطلب مراجعة أو ارفض مع ذكر السبب — يُخطَر الرافع تلقائياً بكل إجراء.',
+      'rev.pending':'⏳ قيد المراجعة','rev.approved':'✓ معتمدة','rev.rejected':'✗ مرفوضة','rev.revision':'↺ إعادة مراجعة',
+      'rev.gateTitle':'للمراجعين فقط','rev.gateMsg':'هذه الصفحة محصورة على المراجعين والمدراء.',
+      'rev.rejectTitle':'رفض الصورة','rev.rejectHelp':'يُرجى ذكر سبب واضح — سيصل إلى الرافع.',
+      'rev.reason':'السبب','rev.notes':'ملاحظات','rev.rejectBtn':'رفض','rev.cancel':'إلغاء',
+      'rev.revTitle':'طلب إعادة مراجعة','rev.revHelp':'ستُعاد الصورة للتحسين. قدّم توجيهاً واضحاً.',
+      'rev.revBtn':'طلب مراجعة',
+      'rev.approve':'✓ اعتماد','rev.reject':'✗ رفض','rev.reqRevision':'↺ مراجعة',
+      'rev.emptyPending':'لا صور بانتظار المراجعة — 🎉',
+      'rev.emptyApproved':'لا صور معتمدة بعد.','rev.emptyRejected':'لا صور مرفوضة.','rev.emptyRevision':'لا طلبات إعادة مراجعة.',
+      'rev.approved.done':'اعتُمدت الصورة ونُشرت في الأطلس.','rev.rejected.done':'رُفضت الصورة وأُخطر الرافع.',
+      'rev.revision.done':'طُلبت إعادة المراجعة وأُخطر الرافع.','rev.err':'خطأ: ',
+    }
+  });
+
+  const t = k => window.OmniRadI18n ? OmniRadI18n.t(k) : k;
+  let sb = null; let currentStatus = 'pending'; let currentUser = null; let currentRole = null;
+
+  function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.style.display = 'block'; setTimeout(()=>{ el.style.display = 'none'; }, 3200); }
+  window.closeModal = id => document.getElementById(id).classList.remove('on');
+
+  async function init(){
+    let tries = 0;
+    while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+    sb = OmniRadAuth.client;
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session){ document.getElementById('gate').style.display=''; document.getElementById('gateMsg').innerHTML = t('rev.gateMsg') + '<br><br><a href="auth.html" class="cta" style="margin-top:14px">Sign in</a>'; return; }
+    currentUser = session.user;
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', currentUser.id).maybeSingle();
+    currentRole = profile && profile.role;
+    if (!['admin','reviewer'].includes(currentRole)){
+      document.getElementById('gate').style.display = '';
+      return;
+    }
+    document.getElementById('content').style.display = '';
+    document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
+      c.classList.add('on'); currentStatus = c.dataset.status; loadList();
+    }));
+    loadList();
+  }
+
+  async function loadList(){
+    const box = document.getElementById('listBox');
+    box.innerHTML = '<div class="empty">Loading…</div>';
+    try {
+      const { data, error } = await sb.from('pending_images')
+        .select('*, generation_sessions(*)')
+        .eq('status', currentStatus)
+        .order('uploaded_at', { ascending: false }).limit(60);
+      if (error) throw error;
+      if (!data.length){
+        const k = 'rev.empty' + currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+        box.innerHTML = '<div class="empty">'+ t(k) +'</div>';
+        return;
+      }
+      box.innerHTML = '<div class="grid">' + data.map(renderCard).join('') + '</div>';
+    } catch(e){
+      box.innerHTML = '<div class="empty">'+ t('rev.err') + e.message +'</div>';
+    }
+  }
+
+  function renderCard(row){
+    const s = row.generation_sessions || {};
+    const url = row.storage_path ? sb.storage.from('pending').getPublicUrl(row.storage_path).data.publicUrl : '';
+    const showActions = currentStatus === 'pending';
+    return `<div class="card" data-id="${row.id}">
+      <div class="card-img">
+        ${url ? `<img src="${url}" alt="">` : `<div class="placeholder">No image</div>`}
+        <div class="badge">${(s.modality||'—').toUpperCase()}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${(s.organ||'—')} · ${(s.plane||'—')}</div>
+        <div class="meta">
+          ${s.region ? `<span>${s.region}</span>`:''}
+          ${s.pathology ? `<span>${s.pathology}</span>`:''}
+          ${s.sequence ? `<span>${s.sequence}</span>`:''}
+          ${s.slice_thickness ? `<span>${s.slice_thickness}</span>`:''}
+        </div>
+        <div class="prompt">${(s.prompt_en||'').substring(0,240)}${(s.prompt_en||'').length>240?'…':''}</div>
+        ${showActions ? `
+        <div class="actions">
+          <button class="btn ok" onclick="doApprove('${row.id}')">${t('rev.approve')}</button>
+          <button class="btn warn" onclick="openRevision('${row.id}')">${t('rev.reqRevision')}</button>
+          <button class="btn err" onclick="openReject('${row.id}')">${t('rev.reject')}</button>
+        </div>` : row.reject_reason ? `<div class="meta"><span style="color:var(--err)">✗ ${row.reject_reason}</span></div>` : row.reviewer_notes ? `<div class="meta"><span style="color:var(--warn)">↺ ${row.reviewer_notes}</span></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  window.doApprove = async id => {
+    try {
+      const { error } = await sb.rpc('approve_pending_image', { p_pending: id, p_notes: null });
+      if (error) throw error; toast(t('rev.approved.done')); loadList();
+    } catch(e){ toast(t('rev.err') + e.message); }
+  };
+  window.openReject = id => {
+    document.getElementById('rejReasonKind').value = 'anatomy';
+    document.getElementById('rejNotes').value = '';
+    document.getElementById('rejConfirm').onclick = () => doReject(id);
+    document.getElementById('rejectModal').classList.add('on');
+  };
+  async function doReject(id){
+    const kind = document.getElementById('rejReasonKind').value;
+    const notes = document.getElementById('rejNotes').value.trim();
+    const opts = document.querySelector('#rejReasonKind option:checked').textContent;
+    const reason = opts + (notes ? ' — ' + notes : '');
+    try {
+      const { error } = await sb.rpc('reject_pending_image', { p_pending: id, p_reason: reason });
+      if (error) throw error; closeModal('rejectModal'); toast(t('rev.rejected.done')); loadList();
+    } catch(e){ toast(t('rev.err') + e.message); }
+  }
+  window.openRevision = id => {
+    document.getElementById('revNotes').value = '';
+    document.getElementById('revConfirm').onclick = () => doRevision(id);
+    document.getElementById('revisionModal').classList.add('on');
+  };
+  async function doRevision(id){
+    const notes = document.getElementById('revNotes').value.trim();
+    if (!notes){ toast(t('rev.err') + 'Please provide guidance.'); return; }
+    try {
+      const { error } = await sb.rpc('request_pending_revision', { p_pending: id, p_notes: notes });
+      if (error) throw error; closeModal('revisionModal'); toast(t('rev.revision.done')); loadList();
+    } catch(e){ toast(t('rev.err') + e.message); }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
