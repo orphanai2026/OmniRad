@@ -47,7 +47,8 @@
   var css = document.createElement('style');
   css.textContent = [
     ':root{--onav-h:56px}',
-    '.onav{position:fixed;top:0;left:0;right:0;height:var(--onav-h);background:rgba(8,14,20,.92);border-bottom:1px solid var(--border,rgba(45,212,200,.12));display:flex;align-items:center;padding:0 16px;gap:12px;z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;box-sizing:border-box}',
+    '.onav{position:fixed;top:0;left:0;right:0;height:var(--onav-h);background:rgba(8,14,20,.92);border-bottom:1px solid var(--border,rgba(45,212,200,.12));display:flex;align-items:center;padding:0 16px;gap:12px;z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-sizing:border-box}',
+    '.onav-inner{display:flex;align-items:center;gap:12px;width:100%;min-width:0}',
     '[data-theme="dim"] .onav{background:rgba(230,236,243,.92)}',
     '.onav a,.onav button{font-family:inherit}',
     '.onav-logo{display:flex;align-items:center;gap:9px;flex-shrink:0;text-decoration:none}',
