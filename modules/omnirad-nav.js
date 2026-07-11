@@ -82,12 +82,16 @@
     '[data-theme="dim"] .onav-ib{background:#ffffff;border-color:rgba(15,58,58,.14);color:rgba(15,58,58,.6)}',
     '[data-theme="dim"] .onav-ib:hover{background:var(--acc-sub);color:var(--acc);border-color:var(--acc)}',
     '.onav-uw{position:relative;flex:0 1 auto;min-width:0;max-width:none}',
-    '.onav-ua{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:999px;background:var(--bg-ov,#162030);border:1px solid var(--border-s,rgba(232,240,245,.08));cursor:pointer;transition:border-color .15s,background .15s;min-width:0}',
+    '.onav-ua{display:grid;place-items:center;width:36px;height:36px;padding:0;border-radius:50%;background:var(--bg-ov,#162030);border:1px solid var(--border-s,rgba(232,240,245,.08));cursor:pointer;transition:border-color .15s,transform .1s}',
     '.onav-ua:hover{border-color:var(--acc,#2dd4c8)}',
+    '.onav-ua:active{transform:scale(.96)}',
     '[data-theme="dim"] .onav-ua{background:#ffffff;border-color:rgba(15,58,58,.14)}',
-    '.onav-av{width:26px;height:26px;border-radius:50%;background:var(--acc,#2dd4c8);color:var(--acc-ink,#08100e);display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden;line-height:1}',
-    '.onav-un{font-size:12px;color:var(--text-s,rgba(232,240,245,.65));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto;max-width:180px}',
-    '@media(max-width:900px){.onav-un{max-width:130px}}',
+    '.onav-av{width:32px;height:32px;border-radius:50%;background:var(--acc,#2dd4c8);color:var(--acc-ink,#08100e);display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;overflow:hidden;line-height:1}',
+    '.onav-uhead{display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;border-bottom:1px solid var(--border-s,rgba(232,240,245,.08));margin-bottom:4px}',
+    '.onav-uhead .un{font-size:13px;font-weight:700;color:var(--text,#e8f0f5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.onav-uhead .ue{font-size:11px;color:var(--text-m,rgba(232,240,245,.5));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:"IBM Plex Mono",monospace}',
+    '.onav-uhead .ur{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc,#2dd4c8);margin-top:3px}',
+    '.onav-un{display:none}',
     '@media(max-width:720px){.onav-un{display:none}.onav-uw{max-width:none;flex:0 0 auto}}',
     '.onav-udrop{position:absolute;top:calc(100% + 6px);inset-inline-end:0;min-width:220px;max-width:calc(100vw - 24px);background:var(--bg-e,#101e2a);border:1px solid var(--border,rgba(45,212,200,.12));border-radius:10px;padding:6px;box-shadow:0 12px 34px -12px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210}',
     '.onav-uw.open .onav-udrop,.onav-uw:hover .onav-udrop,.onav-uw:focus-within .onav-udrop{opacity:1;visibility:visible;transform:translateY(0)}',
@@ -141,8 +145,8 @@
       '<div class="onav-uw" id="onavBellWrap" style="display:none;position:relative"><button class="onav-ib" id="onavBell" title="Notifications">🔔<span id="onavBellCount" style="position:absolute;top:-4px;inset-inline-end:-4px;background:var(--acc);color:var(--acc-ink);border-radius:999px;padding:1px 5px;font-size:9px;font-weight:800;display:none">0</span></button>' +
         '<div class="onav-udrop" id="onavBellDrop" style="min-width:320px;max-height:60vh;overflow-y:auto;padding:6px"><div id="onavBellList" style="padding:8px;font-size:12px;color:var(--text-m);text-align:center">Loading…</div></div>' +
       '</div>' +
-      '<div class="onav-uw" id="onavUserWrap"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">…</div><span class="onav-un" id="onavName">…</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
-        '<div class="onav-udrop"><a href="' + abs('pages/profile.html') + '" data-i18n="common.profile">👤 My Profile</a><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
+      '<div class="onav-uw" id="onavUserWrap"><div class="onav-ua" id="onavUser" tabindex="0" title="Account"><div class="onav-av" id="onavAva">…</div></div>' +
+        '<div class="onav-udrop"><div class="onav-uhead"><div class="un" id="onavHeadName">…</div><div class="ue" id="onavHeadEmail"></div><div class="ur" id="onavHeadRole"></div></div><a href="' + abs('pages/profile.html') + '" data-i18n="common.profile">👤 My Profile</a><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
       '</div>' +
       '<button class="onav-ham" id="onavHam" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>' +
     '</div>';
@@ -223,8 +227,13 @@
         const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
         var nameEl = document.getElementById('onavName');
         var avaEl = document.getElementById('onavAva');
+        var gHeadName = document.getElementById('onavHeadName');
+        var gHeadEmail = document.getElementById('onavHeadEmail');
+        var gHeadRole = document.getElementById('onavHeadRole');
         if (!session){
-          if(nameEl) nameEl.textContent='Guest';
+          if(gHeadName) gHeadName.textContent='Guest';
+          if(gHeadEmail) gHeadEmail.textContent='Not signed in';
+          if(gHeadRole) gHeadRole.textContent='';
           if(avaEl) avaEl.textContent='?';
           // Rewire dropdown links for guest → all point to sign in
           var authUrl = BASE + 'pages/auth.html';
@@ -242,9 +251,15 @@
         }
         const { data:profile } = await OmniRadAuth.client.from('profiles').select('display_name, email, role, avatar_url').eq('id', session.user.id).maybeSingle();
         const fullName = (profile && (profile.display_name || (profile.email||'').split('@')[0])) || session.user.email || 'User';
-        const parts = fullName.trim().split(/\s+/).filter(Boolean);
-        const name = parts.length > 1 ? (parts[0] + ' ' + parts[parts.length-1][0] + '.') : fullName;
-        if (nameEl) { nameEl.textContent = name; nameEl.title = fullName; }
+        var headName = document.getElementById('onavHeadName');
+        var headEmail = document.getElementById('onavHeadEmail');
+        var headRole = document.getElementById('onavHeadRole');
+        if (headName) { headName.textContent = fullName; headName.title = fullName; }
+        if (headEmail) headEmail.textContent = (profile && profile.email) || session.user.email || '';
+        var roleTxt = (profile && profile.role) || 'viewer';
+        if (headRole) headRole.textContent = roleTxt;
+        var ua = document.getElementById('onavUser');
+        if (ua) ua.setAttribute('title', fullName);
         const initials = fullName.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
         if (avaEl){
           const url = profile && profile.avatar_url;
