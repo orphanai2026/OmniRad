@@ -86,9 +86,8 @@
     '.onav-ua:hover{border-color:var(--acc,#2dd4c8)}',
     '[data-theme="dim"] .onav-ua{background:#ffffff;border-color:rgba(15,58,58,.14)}',
     '.onav-av{width:26px;height:26px;border-radius:50%;background:var(--acc,#2dd4c8);color:var(--acc-ink,#08100e);display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden;line-height:1}',
-    '.onav-un{font-size:12px;color:var(--text-s,rgba(232,240,245,.65));white-space:nowrap;overflow:visible;text-overflow:clip;min-width:0;flex:0 0 auto;max-width:none}',
-    '@media(max-width:1100px){.onav-un{overflow:hidden;text-overflow:ellipsis;flex:1 1 auto}.onav-uw{max-width:260px}}',
-    '@media(max-width:900px){.onav-uw{max-width:180px}}',
+    '.onav-un{font-size:12px;color:var(--text-s,rgba(232,240,245,.65));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto;max-width:180px}',
+    '@media(max-width:900px){.onav-un{max-width:130px}}',
     '@media(max-width:720px){.onav-un{display:none}.onav-uw{max-width:none;flex:0 0 auto}}',
     '.onav-udrop{position:absolute;top:calc(100% + 6px);inset-inline-end:0;min-width:220px;max-width:calc(100vw - 24px);background:var(--bg-e,#101e2a);border:1px solid var(--border,rgba(45,212,200,.12));border-radius:10px;padding:6px;box-shadow:0 12px 34px -12px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210}',
     '.onav-uw.open .onav-udrop,.onav-uw:hover .onav-udrop,.onav-uw:focus-within .onav-udrop{opacity:1;visibility:visible;transform:translateY(0)}',
@@ -242,9 +241,11 @@
           return;
         }
         const { data:profile } = await OmniRadAuth.client.from('profiles').select('display_name, email, role, avatar_url').eq('id', session.user.id).maybeSingle();
-        const name = (profile && (profile.display_name || (profile.email||'').split('@')[0])) || session.user.email || 'User';
-        if (nameEl) nameEl.textContent = name;
-        const initials = name.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
+        const fullName = (profile && (profile.display_name || (profile.email||'').split('@')[0])) || session.user.email || 'User';
+        const parts = fullName.trim().split(/\s+/).filter(Boolean);
+        const name = parts.length > 1 ? (parts[0] + ' ' + parts[parts.length-1][0] + '.') : fullName;
+        if (nameEl) { nameEl.textContent = name; nameEl.title = fullName; }
+        const initials = fullName.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
         if (avaEl){
           const url = profile && profile.avatar_url;
           if (url && url.startsWith('preset:')){
