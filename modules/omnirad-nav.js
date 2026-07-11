@@ -79,16 +79,16 @@
     '.onav-ib:hover{color:var(--acc,#2dd4c8);border-color:var(--acc,#2dd4c8)}',
     '[data-theme="dim"] .onav-ib{background:#ffffff;border-color:rgba(15,58,58,.14);color:rgba(15,58,58,.6)}',
     '[data-theme="dim"] .onav-ib:hover{background:var(--acc-sub);color:var(--acc);border-color:var(--acc)}',
-    '.onav-uw{position:relative;flex:0 1 auto;min-width:0;max-width:200px}',
-    '.onav-ua{display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 9px;border-radius:6px;transition:background .15s;min-width:0;max-width:100%;overflow:hidden}',
+    '.onav-uw{position:relative;flex:0 1 auto;min-width:0;max-width:280px}',
+    '.onav-ua{display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 9px;border-radius:6px;transition:background .15s;min-width:0;max-width:100%;overflow:hidden;user-select:none}',
     '.onav-ua:hover{background:var(--bg-ov,#162030)}',
     '.onav-av{width:28px;height:28px;border-radius:50%;background:var(--acc-sub,rgba(45,212,200,.10));border:1.5px solid var(--acc-dim,rgba(45,212,200,.55));display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--acc,#2dd4c8);flex-shrink:0}',
     '.onav-un{font-size:12px;color:var(--text-s,rgba(232,240,245,.65));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto}',
-    '@media(max-width:1100px){.onav-uw{max-width:150px}}',
-    '@media(max-width:900px){.onav-uw{max-width:110px}}',
+    '@media(max-width:1100px){.onav-uw{max-width:200px}}',
+    '@media(max-width:900px){.onav-uw{max-width:140px}}',
     '@media(max-width:720px){.onav-un{display:none}.onav-uw{max-width:none;flex:0 0 auto}}',
-    '.onav-udrop{position:absolute;top:calc(100% + 6px);inset-inline-end:0;min-width:200px;max-width:calc(100vw - 24px);background:var(--bg-e,#101e2a);border:1px solid var(--border,rgba(45,212,200,.12));border-radius:10px;padding:6px;box-shadow:0 12px 34px -12px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210}',
-    '.onav-uw:hover .onav-udrop,.onav-uw:focus-within .onav-udrop{opacity:1;visibility:visible;transform:translateY(0)}',
+    '.onav-udrop{position:absolute;top:calc(100% + 6px);inset-inline-end:0;min-width:220px;max-width:calc(100vw - 24px);background:var(--bg-e,#101e2a);border:1px solid var(--border,rgba(45,212,200,.12));border-radius:10px;padding:6px;box-shadow:0 12px 34px -12px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .16s;z-index:210}',
+    '.onav-uw.open .onav-udrop,.onav-uw:hover .onav-udrop,.onav-uw:focus-within .onav-udrop{opacity:1;visibility:visible;transform:translateY(0)}',
     '.onav-udrop a{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:6px;font-size:13px;color:var(--text-s,rgba(232,240,245,.65));text-decoration:none}',
     '.onav-udrop a:hover{background:var(--acc-sub,rgba(45,212,200,.10));color:var(--acc,#2dd4c8)}',
     '.onav-udsep{height:1px;background:var(--border-s,rgba(232,240,245,.08));margin:5px 4px}',
@@ -180,6 +180,25 @@
     document.addEventListener('click', function (e) {
       if (!ham.contains(e.target) && !mm.contains(e.target)) { mm.classList.remove('open'); ham.classList.remove('open'); }
     });
+    // User dropdown — click-to-toggle (works on touch + keyboard, not only hover)
+    var uw = document.querySelector('.onav-uw:last-of-type');
+    var ua = document.getElementById('onavUser');
+    if (uw && ua){
+      ua.addEventListener('click', function(e){
+        e.stopPropagation();
+        uw.classList.toggle('open');
+      });
+      ua.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); uw.classList.toggle('open'); }
+        if (e.key === 'Escape') uw.classList.remove('open');
+      });
+      document.addEventListener('click', function(e){
+        if (!uw.contains(e.target)) uw.classList.remove('open');
+      });
+      uw.querySelectorAll('.onav-udrop a').forEach(function(a){
+        a.addEventListener('click', function(){ uw.classList.remove('open'); });
+      });
+    }
     // theme
     var html = document.documentElement;
     var btn = document.getElementById('onavTheme');
