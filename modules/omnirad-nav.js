@@ -11,6 +11,8 @@
 (function () {
   if (window.__omniradNavMounted) return;
   window.__omniradNavMounted = true;
+  window.__omniradNavVersion = '2026-07-11-c';
+  console.log('[nav]', window.__omniradNavVersion);
 
   var script = document.currentScript;
   var BASE = (script && script.getAttribute('data-base')) || '';
