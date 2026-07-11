@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/supabase.js"></script>
 <style>
   :root{
     --bg:#0d1117; --panel:#161b22; --border:#30363d;
@@ -105,18 +106,12 @@
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://your-project.supabase.co';   // ← ضع URL مشروعك
-  const SUPABASE_ANON = 'your-anon-key';                     // ← ضع anon key
-
-  // Fallback: read from omnirad-config if present
-  if (window.OMNIRAD_CONFIG) {
-    // no-op — expected keys already global
+  // Uses shared OmniRad Supabase client (../modules/supabase.js)
+  if (!window.OmniRadAuth || !window.OmniRadAuth.client) {
+    document.body.insertAdjacentHTML('afterbegin',
+      '<div style="background:#f85149;color:#fff;padding:10px 16px;font-family:monospace;font-size:12px">❌ OmniRadAuth not loaded. Check ../modules/supabase.js path.</div>');
   }
-
-  const sb = window.supabase.createClient(
-    window.OMNIRAD_SUPABASE_URL || SUPABASE_URL,
-    window.OMNIRAD_SUPABASE_ANON || SUPABASE_ANON
-  );
+  const sb = window.OmniRadAuth && window.OmniRadAuth.client;
 
   const $ = id => document.getElementById(id);
   const DEF_POS = $('prompt').value;
