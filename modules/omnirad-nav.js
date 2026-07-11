@@ -139,7 +139,7 @@
       '<div class="onav-uw" id="onavBellWrap" style="display:none;position:relative"><button class="onav-ib" id="onavBell" title="Notifications">🔔<span id="onavBellCount" style="position:absolute;top:-4px;inset-inline-end:-4px;background:var(--acc);color:var(--acc-ink);border-radius:999px;padding:1px 5px;font-size:9px;font-weight:800;display:none">0</span></button>' +
         '<div class="onav-udrop" id="onavBellDrop" style="min-width:320px;max-height:60vh;overflow-y:auto;padding:6px"><div id="onavBellList" style="padding:8px;font-size:12px;color:var(--text-m);text-align:center">Loading…</div></div>' +
       '</div>' +
-      '<div class="onav-uw"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">…</div><span class="onav-un" id="onavName">…</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
+      '<div class="onav-uw" id="onavUserWrap"><div class="onav-ua" id="onavUser" tabindex="0"><div class="onav-av" id="onavAva">…</div><span class="onav-un" id="onavName">…</span><span style="font-size:10px;color:var(--text-m,rgba(232,240,245,.38))">▾</span></div>' +
         '<div class="onav-udrop"><a href="' + abs('pages/profile.html') + '" data-i18n="common.profile">👤 My Profile</a><a href="' + abs('index.html') + '#about" data-i18n="common.about">ℹ️ About</a><div class="onav-udsep"></div><a href="' + abs('pages/auth.html') + '" id="onavSignOut"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span data-i18n="common.signOut">Sign Out</span></a></div>' +
       '</div>' +
       '<button class="onav-ham" id="onavHam" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>' +
@@ -181,7 +181,7 @@
       if (!ham.contains(e.target) && !mm.contains(e.target)) { mm.classList.remove('open'); ham.classList.remove('open'); }
     });
     // User dropdown — click-to-toggle (works on touch + keyboard, not only hover)
-    var uw = document.querySelector('.onav-uw:last-of-type');
+    var uw = document.getElementById('onavUserWrap');
     var ua = document.getElementById('onavUser');
     if (uw && ua){
       ua.addEventListener('click', function(e){
