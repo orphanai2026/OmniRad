@@ -20,8 +20,12 @@ a{text-decoration:none;color:inherit}
 .info{overflow-y:auto}
 .panel-toggle{position:absolute;top:8px;z-index:5;width:24px;height:30px;border-radius:5px;background:var(--bg-ov);border:1px solid var(--border);color:var(--text-s);display:grid;place-items:center;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:12px;line-height:1;transition:.15s}
 .panel-toggle:hover{color:var(--acc);border-color:var(--acc-dim);background:var(--acc-sub)}
-.sidebar .panel-toggle{inset-inline-end:6px}
-.info .panel-toggle{inset-inline-start:6px}
+.sidebar .panel-toggle{inset-inline-end:6px;top:8px}
+.info .panel-toggle{inset-inline-start:6px;top:8px}
+.side-head{padding:6px 42px 12px 16px}
+body[dir="rtl"] .side-head{padding:6px 16px 12px 42px}
+.info-title-row{padding-inline-start:38px}
+body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 .atlas.left-collapsed .sidebar{padding:0}
 .atlas.right-collapsed .info{padding:0}
 .atlas.left-collapsed .sidebar > *:not(.panel-toggle){display:none}
