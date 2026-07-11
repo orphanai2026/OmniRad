@@ -143,10 +143,11 @@
 
       // Poll loop: gen_check_status → gen_fetch_result
       let attempts = 0, elapsed = 0, done = false;
-      while (attempts < 30 && !done) {
-        await new Promise(r => setTimeout(r, 3000));
-        attempts++; elapsed += 3;
-        set(`⏳ Generating… ${elapsed}s`, Math.min(20 + elapsed * 2, 90));
+      const MAX_ATTEMPTS = 60;   // ~5 minutes upper bound for FLUX Ultra under queue load
+      while (attempts < MAX_ATTEMPTS && !done) {
+        await new Promise(r => setTimeout(r, 5000));
+        attempts++; elapsed += 5;
+        set(`⏳ Generating… ${elapsed}s`, Math.min(15 + elapsed, 92));
 
         // Step 1: kick a poll (fires GET on result_url)
         const { data: chk, error: eC } = await sb.rpc('gen_check_status', { p_session: sessionId });
@@ -174,10 +175,15 @@
             </div>`;
           btn.disabled = false; done = true; return;
         }
-        if (fin?.status === 'failed') throw new Error('fal error: ' + JSON.stringify(fin));
-        // still_polling / not_ready → loop again
+        // fal returns 400 with "Request is still in progress" while the job runs — keep polling
+        const stillRunning = fin?.status === 'failed'
+          && (JSON.stringify(fin).toLowerCase().includes('still in progress') || fin.code === 400);
+        if (fin?.status === 'failed' && !stillRunning) {
+          throw new Error('fal error: ' + JSON.stringify(fin));
+        }
+        // still_polling / not_ready / stillRunning → loop again
       }
-      throw new Error('Timed out after 90s (fal.ai queue too slow or job stuck)');
+      throw new Error('Timed out (fal.ai queue too slow)');
     } catch (e) {
       err.textContent = '❌ ' + (e.message || e);
       set('Failed', 0);
