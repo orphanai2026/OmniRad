@@ -199,7 +199,23 @@
         const { data:{ session } } = await OmniRadAuth.client.auth.getSession();
         var nameEl = document.getElementById('onavName');
         var avaEl = document.getElementById('onavAva');
-        if (!session){ if(nameEl) nameEl.textContent='Guest'; if(avaEl) avaEl.textContent='?'; return; }
+        if (!session){
+          if(nameEl) nameEl.textContent='Guest';
+          if(avaEl) avaEl.textContent='?';
+          // Rewire dropdown links for guest → all point to sign in
+          var authUrl = BASE + 'pages/auth.html';
+          document.querySelectorAll('.onav-uw .onav-udrop a').forEach(function(a){
+            a.href = authUrl;
+            var txt = a.textContent.trim().toLowerCase();
+            if (txt.indexOf('sign out') !== -1 || txt.indexOf('تسجيل الخروج') !== -1){
+              a.innerHTML = '🔐 <span data-i18n="common.signIn">Sign in</span>';
+            }
+          });
+          // Also make the avatar itself click straight to auth
+          var ua = document.getElementById('onavUser');
+          if (ua){ ua.style.cursor = 'pointer'; ua.onclick = function(){ location.href = authUrl; }; }
+          return;
+        }
         const { data:profile } = await OmniRadAuth.client.from('profiles').select('display_name, email, role, avatar_url').eq('id', session.user.id).maybeSingle();
         const name = (profile && (profile.display_name || (profile.email||'').split('@')[0])) || session.user.email || 'User';
         if (nameEl) nameEl.textContent = name;
