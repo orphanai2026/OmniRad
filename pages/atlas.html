@@ -12,7 +12,21 @@
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
 body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
 a{text-decoration:none;color:inherit}
-.atlas{display:grid;grid-template-columns:260px 1fr 300px;height:calc(100vh - 56px)}
+.atlas{display:grid;grid-template-columns:var(--col-l,260px) 1fr var(--col-r,300px);height:calc(100vh - 56px);transition:grid-template-columns .28s cubic-bezier(.4,0,.2,1)}
+.atlas.left-collapsed{--col-l:44px}
+.atlas.right-collapsed{--col-r:44px}
+.sidebar,.info{position:relative}
+.panel-toggle{position:absolute;top:12px;z-index:5;width:26px;height:34px;border-radius:6px;background:var(--bg-ov);border:1px solid var(--border);color:var(--text-s);display:grid;place-items:center;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:13px;line-height:1;transition:.15s;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.panel-toggle:hover{color:var(--acc);border-color:var(--acc-dim);background:var(--acc-sub)}
+.sidebar .panel-toggle{inset-inline-end:-13px}
+.info .panel-toggle{inset-inline-start:-13px}
+body[dir="rtl"] .sidebar .panel-toggle{inset-inline-start:-13px;inset-inline-end:auto}
+body[dir="rtl"] .info .panel-toggle{inset-inline-end:-13px;inset-inline-start:auto}
+.atlas.left-collapsed .sidebar > *:not(.panel-toggle){display:none}
+.atlas.right-collapsed .info > *:not(.panel-toggle){display:none}
+.atlas.left-collapsed .sidebar,.atlas.right-collapsed .info{padding:0;overflow:hidden}
+.atlas.left-collapsed .sidebar .panel-toggle,.atlas.right-collapsed .info .panel-toggle{inset-inline-end:auto;inset-inline-start:auto;left:9px}
+body[dir="rtl"] .atlas.left-collapsed .sidebar .panel-toggle,body[dir="rtl"] .atlas.right-collapsed .info .panel-toggle{right:9px;left:auto}
 .sidebar{background:var(--bg-e);border-inline-end:1px solid var(--border);overflow-y:auto;padding:14px 0}
 .side-head{padding:6px 16px 12px}
 .side-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
@@ -32,7 +46,9 @@ a{text-decoration:none;color:inherit}
 .mod-tab:hover:not(:disabled){color:var(--text)}
 .mod-tab.on{color:var(--acc);border-bottom-color:var(--acc)}
 .mod-tab:disabled{opacity:.35;cursor:not-allowed;position:relative}
-.mod-tab:disabled::after{content:'coming soon';font-size:8px;color:var(--text-m);position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);letter-spacing:0;font-weight:600;text-transform:none}
+.mod-tab.no-images{opacity:.55}
+.mod-tab.no-images::after{content:'· no images yet';font-size:8px;color:var(--text-m);position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);letter-spacing:0;font-weight:600;text-transform:none;white-space:nowrap}
+.mod-tab.on.no-images{opacity:1}
 /* Plane/variant sub-picker */
 .sub-picker{display:flex;gap:12px;align-items:center;padding:8px 18px;background:var(--bg-e);border-bottom:1px solid var(--border-s);flex-wrap:wrap}
 .sub-lbl{font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
@@ -117,6 +133,7 @@ a{text-decoration:none;color:inherit}
 <body>
 <div class="atlas">
   <aside class="sidebar">
+    <button class="panel-toggle" id="tglLeft" title="Hide structures list" aria-label="Toggle structures panel">◀</button>
     <div class="side-head">
       <div class="side-title" data-i18n="atlas.structures">Anatomical structures</div>
       <input class="side-search" id="search" placeholder="Search…" data-i18n-placeholder="common.search" list="anat-dict" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="atlas-search-nosave">
@@ -192,6 +209,7 @@ a{text-decoration:none;color:inherit}
   </section>
 
   <aside class="info" id="info">
+    <button class="panel-toggle" id="tglRight" title="Hide info panel" aria-label="Toggle info panel">▶</button>
     <div class="info-title-row"><h2 id="infoTitle">OmniRad Atlas</h2><span id="titleSpeaker"></span></div>
     <div class="info-sub" id="infoSub">Radiologic anatomy · bilingual</div>
     <h3 data-i18n="atlas.study">Study</h3>
@@ -460,26 +478,38 @@ function renderSidebar(filter){
 }
 window.addEventListener('omnirad-lang', ()=>{ renderSidebar($('search') && $('search').value); renderInfo(); });
 
-/* ─────── Modality tabs (hybrid: enabled + coming-soon disabled) ─────── */
+/* ─────── Modality tabs — ALL enabled, CT default ─────── */
 function renderModBar(){
   const bar = $('modBar'); bar.innerHTML = '';
   const available = U.modalitiesFor(state.structId);
-  ALL_MODALITIES.forEach(mod => {
+  ALL_MODALITIES.forEach(mod =>{
     const btn = document.createElement('button');
     btn.className = 'mod-tab' + (mod === state.modality ? ' on' : '');
     btn.textContent = mod;
-    if (available.includes(mod)) {
-      btn.addEventListener('click', ()=>{ state.modality = mod; state.plane = ''; state.variant = ''; renderModBar(); renderSubPicker(); loadCurrent(); });
-    } else {
-      btn.disabled = true;
-    }
+    if (!available.includes(mod)) btn.classList.add('no-images');
+    btn.addEventListener('click', ()=>{ state.modality = mod; state.plane = ''; state.variant = ''; renderModBar(); renderSubPicker(); loadCurrent(); });
     bar.appendChild(btn);
   });
 }
 
+/* Modality → allowed planes per current radiology practice */
+const PLANES_BY_MOD = {
+  'CT':    ['Axial','Coronal','Sagittal'],
+  'MRI':   ['Axial','Coronal','Sagittal'],
+  'US':    ['Longitudinal','Transverse','Oblique'],
+  'X-Ray': ['AP','PA','Lateral','Oblique'],
+  'NM':    ['Whole-body','Anterior','Posterior','SPECT axial'],
+  'PET':   ['Whole-body','Axial','Coronal','Sagittal'],
+  'Angio': ['AP','Lateral','RAO','LAO','Cranial','Caudal'],
+  'Mammo': ['CC','MLO','ML','XCCL']
+};
+
 /* ─────── Plane + Variant selects ─────── */
 function renderSubPicker(){
-  const planes = U.planesFor(state.structId, state.modality);
+  const modPlanes = PLANES_BY_MOD[state.modality] || ['Axial','Coronal','Sagittal'];
+  let planes = U.planesFor(state.structId, state.modality);
+  planes = planes && planes.length ? planes.filter(p => modPlanes.includes(p)) : [];
+  if (!planes.length) planes = modPlanes.slice();
   const planeSel = $('planeSel'); planeSel.innerHTML = '';
   planes.forEach(p=>{ const o = document.createElement('option'); o.value = p; o.textContent = p; if (p===state.plane) o.selected = true; planeSel.appendChild(o); });
   if (!planes.includes(state.plane)) state.plane = planes[0] || '';
@@ -487,6 +517,7 @@ function renderSubPicker(){
 
   const variants = U.variantsFor(state.structId, state.modality, state.plane);
   const varSel = $('varSel'); varSel.innerHTML = '';
+  if (!variants.length){ const o = document.createElement('option'); o.value=''; o.textContent='—'; varSel.appendChild(o); }
   variants.forEach(v=>{ const o = document.createElement('option'); o.value = v.variant; o.textContent = v.variant; if (v.variant===state.variant) o.selected = true; varSel.appendChild(o); });
   if (!variants.some(v=>v.variant===state.variant)) state.variant = (variants[0] && variants[0].variant) || '';
   varSel.onchange = e => { state.variant = e.target.value; loadCurrent(); };
@@ -524,7 +555,8 @@ function renderInfo(){
 function selectStructure(id){
   state.structId = id;
   const av = U.modalitiesFor(id);
-  state.modality = av[0] || '';
+  // CT default — fall back to first available if the structure has no CT
+  state.modality = av.includes('CT') ? 'CT' : (av[0] || 'CT');
   state.plane = ''; state.variant = '';
   renderSidebar($('search').value); renderModBar(); renderSubPicker();
   loadCurrent();
@@ -720,7 +752,23 @@ document.querySelectorAll('[data-tool]').forEach(b=>{
 $('btnInvert').addEventListener('click', ()=>{ state.invert = !state.invert; $('btnInvert').classList.toggle('on', state.invert); draw(); });
 $('btnOverlay').addEventListener('click', ()=>{ state.overlays = !state.overlays; document.querySelectorAll('.anno,.orient-mark,.scale-bar').forEach(el=>el.style.display = state.overlays ? '' : 'none'); $('btnOverlay').classList.toggle('on', !state.overlays); });
 $('btnClear').addEventListener('click', ()=>{ state.measurements = []; drawMeasurements(); });
-$('btnReset').addEventListener('click', ()=> loadCurrent());
+$('btnReset').addEventListener('click', ()=>{
+  // Full reset: view state + image state + measurements + preset + rotation + flips
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  state.rotate = 0; state.flipH = false; state.flipV = false;
+  state.invert = false; state.measurements = []; state.magnifier = false;
+  state.plane = ''; state.variant = '';
+  $('btnInvert').classList.remove('on');
+  $('btnMag').classList.remove('on');
+  $('presetSel').value = '';
+  // Force default tool back to WL
+  document.querySelectorAll('[data-tool]').forEach(x=>x.classList.remove('on'));
+  const wlBtn = document.querySelector('[data-tool="wl"]'); if (wlBtn){ wlBtn.classList.add('on'); state.tool = 'wl'; }
+  viewer.classList.remove('tool-zoom','tool-pan','tool-measure','tool-angle','tool-probe');
+  viewer.classList.add('tool-wl');
+  renderSubPicker();
+  loadCurrent();
+});
 $('btnRotate').addEventListener('click', ()=>{ state.rotate = (state.rotate + 90) % 360; draw(); });
 $('btnFlipH').addEventListener('click', ()=>{ state.flipH = !state.flipH; draw(); });
 $('btnFlipV').addEventListener('click', ()=>{ state.flipV = !state.flipV; draw(); });
@@ -798,7 +846,41 @@ function mapDictToStructure(row){
   return fallback ? S.find(s => s.id === fallback) : null;
 }
 
-/* Bootstrap */
+/* ─── Collapsible side panels (persisted) ─── */
+(function initPanels(){
+  const atlas = document.querySelector('.atlas');
+  const KEY_L = 'omnirad.atlas.leftCollapsed', KEY_R = 'omnirad.atlas.rightCollapsed';
+  const tL = $('tglLeft'), tR = $('tglRight');
+  const isRTL = () => document.body.getAttribute('dir') === 'rtl';
+  function chevron(side, collapsed){
+    // ◀ points toward the panel it hides; flip in RTL and when collapsed
+    if (side === 'left') return collapsed ? (isRTL()?'◀':'▶') : (isRTL()?'▶':'◀');
+    if (side === 'right') return collapsed ? (isRTL()?'▶':'◀') : (isRTL()?'◀':'▶');
+    return '◀';
+  }
+  function apply(){
+    const l = localStorage.getItem(KEY_L) === '1';
+    const r = localStorage.getItem(KEY_R) === '1';
+    atlas.classList.toggle('left-collapsed', l);
+    atlas.classList.toggle('right-collapsed', r);
+    tL.textContent = chevron('left', l);
+    tR.textContent = chevron('right', r);
+    tL.title = l ? 'Show structures list' : 'Hide structures list';
+    tR.title = r ? 'Show info panel' : 'Hide info panel';
+    // Resize canvas after transition
+    setTimeout(()=>{ fitCanvas(); if (state.img) draw(); }, 320);
+  }
+  tL.addEventListener('click', ()=>{
+    const cur = localStorage.getItem(KEY_L) === '1';
+    localStorage.setItem(KEY_L, cur ? '0' : '1'); apply();
+  });
+  tR.addEventListener('click', ()=>{
+    const cur = localStorage.getItem(KEY_R) === '1';
+    localStorage.setItem(KEY_R, cur ? '0' : '1'); apply();
+  });
+  window.addEventListener('omnirad-lang', apply);
+  apply();
+})();
 function onResize(){ fitCanvas(); if (state.img) draw(); }
 window.addEventListener('resize', onResize);
 onResize();
