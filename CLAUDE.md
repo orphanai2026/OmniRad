@@ -56,7 +56,7 @@
 - **الدومين:** `orphan99.com` (Cloudflare) — DKIM/SPF/DMARC مضبوطة
 - **الاستضافة الحالية:** GitHub Pages (`orphanai2026.github.io/OmniRad/`)
 - **الدومين المستقبلي:** قد ينقل لدومين خاص بعد نجاح التجربة
-- **توليد الصور:** fal.ai (نموذج FLUX) عبر API — Vault يحفظ المفتاح
+- **توليد الصور:** ⚠️ **يدوي عبر ChatGPT UI** (القرار المعتمد 12 يوليو 2026). API models (FLUX Ultra, Gemini 2.5 Flash Image, GPT Image 1) جُرِّبت وفشلت في الدقة التشريحية. Studio auto-generation UI مخفي (الكود محفوظ). Vault يحوي مفاتيح fal.ai + gemini_api_key للاحتياط.
 - **حساب المنصّة الرسمي:** `omniradai@gmail.com` (مالك Supabase Organization)
 
 **قاعدة البيانات — جداول رئيسية:**
@@ -144,22 +144,102 @@
 - يفتح ملفات وصور مباشرة — لا يريد شرح خطوات طويلة
 
 ═══════════════════════════════════════════════════════════════
-## المهام المتبقّية (بالأولوية)
+## القرارات المعتمدة (12 يوليو 2026) — قابلة للتنفيذ في ٣ مراحل
+═══════════════════════════════════════════════════════════════
+
+### تجارب التوليد التلقائي — نتائج نهائية
+
+| المولّد | النتيجة |
+|---|---|
+| **FLUX.1.1 [pro] Ultra** (fal.ai) | ❌ يخلط CT/MRI — anatomy غير دقيق |
+| **GPT Image 1** (OpenAI API) | ❌ لم يُختبر (بطاقة رُفضت على Stripe) |
+| **Gemini 2.5 Flash Image** (Google) | ⚠️ جودة بصرية عالية لكن أخطاء تشريحية |
+| **ChatGPT UI** (يدوي — GPT Image 1 + prompt rewriting) | ✅ **الأنسب** — anatomy دقيق + T2 CSF صحيح + texture واقعي |
+
+**القرار:** توليد يدوي عبر ChatGPT + رفع جماعي إلى المنصّة.
+
+### الـ Workflow المعتمد
+
+```
+Prompt Studio (ينتج البرومبت)
+   ↓
+ChatGPT UI (توليد يدوي — أنت)
+   ↓
+Contribute Hub → Bulk Upload Page (رفع جماعي)
+   ↓
+Review Queue (مراجعة + اعتماد)
+   ↓
+[approve] → Atlas + Dictionary + Comparison (تلقائي)
+[reject]  → Rejected Archive (لا يُحذف)
+```
+
+### القرارات المثبَّتة
+
+**Bulk Upload:**
+- Form كاملة ٧ حقول: organ, modality, plane, sequence, structures[], prompt_used, level
+- Autocomplete من القاموس + «Add new»
+- Rejected → أرشيف (لا حذف)
+
+**Contribute Hub:**
+- صفحة مستقلة `contribute.html` (hub للمساهمين)
+- بطاقة اختصار في `profile.html` (admin/contributor فقط)
+- عنصر في dropdown النافبار (admin/contributor فقط)
+
+**القاموس Stack (Full):**
+- **TA2** (Terminologia Anatomica) — المصدر التشريحي الذهبي
+- **RadLex** — المصدر الإشعاعي (RSNA) عبر BioPortal API
+- **WHO UMD** — الترجمة العربية الموثوقة (منظمة الصحة العالمية)
+- **Wikidata SPARQL** — ترجمة تلقائية سريعة (~٧٥٪ دقة)
+- **Hybrid Arabic:** Wikidata أوّلاً + WHO للمراجعة النهائية
+
+**Studio auto-generation:** يُخفى في UI، الكود محفوظ (استرجاع لاحق).
+
+═══════════════════════════════════════════════════════════════
+## المهام المتبقّية (بالأولوية) — ٣ مراحل مستقلّة
 ═══════════════════════════════════════════════════════════════
 
 ### ⚠️ ملاحظة (11 يوليو 2026):
 جُرِّب Pipeline محلي (TCIA + TotalSegmentator + RadLex) — نجح تقنياً لكن
-أُلغي القرار وعُدنا لتوليد AI (ChatGPT/FLUX). ملفات Pipeline في
-`omnirad-redesign/pipeline/` مرجعية فقط. الجهاز نُظِّف (env + folder).
+أُلغي القرار وعُدنا لتوليد AI. ملفات Pipeline في
+`omnirad-redesign/pipeline/` مرجعية فقط.
 
-بالترتيب المعتمد للتنفيذ:
+### 🟢 المرحلة ١ — القاموس الموسَّع (المحادثة القادمة)
+**قبل كل شيء — لأن Prompt Studio يعتمد عليه.**
 
-1. **⭐ الأولوية القصوى (محادثة جديدة):** توليد الصور الطبية عبر ChatGPT/FLUX بخطة موسّعة
-   - prompt engineering دقيق + negatives + references
-   - Studio direct upload → bucket `atlas` (٦٠)
-   - توليد ≥١ صورة لكل من الـ٤١ عضواً (٦٤): CNS 11 · Chest 4 · CV 3 · Abd 10 · Pelvis 5 · Spine 3 · UL 3 · LL 2
+1. جدول `anatomical_structures` في Supabase (الموسَّع)
+2. استيراد TA2 من OpenAnatomy JSON → ~١,٢٠٠ بنية (من ٢٥٠ الحالية)
+3. Enrichment: RadLex IDs عبر BioPortal API
+4. Arabic hybrid: Wikidata SPARQL → auto-fill عربي (~٤٠٠ بنية)
+5. `anatomy-master-v2.js` مُشتقّ من الجدول (fallback على snapshot ثابت)
+6. تحديث `dictionary.html` + `atlas.html` sidebar للقراءة من v2
 
-2. **٦٢:** إعادة تصميم شريط أدوات Atlas حسب البروتوكولات الدقيقة:
+**التقدير الزمني:** ٤-٦ ساعات
+
+### 🟡 المرحلة ٢ — Bulk Upload + Contribute Hub (محادثة مستقلّة)
+
+7. `contribute.html` (hub + instructions + stats + شارات مساهم)
+8. `bulk-upload.html` (drag & drop + form + autocomplete)
+9. SQL: `submit_bulk_upload()` + `approve_bulk_upload()` + `reject_to_archive()`
+10. جدول `anatomical_structures_ext` (للبنى الجديدة من الرفع)
+11. رابط شرطي في dropdown navbar (admin/contributor)
+12. بطاقة اختصار في `profile.html`
+
+**التقدير الزمني:** ٣-٤ ساعات
+
+### 🟠 المرحلة ٣ — الربط والأتمتة (محادثة مستقلّة)
+
+13. عمود `structures text[]` في `atlas_images`
+14. تحديث `review.html` (دعم manual uploads + archive رفض)
+15. `atlas.html` يعرض الصور المعتمَدة تلقائياً في مكانها
+16. Studio auto-generation UI: hide (الكود محفوظ)
+
+**التقدير الزمني:** ٢-٣ ساعات
+
+---
+
+### مهام مؤجَّلة (بعد اكتمال المراحل ١-٣)
+
+1. **٦٢:** إعادة تصميم شريط أدوات Atlas حسب البروتوكولات الدقيقة:
    - CT: WW/WL presets (brain 80/40, lung 1500/-600, bone 2000/400, abd 400/60, mediast 350/40, subdural 130/50, stroke 40/40) + MPR + MIP
    - MRI: تبويبات T1/T2/FLAIR/DWI/ADC/T1+C + fat-sat + ADC colormap
    - US: B-mode/color/power/spectral Doppler + gain + depth + TGC + focus + harmonic
@@ -177,9 +257,9 @@
 
 4. **٦٠:** Studio يرفع مباشرة إلى bucket `atlas` (بدل رابط fal مؤقّت)
 
-5. **٥٥:** مراجعة اختصاصي أشعة للمصطلحات العربية في `anatomy-master.js`
+4. **٥٥:** مراجعة اختصاصي أشعة للمصطلحات العربية (بعد المرحلة ١)
 
-6. **٥٦ (مؤجّل):** توسيع القاموس 250→500 مصطلح
+5. **٥٦ (منجَز ضمن المرحلة ١):** توسيع القاموس 250 → ~١,٢٠٠ (TA2 كامل)
 
 ═══════════════════════════════════════════════════════════════
 ## نصائح لتوفير التوكن في الجلسات

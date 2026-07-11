@@ -6,11 +6,32 @@
 
 ---
 
-## 🎯 الحالة الحالية (11 يوليو 2026)
+## 🎯 الحالة الحالية (12 يوليو 2026)
 
 **المنصّة تعمل على:** https://orphanai2026.github.io/OmniRad/
 **Supabase Organization:** OmniRad Platform (تحت `omniradai@gmail.com`)
-**آخر توقّف:** تجربة Pipeline محلي (TCIA + TotalSegmentator + RadLex) — **أُلغيت** والقرار: العودة لتوليد الصور عبر ChatGPT/FLUX بخطة موسّعة (يُناقَش في جلسة جديدة).
+**آخر توقّف:** انتهاء جلسة القرارات — كل قرارات التوليد + الرفع + القاموس + Contribute Hub معتمَدة، بانتظار بدء **المرحلة ١** في محادثة جديدة.
+
+---
+
+## 🧪 تجارب التوليد التلقائي (12 يوليو 2026) — نتائج نهائية
+
+جُرِّبت ٤ مولّدات لنفس البرومبت (Axial CT Brain, basal ganglia):
+
+| المولّد | التقييم |
+|---|---|
+| **FLUX.1.1 [pro] Ultra** (fal.ai) | ❌ أعطى MRI بدل CT — anatomy غير دقيق |
+| **GPT Image 1 API** (OpenAI) | ❌ فشل الدفع (بطاقة رُفضت على Stripe) |
+| **Gemini 2.5 Flash Image** (Google) | ⚠️ جودة عالية لكن أخطاء تشريحية |
+| **ChatGPT UI** (يدوي) | ✅ **الأفضل** — CSF ساطع T2 + tissue contrast صحيح + texture واقعي |
+
+**قرار نهائي معتمَد:** توليد يدوي عبر ChatGPT UI + رفع جماعي إلى المنصّة.
+
+ملفات التجارب المحفوظة (مرجع فقط):
+- `supabase/flux-ultra-test.sql`, `omnirad-redesign/pages/flux-ultra-test.html`
+- `supabase/gpt-image-test.sql`, `omnirad-redesign/pages/gpt-image-test.html`
+- `supabase/gemini-image-test.sql`, `omnirad-redesign/pages/gemini-image-test.html`
+- Vault يحتفظ بمفتاح `gemini_api_key` و `openai_api_key` (للاحتياط)
 
 ---
 
@@ -72,16 +93,74 @@ Overview EN+AR · User Manual EN+AR · Tech Spec · SAIP IP Packet · Brochures 
 
 ---
 
-## 🚧 المتبقّي (بالأولوية)
+## 🚧 المتبقّي (بالأولوية) — ٣ مراحل مستقلّة
 
-### 1️⃣ ⭐ الأولوية القصوى — محادثة جديدة
-**مناقشة توليد الصور الطبية عبر ChatGPT/FLUX بخطة موسّعة:**
-- ماذا نغيّر في `studio.html` وSchema
-- كيف نضمن جودة طبية عالية (prompt engineering, negatives, refs)
-- Studio direct upload → bucket `atlas` (المهمة 60)
-- توليد ≥١ صورة لكل من الـ٤١ عضواً (المهمة 64)
+**قرار مهم:** كل مرحلة في **محادثة مستقلّة** لتوفير التوكن ووضوح النطاق.
 
-### 2️⃣ المهمة 62 — أدوات كل مودالتي
+---
+
+### 🟢 المرحلة ١ — القاموس الموسَّع ⭐ الأولوية القصوى
+**قبل كل شيء — Prompt Studio يعتمد على القاموس، لذلك نبنيه أوّلاً.**
+
+**رسالة البداية للمحادثة الجديدة:**
+> «تابع من هنا — المرحلة ١: القاموس الموسَّع»
+
+**الخطوات:**
+1. جدول `anatomical_structures` في Supabase (schema موسَّع)
+2. استيراد TA2 من OpenAnatomy JSON → ~١,٢٠٠ بنية
+3. Enrichment: RadLex IDs عبر BioPortal API لكل بنية
+4. Arabic hybrid: Wikidata SPARQL → auto-fill عربي (~٤٠٠ بنية)
+5. `anatomy-master-v2.js` مُشتقّ من الجدول (fallback على snapshot ثابت)
+6. تحديث `dictionary.html` + `atlas.html` sidebar للقراءة من v2
+
+**Stack المعتمَد:**
+- **TA2** (Terminologia Anatomica) — المصدر التشريحي الذهبي
+- **RadLex** — المصدر الإشعاعي (RSNA)
+- **WHO UMD** — الترجمة العربية الموثوقة
+- **Wikidata SPARQL** — ترجمة تلقائية سريعة
+
+**التقدير:** ٤-٦ ساعات
+
+---
+
+### 🟡 المرحلة ٢ — Bulk Upload + Contribute Hub
+
+**رسالة البداية:** «تابع من هنا — المرحلة ٢: Bulk Upload + Contribute Hub»
+
+**الخطوات:**
+7. `contribute.html` (hub + instructions + stats + شارات مساهم)
+8. `bulk-upload.html` (drag & drop + form ٧ حقول + autocomplete)
+9. SQL: `submit_bulk_upload()` + `approve_bulk_upload()` + `reject_to_archive()`
+10. جدول `anatomical_structures_ext` (البنى الجديدة من الرفع)
+11. رابط شرطي في dropdown navbar (admin/contributor)
+12. بطاقة اختصار في `profile.html`
+
+**Form Fields:** organ, modality, plane, sequence?, structures[], prompt_used?, level?
+**Autocomplete:** من القاموس v2 + «Add new» → يُضاف إلى `anatomical_structures_ext`
+**Rejected:** أرشيف (لا حذف)
+
+**التقدير:** ٣-٤ ساعات
+
+---
+
+### 🟠 المرحلة ٣ — الربط والأتمتة
+
+**رسالة البداية:** «تابع من هنا — المرحلة ٣: الربط والأتمتة»
+
+**الخطوات:**
+13. عمود `structures text[]` في `atlas_images`
+14. تحديث `review.html` (دعم manual uploads + archive رفض)
+15. `atlas.html` يعرض الصور المعتمَدة تلقائياً في مكانها
+16. Studio auto-generation UI: hide (الكود محفوظ)
+17. Studio-app.js: عزل الدوال القديمة (fal.ai/schnell) خلف feature flag
+
+**التقدير:** ٢-٣ ساعات
+
+---
+
+### مؤجَّل بعد اكتمال المراحل ١-٣
+
+**المهمة 62 — أدوات كل مودالتي**
 - **CT:** WW/WL presets (brain 80/40, lung 1500/-600, bone 2000/400, abd 400/60, mediast 350/40, subdural 130/50, stroke 40/40) + MPR + MIP
 - **MRI:** تبويبات T1/T2/FLAIR/DWI/ADC/T1+C + fat-sat + ADC colormap
 - **US:** B-mode/color/power/spectral Doppler + gain + depth + TGC + focus + harmonic
@@ -91,16 +170,16 @@ Overview EN+AR · User Manual EN+AR · Tech Spec · SAIP IP Packet · Brochures 
 - **PET:** SUV window + fusion opacity + PET/CT registration
 - **NM:** colormap (hot/rainbow/grey)
 
-### 3️⃣ المهمة 63 — Stack/Series Viewer
+**المهمة 63 — Stack/Series Viewer**
 - Schema: `series_id` + `order_index` في `atlas_images`
 - UI: slider + prev/next + play/pause + مزامنة Comparison
 - Keyboard: ↑/↓/scroll wheel
 
-### 4️⃣ المهمة 55 — مراجعة اختصاصي أشعة
-للمصطلحات العربية في `anatomy-master.js` قبل الإطلاق العام.
+**المهمة 55 — مراجعة اختصاصي أشعة** (بعد المرحلة ١)
+للمصطلحات العربية في `anatomy-master-v2.js` قبل الإطلاق العام.
 
-### 🕒 مؤجَّل — المهمة 56
-توسيع القاموس 250 → 500 مصطلح.
+**المهمة 56 — منجَزة ضمن المرحلة ١** ✅
+توسيع القاموس 250 → ~١,٢٠٠ مصطلح (TA2 كامل).
 
 ---
 
