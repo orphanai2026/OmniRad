@@ -262,15 +262,19 @@
         if (ua) ua.setAttribute('title', fullName);
         const initials = fullName.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
         if (avaEl){
-          const url = profile && profile.avatar_url;
-          if (url && url.startsWith('preset:')){
-            const svg = window.__omniradPresets && window.__omniradPresets[url.slice(7)];
-            if (svg) avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
-            else avaEl.textContent = initials;
-          } else if (url){
-            avaEl.innerHTML = '<img src="'+url+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-          } else {
-            avaEl.textContent = initials;
+          const url = (profile && profile.avatar_url) || '';
+          const key = url + '|' + initials;
+          if (avaEl.__lastKey !== key) {
+            avaEl.__lastKey = key;
+            if (url && url.startsWith('preset:')){
+              const svg = window.__omniradPresets && window.__omniradPresets[url.slice(7)];
+              if (svg) avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
+              else avaEl.textContent = initials;
+            } else if (url){
+              avaEl.innerHTML = '<img src="'+url+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+            } else {
+              avaEl.textContent = initials;
+            }
           }
         }
         const role = (profile && profile.role) || 'viewer';
