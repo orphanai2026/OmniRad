@@ -265,18 +265,31 @@
           const url = (profile && profile.avatar_url) || '';
           const key = url + '|' + initials;
           if (avaEl.__lastKey !== key) {
-            avaEl.__lastKey = key;
-            if (url && url.startsWith('preset:')){
-              const k = url.slice(7);
-              const presets = window.__omniradPresets || {};
-              const svg = presets[k] || presets[k.toLowerCase()] || presets[k.toUpperCase()];
-              if (svg) avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
-              else avaEl.textContent = initials;
-            } else if (url){
-              avaEl.innerHTML = '<img src="'+url+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-            } else {
-              avaEl.textContent = initials;
-            }
+            const applyAvatar = function(){
+              if (url && url.startsWith('preset:')){
+                const k = url.slice(7);
+                const presets = window.__omniradPresets || {};
+                const svg = presets[k] || presets[k.toLowerCase()] || presets[k.toUpperCase()];
+                if (svg){
+                  avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
+                  avaEl.__lastKey = key;
+                } else if (Object.keys(presets).length === 0) {
+                  // presets not loaded yet — retry shortly, keep initials for now
+                  avaEl.textContent = initials;
+                  setTimeout(applyAvatar, 200);
+                } else {
+                  avaEl.textContent = initials;
+                  avaEl.__lastKey = key;
+                }
+              } else if (url){
+                avaEl.innerHTML = '<img src="'+url+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+                avaEl.__lastKey = key;
+              } else {
+                avaEl.textContent = initials;
+                avaEl.__lastKey = key;
+              }
+            };
+            applyAvatar();
           }
         }
         const role = (profile && profile.role) || 'viewer';
