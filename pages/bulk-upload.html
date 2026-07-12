@@ -150,8 +150,8 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
     <div class="steps">
       <div class="step on" id="stepEl1"><span class="n">1</span><span data-i18n="bu.step1">Select images</span></div>
-      <div class="step" id="stepEl2"><span class="n">2</span><span data-i18n="bu.step2">Shared metadata</span></div>
-      <div class="step" id="stepEl3"><span class="n">3</span><span data-i18n="bu.step3">Per-image review</span></div>
+      <div class="step" id="stepEl2"><span class="n">2</span><span data-i18n="bu.step2">Per-image</span></div>
+      <div class="step" id="stepEl3"><span class="n">3</span><span data-i18n="bu.step3">Review</span></div>
       <div class="step" id="stepEl4"><span class="n">4</span><span data-i18n="bu.step4">Submit</span></div>
     </div>
 
@@ -180,9 +180,21 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
     <!-- STEP 2 -->
     <div class="panel" id="panel2">
+      <div class="card" style="padding:14px 22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px" data-i18n="bu.modeTitle">Batch mode</div>
+            <div style="font-size:11.5px;color:var(--text-s)" id="modeHint" data-i18n="bu.modeHintSeries">Series: same organ, different slices — shared metadata + auto slice index.</div>
+          </div>
+          <div style="display:inline-flex;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px">
+            <button type="button" class="btn-mini on" id="modeSeries" style="border:none;background:var(--acc);color:var(--acc-ink)" data-i18n="bu.modeSeries">Series</button>
+            <button type="button" class="btn-mini" id="modeIndividual" style="border:none;background:transparent;color:var(--text)" data-i18n="bu.modeIndividual">Individual</button>
+          </div>
+        </div>
+      </div>
       <div class="card">
-        <h2><span class="k">02</span><span data-i18n="bu.p2title">Metadata for all images</span></h2>
-        <div class="cardhelp" data-i18n="bu.p2help">These values apply to every image in the batch. You can override individual images in the next step. Fields marked <span class="req">*</span> are required.</div>
+        <h2><span class="k">02</span><span data-i18n="bu.p2title">Fill metadata for each image</span></h2>
+        <div class="cardhelp" data-i18n="bu.p2help">Set shared defaults below (Apply to all), then fine-tune each image in its own card. Fields marked <span class="req">*</span> are required.</div>
 
         <div class="form-grid">
           <div class="field">
@@ -259,24 +271,33 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         </div>
       </div>
 
+      <!-- Per-image cards (inline editable) -->
+      <div class="card" style="padding:16px 20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+          <h2 style="margin:0"><span class="k">02b</span><span data-i18n="bu.perImgTitle">Per-image fields</span></h2>
+          <button type="button" class="btn-mini on" id="btnApplyAll" data-i18n="bu.applyAll">Apply shared defaults to all →</button>
+        </div>
+        <div class="cardhelp" data-i18n="bu.perImgHelp">Each card below can be edited independently. Values inherit the shared defaults above until you override them.</div>
+        <div id="rowList" style="margin-top:8px"></div>
+      </div>
       <div class="actions">
-        <div class="summary"><span data-i18n="bu.applyTo">Applies to</span> <strong id="applyCount">0</strong> <span data-i18n="bu.images">images</span></div>
+        <div class="summary"><strong id="rowCount">0</strong> <span data-i18n="bu.images">images</span> · <strong id="overrideCount">0</strong> <span data-i18n="bu.overridden">overridden</span></div>
         <div style="display:flex;gap:10px">
           <button class="btn ghost" id="backTo1" data-i18n="bu.back">← Back</button>
-          <button class="btn" id="toStep3" data-i18n="bu.next3">Next: Review per-image →</button>
+          <button class="btn" id="toStep3" data-i18n="bu.next3">Next: Review →</button>
         </div>
       </div>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3 — Read-only Review -->
     <div class="panel" id="panel3">
       <div class="card">
-        <h2><span class="k">03</span><span data-i18n="bu.p3title">Review &amp; override</span></h2>
-        <div class="cardhelp" data-i18n="bu.p3help">Each image inherits the shared metadata from Step 2. Click «Override» on any row to change values for just that image (e.g. different plane or a specific structure).</div>
+        <h2><span class="k">03</span><span data-i18n="bu.p3title">Review before submit</span></h2>
+        <div class="cardhelp" data-i18n="bu.p3help">Final summary of every image and its metadata. Go back to fix anything, or submit for medical review.</div>
       </div>
-      <div id="rowList"></div>
+      <div id="reviewList"></div>
       <div class="actions">
-        <div class="summary"><strong id="rowCount">0</strong> <span data-i18n="bu.images">images</span> · <strong id="overrideCount">0</strong> <span data-i18n="bu.overridden">overridden</span></div>
+        <div class="summary"><strong id="reviewCount">0</strong> <span data-i18n="bu.images">images</span> · <span data-i18n="bu.readyToSubmit">ready to submit</span></div>
         <div style="display:flex;gap:10px">
           <button class="btn ghost" id="backTo2" data-i18n="bu.back">← Back</button>
           <button class="btn" id="toStep4" data-i18n="bu.submit">Submit for review →</button>
@@ -327,18 +348,23 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
   const STRINGS = {
     en: {
       'bu.eyebrow':'Bulk Upload','bu.title':'Upload images to the Atlas',
+      'bu.modeTitle':'Batch mode','bu.modeSeries':'Series','bu.modeIndividual':'Individual',
+      'bu.modeHintSeries':'Series: same organ, different slices — shared metadata + auto slice index.',
+      'bu.modeHintIndividual':'Individual: each image gets its own metadata from the start (Step 2 skipped for shared values).',
       'bu.lead':"Drag and drop your ChatGPT-generated images, apply shared metadata to all, then override individual images where needed. Every image enters the review queue — nothing publishes automatically.",
       'bu.crumb':'Contribute','bu.crumb2':'Bulk Upload',
-      'bu.step1':'Select images','bu.step2':'Shared metadata','bu.step3':'Per-image review','bu.step4':'Submit',
+      'bu.step1':'Select images','bu.step2':'Per-image','bu.step3':'Review','bu.step4':'Submit',
+      'bu.perImgTitle':'Per-image fields','bu.perImgHelp':'Each card below can be edited independently. Values inherit the shared defaults above until you override them.',
+      'bu.applyAll':'Apply shared defaults to all →','bu.readyToSubmit':'ready to submit',
       'bu.p1title':'Select the images to upload','bu.p1help':'Up to 30 images per batch. PNG or JPEG. Max 4 MB each. Files are uploaded to your private review area first — nothing is public until a reviewer approves.',
       'bu.dzTitle':'Drag & drop images here','bu.dzSub':'or click to browse — PNG / JPEG, up to 30 files','bu.dzBrowse':'Browse files',
       'bu.filesReady':'files ready','bu.cancel':'Cancel','bu.next':'Next: Shared metadata →','bu.back':'← Back',
-      'bu.p2title':'Metadata for all images','bu.p2help':"These values apply to every image in the batch. You can override individual images in the next step.",
+      'bu.p2title':'Fill metadata for each image','bu.p2help':"Set shared defaults below (Apply to all), then fine-tune each image in its own card.",
       'bu.f.organ':'Organ / Region','bu.f.modality':'Modality','bu.f.plane':'Anatomical plane','bu.f.sequence':'MRI sequence','bu.f.level':'Teaching level',
       'bu.f.structures':'Anatomical structures visible','bu.f.structuresHint':'— type to search RadLex dictionary; press Enter or click «Add new» for unlisted terms',
       'bu.f.prompt':'ChatGPT prompt used','bu.f.citation':'Citation / source','bu.selectOne':'Select…',
       'bu.applyTo':'Applies to','bu.images':'images','bu.next3':'Next: Review per-image →',
-      'bu.p3title':'Review & override','bu.p3help':"Each image inherits the shared metadata from Step 2. Click «Override» on any row to change values for just that image.",
+      'bu.p3title':'Review before submit','bu.p3help':"Final summary of every image and its metadata. Go back to fix anything, or submit for medical review.",
       'bu.overridden':'overridden','bu.submit':'Submit for review →',
       'bu.uploading':'Uploading images…','bu.uploadingSub':'Please keep this tab open until upload finishes.',
       'bu.doneTitle':'Batch submitted successfully','bu.doneMsg':"images were queued for medical review. You'll receive a notification when each image is approved or rejected. Typical turnaround: 24–48 hours.",
@@ -352,18 +378,23 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     },
     ar: {
       'bu.eyebrow':'رفع جماعي','bu.title':'ارفع صوراً إلى الأطلس',
+      'bu.modeTitle':'وضع الدفعة','bu.modeSeries':'سلسلة','bu.modeIndividual':'فردي',
+      'bu.modeHintSeries':'سلسلة: نفس العضو، شرائح مختلفة — بيانات موحّدة + ترقيم شرائح تلقائي.',
+      'bu.modeHintIndividual':'فردي: كل صورة لها بياناتها الخاصة من البداية (تُتخطّى الخطوة ٢).',
       'bu.lead':'اسحب صور ChatGPT المولَّدة، طبِّق بيانات مشتركة، ثم عدِّل الصور فردياً عند الحاجة. كل صورة تدخل طابور المراجعة — لا نشر تلقائي.',
       'bu.crumb':'المساهمة','bu.crumb2':'الرفع الجماعي',
-      'bu.step1':'اختر الصور','bu.step2':'بيانات مشتركة','bu.step3':'مراجعة فردية','bu.step4':'إرسال',
+      'bu.step1':'اختر الصور','bu.step2':'صورة صورة','bu.step3':'المراجعة','bu.step4':'إرسال',
+      'bu.perImgTitle':'حقول لكل صورة','bu.perImgHelp':'كل بطاقة أدناه قابلة للتعديل باستقلال. القيم ترث الافتراضيات المشتركة أعلاه حتى تعدّلها.',
+      'bu.applyAll':'طبِّق الافتراضيات على الكل ←','bu.readyToSubmit':'جاهزة للإرسال',
       'bu.p1title':'اختر الصور المراد رفعها','bu.p1help':'حتى 30 صورة في الدفعة. PNG أو JPEG. الحد الأقصى 4 MB لكل ملف. الرفع أولاً إلى منطقتك الخاصة — لا نشر قبل الاعتماد.',
       'bu.dzTitle':'اسحب وأفلت الصور هنا','bu.dzSub':'أو انقر للاستعراض — PNG / JPEG، حتى 30 ملفاً','bu.dzBrowse':'استعراض الملفات',
       'bu.filesReady':'ملفات جاهزة','bu.cancel':'إلغاء','bu.next':'التالي: البيانات المشتركة ←','bu.back':'رجوع →',
-      'bu.p2title':'بيانات مشتركة لكل الصور','bu.p2help':'هذه القيم تُطبَّق على كل صور الدفعة. يمكنك تعديل صور فردياً في الخطوة التالية.',
+      'bu.p2title':'املأ بيانات كل صورة','bu.p2help':'اضبط الافتراضيات المشتركة أدناه (طبّق على الكل)، ثم دقّق كل صورة في بطاقتها. الحقول المميّزة بـ * إلزامية.',
       'bu.f.organ':'العضو / المنطقة','bu.f.modality':'المودالتي','bu.f.plane':'المستوى التشريحي','bu.f.sequence':'تسلسل MRI','bu.f.level':'المستوى التعليمي',
       'bu.f.structures':'البنى التشريحية الظاهرة','bu.f.structuresHint':'— اكتب للبحث في قاموس RadLex؛ اضغط Enter أو «أضف جديد» لمصطلحات غير مدرجة',
       'bu.f.prompt':'برومبت ChatGPT المستخدم','bu.f.citation':'مرجع / مصدر','bu.selectOne':'اختر…',
       'bu.applyTo':'يُطبَّق على','bu.images':'صور','bu.next3':'التالي: مراجعة فردية ←',
-      'bu.p3title':'مراجعة وتعديل','bu.p3help':'كل صورة ترث البيانات المشتركة من الخطوة ٢. اضغط «تعديل» على أي صف لتعديل قيم تلك الصورة فقط.',
+      'bu.p3title':'راجع قبل الإرسال','bu.p3help':'ملخّص نهائي لكل صورة وبياناتها. ارجع لتعديل أي شيء، أو أرسل للمراجعة الطبية.',
       'bu.overridden':'مُعدَّل','bu.submit':'إرسال للمراجعة ←',
       'bu.uploading':'جارٍ الرفع…','bu.uploadingSub':'أبقِ هذا التبويب مفتوحاً حتى ينتهي الرفع.',
       'bu.doneTitle':'تم إرسال الدفعة بنجاح','bu.doneMsg':'صور دخلت طابور المراجعة الطبية. ستصلك إشعارات عند اعتماد كل صورة أو رفضها. المدة المعتادة: 24-48 ساعة.',
@@ -392,6 +423,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
   const MAX_SIZE = 4 * 1024 * 1024;
   let sb = null, user = null, role = null;
   let files = []; // {id, file, previewUrl, override:{}}
+  let mode = 'series'; // 'series' | 'individual'
   let shared = { organ:'', modality:'', plane:'', sequence:'', structures:[], level:'', prompt:'', citation:'' };
 
   // ── Init ──────────────────────────────────────
@@ -438,6 +470,9 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     input.addEventListener('change', e => handleFiles(e.target.files));
     document.getElementById('toStep2').addEventListener('click', () => {
       if (!files.length){ toast(t('bu.needFiles'), true); return; }
+      // Populate shared from any existing values, then render per-image cards
+      captureShared();
+      renderRows();
       goStep(2);
     });
   }
@@ -475,6 +510,15 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
   // ── Step 2: Shared metadata ────────────────────
   function wireForm(){
+    // Mode toggle
+    document.getElementById('modeSeries').addEventListener('click', () => setMode('series'));
+    document.getElementById('modeIndividual').addEventListener('click', () => setMode('individual'));
+    document.getElementById('fOrgan').addEventListener('change', () => {
+      if (window.__buClearStructures) window.__buClearStructures();
+      // Auto-open the structures list for the new organ
+      const si = document.getElementById('structuresText');
+      if (si){ si.value=''; si.focus(); }
+    });
     document.getElementById('fModality').addEventListener('change', e => {
       document.getElementById('seqField').style.display = e.target.value === 'MRI' ? '' : 'none';
     });
@@ -484,6 +528,24 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     document.getElementById('backTo1').addEventListener('click', () => goStep(1));
     document.getElementById('backTo2').addEventListener('click', () => goStep(2));
     document.getElementById('toStep3').addEventListener('click', () => {
+      captureShared();
+      // Validate: at least one image must have full metadata
+      const anyIncomplete = files.some(f => {
+        const m = effective(f);
+        return !m.organ || !m.modality || !m.plane || !(m.structures && m.structures.length);
+      });
+      if (anyIncomplete){ toast(t('bu.needFields'), true); return; }
+      renderReview();
+      goStep(3);
+    });
+    document.getElementById('btnApplyAll').addEventListener('click', () => {
+      captureShared();
+      files.forEach(f => { f.override = null; });
+      renderRows();
+      toast('✓ Applied to all');
+    });
+
+    function captureShared(){
       shared.organ = document.getElementById('fOrgan').value;
       shared.modality = document.getElementById('fModality').value;
       shared.plane = document.getElementById('fPlane').value;
@@ -491,14 +553,47 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       shared.level = document.getElementById('fLevel').value;
       shared.prompt = document.getElementById('fPrompt').value;
       shared.citation = document.getElementById('fCitation').value;
-      if (!shared.organ || !shared.modality || !shared.plane || !shared.structures.length){
-        toast(t('bu.needFields'), true);
-        return;
-      }
-      renderRows();
-      goStep(3);
-    });
+    }
+
+    function renderReview(){
+      const box = document.getElementById('reviewList');
+      box.innerHTML = files.map(f => {
+        const m = effective(f);
+        const structs = (m.structures||[]).map(s => s.label || s).join(', ');
+        return `<div class="row" style="grid-template-columns:80px 1fr">
+          <img class="row-thumb" src="${f.previewUrl}">
+          <div class="row-body">
+            <div class="row-name">${escapeHtml(f.file.name)}</div>
+            <div class="row-meta">
+              ${m.organ ? '<span>'+escapeHtml(m.organ)+'</span>':''}
+              ${m.modality ? '<span>'+escapeHtml(m.modality)+'</span>':''}
+              ${m.plane ? '<span>'+escapeHtml(m.plane)+'</span>':''}
+              ${m.sequence ? '<span>'+escapeHtml(m.sequence)+'</span>':''}
+              ${structs ? '<span style="max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHtml(structs)+'</span>':''}
+            </div>
+            ${m.prompt ? '<div class="row-meta" style="margin-top:6px;color:var(--text-s);font-family:IBM Plex Mono,monospace"><span style="max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHtml((m.prompt||'').slice(0,120))+(m.prompt.length>120?'…':'')+'</span></div>':''}
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('reviewCount').textContent = files.length;
+    }
     document.getElementById('toStep4').addEventListener('click', submitBatch);
+  }
+
+  function setMode(m){
+    mode = m;
+    document.getElementById('modeSeries').classList.toggle('on', m==='series');
+    document.getElementById('modeSeries').style.background = m==='series' ? 'var(--acc)' : 'transparent';
+    document.getElementById('modeSeries').style.color = m==='series' ? 'var(--acc-ink)' : 'var(--text)';
+    document.getElementById('modeIndividual').classList.toggle('on', m==='individual');
+    document.getElementById('modeIndividual').style.background = m==='individual' ? 'var(--acc)' : 'transparent';
+    document.getElementById('modeIndividual').style.color = m==='individual' ? 'var(--acc-ink)' : 'var(--text)';
+    document.getElementById('modeHint').textContent = t(m==='series' ? 'bu.modeHintSeries' : 'bu.modeHintIndividual');
+    // In individual mode, structures & sequence become per-image (Step 3 will show full forms)
+    // In series mode, structures are shared
+    document.getElementById('toStep3').textContent = m==='individual'
+      ? (t('bu.next3').replace('Review','Fill per-image').replace('مراجعة فردية','ملء فردي'))
+      : t('bu.next3');
   }
 
   // ── Autocomplete for structures ────────────────
@@ -508,6 +603,8 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     const list = document.getElementById(listId);
     let selected = [];
     let hiIdx = -1;
+
+    window.__buClearStructures = () => { selected = []; renderChips(); };
 
     function renderChips(){
       wrap.querySelectorAll('.chip').forEach(c => c.remove());
@@ -521,14 +618,20 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       onChange(selected);
     }
 
-    input.addEventListener('input', () => {
+    function showList(){
       const q = input.value.trim().toLowerCase();
       hiIdx = -1;
-      if (!q){ list.classList.remove('on'); list.innerHTML = ''; return; }
       const all = (window.__omniradStructuresV2 || window.__omniradStructures || []);
-      const matches = all.filter(s => {
-        return (s.en||'').toLowerCase().includes(q) || (s.ar||'').includes(q) || (s.label_en||'').toLowerCase().includes(q);
-      }).slice(0, 8);
+      const currentOrgan = (document.getElementById('fOrgan')||{}).value || '';
+      const scoped = currentOrgan ? all.filter(s => !s.region || s.region === currentOrgan) : all;
+      let matches;
+      if (!q){
+        // No query — if organ picked, show ALL scoped structures for that organ (up to 40)
+        if (!currentOrgan){ list.classList.remove('on'); list.innerHTML = ''; return; }
+        matches = scoped.slice(0, 40);
+      } else {
+        matches = scoped.filter(s => (s.en||'').toLowerCase().includes(q) || (s.ar||'').includes(q) || (s.label_en||'').toLowerCase().includes(q)).slice(0, 20);
+      }
       let html = matches.map((m,i) => {
         const en = m.en || m.label_en || m.slug || '';
         const ar = m.ar || m.label_ar || '';
@@ -552,7 +655,9 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
           renderChips();
         };
       });
-    });
+    }
+    input.addEventListener('input', showList);
+    input.addEventListener('focus', showList);
     input.addEventListener('keydown', e => {
       const items = list.querySelectorAll('.ac-item');
       if (e.key === 'ArrowDown'){ e.preventDefault(); hiIdx = Math.min(items.length-1, hiIdx+1); items.forEach((el,i)=>el.classList.toggle('hi', i===hiIdx)); }
@@ -623,9 +728,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
   function wireRow(f){
     const row = document.querySelector('.row[data-id="'+f.id+'"]');
     if (!row) return;
-    row.querySelector('[data-act="toggle"]').onclick = () => {
+    // Auto-open the per-image form
+    const openForm = () => {
       const rf = row.querySelector('.row-form');
-      if (rf.classList.contains('on')){ rf.classList.remove('on'); rf.innerHTML = ''; return; }
+      if (rf.classList.contains('on')) return;
       const eff = effective(f);
       rf.innerHTML = (
         '<div class="form-grid">' +
@@ -641,12 +747,19 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         const patch = {};
         rf.querySelectorAll('[data-k]').forEach(el => { if (el.value && el.value !== effective(f)[el.dataset.k]) patch[el.dataset.k] = el.value; });
         f.override = Object.keys(patch).length ? patch : null;
-        rf.classList.remove('on');
         renderRows();
       };
     };
+    // Toggle button now expands/collapses (kept for compatibility)
+    const tog = row.querySelector('[data-act="toggle"]');
+    if (tog) tog.onclick = () => {
+      const rf = row.querySelector('.row-form');
+      if (rf.classList.contains('on')){ rf.classList.remove('on'); rf.innerHTML=''; } else { openForm(); }
+    };
     const clr = row.querySelector('[data-act="clear"]');
     if (clr) clr.onclick = () => { f.override = null; renderRows(); };
+    // Auto-open by default for per-image editing
+    openForm();
   }
   function planeOpts(cur){ return ['Axial','Coronal','Sagittal','Oblique','3D'].map(v=>'<option '+(cur===v?'selected':'')+'>'+v+'</option>').join(''); }
   function modOpts(cur){ return ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'].map(v=>'<option '+(cur===v?'selected':'')+'>'+v+'</option>').join(''); }
