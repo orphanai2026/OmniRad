@@ -225,7 +225,8 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       : '';
     const showActions = currentStatus === 'pending';
     const structs = (row.structures||[]).slice(0,6).map(s => `<span>${s}</span>`).join('');
-    return `<div class="card" data-id="${row.id}">
+    const rowJson = JSON.stringify(row).replace(/"/g,'&quot;');
+    return `<div class="card" data-id="${row.id}" data-row="${rowJson}">
       <div class="card-img">
         ${url ? `<img src="${url}" alt="">` : `<div class="placeholder">No image</div>`}
         <div class="badge">${(row.modality||'—').toUpperCase()}</div>
@@ -238,14 +239,64 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
         </div>
         <div class="prompt">${(row.prompt||'').substring(0,240)}${(row.prompt||'').length>240?'…':''}</div>
         ${showActions ? `
-        <div class="actions">
-          <button class="btn ok" onclick="doApprove('${row.id}')">${t('rev.approve')}</button>
+        <div class="actions" style="flex-wrap:wrap">
+          <button class="btn ok" onclick="doApprove('${row.id}')">✓ ${t('rev.approve')}</button>
+          <button class="btn" style="background:transparent;color:var(--acc);border:1px solid var(--acc)" onclick="openEdit('${row.id}')">✎ Edit</button>
           <button class="btn warn" onclick="openRevision('${row.id}')">${t('rev.reqRevision')}</button>
           <button class="btn err" onclick="openReject('${row.id}')">${t('rev.reject')}</button>
-        </div>` : row.reject_reason ? `<div class="meta"><span style="color:var(--err)">✗ ${row.reject_reason}</span></div>` : row.review_notes ? `<div class="meta"><span style="color:var(--warn)">↺ ${row.review_notes}</span></div>` : ''}
+        </div>
+        <div class="edit-form" id="ef-${row.id}" style="display:none;margin-top:12px;padding:12px;background:var(--bg-s);border-radius:8px;border:1px solid var(--border)"></div>
+        ` : row.reject_reason ? `<div class="meta"><span style="color:var(--err)">✗ ${row.reject_reason}</span></div>` : row.review_notes ? `<div class="meta"><span style="color:var(--warn)">↺ ${row.review_notes}</span></div>` : ''}
       </div>
     </div>`;
   }
+
+  const REGIONS = ['Head & Neck','Brain','Chest','Cardiac','Abdomen','Pelvis','Musculoskeletal','Spine','Vascular'];
+  const MODALITIES = ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'];
+  const PLANES = ['Axial','Coronal','Sagittal','Oblique','3D'];
+  const SEQS = ['','T1','T2','FLAIR','DWI','ADC','T1+C','T2 fat-sat','STIR','GRE'];
+
+  window.openEdit = (id) => {
+    const card = document.querySelector('.card[data-id="'+id+'"]');
+    if (!card) return;
+    const box = document.getElementById('ef-'+id);
+    if (box.style.display === 'block'){ box.style.display='none'; return; }
+    const row = JSON.parse(card.getAttribute('data-row').replace(/&quot;/g,'"'));
+    const opts = (arr, cur) => arr.map(v => `<option value="${v}" ${v===cur?'selected':''}>${v||'—'}</option>`).join('');
+    box.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+        <label style="font-size:11px;color:var(--text-s)">Organ<select id="ed-organ-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...REGIONS], row.organ||'')}</select></label>
+        <label style="font-size:11px;color:var(--text-s)">Modality<select id="ed-modality-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...MODALITIES], row.modality||'')}</select></label>
+        <label style="font-size:11px;color:var(--text-s)">Plane<select id="ed-plane-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...PLANES], row.plane||'')}</select></label>
+        <label style="font-size:11px;color:var(--text-s)">Sequence<select id="ed-sequence-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(SEQS, row.sequence||'')}</select></label>
+      </div>
+      <label style="font-size:11px;color:var(--text-s);display:block;margin-top:10px">Structures (comma-separated)<input id="ed-structures-${id}" type="text" value="${(row.structures||[]).join(', ').replace(/"/g,'&quot;')}" style="width:100%;margin-top:4px;padding:7px 9px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px"></label>
+      <label style="font-size:11px;color:var(--text-s);display:block;margin-top:10px">Prompt<textarea id="ed-prompt-${id}" style="width:100%;margin-top:4px;padding:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px;min-height:60px;font-family:IBM Plex Mono,monospace">${(row.prompt||'').replace(/</g,'&lt;')}</textarea></label>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+        <button class="btn" style="background:transparent;color:var(--text-s);border:1px solid var(--border)" onclick="document.getElementById('ef-${id}').style.display='none'">Cancel</button>
+        <button class="btn ok" onclick="saveEdit('${id}')">Save changes</button>
+      </div>
+    `;
+    box.style.display = 'block';
+  };
+
+  window.saveEdit = async (id) => {
+    try {
+      const structuresText = document.getElementById('ed-structures-'+id).value.trim();
+      const patch = {
+        organ:      document.getElementById('ed-organ-'+id).value || null,
+        modality:   document.getElementById('ed-modality-'+id).value || null,
+        plane:      document.getElementById('ed-plane-'+id).value || null,
+        sequence:   document.getElementById('ed-sequence-'+id).value || null,
+        structures: structuresText ? structuresText.split(',').map(s=>s.trim()).filter(Boolean) : [],
+        prompt:     document.getElementById('ed-prompt-'+id).value.trim() || null
+      };
+      const { error } = await sb.from('review_queue').update(patch).eq('id', Number(id));
+      if (error) throw error;
+      toast('✓ Saved');
+      loadList();
+    } catch(e){ toast(t('rev.err') + e.message); }
+  };
 
   window.doApprove = async id => {
     try {
