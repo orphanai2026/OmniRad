@@ -88,6 +88,7 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="modules/supabase.js"></script>
 <script src="modules/omnirad-nav.js" data-base=""></script>
+<script src="modules/omnirad-atlas-dynamic.js"></script>
 </head>
 <body>
 
@@ -131,7 +132,7 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
       <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div><div class="stat-val">8</div><div class="stat-label">Modalities</div><div class="stat-sub">CT · MRI · US · X-Ray · NM · PET · Angio · Mammo</div></div></div>
       <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div><div class="stat-val">AR / EN</div><div class="stat-label">Bilingual</div><div class="stat-sub">Arabic &amp; English</div></div></div>
       <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><div class="stat-val">SM-2</div><div class="stat-label">Spaced repetition</div><div class="stat-sub">Science-based learning</div></div></div>
-      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div><div><div class="stat-val">Live</div><div class="stat-label">Growing</div><div class="stat-sub">New structures added regularly</div></div></div>
+      <div class="stat-cell" id="growthStatCell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><div class="stat-val" id="growthTotal">—</div><div class="stat-label" data-i18n="home.growing">Growing atlas</div><div class="stat-sub" id="growthSub" data-i18n="home.growingSub">New structures added regularly</div></div></div>
     </div>
   </div>
 </main>
@@ -140,6 +141,38 @@ footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align
   <div class="footer-logo"><div class="footer-mark">OR</div><span class="footer-name">OmniRad — v3.9</span></div>
   <span class="footer-meta">© 2026 · <span data-i18n="common.educational">Educational use only</span></span>
 </footer>
+
+<script>
+(async function initHomeGrowth(){
+  try {
+    let tries = 0;
+    while ((!window.OmniRadAuth || !OmniRadAuth.client || !window.OmniRadAtlasDynamic) && tries < 50){
+      await new Promise(r => setTimeout(r, 80)); tries++;
+    }
+    if (!window.OmniRadAtlasDynamic) return;
+    const s = await OmniRadAtlasDynamic.stats();
+    if (!s) return;
+    const ar = () => (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
+    const render = () => {
+      const isAr = ar();
+      const total = s.total_images || 0;
+      const contrib = s.contributors || 0;
+      const week = s.this_week || 0;
+      const totalEl = document.getElementById('growthTotal');
+      const subEl = document.getElementById('growthSub');
+      if (totalEl) totalEl.textContent = total.toLocaleString(isAr ? 'ar' : 'en');
+      if (subEl){
+        const parts = [];
+        parts.push('⤴ +' + week.toLocaleString(isAr ? 'ar' : 'en') + ' ' + (isAr ? 'هذا الأسبوع' : 'this week'));
+        parts.push(contrib.toLocaleString(isAr ? 'ar' : 'en') + ' ' + (isAr ? 'مساهم' : (contrib === 1 ? 'contributor' : 'contributors')));
+        subEl.textContent = parts.join(' · ');
+      }
+    };
+    render();
+    window.addEventListener('omnirad-lang', render);
+  } catch(e){ console.warn('[home] growth counter error', e); }
+})();
+</script>
 
 </body>
 </html>
