@@ -93,7 +93,7 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
 .btn.ghost{border-color:transparent;color:var(--text-s)}
 
 .disc-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--border-s);font-size:11px;color:var(--text-m);text-align:center;line-height:1.7}
-</style>
+body[dir="rtl"] .gen-en{display:none!important}body[dir="rtl"] .gen-ar{display:inline!important}</style>
 </head>
 <body>
 
@@ -218,11 +218,11 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
     <!-- Live preview -->
     <div class="preview">
       <div class="row">
-        <div class="row-head" style="gap:6px"><span class="row-lbl">ENGLISH</span><div style="display:inline-flex;gap:6px"><button class="copy-btn" data-copy="en">Copy EN <span class="neg-tag" style="display:none">+Neg</span></button><button class="copy-btn" data-gpt="en" title="Generate in ChatGPT / توليد" style="border-color:#5ee5db">↗ <span data-i18n="studio.gen">Generate</span></button></div></div>
+        <div class="row-head"><span class="row-lbl">ENGLISH</span><button class="copy-btn" data-copy="en">Copy EN <span class="neg-tag" style="display:none">+Neg</span></button></div>
         <p id="outEn"></p>
       </div>
       <div class="row ar">
-        <div class="row-head" style="gap:6px"><span class="row-lbl">عربي · Arabic</span><div style="display:inline-flex;gap:6px"><button class="copy-btn" data-copy="ar">Copy AR <span class="neg-tag" style="display:none">+Neg</span></button><button class="copy-btn" data-gpt="ar" title="Generate in ChatGPT / توليد" style="border-color:#5ee5db">↗ <span data-i18n="studio.gen">Generate</span></button></div></div>
+        <div class="row-head"><span class="row-lbl">عربي · Arabic</span><button class="copy-btn" data-copy="ar">Copy AR <span class="neg-tag" style="display:none">+Neg</span></button></div>
         <p id="outAr"></p>
       </div>
       <div id="negRow" class="row neg">
@@ -237,13 +237,21 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
 
       <!-- Generate & Send to Review -->
       <!-- Manual workflow (auto-generation coming soon) -->
-      <div id="genBox" style="margin-top:18px;padding:16px 20px;background:linear-gradient(135deg,rgba(45,212,200,.06),transparent);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
-          <span style="width:22px;height:22px;border-radius:6px;background:var(--acc-sub);color:var(--acc);display:grid;place-items:center;font-size:13px;flex-shrink:0">↗</span>
-          <div style="font-size:12.5px;color:var(--text-s);line-height:1.55">
-            اضغط <b style="color:var(--acc)">↗ توليد</b> بجانب Copy EN/AR لفتح البرومبت في ChatGPT، ثم احفظ الصورة وارفعها. · Click <b style="color:var(--acc)">↗ توليد</b> next to Copy EN/AR to open in ChatGPT, save the image, then upload.
-          </div>
+      <div id="genBox" style="margin-top:22px;padding:18px 22px;background:linear-gradient(135deg,rgba(45,212,200,.06),transparent);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between">
+        <div style="font-size:12.5px;color:var(--text-s);line-height:1.65;flex:1;min-width:220px">
+          <span class="gen-en">Click <b style="color:var(--acc)">Generate</b> to open the prompt in ChatGPT, save the image, then upload it via Bulk Upload.</span><span class="gen-ar" style="display:none">اضغط <b style="color:var(--acc)">توليد</b> لفتح البرومبت في ChatGPT، ثم احفظ الصورة وارفعها عبر الرفع الجماعي.</span>
         </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="btnGenBig" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:linear-gradient(135deg,var(--acc),#5ee5db);color:var(--acc-ink);border:none;border-radius:10px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(45,212,200,.28)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+            <span class="gen-en">Generate</span><span class="gen-ar" style="display:none">توليد</span>
+          </button>
+          <a href="bulk-upload.html" style="display:inline-flex;align-items:center;gap:7px;padding:11px 18px;background:transparent;color:var(--acc);border:1px solid var(--acc);border-radius:10px;font-weight:700;font-size:12.5px;text-decoration:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span class="gen-en">Bulk Upload</span><span class="gen-ar" style="display:none">الرفع الجماعي</span>
+          </a>
+        </div>
+      </div>
         <a href="bulk-upload.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:12px;text-decoration:none;flex-shrink:0">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Bulk Upload
@@ -299,6 +307,20 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
 
 <script>
 document.addEventListener('click', function(e){
+  const big = e.target.closest('#btnGenBig');
+  if (big){
+    const isAr = document.body.dir === 'rtl';
+    const el = document.getElementById(isAr ? 'outAr' : 'outEn') || document.getElementById('outEn');
+    const text = (el && el.textContent || '').trim();
+    if (!text){ alert('لا يوجد برومبت / No prompt yet'); return; }
+    try {
+      localStorage.setItem('omnirad:last-prompt', text);
+      localStorage.setItem('omnirad:last-prompt-lang', isAr ? 'ar' : 'en');
+      localStorage.setItem('omnirad:last-prompt-at', new Date().toISOString());
+    } catch(_){}
+    window.open('https://chatgpt.com/?q=' + encodeURIComponent(text), '_blank');
+    return;
+  }
   const b = e.target.closest('[data-gpt]');
   if (!b) return;
   const which = b.getAttribute('data-gpt');
