@@ -267,7 +267,9 @@
           if (avaEl.__lastKey !== key) {
             avaEl.__lastKey = key;
             if (url && url.startsWith('preset:')){
-              const svg = window.__omniradPresets && window.__omniradPresets[url.slice(7)];
+              const k = url.slice(7);
+              const presets = window.__omniradPresets || {};
+              const svg = presets[k] || presets[k.toLowerCase()] || presets[k.toUpperCase()];
               if (svg) avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
               else avaEl.textContent = initials;
             } else if (url){
