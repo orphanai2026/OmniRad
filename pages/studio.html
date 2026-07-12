@@ -218,11 +218,11 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
     <!-- Live preview -->
     <div class="preview">
       <div class="row">
-        <div class="row-head"><span class="row-lbl">ENGLISH</span><button class="copy-btn" data-copy="en">Copy EN <span class="neg-tag" style="display:none">+Neg</span></button></div>
+        <div class="row-head" style="gap:6px"><span class="row-lbl">ENGLISH</span><div style="display:inline-flex;gap:6px"><button class="copy-btn" data-copy="en">Copy EN <span class="neg-tag" style="display:none">+Neg</span></button><button class="copy-btn" data-gpt="en" title="Open in ChatGPT" style="border-color:#5ee5db">↗ GPT</button></div></div>
         <p id="outEn"></p>
       </div>
       <div class="row ar">
-        <div class="row-head"><span class="row-lbl">عربي · Arabic</span><button class="copy-btn" data-copy="ar">Copy AR <span class="neg-tag" style="display:none">+Neg</span></button></div>
+        <div class="row-head" style="gap:6px"><span class="row-lbl">عربي · Arabic</span><div style="display:inline-flex;gap:6px"><button class="copy-btn" data-copy="ar">Copy AR <span class="neg-tag" style="display:none">+Neg</span></button><button class="copy-btn" data-gpt="ar" title="Open in ChatGPT" style="border-color:#5ee5db">↗ GPT</button></div></div>
         <p id="outAr"></p>
       </div>
       <div id="negRow" class="row neg">
@@ -304,5 +304,16 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
 <script src="../modules/omnirad-cloud.js"></script>
 <script src="./studio-app.js"></script>
 
+<script>
+document.addEventListener('click', function(e){
+  const b = e.target.closest('[data-gpt]');
+  if (!b) return;
+  const which = b.getAttribute('data-gpt');
+  const el = document.getElementById(which === 'ar' ? 'outAr' : 'outEn');
+  const text = (el && el.textContent || '').trim();
+  if (!text){ alert('لا يوجد برومبت / No prompt yet'); return; }
+  window.open('https://chatgpt.com/?q=' + encodeURIComponent(text), '_blank');
+});
+</script>
 </body>
 </html>
