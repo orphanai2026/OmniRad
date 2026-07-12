@@ -306,8 +306,14 @@ document.addEventListener('click', function(e){
   if (big){
     const isAr = document.body.dir === 'rtl';
     const el = document.getElementById(isAr ? 'outAr' : 'outEn') || document.getElementById('outEn');
-    const text = (el && el.textContent || '').trim();
-    if (!text){ alert('لا يوجد برومبت / No prompt yet'); return; }
+    const body = (el && el.textContent || '').trim();
+    if (!body){ alert('لا يوجد برومبت / No prompt yet'); return; }
+    // Include Negative prompt — critical for image generation quality
+    const negEl = document.getElementById('outNeg');
+    const negRow = document.getElementById('negRow');
+    const negVisible = negRow && negRow.style.display !== 'none';
+    const neg = negVisible ? (negEl && negEl.textContent || '').trim() : '';
+    const text = neg ? (body + '\n\nNegative prompt: ' + neg) : body;
     try {
       localStorage.setItem('omnirad:last-prompt', text);
       localStorage.setItem('omnirad:last-prompt-lang', isAr ? 'ar' : 'en');
