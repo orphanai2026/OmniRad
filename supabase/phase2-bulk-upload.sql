@@ -7,6 +7,72 @@
 
 do $$ begin raise notice '▶ TASK: PHASE2-BULK-UPLOAD — starting'; end $$;
 
+-- ─── 0) Ensure prerequisite tables exist ─────────────────────────
+-- atlas_images (approved published images)
+create table if not exists atlas_images (
+  id            bigserial primary key,
+  storage_path  text not null,
+  organ         text,
+  modality      text,
+  plane         text,
+  sequence      text,
+  prompt        text,
+  uploader_id   uuid references auth.users(id) on delete set null,
+  reviewer_id   uuid references auth.users(id) on delete set null,
+  approved_at   timestamptz default now(),
+  created_at    timestamptz default now()
+);
+
+-- review_queue (pending / approved / rejected submissions)
+create table if not exists review_queue (
+  id            bigserial primary key,
+  uploader_id   uuid references auth.users(id) on delete set null,
+  reviewer_id   uuid references auth.users(id) on delete set null,
+  storage_path  text not null,
+  organ         text,
+  modality      text,
+  plane         text,
+  sequence      text,
+  prompt        text,
+  status        text not null default 'pending' check (status in ('pending','approved','rejected','revision')),
+  review_notes  text,
+  reject_reason text,
+  created_at    timestamptz default now(),
+  reviewed_at   timestamptz
+);
+
+create index if not exists review_queue_status_idx on review_queue(status);
+create index if not exists review_queue_uploader_idx on review_queue(uploader_id);
+create index if not exists atlas_images_organ_idx on atlas_images(organ);
+
+alter table review_queue enable row level security;
+alter table atlas_images enable row level security;
+
+drop policy if exists rq_read on review_queue;
+create policy rq_read on review_queue for select using (
+  uploader_id = auth.uid()
+  or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('admin','reviewer'))
+);
+
+drop policy if exists rq_insert on review_queue;
+create policy rq_insert on review_queue for insert with check (auth.uid() is not null);
+
+drop policy if exists rq_update on review_queue;
+create policy rq_update on review_queue for update using (
+  exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('admin','reviewer'))
+);
+
+drop policy if exists ai_read on atlas_images;
+create policy ai_read on atlas_images for select using (true);
+
+drop policy if exists ai_insert on atlas_images;
+create policy ai_insert on atlas_images for insert with check (
+  exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('admin','reviewer'))
+);
+
+-- pg_trgm extension (used by ext table below)
+create extension if not exists pg_trgm;
+
 -- ─── 1) Extend atlas_images with structures[] (if missing) ───────
 alter table if exists atlas_images
   add column if not exists structures text[] default '{}'::text[],
