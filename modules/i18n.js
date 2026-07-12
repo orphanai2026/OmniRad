@@ -50,6 +50,8 @@
       home:         { en:'Home',               ar:'الرئيسية' },
       contact:      { en:'Contact',            ar:'التواصل' },
       contributors: { en:'Contributors',       ar:'المتعاونون' },
+      contribute:   { en:'Contribute',         ar:'ساهم' },
+      profile:      { en:'My Profile',         ar:'ملفّي الشخصي' },
       language:     { en:'Language',           ar:'اللغة' },
       theme:        { en:'Theme',              ar:'الوضع' },
       dark:         { en:'Dark',               ar:'ليلي' },
@@ -67,7 +69,10 @@
       daily:        { en:'Daily Challenge',    ar:'التحدّي اليومي' },
       progress:     { en:'My Progress',        ar:'تقدّمي' },
       aiChat:       { en:'AI Assistant',       ar:'مساعد الذكاء' },
-      clinic:       { en:'Clinic',             ar:'العيادة' }
+      clinic:       { en:'Clinic',             ar:'العيادة' },
+      dictionary:   { en:'Dictionary',         ar:'القاموس' },
+      review:       { en:'Review',             ar:'المراجعة' },
+      admin:        { en:'Admin',              ar:'الإدارة' }
     },
     home: {
       eyebrow:      { en:'Radiologic Anatomy Platform', ar:'منصّة التشريح الإشعاعي' },
