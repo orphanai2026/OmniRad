@@ -166,7 +166,18 @@
       if (nameEl && p) nameEl.textContent = p.display_name || p.email || 'User';
       if (avaEl && p) {
         const initials = (p.display_name || p.email || 'U').trim().split(/\s+/).slice(0, 2).map(x => x[0]?.toUpperCase() || '').join('') || 'U';
-        avaEl.textContent = initials;
+        const url = p.avatar_url || '';
+        if (url.startsWith('preset:')) {
+          const k = url.slice(7);
+          const presets = window.__omniradPresets || {};
+          const svg = presets[k] || presets[k.toLowerCase()] || presets[k.toUpperCase()];
+          if (svg) avaEl.innerHTML = svg.replace('<svg', '<svg width="80%" height="80%"');
+          else avaEl.textContent = initials;
+        } else if (url) {
+          avaEl.innerHTML = '<img src="' + url + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+        } else {
+          avaEl.textContent = initials;
+        }
       }
     }
   };
