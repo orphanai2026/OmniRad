@@ -285,6 +285,9 @@
       setTimeout(pollAuth, 120);
     })();
 
+    // Re-sync when profile page (or others) updates the user's avatar/profile
+    window.addEventListener('omnirad:profile-updated', function(){ syncUser(); });
+
     /* ─── Bell notifications ─── */
     async function bellRender(){
       if (!window.OmniRadAuth || !OmniRadAuth.client) return;
