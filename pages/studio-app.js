@@ -4,6 +4,13 @@
    Phase 1: skeleton + Custom form + live preview + filename
    Reuses: i18n, supabase (auth guard), anatomy-dict, structures data
    Phases 2-5 add Presets, Case Builder, and Library.
+
+   AUTO-GEN DISABLED (Phase 3 Sprint 1 · 12 Jul 2026):
+     Auto-generation via fal.ai/FLUX/Gemini is gated behind
+     window.OmniRadFeatures.AUTOGEN (see modules/feature-flags.js).
+     Manual ChatGPT workflow is the sole production path.
+     Legacy doGenerate() preserved below for restore.
+     Restore: flip AUTOGEN=true + run supabase/studio-autogen-restore.sql.
    ═══════════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
@@ -11,6 +18,12 @@
   const $ = id => document.getElementById(id);
   const q = (sel, root) => (root || document).querySelector(sel);
   const qa = (sel, root) => [...(root || document).querySelectorAll(sel)];
+
+  /* ─── Feature flags (defense in depth: optional-chain + local snapshot) ─── */
+  const FEATURE_AUTOGEN = !!(window.OmniRadFeatures && window.OmniRadFeatures.AUTOGEN);
+
+  /* ─── Legacy auto-gen constants (behind FEATURE_AUTOGEN) ─── */
+  const AUTOGEN_MODEL_LEGACY = 'fal-ai/flux/schnell'; // deprecated 2026-07-12
 
   /* ─── i18n strings for this page ─── */
   const I18N = {
@@ -422,11 +435,19 @@
     }));
     $('btnReset').addEventListener('click', ()=>{ state.s = DEF(); populate(); render(); });
     $('btnHist').addEventListener('click', ()=>{ alert(isAr()?'حفظ السجل يأتي في المرحلة اللاحقة.':'History save coming in a later phase.'); });
-    $('btnGen') && $('btnGen').addEventListener('click', doGenerate);
+    if (FEATURE_AUTOGEN) {
+      $('btnGen') && $('btnGen').addEventListener('click', doGenerate);
+    }
   }
 
-  /* ─── Generate & Send to Review ─── */
+  /**
+   * Legacy auto-generation flow (fal.ai · FLUX · Gemini).
+   * @deprecated Phase 3 Sprint 1 (2026-07-12). Gated behind FEATURE_AUTOGEN.
+   * Kept for restore path — do not invoke unless flag is true.
+   * See: docs/feature-flags.md · supabase/studio-autogen-restore.sql
+   */
   async function doGenerate(){
+    if (!FEATURE_AUTOGEN) { console.warn('[Studio] doGenerate() called but AUTOGEN flag is off — noop.'); return; }
     const sb = window.OmniRadAuth && window.OmniRadAuth.client;
     if (!sb){ alert(isAr()?'يلزم تسجيل الدخول.':'Sign-in required.'); return; }
     const b = build();
@@ -446,7 +467,7 @@
         p_plane: s.view || null, p_pathology: s.pathCase || null,
         p_sequence: (s.modality==='MRI'? s.sequence : null),
         p_slice_thickness: null,
-        p_extra: {}, p_model: 'fal-ai/flux/schnell'
+        p_extra: {}, p_model: AUTOGEN_MODEL_LEGACY
       });
       if (e1) throw e1;
       sessionId = sid;
@@ -496,6 +517,7 @@
   /* ─── Boot ─── */
   function init(){
     applyI18n(); populate(); bindEvents(); render();
+    console.info('[OmniRad Studio] Manual ChatGPT workflow active. AUTOGEN=' + FEATURE_AUTOGEN + ' (Phase 3 Sprint 1 · 12 Jul 2026).');
   }
 
   document.addEventListener('DOMContentLoaded', ()=>{
