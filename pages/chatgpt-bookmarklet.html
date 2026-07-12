@@ -271,11 +271,11 @@ textarea.qs:focus{outline:none;border-color:var(--acc)}
     var text = '';
     try { text = await navigator.clipboard.readText(); } catch(e){}
     if (!text || !text.trim()){
-      alert('No prompt in clipboard. Copy your prompt from OmniRad Studio first, then click me again.');
+      alert('لا يوجد برومبت في الحافظة — انسخه من مولّد البرومبات في OmniRad أولاً، ثم اضغط الاختصار من جديد.\n\nNo prompt in clipboard. Copy your prompt from OmniRad Studio first, then click me again.');
       return;
     }
     var t = document.querySelector('#prompt-textarea, textarea[data-testid=\\'root\\'], textarea, div[contenteditable=\\'true\\']');
-    if (!t){ alert('ChatGPT input not found. Scroll to the bottom of the chat and try again.'); return; }
+    if (!t){ alert('لم يتم العثور على مربع كتابة ChatGPT. انزل إلى أسفل المحادثة وحاول مجدداً.\n\nChatGPT input not found. Scroll to the bottom of the chat and try again.'); return; }
     if (t.tagName === 'TEXTAREA'){
       var setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype,'value').set;
       setter.call(t, text);
@@ -285,7 +285,7 @@ textarea.qs:focus{outline:none;border-color:var(--acc)}
       document.execCommand('insertText', false, text);
     }
     t.focus();
-  } catch(err){ alert('OmniRad bookmarklet error: '+err.message); }
+  } catch(err){ alert('خطأ في اختصار OmniRad / OmniRad bookmarklet error:\n' + err.message); }
 })();`;
   const bmMin = bm.replace(/\n\s*/g,' ');
   document.getElementById('bmLink').href = bmMin;
