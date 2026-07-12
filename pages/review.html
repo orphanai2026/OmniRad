@@ -203,10 +203,10 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const box = document.getElementById('listBox');
     box.innerHTML = '<div class="empty">Loading…</div>';
     try {
-      const { data, error } = await sb.from('pending_images')
-        .select('*, generation_sessions(*)')
+      const { data, error } = await sb.from('review_queue')
+        .select('*')
         .eq('status', currentStatus)
-        .order('uploaded_at', { ascending: false }).limit(60);
+        .order('created_at', { ascending: false }).limit(60);
       if (error) throw error;
       if (!data.length){
         const k = 'rev.empty' + currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
@@ -220,52 +220,36 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
   }
 
   function renderCard(row){
-    const s = row.generation_sessions || {};
     const url = row.storage_path
-      ? (row.storage_path.startsWith('http') ? row.storage_path : sb.storage.from('pending').getPublicUrl(row.storage_path).data.publicUrl)
+      ? (String(row.storage_path).startsWith('http') ? row.storage_path : sb.storage.from('atlas').getPublicUrl(row.storage_path).data.publicUrl)
       : '';
     const showActions = currentStatus === 'pending';
+    const structs = (row.structures||[]).slice(0,6).map(s => `<span>${s}</span>`).join('');
     return `<div class="card" data-id="${row.id}">
       <div class="card-img">
         ${url ? `<img src="${url}" alt="">` : `<div class="placeholder">No image</div>`}
-        <div class="badge">${(s.modality||'—').toUpperCase()}</div>
+        <div class="badge">${(row.modality||'—').toUpperCase()}</div>
       </div>
       <div class="card-body">
-        <div class="card-title">${(s.organ||'—')} · ${(s.plane||'—')}</div>
+        <div class="card-title">${(row.organ||'—')} · ${(row.plane||'—')}</div>
         <div class="meta">
-          ${s.region ? `<span>${s.region}</span>`:''}
-          ${s.pathology ? `<span>${s.pathology}</span>`:''}
-          ${s.sequence ? `<span>${s.sequence}</span>`:''}
-          ${s.slice_thickness ? `<span>${s.slice_thickness}</span>`:''}
+          ${row.sequence ? `<span>${row.sequence}</span>`:''}
+          ${structs}
         </div>
-        <div class="prompt">${(s.prompt_en||'').substring(0,240)}${(s.prompt_en||'').length>240?'…':''}</div>
+        <div class="prompt">${(row.prompt||'').substring(0,240)}${(row.prompt||'').length>240?'…':''}</div>
         ${showActions ? `
         <div class="actions">
           <button class="btn ok" onclick="doApprove('${row.id}')">${t('rev.approve')}</button>
           <button class="btn warn" onclick="openRevision('${row.id}')">${t('rev.reqRevision')}</button>
           <button class="btn err" onclick="openReject('${row.id}')">${t('rev.reject')}</button>
-        </div>` : row.reject_reason ? `<div class="meta"><span style="color:var(--err)">✗ ${row.reject_reason}</span></div>` : row.reviewer_notes ? `<div class="meta"><span style="color:var(--warn)">↺ ${row.reviewer_notes}</span></div>` : ''}
+        </div>` : row.reject_reason ? `<div class="meta"><span style="color:var(--err)">✗ ${row.reject_reason}</span></div>` : row.review_notes ? `<div class="meta"><span style="color:var(--warn)">↺ ${row.review_notes}</span></div>` : ''}
       </div>
     </div>`;
   }
 
   window.doApprove = async id => {
     try {
-      // 1) Look up pending row to get its storage_path
-      const { data: p, error: e1 } = await sb.from('pending_images').select('storage_path').eq('id', id).single();
-      if (e1) throw e1;
-      // 2) Physically copy the file from pending bucket to atlas (public) bucket
-      if (p && p.storage_path){
-        const { data: blob, error: eDl } = await sb.storage.from('pending').download(p.storage_path);
-        if (!eDl && blob){
-          const { error: eUp } = await sb.storage.from('atlas').upload(p.storage_path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
-          if (eUp) console.warn('[approve] atlas upload warning:', eUp);
-        } else if (eDl) {
-          console.warn('[approve] pending download warning:', eDl);
-        }
-      }
-      // 3) Insert the atlas_images row + mark pending as approved
-      const { error } = await sb.rpc('approve_pending_image', { p_pending: id, p_notes: null });
+      const { error } = await sb.rpc('approve_bulk_upload_item', { p_review_id: Number(id) });
       if (error) throw error;
       toast(t('rev.approved.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
@@ -282,7 +266,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const opts = document.querySelector('#rejReasonKind option:checked').textContent;
     const reason = opts + (notes ? ' — ' + notes : '');
     try {
-      const { error } = await sb.rpc('reject_pending_image', { p_pending: id, p_reason: reason });
+      const { error } = await sb.rpc('reject_to_archive', { p_review_id: Number(id), p_reason: reason });
       if (error) throw error; closeModal('rejectModal'); toast(t('rev.rejected.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   }
