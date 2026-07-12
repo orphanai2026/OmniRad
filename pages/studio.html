@@ -236,21 +236,15 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
       </div>
 
       <!-- Generate & Send to Review -->
-      <div id="genBox" style="margin-top:18px;padding:16px;background:linear-gradient(135deg,var(--acc-sub),transparent);border:1px solid var(--acc-dim);border-radius:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
-          <div>
-            <div style="font-weight:800;font-size:14px;color:var(--acc);letter-spacing:.02em" data-i18n="studio.genTitle">✨ Generate & Send to Review</div>
-            <div style="font-size:11.5px;color:var(--text-s);margin-top:4px;line-height:1.55" data-i18n="studio.genHint">Sends this prompt to fal.ai (FLUX). Generation takes 20-60 seconds. The image will appear in the Review Queue for approval.</div>
-          </div>
-          <button id="btnGen" style="border:none;background:var(--acc);color:var(--acc-ink);font-weight:800;font-size:13.5px;padding:11px 20px;border-radius:10px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.15s">✨ <span data-i18n="studio.genBtn">Generate</span></button>
+      <!-- Generate & Send to Review — DISABLED (manual ChatGPT workflow active) -->
+      <div id="genBox" style="margin-top:18px;padding:18px;background:linear-gradient(135deg,rgba(251,191,36,.08),transparent);border:1px dashed var(--pending);border-radius:14px;text-align:center">
+        <div style="font-weight:800;font-size:14px;color:var(--pending);letter-spacing:.02em">⏳ Auto-generation — coming soon</div>
+        <div style="font-size:12px;color:var(--text-s);margin-top:6px;line-height:1.6;max-width:60ch;margin-inline:auto">
+          <span data-i18n="studio.genSoon">Direct in-app generation is temporarily disabled while we integrate a higher-accuracy image model. For now: copy the prompt above → generate in ChatGPT → upload via </span><a href="bulk-upload.html" style="color:var(--acc);font-weight:700">Bulk Upload</a>. <a href="chatgpt-bookmarklet.html" style="color:var(--acc);font-weight:700;margin-inline-start:6px">📎 Get the one-click ChatGPT bookmarklet</a>
         </div>
-        <div id="genProgress" style="display:none;margin-top:14px;padding:12px 14px;background:var(--bg-s);border:1px solid var(--border);border-radius:10px;font-size:12.5px;color:var(--text-s);line-height:1.6">
-          <div id="genProgressText"></div>
-          <div style="height:4px;background:var(--border-s);border-radius:2px;margin-top:8px;overflow:hidden">
-            <div id="genProgressBar" style="height:100%;width:0;background:var(--acc);border-radius:2px;transition:width .5s"></div>
-          </div>
-        </div>
-        <div id="genResult" style="display:none;margin-top:14px"></div>
+      </div>
+      <div id="genProgress" style="display:none"></div>
+      <div id="genResult" style="display:none"></div>
       </div>
     </div>
 
