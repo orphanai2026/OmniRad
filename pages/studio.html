@@ -236,10 +236,10 @@ body[dir="rtl"] .gen-en{display:none!important}body[dir="rtl"] .gen-ar{display:i
       </div>
 
       <!-- Generate & Send to Review -->
-      <!-- Manual workflow (auto-generation coming soon) -->
+      <!-- Manual generation via ChatGPT · RadLex/RSNA validated workflow (highest anatomical accuracy). Auto-gen retired Phase 3 Sprint 1 — see modules/feature-flags.js -->
       <div id="genBox" style="margin-top:22px;padding:18px 22px;background:linear-gradient(135deg,rgba(45,212,200,.06),transparent);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between">
         <div style="font-size:12.5px;color:var(--text-s);line-height:1.65;flex:1;min-width:220px">
-          <span class="gen-en">Click <b style="color:var(--acc)">Generate</b> to open the prompt in ChatGPT, save the image, then upload it via Bulk Upload.</span><span class="gen-ar" style="display:none">اضغط <b style="color:var(--acc)">توليد</b> لفتح البرومبت في ChatGPT، ثم احفظ الصورة وارفعها عبر الرفع الجماعي.</span>
+          <span class="gen-en"><b style="color:var(--text)">Manual generation via ChatGPT</b> — highest anatomical accuracy. Click <b style="color:var(--acc)">Generate</b> to open the prompt in ChatGPT, save the image, then upload it via Bulk Upload.</span><span class="gen-ar" style="display:none"><b style="color:var(--text)">توليد يدوي عبر ChatGPT</b> — أعلى دقة تشريحية. اضغط <b style="color:var(--acc)">توليد</b> لفتح البرومبت في ChatGPT، ثم احفظ الصورة وارفعها عبر الرفع الجماعي.</span>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button id="btnGenBig" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:linear-gradient(135deg,var(--acc),#5ee5db);color:var(--acc-ink);border:none;border-radius:10px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(45,212,200,.28)">
@@ -298,6 +298,7 @@ body[dir="rtl"] .gen-en{display:none!important}body[dir="rtl"] .gen-ar{display:i
 <script src="../modules/data/presets-acr.js"></script>
 <script src="../modules/omnirad-lib.js"></script>
 <script src="../modules/omnirad-cloud.js"></script>
+<script src="../modules/feature-flags.js"></script>
 <script src="./studio-app.js"></script>
 
 <script>
