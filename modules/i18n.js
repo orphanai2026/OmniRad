@@ -72,7 +72,9 @@
       clinic:       { en:'Clinic',             ar:'العيادة' },
       dictionary:   { en:'Dictionary',         ar:'القاموس' },
       review:       { en:'Review',             ar:'المراجعة' },
-      admin:        { en:'Admin',              ar:'الإدارة' }
+      admin:        { en:'Admin',              ar:'الإدارة' },
+      studio:       { en:'Studio',             ar:'الاستوديو' },
+      adminConsole: { en:'Admin Console',      ar:'لوحة الإدارة' }
     },
     home: {
       eyebrow:      { en:'Radiologic Anatomy Platform', ar:'منصّة التشريح الإشعاعي' },
