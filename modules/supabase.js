@@ -171,7 +171,7 @@
           const k = url.slice(7);
           const presets = window.__omniradPresets || {};
           const svg = presets[k] || presets[k.toLowerCase()] || presets[k.toUpperCase()];
-          if (svg) avaEl.innerHTML = svg.replace('<svg', '<svg width="80%" height="80%"');
+          if (svg) avaEl.innerHTML = svg.replace('<svg', '<svg width="80%" height="80%" style="color:var(--acc-ink)"');
           else avaEl.textContent = initials;
         } else if (url) {
           avaEl.innerHTML = '<img src="' + url + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';

@@ -271,7 +271,7 @@
                 const presets = window.__omniradPresets || {};
                 const svg = presets[k] || presets[k.toLowerCase()] || presets[k.toUpperCase()];
                 if (svg){
-                  avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%"');
+                  avaEl.innerHTML = svg.replace('<svg','<svg width="80%" height="80%" style="color:var(--acc-ink)"');
                   avaEl.__lastKey = key;
                 } else if (Object.keys(presets).length === 0) {
                   // presets not loaded yet — retry shortly, keep initials for now
