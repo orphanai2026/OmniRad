@@ -216,6 +216,8 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
     <button class="panel-toggle" id="tglRight" title="Hide info panel" aria-label="Toggle info panel">▶</button>
     <div class="info-title-row"><h2 id="infoTitle">OmniRad Atlas</h2><span id="titleSpeaker"></span></div>
     <div class="info-sub" id="infoSub">Radiologic anatomy · bilingual</div>
+    <div id="atlasGrowth" style="margin:8px 0 12px"></div>
+    <div id="communityBadge" style="margin:0 0 12px"></div>
     <h3 data-i18n="atlas.study">Study</h3>
     <div class="kv"><span class="k">Modality</span><span class="v" id="infoMod">—</span></div>
     <div class="kv"><span class="k">Plane</span><span class="v" id="infoPlane">—</span></div>
@@ -241,6 +243,7 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script src="../modules/structures.js"></script>
 <script src="../modules/speak.js"></script>
+<script src="../modules/omnirad-atlas-dynamic.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    Anatomical parts per structure (bilingual, teaching-oriented).
@@ -893,71 +896,136 @@ onResize();
 renderSidebar();
 selectStructure('brain');
 
-/* ─── Overlay approved AI images from Supabase (Phase E) ─── */
-(async function loadApprovedFromDB(){
+/* ═══════════════════════════════════════════════════════════════
+   Atlas dynamic loader — Sprint 2 (Phase 3)
+   Reads approved images from atlas_public_v via OmniRadAtlasDynamic.
+   Adds: dynamic image lookup, community badge, growth counter,
+         smart empty-state, URL-param deep-linking.
+   ═══════════════════════════════════════════════════════════════ */
+(async function initDynamicAtlas(){
   try {
-    let tries=0;
-    while(!(window.OmniRadAuth && OmniRadAuth.client) && tries<40){ await new Promise(r=>setTimeout(r,80)); tries++; }
-    if (!window.OmniRadAuth) return;
-    const sb = OmniRadAuth.client;
-    const { data, error } = await sb.from('atlas_images')
-      .select('id,storage_path,modality,region,organ,plane,pathology,prompt_en,approved_at')
-      .order('approved_at', { ascending:false });
-    if (error){ console.warn('[atlas] approved fetch failed', error); return; }
-    if (!data || !data.length) return;
-    // Build index keyed on lowercase organ+modality+plane
-    const idx = {};
-    const pubBase = sb.storage.from('atlas').getPublicUrl('').data.publicUrl.replace(/\/$/,'');
-    data.forEach(r => {
-      const url = pubBase + '/' + r.storage_path;
-      const org = (r.organ||'').toLowerCase().trim();
-      const mod = (r.modality||'').toLowerCase().trim();
-      const pln = (r.plane||'').toLowerCase().trim();
-      const key = org + '|' + mod + '|' + pln;
-      if (!idx[key]) idx[key] = { url, meta:r };
+    // Wait for supabase client + dynamic module
+    let tries = 0;
+    while ((!window.OmniRadAuth || !OmniRadAuth.client || !window.OmniRadAtlasDynamic) && tries < 50){
+      await new Promise(r => setTimeout(r, 80)); tries++;
+    }
+    if (!window.OmniRadAtlasDynamic) return;
 
-      // Auto-register organ as a virtual structure if not present
-      if (org && !S.some(s => s.en.toLowerCase().trim() === org)){
-        const id = 'db_' + org.replace(/[^a-z0-9]+/g,'_');
-        if (!S.some(s => s.id === id)){
-          S.push({
-            id, en: r.organ, ar: r.organ, icon:'🩺',
-            region: r.region || 'Custom',
-            regionCanonical: canonicalRegion((r.organ||'') + ' ' + (r.region||'')),
-            desc:'User-submitted structure — approved AI image.'
-          });
+    // 1) Render live growth counter (top of info panel + sidebar)
+    const gMount = document.getElementById('atlasGrowth');
+    if (gMount) OmniRadAtlasDynamic.renderCounter(gMount, { compact: true });
+
+    // 2) Load approved images
+    const rows = await OmniRadAtlasDynamic.load();
+
+    // 3) Auto-register unknown organs as virtual structures so the sidebar shows them
+    if (rows && rows.length){
+      const orgs = new Set(rows.map(r => (r.organ||'').toLowerCase().trim()).filter(Boolean));
+      orgs.forEach(org => {
+        if (!S.some(s => (s.en||'').toLowerCase().trim() === org || s.id === org)){
+          const id = 'db_' + org.replace(/[^a-z0-9]+/g,'_');
+          if (!S.some(s => s.id === id)){
+            const label = org.charAt(0).toUpperCase() + org.slice(1);
+            S.push({
+              id, en: label, ar: label, icon:'🩺',
+              region: 'Contributed', regionCanonical: canonicalRegion(label),
+              desc:'Community-contributed structure.'
+            });
+          }
         }
-      }
-    });
-    // Re-render sidebar so new structures appear
-    if (typeof renderSidebar==='function') renderSidebar($('search') && $('search').value);
-    window.__omniradApproved = idx;
+      });
+      if (typeof renderSidebar === 'function') renderSidebar($('search') && $('search').value);
+    }
 
-    // Wrap loadCurrent to prefer DB images
+    // 4) Wrap loadCurrent to prefer dynamic images + render community badge
+    const badgeMount = document.getElementById('communityBadge');
     const origLoad = window.loadCurrent || loadCurrent;
     window.loadCurrent = function(){
       const st = currentStruct();
+      if (badgeMount) badgeMount.innerHTML = '';
       if (st){
-        const org = (st.en||'').toLowerCase().trim();
-        const mod = (state.modality||'').toLowerCase().trim();
-        const pln = (state.plane||'').toLowerCase().trim();
-        const hit = idx[org+'|'+mod+'|'+pln] || idx[org+'|'+mod+'|'] || idx[org+'|'+mod];
+        // Match by canonical id first, then by English label
+        const key = (st.id||'').toLowerCase().trim();
+        const enKey = (st.en||'').toLowerCase().trim();
+        const hit = OmniRadAtlasDynamic.find(key, state.modality, state.plane)
+                 || OmniRadAtlasDynamic.find(enKey, state.modality, state.plane);
         if (hit){
-          $('empty').style.display = 'none';
-          state.zoom = 1; state.panX = 0; state.panY = 0; state.invert = false; state.measurements = [];
-          const el = new Image(); el.crossOrigin = 'anonymous';
-          el.onload = ()=>{ state.img = el; renderInfo(); draw(); };
-          el.onerror = ()=>{ origLoad(); };
-          el.src = hit.url;
-          $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · AI-approved`;
-          return;
+          const url = OmniRadAtlasDynamic.publicUrl(hit.storage_path, hit.approved_at);
+          if (url){
+            $('empty').style.display = 'none';
+            state.zoom = 1; state.panX = 0; state.panY = 0;
+            state.invert = false; state.measurements = [];
+            $('valZoom').textContent = '1.00×';
+            const el = new Image(); el.crossOrigin = 'anonymous';
+            el.onload  = () => { state.img = el; renderInfo(); draw(); };
+            el.onerror = () => { console.warn('[atlas] dynamic image load failed, falling back'); origLoad(); };
+            el.src = url;
+            $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · Community`;
+            $('anTR').innerHTML = `OmniRad · Atlas<br>${state.modality} · ${state.plane}`;
+            $('anBR').innerHTML = `Zoom: <span id="anZ">1.00×</span><br>Educational only`;
+            if (badgeMount) badgeMount.innerHTML = OmniRadAtlasDynamic.badgeHtml(hit);
+            return;
+          }
         }
       }
       return origLoad();
     };
-    // Refresh current view
-    if (typeof loadCurrent==='function') loadCurrent();
-  } catch(e){ console.warn('[atlas] approved overlay error', e); }
+
+    // 5) Smart empty-state — replace the default "Image not available" message
+    //    when the current combination truly has no dynamic image (and static also empty).
+    const emptyEl = document.getElementById('empty');
+    const emptyText = document.getElementById('emptyText');
+    if (emptyEl && emptyText){
+      const origSetter = emptyEl.style;
+      // Observe display changes → on show, if we have no static image AND no dynamic, show CTA
+      const mo = new MutationObserver(() => {
+        if (emptyEl.style.display !== 'block') return;
+        const st = currentStruct();
+        if (!st) return;
+        // Only replace when there's no dynamic hit
+        const key = (st.id||'').toLowerCase().trim();
+        const enKey = (st.en||'').toLowerCase().trim();
+        const hit = OmniRadAtlasDynamic.find(key, state.modality, state.plane)
+                 || OmniRadAtlasDynamic.find(enKey, state.modality, state.plane);
+        if (hit) return;
+        emptyEl.innerHTML = OmniRadAtlasDynamic.emptyStateHtml(enKey, state.modality, state.plane);
+      });
+      mo.observe(emptyEl, { attributes:true, attributeFilter:['style'] });
+    }
+
+    // 6) URL-param deep-linking — ?organ=brain&modality=CT&plane=Axial
+    const params = new URLSearchParams(location.search);
+    const pOrgan = (params.get('organ') || '').toLowerCase().trim();
+    const pMod   = (params.get('modality') || '').toUpperCase().trim();
+    const pPlane = params.get('plane') || '';
+    if (pOrgan){
+      // Alias common short codes → structure IDs
+      const modAlias = { XRAY:'X-Ray', 'X-RAY':'X-Ray', MAMMO:'Mammo', ANGIO:'Angio' };
+      const modality = modAlias[pMod] || pMod;
+      const match = S.find(s =>
+        s.id === pOrgan ||
+        (s.en||'').toLowerCase() === pOrgan ||
+        (s.ar||'') === pOrgan
+      );
+      if (match){
+        state.structId = match.id;
+        if (modality) state.modality = modality;
+        if (pPlane) state.plane = pPlane;
+        renderSidebar($('search') && $('search').value);
+        renderModBar(); renderSubPicker();
+        window.loadCurrent();
+      } else if (modality){
+        // Just apply modality filter to current structure
+        state.modality = modality;
+        renderModBar(); renderSubPicker();
+        window.loadCurrent();
+      }
+    } else {
+      // Refresh current view with wrapped loader
+      window.loadCurrent();
+    }
+
+  } catch(e){ console.warn('[atlas] dynamic init error', e); }
 })();
 </script>
 </body>
