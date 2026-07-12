@@ -120,6 +120,37 @@
 - حدِّث `RESUME.md` (نقل المهمة من "المتبقّي" إلى "المنجز")
 - أي ملفات جذر ذات صلة بالمهمة
 
+**٧-أ) بداية كل محادثة جديدة — إلزامي:**
+- **أول ردّ من Claude** يجب أن يطلب من المستخدم: «أرفق RESUME.md لأتابع من حيث توقّفنا».
+- لا يبدأ أي عمل قبل قراءة RESUME.md، إلا إذا كان الطلب مستقلاً تماماً.
+
+**٧-ب) نهاية كل محادثة — إلزامي:**
+- قبل الختام، Claude يحدّث `RESUME.md` + `CLAUDE.md` تلقائياً بـ:
+  - نقل ما أُنجز من "المتبقّي" إلى "المنجز"
+  - تحديث "الحالة الحالية" بالتاريخ + آخر توقّف
+  - إضافة أي قرارات جديدة إلى قسم "القرارات المعتمدة"
+- ثم يقدّم الملفَّين للمستخدم للتنزيل عبر `present_fs_item_for_download`.
+
+**٧-ج-١) قاعدة تنظيف الكود (معتمَدة 12 يوليو 2026):**
+- **مراجعة تنظيف بعد كل مجموعة مراحل** — قبل بدء المهام المؤجَّلة
+- تشمل: الكود الميت · feature flags · الملفات غير المستخدمة · imports زائدة · SQL migrations قديمة
+
+**٧-ج) عند اعتماد اكتمال مرحلة — إلزامي:**
+- Claude يُصدر **رسالة بدء جاهزة** للمرحلة التالية، بصيغة قابلة للنسخ:
+  ```
+  «تابع من هنا — المرحلة X: <عنوان المرحلة>»
+  ```
+- الرسالة تُقدَّم في كتلة code block منفصلة ليسهل نسخها.
+- Claude يُذكّر المستخدم بإرفاق `RESUME.md` المحدَّث مع الرسالة في المحادثة الجديدة.
+
+**٧-د) تسمية ملفات Supabase — إلزامي:**
+- كل ملف SQL يبدأ بترويسة تحوي `TASK NAME:` بأحرف كبيرة (مثل `ANATOMY-V2-SCHEMA`)
+- ترويسة كاملة تشمل: Task name · Phase · Run order · Repeat safety
+- `do $$ raise notice '▶ TASK: <NAME> — starting'; end $$;` أوّل الملف
+- `do $$ raise notice '✔ TASK: <NAME> — completed'; end $$;` آخره
+- عند طلب المستخدم مهمة موجودة مسبقاً بالاسم → نجدّد نفس الملف بنفس الاسم
+- المهام تُرجع باسمها في المحادثة (مثل: «نفّذ `ANATOMY-V2-SEED`»)
+
 **٨) قاعدة النقاش قبل التنفيذ (إلزامية):**
 - أي طلب جديد → **نقاش أولاً**: أقدّم أفضل المقترحات العالمية (UX/UI) + الطبية (RadLex/RSNA/ACR/ESR) + التقنية
 - أعرض الخيارات وإيجابيات/سلبيات كل منها
@@ -203,17 +234,36 @@ Review Queue (مراجعة + اعتماد)
 أُلغي القرار وعُدنا لتوليد AI. ملفات Pipeline في
 `omnirad-redesign/pipeline/` مرجعية فقط.
 
-### 🟢 المرحلة ١ — القاموس الموسَّع (المحادثة القادمة)
-**قبل كل شيء — لأن Prompt Studio يعتمد عليه.**
+### 🟢 المرحلة ١ — القاموس الموسَّع ✅ (منجَزة ومختبَرة — 12 يوليو 2026)
 
-1. جدول `anatomical_structures` في Supabase (الموسَّع)
-2. استيراد TA2 من OpenAnatomy JSON → ~١,٢٠٠ بنية (من ٢٥٠ الحالية)
-3. Enrichment: RadLex IDs عبر BioPortal API
-4. Arabic hybrid: Wikidata SPARQL → auto-fill عربي (~٤٠٠ بنية)
-5. `anatomy-master-v2.js` مُشتقّ من الجدول (fallback على snapshot ثابت)
-6. تحديث `dictionary.html` + `atlas.html` sidebar للقراءة من v2
+**Deployed & verified:**
+- ✅ `supabase/anatomy-v2-schema.sql` منفَّذ على Supabase (جدول + indexes pg_trgm + RLS + view + stats)
+- ✅ `supabase/anatomy-v2-seed.sql` منفَّذ (129 بنية · 103 مع RadLex · 129 عربي كاملة)
+- ✅ `omnirad-redesign/scripts/build-anatomy-v2.mjs` مع وضع `--v1-only` (يتخطى TA2 fetch المعطّل + Wikidata + يثري بـ BioPortal RadLex)
+- ✅ `omnirad-redesign/modules/data/anatomy-master-v2.js` (loader chain: Supabase → session → snapshot → v1)
+- ✅ `omnirad-redesign/modules/data/anatomy-master-v2.snapshot.json` (fallback offline)
+- ✅ 15 صفحة مرفوعة على GitHub — `structures.length = 129` مُتحقّق على atlas + studio + comparison
+- ✅ BioPortal API key: `1ad6cd52-5d72-4666-a11e-16bbcda0f252` (مضمَّن في السكربت)
 
-**التقدير الزمني:** ٤-٦ ساعات
+**ملاحظات لاحقة:**
+- TA2 OpenAnatomy URL معطّل — سنستعمل BioPortal FMA/RADLEX لاحقاً للتوسّع
+- regex استخراج v1 يمسك 129 من 250 (يتطلب كل الحقول بالترتيب) — نوسّعه لاحقاً
+- خطأ منفصل غير مرتبط: `A.resolveToId is not a function` في omnirad-term.js:176
+
+### 🟢 Sprint 1 من المرحلة ٣ ✅ (منجَز 12 يوليو 2026)
+
+**Deployed:**
+- ✅ `omnirad-redesign/modules/feature-flags.js` (Object.freeze SSoT)
+- ✅ `omnirad-redesign/pages/_archived/` (3 test pages + README + noindex)
+- ✅ `omnirad-redesign/pages/studio.html` + `studio-app.js` (FEATURE_AUTOGEN guard + JSDoc + constant)
+- ✅ `supabase/studio-autogen-deprecate.sql` (drop RPCs + rename generation_sessions + audit log)
+- ✅ `supabase/studio-autogen-restore.sql` (reverse operation)
+- ✅ `docs/feature-flags.md` (documentation + retirement procedure)
+
+**رسالة البداية للمحادثة القادمة:**
+```
+تابع من هنا — المرحلة ٣ Sprint 2: Atlas ديناميكي (الخطوة ١٣)
+```
 
 ### 🟡 المرحلة ٢ — Bulk Upload + Contribute Hub (محادثة مستقلّة)
 
@@ -226,14 +276,40 @@ Review Queue (مراجعة + اعتماد)
 
 **التقدير الزمني:** ٣-٤ ساعات
 
-### 🟠 المرحلة ٣ — الربط والأتمتة (محادثة مستقلّة)
+### 🟠 المرحلة ٣ — الربط والأتمتة (مخطَّطة بالكامل — 12 يوليو 2026)
 
-13. عمود `structures text[]` في `atlas_images`
-14. تحديث `review.html` (دعم manual uploads + archive رفض)
-15. `atlas.html` يعرض الصور المعتمَدة تلقائياً في مكانها
-16. Studio auto-generation UI: hide (الكود محفوظ)
+**رسالة البداية للمحادثة القادمة:**
+```
+تابع من هنا — المرحلة ٣ Sprint 1: Studio Cleanup (الخطوة ١٦)
+```
 
-**التقدير الزمني:** ٢-٣ ساعات
+**ترتيب Sprints المعتمَد:**
+| Sprint | المدة | المحتوى |
+|---|---|---|
+| 1 | يوم ١ | ١٦ — Studio Cleanup (feature flag) |
+| 2 | يوم ٢-٣ | ١٣ — Atlas ديناميكي + Community badge + عدّاد نمو |
+| 3 | يوم ٣-٤ | ١٥ — Anatomy Queue + Auto-lookup RadLex + 3-Layer Quality |
+| 4 | يوم ٥-٧ | ١٤ — Series Mode + DICOM overlay + Cine + Position indicator |
+| 5 | يوم ٨-١٠ | ١٧ — **RadCompare** (Multi-Pane Workbench) |
+| Cleanup | يوم ١٠ | مراجعة تنظيف نهاية المرحلة |
+
+**قرارات معتمَدة (تفصيل كامل في RESUME.md):**
+- **١٣ Atlas:** ديناميكي من DB + Community badge + عدّاد نمو حيّ + static fallback ذكي
+- **١٤ Series:** Padded `01/10` + IBM Plex Mono + DICOM overlay + keyboard shortcuts (↑↓/Space/+-/R/H) + Cine mode + Position indicator + Cinematic scroll
+- **١٥ Anatomy Queue:** Auto-lookup RadLex (BioPortal) + Verified ✓ badge + 3-Layer Quality (Auto + Admin + Community flagging) + المساهم يُدخل حقلين فقط
+- **١٦ Studio Cleanup:** `FEATURE_AUTOGEN = false` + الكود محفوظ + UI مخفي
+- **١٧ RadCompare:** الاسم النهائي `RadCompare/رادكومبير` + 1-4 panes مستقلّة + PACS-style + Divider قابل للسحب + Case dropdown Grouped (Normal/Pathology/Variants) + Schema `case_type` + Panel معلومات قابل للطيّ + Annotations أساسية (ب) + Export screenshot + Empty state شعار OmniRad + Smart Suggestions + Sync controls
+
+**مؤجَّل عن المرحلة ٣:**
+- **مرحلة ٤:** Annotations كاملة + Export/Share كامل + PDF reports + Save to My Cases
+- **مرحلة ٥:** Responsive Overhaul (Mobile/Tablet/iPad/Desktop لكامل المنصّة)
+- Comparison في المرحلة ٣ = Desktop only
+
+**ميزات تسويقية للنقاش لاحقاً:**
+1. Case of the Week (index)
+2. Contributor Badges (Bronze/Silver/Gold)
+3. Public Contributor Profile pages
+4. "Powered by OmniRad" watermark
 
 ---
 
