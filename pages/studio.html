@@ -313,6 +313,12 @@ document.addEventListener('click', function(e){
       localStorage.setItem('omnirad:last-prompt-lang', isAr ? 'ar' : 'en');
       localStorage.setItem('omnirad:last-prompt-at', new Date().toISOString());
     } catch(_){}
+    // Copy to clipboard so user can paste manually if URL API is ignored by ChatGPT
+    try { navigator.clipboard.writeText(text); } catch(_){}
+    // Visual confirmation on the button
+    const oldHtml = big.innerHTML;
+    big.innerHTML = '<span style="font-size:14px">✓</span> <span class="gen-en">Copied</span><span class="gen-ar" style="display:none">نُسخ</span>';
+    setTimeout(()=>{ big.innerHTML = oldHtml; }, 1400);
     window.open('https://chatgpt.com/?q=' + encodeURIComponent(text), '_blank');
     return;
   }
