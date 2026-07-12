@@ -279,7 +279,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const notes = document.getElementById('revNotes').value.trim();
     if (!notes){ toast(t('rev.err') + 'Please provide guidance.'); return; }
     try {
-      const { error } = await sb.rpc('request_pending_revision', { p_pending: id, p_notes: notes });
+      const { error } = await sb.rpc('request_review_revision', { p_review_id: Number(id), p_notes: notes });
       if (error) throw error; closeModal('revisionModal'); toast(t('rev.revision.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   }
