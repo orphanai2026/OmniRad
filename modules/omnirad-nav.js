@@ -292,7 +292,10 @@
     })();
 
     // Re-sync when profile page (or others) updates the user's avatar/profile
-    window.addEventListener('omnirad:profile-updated', function(){ syncUser(); });
+    window.addEventListener('omnirad:profile-updated', function(){
+      var a = document.getElementById('onavAva'); if (a) a.__lastKey = null;
+      syncUser();
+    });
 
     /* ─── Bell notifications ─── */
     async function bellRender(){
