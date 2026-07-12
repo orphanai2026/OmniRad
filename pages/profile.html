@@ -546,6 +546,7 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
     }
     if (url){ box.innerHTML = '<img src="'+url+'" alt="">'; $('btnAvaClear').style.display = 'inline-block'; }
     else { box.innerHTML = '<span>'+initialsOf($('whoName').textContent)+'</span>'; box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))'; $('btnAvaClear').style.display = 'none'; }
+    try { window.dispatchEvent(new CustomEvent('omnirad:profile-updated')); } catch(_){}
   }
 
 
@@ -557,6 +558,7 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
       cur.avatar_url = null;
       $('avaBox').innerHTML = '<span id="avaInitials">'+initialsOf($('whoName').textContent)+'</span>';
       $('btnAvaClear').style.display = 'none';
+      try { window.dispatchEvent(new CustomEvent('omnirad:profile-updated')); } catch(_){}
       showMsg('ok', t('msg.saved'));
     } catch(e){ showMsg('err', t('profile.uploadError') + e.message); }
   });
