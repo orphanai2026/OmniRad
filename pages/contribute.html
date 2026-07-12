@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Contribute</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--acc-ink:#08100e;--ok:#4ade80;--warn:#f59e0b;--err:#f87171;--pending:#fbbf24}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--warn:#b45309;--err:#c53030;--pending:#a16207}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{color:var(--acc);text-decoration:none}
+a:hover{opacity:.85}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 22px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.7rem,3vw,2.2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.lead{color:var(--text-s);font-size:14px;line-height:1.65;margin-bottom:24px;max-width:70ch}
+.hero{background:linear-gradient(135deg,var(--bg-e),var(--bg-s));border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:26px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.hero-l{flex:1;min-width:260px}
+.role-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;background:var(--acc-sub);border:1px solid var(--acc-dim);color:var(--acc);border-radius:999px;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.hero-stats{display:flex;gap:14px;flex-wrap:wrap}
+.stat{background:var(--bg-ov);border:1px solid var(--border-s);border-radius:12px;padding:12px 16px;min-width:110px}
+.stat-n{font-size:22px;font-weight:800;color:var(--acc);font-family:'IBM Plex Mono',monospace;line-height:1}
+.stat-l{font-size:10.5px;color:var(--text-m);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:5px;font-family:'IBM Plex Mono',monospace}
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:30px}
+.card{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px;transition:.15s;position:relative;overflow:hidden}
+.card:hover{border-color:var(--acc-dim);transform:translateY(-2px)}
+.card-ico{width:44px;height:44px;border-radius:12px;background:var(--acc-sub);color:var(--acc);display:grid;place-items:center}
+.card-ico svg{width:22px;height:22px}
+.card h3{font-size:16px;font-weight:700}
+.card p{font-size:12.5px;color:var(--text-s);line-height:1.6;flex:1}
+.card .cta{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:12.5px;align-self:flex-start;font-family:inherit;border:none;cursor:pointer;white-space:nowrap}
+.card .cta.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc-dim)}
+.section-title{font-size:15px;font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:14px;background:var(--acc);border-radius:2px}
+.guide{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:20px 22px;margin-bottom:22px}
+.guide ol{padding-inline-start:20px;color:var(--text-s);font-size:13px;line-height:1.9}
+.guide ol li strong{color:var(--text)}
+.recent{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;overflow:hidden}
+.recent-row{display:grid;grid-template-columns:60px 1fr auto auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border-s);font-size:12.5px}
+.recent-row:last-child{border-bottom:none}
+.recent-row .thumb{width:56px;height:56px;border-radius:8px;background:var(--bg-s);object-fit:cover;border:1px solid var(--border-s)}
+.recent-meta{color:var(--text-s);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-top:3px}
+.pill{padding:3px 10px;border-radius:999px;font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
+.pill.pending{background:rgba(251,191,36,.15);color:var(--pending)}
+.pill.approved{background:rgba(74,222,128,.15);color:var(--ok)}
+.pill.rejected{background:rgba(248,113,113,.15);color:var(--err)}
+.empty{text-align:center;padding:34px 20px;color:var(--text-m);font-size:13px}
+.leaderboard{background:var(--bg-e);border:1px solid var(--acc-dim);border-radius:14px;padding:20px;margin-bottom:22px}
+.leaderboard h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.lb-row{display:grid;grid-template-columns:32px 40px 1fr auto auto;gap:12px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--border-s);font-size:12.5px}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:'IBM Plex Mono',monospace;font-weight:800;color:var(--acc);text-align:center}
+.lb-ava{width:34px;height:34px;border-radius:50%;background:var(--bg-s);display:grid;place-items:center;font-weight:700;color:var(--acc);font-family:'IBM Plex Mono',monospace;overflow:hidden}
+.lb-ava img{width:100%;height:100%;object-fit:cover}
+.lb-num{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--acc)}
+.footer-note{margin-top:30px;padding:14px 18px;background:var(--acc-sub);border:1px solid var(--acc-dim);border-radius:10px;font-size:12px;color:var(--text-s);line-height:1.55}
+.footer-note strong{color:var(--acc)}
+</style>
+</head>
+<body>
+
+<div id="omnirad-nav-mount"></div>
+
+<div class="wrap">
+  <div id="gate" class="gate" style="display:none">
+    <div class="icon">🤝</div>
+    <h2 data-i18n="ct.gateTitle">Contributor access</h2>
+    <p data-i18n="ct.gateMsg">This page is for contributors and administrators. Contact the platform owner to request contributor access.</p>
+    <a href="contact.html" class="cta" data-i18n="ct.contact">Contact us</a>
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="eyebrow" data-i18n="ct.eyebrow">Contribute</div>
+    <h1 data-i18n="ct.title">Contribute to OmniRad Atlas</h1>
+    <p class="lead" data-i18n="ct.lead">Help build the world's most accurate radiology teaching atlas. Generate images via ChatGPT UI using our approved prompts, then upload them here for medical review before they reach the public atlas.</p>
+
+    <div class="hero">
+      <div class="hero-l">
+        <div class="role-badge" id="roleBadge">CONTRIBUTOR</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px" id="hiUser">Welcome back</div>
+        <div style="font-size:12.5px;color:var(--text-s);line-height:1.55" data-i18n="ct.heroSub">Every image you submit is reviewed by a radiologist before publication. Quality first — quantity follows.</div>
+      </div>
+      <div class="hero-stats" id="heroStats">
+        <div class="stat"><div class="stat-n" id="stSubmitted">—</div><div class="stat-l" data-i18n="ct.stSubmitted">Submitted</div></div>
+        <div class="stat"><div class="stat-n" id="stApproved">—</div><div class="stat-l" data-i18n="ct.stApproved">Approved</div></div>
+        <div class="stat"><div class="stat-n" id="stPending">—</div><div class="stat-l" data-i18n="ct.stPending">Pending</div></div>
+        <div class="stat"><div class="stat-n" id="stRejected">—</div><div class="stat-l" data-i18n="ct.stRejected">Rejected</div></div>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <a class="card" href="bulk-upload.html">
+        <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <h3 data-i18n="ct.cardBulkTitle">Bulk Upload</h3>
+        <p data-i18n="ct.cardBulkDesc">Drag &amp; drop multiple images at once. Apply metadata to all, then override per-image where needed. Autocomplete pulls from the anatomy dictionary.</p>
+        <span class="cta" data-i18n="ct.cardBulkCta">Start upload →</span>
+      </a>
+      <a class="card" href="../Medical Prompt Studio.html">
+        <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <h3 data-i18n="ct.cardPromptTitle">Prompt Studio</h3>
+        <p data-i18n="ct.cardPromptDesc">Generate the exact prompt you need — ACR-approved presets, case builder, or fully custom. Then paste it into ChatGPT to create the image.</p>
+        <span class="cta ghost" data-i18n="ct.cardPromptCta">Open Studio →</span>
+      </a>
+      <a class="card" href="#guidelines">
+        <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <h3 data-i18n="ct.cardGuideTitle">Guidelines</h3>
+        <p data-i18n="ct.cardGuideDesc">What makes a good contribution — RadLex terms, ACR modality standards, prompt quality, and the review criteria we use.</p>
+        <span class="cta ghost" data-i18n="ct.cardGuideCta">Read guidelines →</span>
+      </a>
+    </div>
+
+    <div id="adminOnly" style="display:none">
+      <div class="section-title" data-i18n="ct.leaderTitle">Top contributors this month</div>
+      <div class="leaderboard">
+        <div id="lbList"><div class="empty" data-i18n="ct.loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <div class="section-title" data-i18n="ct.recentTitle">Your recent submissions</div>
+    <div class="recent" id="recentBox">
+      <div class="empty" data-i18n="ct.loading">Loading…</div>
+    </div>
+
+    <div id="guidelines" style="scroll-margin-top:80px">
+      <div class="section-title" data-i18n="ct.guideTitle">Contribution guidelines</div>
+      <div class="guide">
+        <ol>
+          <li data-i18n="ct.g1"><strong>Use approved prompts.</strong> Generate images via Medical Prompt Studio → ChatGPT UI. Free-hand prompts often miss RadLex/ACR terminology.</li>
+          <li data-i18n="ct.g2"><strong>Match modality contrast.</strong> CT: dense bone bright, air dark. MRI T2: CSF bright, fat dark on fat-sat. US: probe-side up, cone-shaped field.</li>
+          <li data-i18n="ct.g3"><strong>Label with RadLex terms.</strong> Use the autocomplete from our dictionary; only add new structures if you can cite an anatomical reference.</li>
+          <li data-i18n="ct.g4"><strong>One anatomical view per image.</strong> No multi-panel figures. Each image should be a single axial/coronal/sagittal slice.</li>
+          <li data-i18n="ct.g5"><strong>Educational only.</strong> No patient data, no identifying features. All uploads land in the review queue — nothing publishes automatically.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <strong data-i18n="ct.disclaimerTitle">⚠ Educational use only —</strong>
+      <span data-i18n="ct.disclaimer">not for diagnosis or clinical decision-making. All uploaded content becomes part of the OmniRad teaching atlas under the platform's usage terms.</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/data/anatomy-master.js"></script>
+<script src="../modules/data/anatomy-master-v2.js"></script>
+<script src="../modules/omnirad-search.js"></script>
+<script src="../modules/omnirad-typography.js"></script>
+<script src="../modules/omnirad-avatars.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script>
+(function(){
+  const STRINGS = {
+    en: {
+      'ct.eyebrow':'Contribute','ct.title':'Contribute to OmniRad Atlas',
+      'ct.lead':"Help build the world's most accurate radiology teaching atlas. Generate images via ChatGPT UI using our approved prompts, then upload them here for medical review before they reach the public atlas.",
+      'ct.heroSub':'Every image you submit is reviewed by a radiologist before publication. Quality first — quantity follows.',
+      'ct.stSubmitted':'Submitted','ct.stApproved':'Approved','ct.stPending':'Pending','ct.stRejected':'Rejected',
+      'ct.cardBulkTitle':'Bulk Upload','ct.cardBulkDesc':'Drag & drop multiple images at once. Apply metadata to all, then override per-image where needed. Autocomplete pulls from the anatomy dictionary.','ct.cardBulkCta':'Start upload →',
+      'ct.cardPromptTitle':'Prompt Studio','ct.cardPromptDesc':'Generate the exact prompt you need — ACR-approved presets, case builder, or fully custom. Then paste it into ChatGPT to create the image.','ct.cardPromptCta':'Open Studio →',
+      'ct.cardGuideTitle':'Guidelines','ct.cardGuideDesc':'What makes a good contribution — RadLex terms, ACR modality standards, prompt quality, and the review criteria we use.','ct.cardGuideCta':'Read guidelines →',
+      'ct.leaderTitle':'Top contributors this month','ct.recentTitle':'Your recent submissions','ct.guideTitle':'Contribution guidelines',
+      'ct.g1':'Use approved prompts. Generate images via Medical Prompt Studio → ChatGPT UI. Free-hand prompts often miss RadLex/ACR terminology.',
+      'ct.g2':'Match modality contrast. CT: dense bone bright, air dark. MRI T2: CSF bright, fat dark on fat-sat. US: probe-side up, cone-shaped field.',
+      'ct.g3':'Label with RadLex terms. Use the autocomplete from our dictionary; only add new structures if you can cite an anatomical reference.',
+      'ct.g4':'One anatomical view per image. No multi-panel figures. Each image should be a single axial/coronal/sagittal slice.',
+      'ct.g5':'Educational only. No patient data, no identifying features. All uploads land in the review queue — nothing publishes automatically.',
+      'ct.disclaimerTitle':'⚠ Educational use only —','ct.disclaimer':'not for diagnosis or clinical decision-making. All uploaded content becomes part of the OmniRad teaching atlas under the platform usage terms.',
+      'ct.gateTitle':'Contributor access','ct.gateMsg':'This page is for contributors and administrators. Contact the platform owner to request contributor access.','ct.contact':'Contact us',
+      'ct.empty':'No submissions yet. Start with a bulk upload.','ct.loading':'Loading…',
+    },
+    ar: {
+      'ct.eyebrow':'المساهمة','ct.title':'ساهم في أطلس OmniRad',
+      'ct.lead':'ساعد في بناء أدق أطلس تعليمي إشعاعي عالمياً. ولّد الصور عبر ChatGPT باستخدام برومباتنا المعتمَدة، ثم ارفعها هنا لمراجعة طبية قبل نشرها في الأطلس.',
+      'ct.heroSub':'كل صورة ترفعها يراجعها اختصاصي أشعة قبل النشر. الجودة أولاً — الكمّية تتبع.',
+      'ct.stSubmitted':'مُرسَل','ct.stApproved':'معتمَد','ct.stPending':'قيد المراجعة','ct.stRejected':'مرفوض',
+      'ct.cardBulkTitle':'رفع جماعي','ct.cardBulkDesc':'اسحب وأفلت عدة صور دفعة واحدة. طبِّق بيانات موحّدة، ثم عدّل كل صورة عند الحاجة. الإكمال التلقائي من قاموس التشريح.','ct.cardBulkCta':'ابدأ الرفع ←',
+      'ct.cardPromptTitle':'مولّد البرومبت','ct.cardPromptDesc':'ولّد البرومبت الذي تحتاجه — presets معتمدة ACR أو Case Builder أو Custom. الصقه في ChatGPT لإنتاج الصورة.','ct.cardPromptCta':'افتح المولّد ←',
+      'ct.cardGuideTitle':'الإرشادات','ct.cardGuideDesc':'ما الذي يجعل المساهمة جيّدة — مصطلحات RadLex، معايير ACR، جودة البرومبت، ومعايير المراجعة.','ct.cardGuideCta':'اقرأ الإرشادات ←',
+      'ct.leaderTitle':'أعلى المساهمين هذا الشهر','ct.recentTitle':'مساهماتك الأخيرة','ct.guideTitle':'إرشادات المساهمة',
+      'ct.g1':'استخدم البرومبات المعتمدة. ولّد الصور عبر Medical Prompt Studio → ChatGPT. البرومبات الحرّة غالباً تُخفق في مصطلحات RadLex/ACR.',
+      'ct.g2':'طابِق تباين المودالتي. CT: العظم كثيف مشرق والهواء داكن. MRI T2: CSF مشرق. US: الحقل مخروطي.',
+      'ct.g3':'استخدم مصطلحات RadLex. اعتمد على الإكمال التلقائي؛ لا تضف بنى جديدة إلا مع مرجع تشريحي.',
+      'ct.g4':'مستوى تشريحي واحد لكل صورة. لا لوحات متعدّدة. كل صورة مقطع axial/coronal/sagittal واحد.',
+      'ct.g5':'تعليمي بحت. لا بيانات مرضى ولا معلومات تعريفية. كل رفع يمرّ بطابور المراجعة — لا نشر تلقائي.',
+      'ct.disclaimerTitle':'⚠ للاستخدام التعليمي فقط —','ct.disclaimer':'ليس للتشخيص أو اتخاذ قرارات سريرية. كل ما يُرفع يصبح جزءاً من أطلس OmniRad التعليمي وفق شروط الاستخدام.',
+      'ct.gateTitle':'خاص بالمساهمين','ct.gateMsg':'هذه الصفحة للمساهمين والمدراء. تواصل مع مالك المنصّة لطلب صلاحية المساهمة.','ct.contact':'اتصل بنا',
+      'ct.empty':'لا مساهمات بعد. ابدأ برفع جماعي.','ct.loading':'جارٍ التحميل…',
+    }
+  };
+  const t = k => {
+    const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+    return (STRINGS[lang] && STRINGS[lang][k]) || (STRINGS.en && STRINGS.en[k]) || k;
+  };
+
+  let sb = null, user = null, role = null;
+
+  async function init(){
+    let tries = 0;
+    while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+    sb = OmniRadAuth.client;
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session){
+      document.getElementById('gate').style.display='';
+      const gateP = document.getElementById('gate').querySelector('p');
+      gateP.insertAdjacentHTML('afterend', '<a href="auth.html" class="cta" style="margin-top:14px">Sign in</a>');
+      return;
+    }
+    user = session.user;
+    const { data: profile } = await sb.from('profiles').select('role, display_name, email').eq('id', user.id).maybeSingle();
+    role = profile && profile.role;
+    if (!['admin','contributor'].includes(role)){
+      document.getElementById('gate').style.display = '';
+      return;
+    }
+    document.getElementById('content').style.display = '';
+    document.getElementById('hiUser').textContent = (profile && profile.display_name) || (user.email||'').split('@')[0] || 'Contributor';
+    document.getElementById('roleBadge').textContent = role.toUpperCase();
+
+    // Stats
+    try {
+      const { data: stats } = await sb.rpc('contributor_stats');
+      if (stats && stats[0]){
+        document.getElementById('stSubmitted').textContent = stats[0].submitted || 0;
+        document.getElementById('stApproved').textContent = stats[0].approved || 0;
+        document.getElementById('stPending').textContent = stats[0].pending || 0;
+        document.getElementById('stRejected').textContent = stats[0].rejected || 0;
+      }
+    } catch(e){ console.warn('[contribute] stats', e); }
+
+    // Recent
+    try {
+      const { data: rows } = await sb.from('review_queue')
+        .select('id, storage_path, organ, modality, plane, status, created_at')
+        .eq('uploader_id', user.id)
+        .order('created_at', { ascending:false })
+        .limit(8);
+      renderRecent(rows || []);
+    } catch(e){ document.getElementById('recentBox').innerHTML = '<div class="empty">'+t('ct.empty')+'</div>'; }
+
+    // Admin leaderboard
+    if (role === 'admin'){
+      document.getElementById('adminOnly').style.display = '';
+      try {
+        const { data: lb } = await sb.rpc('contributor_leaderboard', { p_limit: 5 });
+        renderLeaderboard(lb || []);
+      } catch(e){ document.getElementById('lbList').innerHTML = '<div class="empty">—</div>'; }
+    }
+  }
+
+  function renderRecent(rows){
+    const box = document.getElementById('recentBox');
+    if (!rows.length){ box.innerHTML = '<div class="empty">'+t('ct.empty')+'</div>'; return; }
+    box.innerHTML = rows.map(r => {
+      const status = r.status || 'pending';
+      const url = r.storage_path
+        ? sb.storage.from('atlas').getPublicUrl(r.storage_path).data.publicUrl
+        : '';
+      const meta = [r.organ, r.modality, r.plane].filter(Boolean).join(' · ');
+      const date = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+      return '<div class="recent-row">' +
+        (url ? '<img class="thumb" src="'+url+'" onerror="this.style.opacity=.3">' : '<div class="thumb"></div>') +
+        '<div><div style="font-weight:600">'+ (r.organ||'—') +'</div><div class="recent-meta">'+ meta +' · '+ date +'</div></div>' +
+        '<span class="pill '+status+'">'+ status +'</span>' +
+        '<a href="atlas.html?organ='+encodeURIComponent(r.organ||'')+'" style="font-size:11px">→</a>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderLeaderboard(rows){
+    const box = document.getElementById('lbList');
+    if (!rows.length){ box.innerHTML = '<div class="empty">—</div>'; return; }
+    box.innerHTML = rows.map((r, i) => {
+      const initials = (r.display_name||'?').split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+      const ava = r.avatar_url && r.avatar_url.startsWith('http')
+        ? '<img src="'+r.avatar_url+'">'
+        : initials;
+      return '<div class="lb-row">' +
+        '<div class="lb-rank">#'+(i+1)+'</div>' +
+        '<div class="lb-ava">'+ava+'</div>' +
+        '<div style="font-weight:600">'+ (r.display_name || 'Anonymous') +'</div>' +
+        '<div class="lb-num">'+ (r.approved_count||0) +' ✓</div>' +
+        '<div style="color:var(--text-m);font-size:11px;font-family:IBM Plex Mono,monospace">'+ (r.submitted_count||0) +' total</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // i18n hookup
+  function applyI18n(){
+    const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+  }
+  if (window.OmniRadI18n) OmniRadI18n.onChange && OmniRadI18n.onChange(applyI18n);
+  applyI18n();
+  init();
+})();
+</script>
+</body>
+</html>
