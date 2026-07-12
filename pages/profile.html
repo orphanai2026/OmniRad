@@ -540,12 +540,38 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   function renderAvatar(){
     const box = $('avaBox');
     const url = cur.avatar_url || '';
+    const initials = initialsOf($('whoName').textContent);
+    let navSvg = null; // build markup for navbar in parallel
     if (url.startsWith(PRESET_PREFIX)){
-      const p = PRESETS.find(x=>x.k === url.slice(PRESET_PREFIX.length));
-      if (p){ box.innerHTML = p.svg.replace('<svg', '<svg width="72%" height="72%" style="color:var(--acc-ink)"'); box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))'; $('btnAvaClear').style.display = 'inline-block'; return; }
+      const key = url.slice(PRESET_PREFIX.length);
+      const p = PRESETS.find(x=>x.k === key) || PRESETS.find(x=>x.k.toLowerCase() === key.toLowerCase());
+      if (p){
+        box.innerHTML = p.svg.replace('<svg', '<svg width="72%" height="72%" style="color:var(--acc-ink)"');
+        box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))';
+        $('btnAvaClear').style.display = 'inline-block';
+        navSvg = p.svg.replace('<svg','<svg width="80%" height="80%" style="color:var(--acc-ink)"');
+      }
+    } else if (url){
+      box.innerHTML = '<img src="'+url+'" alt="">';
+      $('btnAvaClear').style.display = 'inline-block';
+      navSvg = '__IMG__' + url;
+    } else {
+      box.innerHTML = '<span>'+initials+'</span>';
+      box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))';
+      $('btnAvaClear').style.display = 'none';
     }
-    if (url){ box.innerHTML = '<img src="'+url+'" alt="">'; $('btnAvaClear').style.display = 'inline-block'; }
-    else { box.innerHTML = '<span>'+initialsOf($('whoName').textContent)+'</span>'; box.style.background = 'linear-gradient(135deg,var(--acc),var(--acc-dim))'; $('btnAvaClear').style.display = 'none'; }
+    // Directly update navbar avatar — no dependency on cached nav.js
+    const nav = document.getElementById('onavAva');
+    if (nav){
+      if (navSvg && navSvg.startsWith('__IMG__')) {
+        nav.innerHTML = '<img src="'+navSvg.slice(7)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      } else if (navSvg) {
+        nav.innerHTML = navSvg;
+      } else {
+        nav.textContent = initials;
+      }
+      nav.__lastKey = null;
+    }
     try { window.dispatchEvent(new CustomEvent('omnirad:profile-updated')); } catch(_){}
   }
 
