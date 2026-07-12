@@ -236,25 +236,18 @@ body[dir="rtl"] .tab{font-family:'IBM Plex Sans Arabic',sans-serif}
       </div>
 
       <!-- Generate & Send to Review -->
-      <!-- Generate & Send to Review — DISABLED (manual ChatGPT workflow active) -->
-      <div id="genBox" style="margin-top:18px;padding:20px 22px;background:linear-gradient(135deg,rgba(251,191,36,.06),rgba(45,212,200,.03));border:1px solid var(--border);border-radius:14px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <span style="width:22px;height:22px;border-radius:50%;background:rgba(251,191,36,.15);color:var(--pending);display:grid;place-items:center;font-size:13px">⏳</span>
-          <div style="font-weight:700;font-size:13.5px;color:var(--pending);letter-spacing:.01em">Auto-generation — coming soon</div>
+      <!-- Manual workflow (auto-generation coming soon) -->
+      <div id="genBox" style="margin-top:18px;padding:16px 20px;background:linear-gradient(135deg,rgba(45,212,200,.06),transparent);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
+          <span style="width:22px;height:22px;border-radius:6px;background:var(--acc-sub);color:var(--acc);display:grid;place-items:center;font-size:13px;flex-shrink:0">↗</span>
+          <div style="font-size:12.5px;color:var(--text-s);line-height:1.55">
+            Use <b style="color:var(--acc)">↗ GPT</b> next to Copy EN/AR to open the prompt in ChatGPT, then save the image and upload it.
+          </div>
         </div>
-        <div style="font-size:12.5px;color:var(--text-s);line-height:1.7;max-width:64ch;margin-inline-start:32px">
-          Direct in-app generation is temporarily disabled while we integrate a higher-accuracy image model. Use the manual workflow:
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;margin-inline-start:32px">
-          <a href="chatgpt-bookmarklet.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:12px;text-decoration:none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            ChatGPT bookmarklet
-          </a>
-          <a href="bulk-upload.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:transparent;color:var(--acc);border:1px solid var(--acc);border-radius:8px;font-weight:700;font-size:12px;text-decoration:none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Bulk Upload
-          </a>
-        </div>
+        <a href="bulk-upload.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:12px;text-decoration:none;flex-shrink:0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Bulk Upload
+        </a>
       </div>
       <div id="genProgress" style="display:none"></div>
       <div id="genResult" style="display:none"></div>
@@ -312,6 +305,12 @@ document.addEventListener('click', function(e){
   const el = document.getElementById(which === 'ar' ? 'outAr' : 'outEn');
   const text = (el && el.textContent || '').trim();
   if (!text){ alert('لا يوجد برومبت / No prompt yet'); return; }
+  // Auto-save last prompt for history/reuse
+  try {
+    localStorage.setItem('omnirad:last-prompt', text);
+    localStorage.setItem('omnirad:last-prompt-lang', which);
+    localStorage.setItem('omnirad:last-prompt-at', new Date().toISOString());
+  } catch(_){}
   window.open('https://chatgpt.com/?q=' + encodeURIComponent(text), '_blank');
 });
 </script>
