@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Bulk Upload</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--acc-ink:#08100e;--ok:#4ade80;--warn:#f59e0b;--err:#f87171;--pending:#fbbf24}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--warn:#b45309;--err:#c53030;--pending:#a16207}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{color:var(--acc);text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 22px 60px}
+.crumbs{font-size:11.5px;color:var(--text-m);margin-bottom:8px;font-family:'IBM Plex Mono',monospace}
+.crumbs a{color:var(--text-s)}
+.crumbs a:hover{color:var(--acc)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.lead{color:var(--text-s);font-size:13.5px;line-height:1.65;margin-bottom:22px}
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap}
+
+/* Step nav */
+.steps{display:flex;gap:0;margin-bottom:22px;background:var(--bg-e);border:1px solid var(--border-s);border-radius:12px;padding:6px;overflow:hidden}
+.step{flex:1;padding:10px 14px;font-size:12px;font-weight:600;color:var(--text-s);border-radius:8px;text-align:center;cursor:default;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em}
+.step.on{background:var(--acc);color:var(--acc-ink)}
+.step .n{font-weight:800;margin-inline-end:6px}
+
+/* Panels */
+.panel{display:none}
+.panel.on{display:block}
+
+/* Dropzone */
+.dropzone{background:var(--bg-e);border:2px dashed var(--border);border-radius:16px;padding:60px 24px;text-align:center;transition:.18s;cursor:pointer}
+.dropzone.drag{border-color:var(--acc);background:var(--acc-sub)}
+.dropzone .dz-ico{font-size:48px;color:var(--acc);margin-bottom:12px}
+.dropzone h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.dropzone p{font-size:13px;color:var(--text-s);margin-bottom:14px}
+.dropzone .browse{display:inline-block;padding:9px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:12.5px}
+.dropzone input[type=file]{display:none}
+
+/* Files strip */
+.files-strip{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.tile{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:var(--bg-s);border:1px solid var(--border-s)}
+.tile img{width:100%;height:100%;object-fit:cover}
+.tile-x{position:absolute;top:5px;inset-inline-end:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:14px;line-height:1;display:grid;place-items:center}
+.tile-name{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font-size:9.5px;background:rgba(0,0,0,.7);color:#fff;font-family:'IBM Plex Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11.5px;font-weight:600;color:var(--text-s);letter-spacing:.02em}
+.field label .req{color:var(--err)}
+.field .hint{font-size:10.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
+select,input[type=text],textarea{width:100%;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:inherit}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--acc)}
+textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55}
+
+/* Autocomplete chips */
+.chip-input{background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:6px;min-height:44px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;position:relative}
+.chip-input input{flex:1;min-width:120px;background:transparent;border:none;color:var(--text);font-size:12.5px;padding:5px 6px;font-family:inherit}
+.chip-input input:focus{outline:none}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 9px;background:var(--acc-sub);border:1px solid var(--acc-dim);color:var(--acc);border-radius:6px;font-size:11.5px;font-weight:600}
+.chip.new{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.4);color:var(--pending)}
+.chip button{background:none;border:none;color:inherit;cursor:pointer;font-size:14px;line-height:1;padding:0 4px;opacity:.7}
+.chip button:hover{opacity:1}
+.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--bg-e);border:1px solid var(--border);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
+.ac-list.on{display:block}
+.ac-item{padding:8px 12px;font-size:12.5px;cursor:pointer;border-bottom:1px solid var(--border-s);display:flex;justify-content:space-between;gap:10px}
+.ac-item:hover,.ac-item.hi{background:var(--acc-sub);color:var(--acc)}
+.ac-item .en{font-weight:600}
+.ac-item .ar{color:var(--text-m);font-family:'Noto Sans Arabic',sans-serif;font-size:11.5px}
+.ac-item .add-new{color:var(--pending);font-weight:700}
+
+/* Card / section */
+.card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:20px 22px;margin-bottom:18px}
+.card h2{font-size:14.5px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card h2 .k{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--acc);background:var(--acc-sub);padding:2px 8px;border-radius:5px}
+.card .cardhelp{font-size:12px;color:var(--text-s);margin-bottom:14px;line-height:1.55}
+
+/* Per-image override rows */
+.row{background:var(--bg-e);border:1px solid var(--border-s);border-radius:12px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:80px 1fr auto;gap:14px;align-items:start}
+.row .row-thumb{width:80px;height:80px;border-radius:8px;background:var(--bg-s);object-fit:cover}
+.row-body{flex:1;min-width:0}
+.row-name{font-size:12px;font-weight:600;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-meta{font-size:11px;color:var(--text-m);display:flex;flex-wrap:wrap;gap:4px 10px;font-family:'IBM Plex Mono',monospace}
+.row-meta span{background:var(--bg-s);padding:2px 8px;border-radius:4px}
+.row-meta span.override{background:var(--acc-sub);color:var(--acc)}
+.row-actions{display:flex;gap:6px;flex-direction:column}
+.btn-mini{padding:6px 10px;font-size:11px;background:var(--bg-s);border:1px solid var(--border);color:var(--text);border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;white-space:nowrap}
+.btn-mini:hover{border-color:var(--acc)}
+.btn-mini.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.row-form{grid-column:1/-1;padding-top:14px;margin-top:12px;border-top:1px dashed var(--border-s);display:none}
+.row-form.on{display:block}
+
+/* Actions bar */
+.actions{position:sticky;bottom:0;background:var(--bg);padding:14px 0 0;margin-top:22px;border-top:1px solid var(--border-s);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;z-index:5}
+.btn{padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px;font-family:inherit;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{opacity:.92}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn.ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.err{background:transparent;color:var(--err);border:1px solid var(--err)}
+.summary{font-size:12.5px;color:var(--text-s);font-family:'IBM Plex Mono',monospace}
+.summary strong{color:var(--acc)}
+
+/* Progress */
+.progress{background:var(--bg-e);border:1px solid var(--border);border-radius:12px;padding:22px;text-align:center}
+.progress-bar{height:8px;background:var(--bg-s);border-radius:99px;overflow:hidden;margin:16px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc-dim));transition:width .3s;width:0%}
+.progress-txt{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text-s)}
+
+/* Success */
+.success{background:var(--bg-e);border:1px solid rgba(74,222,128,.3);border-radius:14px;padding:32px;text-align:center}
+.success .icon{width:64px;height:64px;border-radius:50%;background:rgba(74,222,128,.15);color:var(--ok);display:grid;place-items:center;margin:0 auto 16px}
+.success .icon svg{width:32px;height:32px}
+.success h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.success p{color:var(--text-s);font-size:13.5px;line-height:1.65;max-width:52ch;margin:0 auto 20px}
+.success .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--acc);color:var(--acc-ink);padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:1000;display:none;max-width:90vw}
+.toast.err{background:var(--err);color:#fff}
+.note{margin-top:24px;padding:12px 16px;background:var(--acc-sub);border:1px solid var(--acc-dim);border-radius:10px;font-size:11.5px;color:var(--text-s);line-height:1.55}
+.note strong{color:var(--acc)}
+</style>
+</head>
+<body>
+
+<div id="omnirad-nav-mount"></div>
+
+<div class="wrap">
+  <div id="gate" class="gate" style="display:none">
+    <div class="icon">🔒</div>
+    <h2 data-i18n="bu.gateTitle">Contributor access</h2>
+    <p data-i18n="bu.gateMsg">Bulk upload is restricted to contributors and administrators.</p>
+    <a href="contribute.html" class="cta" data-i18n="bu.gateBtn">Back to Contribute Hub</a>
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="crumbs"><a href="contribute.html" data-i18n="bu.crumb">Contribute</a> / <span data-i18n="bu.crumb2">Bulk Upload</span></div>
+    <div class="eyebrow" data-i18n="bu.eyebrow">Bulk Upload</div>
+    <h1 data-i18n="bu.title">Upload images to the Atlas</h1>
+    <p class="lead" data-i18n="bu.lead">Drag and drop your ChatGPT-generated images, apply shared metadata to all, then override individual images where needed. Every image enters the review queue — nothing publishes automatically.</p>
+
+    <div class="steps">
+      <div class="step on" id="stepEl1"><span class="n">1</span><span data-i18n="bu.step1">Select images</span></div>
+      <div class="step" id="stepEl2"><span class="n">2</span><span data-i18n="bu.step2">Shared metadata</span></div>
+      <div class="step" id="stepEl3"><span class="n">3</span><span data-i18n="bu.step3">Per-image review</span></div>
+      <div class="step" id="stepEl4"><span class="n">4</span><span data-i18n="bu.step4">Submit</span></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="panel on" id="panel1">
+      <div class="card">
+        <h2><span class="k">01</span><span data-i18n="bu.p1title">Select the images to upload</span></h2>
+        <div class="cardhelp" data-i18n="bu.p1help">Up to 30 images per batch. PNG or JPEG. Max 4 MB each. Files are uploaded to your private review area first — nothing is public until a reviewer approves.</div>
+        <label class="dropzone" id="dz">
+          <div class="dz-ico">☁</div>
+          <h3 data-i18n="bu.dzTitle">Drag &amp; drop images here</h3>
+          <p data-i18n="bu.dzSub">or click to browse — PNG / JPEG, up to 30 files</p>
+          <span class="browse" data-i18n="bu.dzBrowse">Browse files</span>
+          <input type="file" id="fileInput" multiple accept="image/png,image/jpeg,image/webp">
+        </label>
+        <div class="files-strip" id="filesStrip"></div>
+      </div>
+      <div class="actions">
+        <div class="summary"><span id="fileCount">0</span> <span data-i18n="bu.filesReady">files ready</span></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" onclick="location.href='contribute.html'" data-i18n="bu.cancel">Cancel</button>
+          <button class="btn" id="toStep2" disabled data-i18n="bu.next">Next: Shared metadata →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="panel" id="panel2">
+      <div class="card">
+        <h2><span class="k">02</span><span data-i18n="bu.p2title">Metadata for all images</span></h2>
+        <div class="cardhelp" data-i18n="bu.p2help">These values apply to every image in the batch. You can override individual images in the next step. Fields marked <span class="req">*</span> are required.</div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label><span data-i18n="bu.f.organ">Organ / Region</span> <span class="req">*</span></label>
+            <select id="fOrgan"><option value="" data-i18n="bu.selectOne">Select…</option></select>
+          </div>
+          <div class="field">
+            <label><span data-i18n="bu.f.modality">Modality</span> <span class="req">*</span></label>
+            <select id="fModality">
+              <option value="" data-i18n="bu.selectOne">Select…</option>
+              <option value="CT">CT — Computed Tomography</option>
+              <option value="MRI">MRI — Magnetic Resonance</option>
+              <option value="US">US — Ultrasound</option>
+              <option value="X-Ray">X-Ray — Radiography</option>
+              <option value="NM">NM — Nuclear Medicine</option>
+              <option value="PET">PET / PET-CT</option>
+              <option value="Angio">Angiography / DSA</option>
+              <option value="Mammo">Mammography</option>
+            </select>
+          </div>
+          <div class="field">
+            <label><span data-i18n="bu.f.plane">Anatomical plane</span> <span class="req">*</span></label>
+            <select id="fPlane">
+              <option value="" data-i18n="bu.selectOne">Select…</option>
+              <option value="Axial">Axial</option>
+              <option value="Coronal">Coronal</option>
+              <option value="Sagittal">Sagittal</option>
+              <option value="Oblique">Oblique</option>
+              <option value="3D">3D reconstruction</option>
+            </select>
+          </div>
+          <div class="field" id="seqField" style="display:none">
+            <label><span data-i18n="bu.f.sequence">MRI sequence</span></label>
+            <select id="fSequence">
+              <option value="" data-i18n="bu.selectOne">Select…</option>
+              <option value="T1">T1</option>
+              <option value="T2">T2</option>
+              <option value="FLAIR">FLAIR</option>
+              <option value="DWI">DWI</option>
+              <option value="ADC">ADC</option>
+              <option value="T1+C">T1 + Contrast</option>
+              <option value="T2 fat-sat">T2 fat-sat</option>
+              <option value="STIR">STIR</option>
+              <option value="GRE">GRE / SWI</option>
+            </select>
+          </div>
+          <div class="field">
+            <label data-i18n="bu.f.level">Teaching level</label>
+            <select id="fLevel">
+              <option value="" data-i18n="bu.selectOne">Select…</option>
+              <option value="student">Medical student</option>
+              <option value="resident">Resident</option>
+              <option value="specialist">Specialist</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:16px" class="field">
+          <label><span data-i18n="bu.f.structures">Anatomical structures visible</span> <span class="req">*</span> <span class="hint" data-i18n="bu.f.structuresHint">— type to search RadLex dictionary; press Enter or click «Add new» for unlisted terms</span></label>
+          <div class="chip-input" id="structuresInput">
+            <input type="text" id="structuresText" placeholder="Type a structure…" autocomplete="off">
+            <div class="ac-list" id="acList"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px" class="field">
+          <label data-i18n="bu.f.prompt">ChatGPT prompt used <span class="hint">(recommended — helps reviewers verify)</span></label>
+          <textarea id="fPrompt" placeholder="Paste the exact prompt you used in ChatGPT..."></textarea>
+        </div>
+
+        <div style="margin-top:12px" class="field">
+          <label data-i18n="bu.f.citation">Citation / source <span class="hint">(optional — case ID, textbook, paper)</span></label>
+          <input type="text" id="fCitation" placeholder="e.g. Radiopaedia case 12345, or ACR Appropriateness Criteria...">
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="summary"><span data-i18n="bu.applyTo">Applies to</span> <strong id="applyCount">0</strong> <span data-i18n="bu.images">images</span></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" id="backTo1" data-i18n="bu.back">← Back</button>
+          <button class="btn" id="toStep3" data-i18n="bu.next3">Next: Review per-image →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="panel" id="panel3">
+      <div class="card">
+        <h2><span class="k">03</span><span data-i18n="bu.p3title">Review &amp; override</span></h2>
+        <div class="cardhelp" data-i18n="bu.p3help">Each image inherits the shared metadata from Step 2. Click «Override» on any row to change values for just that image (e.g. different plane or a specific structure).</div>
+      </div>
+      <div id="rowList"></div>
+      <div class="actions">
+        <div class="summary"><strong id="rowCount">0</strong> <span data-i18n="bu.images">images</span> · <strong id="overrideCount">0</strong> <span data-i18n="bu.overridden">overridden</span></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" id="backTo2" data-i18n="bu.back">← Back</button>
+          <button class="btn" id="toStep4" data-i18n="bu.submit">Submit for review →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 — progress + success -->
+    <div class="panel" id="panel4">
+      <div class="progress" id="progressBox">
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px" data-i18n="bu.uploading">Uploading images…</div>
+        <div style="font-size:12.5px;color:var(--text-s)" data-i18n="bu.uploadingSub">Please keep this tab open until upload finishes.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+        <div class="progress-txt"><span id="progNow">0</span> / <span id="progTotal">0</span></div>
+      </div>
+
+      <div class="success" id="successBox" style="display:none">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2 data-i18n="bu.doneTitle">Batch submitted successfully</h2>
+        <p><strong id="doneCount">0</strong> <span data-i18n="bu.doneMsg">images were queued for medical review. You'll receive a notification when each image is approved or rejected. Typical turnaround: 24–48 hours.</span></p>
+        <div class="btns">
+          <a href="contribute.html" class="btn ghost" data-i18n="bu.doneHub">← Contribute Hub</a>
+          <a href="bulk-upload.html" class="btn" data-i18n="bu.doneAgain">Upload another batch</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong data-i18n="bu.privacyTitle">Privacy &amp; consent —</strong>
+      <span data-i18n="bu.privacyBody">Do not upload real patient images or identifiable data. Only AI-generated teaching images are accepted. All content is educational, not for diagnosis.</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/data/anatomy-master.js"></script>
+<script src="../modules/data/anatomy-master-v2.js"></script>
+<script src="../modules/omnirad-search.js"></script>
+<script src="../modules/omnirad-typography.js"></script>
+<script src="../modules/omnirad-avatars.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script>
+(function(){
+  const STRINGS = {
+    en: {
+      'bu.eyebrow':'Bulk Upload','bu.title':'Upload images to the Atlas',
+      'bu.lead':"Drag and drop your ChatGPT-generated images, apply shared metadata to all, then override individual images where needed. Every image enters the review queue — nothing publishes automatically.",
+      'bu.crumb':'Contribute','bu.crumb2':'Bulk Upload',
+      'bu.step1':'Select images','bu.step2':'Shared metadata','bu.step3':'Per-image review','bu.step4':'Submit',
+      'bu.p1title':'Select the images to upload','bu.p1help':'Up to 30 images per batch. PNG or JPEG. Max 4 MB each. Files are uploaded to your private review area first — nothing is public until a reviewer approves.',
+      'bu.dzTitle':'Drag & drop images here','bu.dzSub':'or click to browse — PNG / JPEG, up to 30 files','bu.dzBrowse':'Browse files',
+      'bu.filesReady':'files ready','bu.cancel':'Cancel','bu.next':'Next: Shared metadata →','bu.back':'← Back',
+      'bu.p2title':'Metadata for all images','bu.p2help':"These values apply to every image in the batch. You can override individual images in the next step.",
+      'bu.f.organ':'Organ / Region','bu.f.modality':'Modality','bu.f.plane':'Anatomical plane','bu.f.sequence':'MRI sequence','bu.f.level':'Teaching level',
+      'bu.f.structures':'Anatomical structures visible','bu.f.structuresHint':'— type to search RadLex dictionary; press Enter or click «Add new» for unlisted terms',
+      'bu.f.prompt':'ChatGPT prompt used','bu.f.citation':'Citation / source','bu.selectOne':'Select…',
+      'bu.applyTo':'Applies to','bu.images':'images','bu.next3':'Next: Review per-image →',
+      'bu.p3title':'Review & override','bu.p3help':"Each image inherits the shared metadata from Step 2. Click «Override» on any row to change values for just that image.",
+      'bu.overridden':'overridden','bu.submit':'Submit for review →',
+      'bu.uploading':'Uploading images…','bu.uploadingSub':'Please keep this tab open until upload finishes.',
+      'bu.doneTitle':'Batch submitted successfully','bu.doneMsg':"images were queued for medical review. You'll receive a notification when each image is approved or rejected. Typical turnaround: 24–48 hours.",
+      'bu.doneHub':'← Contribute Hub','bu.doneAgain':'Upload another batch',
+      'bu.gateTitle':'Contributor access','bu.gateMsg':'Bulk upload is restricted to contributors and administrators.','bu.gateBtn':'Back to Contribute Hub',
+      'bu.privacyTitle':'Privacy & consent —','bu.privacyBody':'Do not upload real patient images or identifiable data. Only AI-generated teaching images are accepted. All content is educational, not for diagnosis.',
+      'bu.tooMany':'Maximum 30 images per batch.','bu.tooBig':'File too large (max 4 MB): ',
+      'bu.needFiles':'Add at least one image first.','bu.needFields':'Please fill required fields (organ, modality, plane, structures).',
+      'bu.uploadErr':'Upload error: ','bu.submitErr':'Submit error: ',
+      'bu.override':'Override','bu.saveOverride':'Save override','bu.clearOverride':'Clear override','bu.newStruct':'Add new: ',
+    },
+    ar: {
+      'bu.eyebrow':'رفع جماعي','bu.title':'ارفع صوراً إلى الأطلس',
+      'bu.lead':'اسحب صور ChatGPT المولَّدة، طبِّق بيانات مشتركة، ثم عدِّل الصور فردياً عند الحاجة. كل صورة تدخل طابور المراجعة — لا نشر تلقائي.',
+      'bu.crumb':'المساهمة','bu.crumb2':'الرفع الجماعي',
+      'bu.step1':'اختر الصور','bu.step2':'بيانات مشتركة','bu.step3':'مراجعة فردية','bu.step4':'إرسال',
+      'bu.p1title':'اختر الصور المراد رفعها','bu.p1help':'حتى 30 صورة في الدفعة. PNG أو JPEG. الحد الأقصى 4 MB لكل ملف. الرفع أولاً إلى منطقتك الخاصة — لا نشر قبل الاعتماد.',
+      'bu.dzTitle':'اسحب وأفلت الصور هنا','bu.dzSub':'أو انقر للاستعراض — PNG / JPEG، حتى 30 ملفاً','bu.dzBrowse':'استعراض الملفات',
+      'bu.filesReady':'ملفات جاهزة','bu.cancel':'إلغاء','bu.next':'التالي: البيانات المشتركة ←','bu.back':'رجوع →',
+      'bu.p2title':'بيانات مشتركة لكل الصور','bu.p2help':'هذه القيم تُطبَّق على كل صور الدفعة. يمكنك تعديل صور فردياً في الخطوة التالية.',
+      'bu.f.organ':'العضو / المنطقة','bu.f.modality':'المودالتي','bu.f.plane':'المستوى التشريحي','bu.f.sequence':'تسلسل MRI','bu.f.level':'المستوى التعليمي',
+      'bu.f.structures':'البنى التشريحية الظاهرة','bu.f.structuresHint':'— اكتب للبحث في قاموس RadLex؛ اضغط Enter أو «أضف جديد» لمصطلحات غير مدرجة',
+      'bu.f.prompt':'برومبت ChatGPT المستخدم','bu.f.citation':'مرجع / مصدر','bu.selectOne':'اختر…',
+      'bu.applyTo':'يُطبَّق على','bu.images':'صور','bu.next3':'التالي: مراجعة فردية ←',
+      'bu.p3title':'مراجعة وتعديل','bu.p3help':'كل صورة ترث البيانات المشتركة من الخطوة ٢. اضغط «تعديل» على أي صف لتعديل قيم تلك الصورة فقط.',
+      'bu.overridden':'مُعدَّل','bu.submit':'إرسال للمراجعة ←',
+      'bu.uploading':'جارٍ الرفع…','bu.uploadingSub':'أبقِ هذا التبويب مفتوحاً حتى ينتهي الرفع.',
+      'bu.doneTitle':'تم إرسال الدفعة بنجاح','bu.doneMsg':'صور دخلت طابور المراجعة الطبية. ستصلك إشعارات عند اعتماد كل صورة أو رفضها. المدة المعتادة: 24-48 ساعة.',
+      'bu.doneHub':'العودة إلى المساهمة →','bu.doneAgain':'رفع دفعة أخرى',
+      'bu.gateTitle':'خاص بالمساهمين','bu.gateMsg':'الرفع الجماعي مقصور على المساهمين والمدراء.','bu.gateBtn':'العودة إلى المساهمة →',
+      'bu.privacyTitle':'الخصوصية والموافقة —','bu.privacyBody':'لا ترفع صور مرضى حقيقيين أو بيانات تعريفية. فقط صور تعليمية مولَّدة بالذكاء الاصطناعي. كل المحتوى تعليمي.',
+      'bu.tooMany':'الحد الأقصى 30 صورة في الدفعة.','bu.tooBig':'ملف كبير جداً (الحد 4 MB): ',
+      'bu.needFiles':'أضف صورة واحدة على الأقل.','bu.needFields':'الحقول المطلوبة: العضو، المودالتي، المستوى، البنى.',
+      'bu.uploadErr':'خطأ في الرفع: ','bu.submitErr':'خطأ في الإرسال: ',
+      'bu.override':'تعديل','bu.saveOverride':'حفظ التعديل','bu.clearOverride':'إلغاء التعديل','bu.newStruct':'أضف جديد: ',
+    }
+  };
+  const t = k => {
+    const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+    return (STRINGS[lang] && STRINGS[lang][k]) || (STRINGS.en && STRINGS.en[k]) || k;
+  };
+  function toast(msg, err){
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.className = 'toast' + (err ? ' err' : '');
+    el.style.display = 'block';
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>{ el.style.display = 'none'; }, 3800);
+  }
+
+  const MAX_FILES = 30;
+  const MAX_SIZE = 4 * 1024 * 1024;
+  let sb = null, user = null, role = null;
+  let files = []; // {id, file, previewUrl, override:{}}
+  let shared = { organ:'', modality:'', plane:'', sequence:'', structures:[], level:'', prompt:'', citation:'' };
+
+  // ── Init ──────────────────────────────────────
+  async function init(){
+    let tries = 0;
+    while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+    sb = OmniRadAuth.client;
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session){ document.getElementById('gate').style.display=''; return; }
+    user = session.user;
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).maybeSingle();
+    role = profile && profile.role;
+    if (!['admin','contributor'].includes(role)){ document.getElementById('gate').style.display=''; return; }
+    document.getElementById('content').style.display = '';
+    populateOrgans();
+    wireDropzone();
+    wireForm();
+  }
+
+  // ── Populate organ dropdown from v2 dictionary ─────
+  function populateOrgans(){
+    const sel = document.getElementById('fOrgan');
+    const structures = (window.__omniradStructuresV2 || window.__omniradStructures || []);
+    const regions = [...new Set(structures.map(s => s.region).filter(Boolean))].sort();
+    if (!regions.length){
+      // fallback list
+      ['Head & Neck','Brain','Chest','Cardiac','Abdomen','Pelvis','Musculoskeletal','Spine','Vascular'].forEach(r => {
+        const o = document.createElement('option'); o.value = r; o.textContent = r; sel.appendChild(o);
+      });
+      return;
+    }
+    regions.forEach(r => {
+      const o = document.createElement('option'); o.value = r; o.textContent = r; sel.appendChild(o);
+    });
+  }
+
+  // ── Step 1: Dropzone ──────────────────────────
+  function wireDropzone(){
+    const dz = document.getElementById('dz');
+    const input = document.getElementById('fileInput');
+    ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+    dz.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
+    input.addEventListener('change', e => handleFiles(e.target.files));
+    document.getElementById('toStep2').addEventListener('click', () => {
+      if (!files.length){ toast(t('bu.needFiles'), true); return; }
+      goStep(2);
+    });
+  }
+
+  function handleFiles(fileList){
+    const arr = Array.from(fileList);
+    if (files.length + arr.length > MAX_FILES){ toast(t('bu.tooMany'), true); return; }
+    for (const f of arr){
+      if (f.size > MAX_SIZE){ toast(t('bu.tooBig') + f.name, true); continue; }
+      if (!/^image\//.test(f.type)) continue;
+      const url = URL.createObjectURL(f);
+      files.push({ id: 'f'+Math.random().toString(36).slice(2,9), file: f, previewUrl: url, override: null });
+    }
+    renderStrip();
+  }
+
+  function renderStrip(){
+    const strip = document.getElementById('filesStrip');
+    strip.innerHTML = files.map(f => (
+      '<div class="tile" data-id="'+f.id+'">' +
+        '<img src="'+f.previewUrl+'">' +
+        '<button class="tile-x" onclick="window.__buRemove(\''+f.id+'\')">×</button>' +
+        '<div class="tile-name">'+f.file.name+'</div>' +
+      '</div>'
+    )).join('');
+    document.getElementById('fileCount').textContent = files.length;
+    document.getElementById('toStep2').disabled = !files.length;
+    document.getElementById('applyCount').textContent = files.length;
+    document.getElementById('rowCount').textContent = files.length;
+  }
+  window.__buRemove = (id) => {
+    files = files.filter(f => f.id !== id);
+    renderStrip();
+  };
+
+  // ── Step 2: Shared metadata ────────────────────
+  function wireForm(){
+    document.getElementById('fModality').addEventListener('change', e => {
+      document.getElementById('seqField').style.display = e.target.value === 'MRI' ? '' : 'none';
+    });
+    setupStructureAutocomplete('structuresText', 'structuresInput', 'acList', s => {
+      shared.structures = s;
+    });
+    document.getElementById('backTo1').addEventListener('click', () => goStep(1));
+    document.getElementById('backTo2').addEventListener('click', () => goStep(2));
+    document.getElementById('toStep3').addEventListener('click', () => {
+      shared.organ = document.getElementById('fOrgan').value;
+      shared.modality = document.getElementById('fModality').value;
+      shared.plane = document.getElementById('fPlane').value;
+      shared.sequence = document.getElementById('fSequence').value;
+      shared.level = document.getElementById('fLevel').value;
+      shared.prompt = document.getElementById('fPrompt').value;
+      shared.citation = document.getElementById('fCitation').value;
+      if (!shared.organ || !shared.modality || !shared.plane || !shared.structures.length){
+        toast(t('bu.needFields'), true);
+        return;
+      }
+      renderRows();
+      goStep(3);
+    });
+    document.getElementById('toStep4').addEventListener('click', submitBatch);
+  }
+
+  // ── Autocomplete for structures ────────────────
+  function setupStructureAutocomplete(inputId, wrapId, listId, onChange){
+    const wrap = document.getElementById(wrapId);
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    let selected = [];
+    let hiIdx = -1;
+
+    function renderChips(){
+      wrap.querySelectorAll('.chip').forEach(c => c.remove());
+      selected.forEach((s, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'chip' + (s.isNew ? ' new' : '');
+        chip.innerHTML = (s.isNew ? '➕ ' : '') + escapeHtml(s.label) + ' <button type="button">×</button>';
+        chip.querySelector('button').onclick = () => { selected.splice(i,1); renderChips(); onChange(selected); };
+        wrap.insertBefore(chip, input);
+      });
+      onChange(selected);
+    }
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      hiIdx = -1;
+      if (!q){ list.classList.remove('on'); list.innerHTML = ''; return; }
+      const all = (window.__omniradStructuresV2 || window.__omniradStructures || []);
+      const matches = all.filter(s => {
+        return (s.en||'').toLowerCase().includes(q) || (s.ar||'').includes(q) || (s.label_en||'').toLowerCase().includes(q);
+      }).slice(0, 8);
+      let html = matches.map((m,i) => {
+        const en = m.en || m.label_en || m.slug || '';
+        const ar = m.ar || m.label_ar || '';
+        return '<div class="ac-item" data-i="'+i+'"><span class="en">'+escapeHtml(en)+'</span><span class="ar">'+escapeHtml(ar)+'</span></div>';
+      }).join('');
+      // Always show "add new"
+      html += '<div class="ac-item add-new" data-new="1"><span>'+t('bu.newStruct')+'"'+escapeHtml(input.value.trim())+'"</span><span>+</span></div>';
+      list.innerHTML = html;
+      list.classList.add('on');
+      list.dataset.matches = JSON.stringify(matches);
+      list.querySelectorAll('.ac-item').forEach(el => {
+        el.onclick = () => {
+          if (el.dataset.new){
+            selected.push({ label: input.value.trim(), isNew: true, slug: slugify(input.value.trim()) });
+          } else {
+            const m = matches[+el.dataset.i];
+            selected.push({ label: m.en || m.label_en, isNew: false, slug: m.slug || slugify(m.en||m.label_en) });
+          }
+          input.value = '';
+          list.classList.remove('on');
+          renderChips();
+        };
+      });
+    });
+    input.addEventListener('keydown', e => {
+      const items = list.querySelectorAll('.ac-item');
+      if (e.key === 'ArrowDown'){ e.preventDefault(); hiIdx = Math.min(items.length-1, hiIdx+1); items.forEach((el,i)=>el.classList.toggle('hi', i===hiIdx)); }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); hiIdx = Math.max(0, hiIdx-1); items.forEach((el,i)=>el.classList.toggle('hi', i===hiIdx)); }
+      else if (e.key === 'Enter'){
+        e.preventDefault();
+        if (hiIdx >= 0 && items[hiIdx]) items[hiIdx].click();
+        else if (input.value.trim()){
+          selected.push({ label: input.value.trim(), isNew: true, slug: slugify(input.value.trim()) });
+          input.value=''; list.classList.remove('on'); renderChips();
+        }
+      }
+      else if (e.key === 'Backspace' && !input.value && selected.length){
+        selected.pop(); renderChips();
+      }
+      else if (e.key === 'Escape'){ list.classList.remove('on'); }
+    });
+    document.addEventListener('click', e => { if (!wrap.contains(e.target)) list.classList.remove('on'); });
+  }
+  function slugify(s){ return (s||'').toLowerCase().replace(/[^\w]+/g,'-').replace(/^-|-$/g,''); }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ── Step 3: Per-image rows ─────────────────────
+  function renderRows(){
+    const box = document.getElementById('rowList');
+    box.innerHTML = files.map(f => rowHtml(f)).join('');
+    files.forEach(f => wireRow(f));
+    updateOverrideCount();
+  }
+  function rowHtml(f){
+    const meta = effective(f);
+    const structs = (meta.structures||[]).map(s=>s.label).join(', ');
+    const overridden = !!f.override;
+    return (
+      '<div class="row" data-id="'+f.id+'">' +
+        '<img class="row-thumb" src="'+f.previewUrl+'">' +
+        '<div class="row-body">' +
+          '<div class="row-name">'+escapeHtml(f.file.name)+'</div>' +
+          '<div class="row-meta">' +
+            (meta.organ ? '<span'+(overridden && f.override.organ?' class="override"':'')+'>'+escapeHtml(meta.organ)+'</span>':'') +
+            (meta.modality ? '<span'+(overridden && f.override.modality?' class="override"':'')+'>'+escapeHtml(meta.modality)+'</span>':'') +
+            (meta.plane ? '<span'+(overridden && f.override.plane?' class="override"':'')+'>'+escapeHtml(meta.plane)+'</span>':'') +
+            (meta.sequence ? '<span>'+escapeHtml(meta.sequence)+'</span>':'') +
+            (structs ? '<span style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escapeHtml(structs)+'">'+escapeHtml(structs)+'</span>':'') +
+          '</div>' +
+        '</div>' +
+        '<div class="row-actions">' +
+          '<button class="btn-mini '+(overridden?'on':'')+'" data-act="toggle">'+ (overridden ? '✓ '+t('bu.override') : t('bu.override')) +'</button>' +
+          (overridden ? '<button class="btn-mini" data-act="clear">'+t('bu.clearOverride')+'</button>' : '') +
+        '</div>' +
+        '<div class="row-form" id="rf-'+f.id+'"></div>' +
+      '</div>'
+    );
+  }
+  function effective(f){
+    const o = f.override || {};
+    return {
+      organ: o.organ || shared.organ,
+      modality: o.modality || shared.modality,
+      plane: o.plane || shared.plane,
+      sequence: o.sequence || shared.sequence,
+      structures: o.structures || shared.structures,
+      level: o.level || shared.level,
+      prompt: o.prompt || shared.prompt,
+      citation: o.citation || shared.citation,
+    };
+  }
+  function wireRow(f){
+    const row = document.querySelector('.row[data-id="'+f.id+'"]');
+    if (!row) return;
+    row.querySelector('[data-act="toggle"]').onclick = () => {
+      const rf = row.querySelector('.row-form');
+      if (rf.classList.contains('on')){ rf.classList.remove('on'); rf.innerHTML = ''; return; }
+      const eff = effective(f);
+      rf.innerHTML = (
+        '<div class="form-grid">' +
+          '<div class="field"><label>'+t('bu.f.plane')+'</label><select data-k="plane">' + planeOpts(eff.plane) + '</select></div>' +
+          '<div class="field"><label>'+t('bu.f.modality')+'</label><select data-k="modality">' + modOpts(eff.modality) + '</select></div>' +
+          '<div class="field"><label>'+t('bu.f.sequence')+'</label><select data-k="sequence">' + seqOpts(eff.sequence) + '</select></div>' +
+        '</div>' +
+        '<div class="field" style="margin-top:12px"><label>'+t('bu.f.prompt')+'</label><textarea data-k="prompt">'+escapeHtml(eff.prompt||'')+'</textarea></div>' +
+        '<div style="margin-top:10px;text-align:end"><button class="btn-mini on" data-act="save">'+t('bu.saveOverride')+'</button></div>'
+      );
+      rf.classList.add('on');
+      rf.querySelector('[data-act="save"]').onclick = () => {
+        const patch = {};
+        rf.querySelectorAll('[data-k]').forEach(el => { if (el.value && el.value !== effective(f)[el.dataset.k]) patch[el.dataset.k] = el.value; });
+        f.override = Object.keys(patch).length ? patch : null;
+        rf.classList.remove('on');
+        renderRows();
+      };
+    };
+    const clr = row.querySelector('[data-act="clear"]');
+    if (clr) clr.onclick = () => { f.override = null; renderRows(); };
+  }
+  function planeOpts(cur){ return ['Axial','Coronal','Sagittal','Oblique','3D'].map(v=>'<option '+(cur===v?'selected':'')+'>'+v+'</option>').join(''); }
+  function modOpts(cur){ return ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'].map(v=>'<option '+(cur===v?'selected':'')+'>'+v+'</option>').join(''); }
+  function seqOpts(cur){ return ['','T1','T2','FLAIR','DWI','ADC','T1+C','T2 fat-sat','STIR','GRE'].map(v=>'<option value="'+v+'" '+(cur===v?'selected':'')+'>'+(v||'—')+'</option>').join(''); }
+  function updateOverrideCount(){
+    document.getElementById('overrideCount').textContent = files.filter(f => f.override).length;
+    document.getElementById('rowCount').textContent = files.length;
+  }
+
+  // ── Step 4: Submit ─────────────────────────────
+  async function submitBatch(){
+    goStep(4);
+    const total = files.length;
+    document.getElementById('progTotal').textContent = total;
+    const uploaded = [];
+
+    for (let i = 0; i < files.length; i++){
+      const f = files[i];
+      const meta = effective(f);
+      // storage path: uploads/<uid>/YYYYMMDD/<uuid>.<ext>
+      const ext = (f.file.name.match(/\.([a-z0-9]+)$/i) || [,'png'])[1].toLowerCase();
+      const dt = new Date();
+      const ymd = dt.getFullYear()+String(dt.getMonth()+1).padStart(2,'0')+String(dt.getDate()).padStart(2,'0');
+      const uid = 'u_' + Math.random().toString(36).slice(2, 12);
+      const path = 'uploads/' + user.id + '/' + ymd + '/' + uid + '.' + ext;
+      try {
+        const { error } = await sb.storage.from('atlas').upload(path, f.file, { contentType: f.file.type, upsert: false });
+        if (error) throw error;
+      } catch(e){
+        console.error('[bulk-upload]', e);
+        toast(t('bu.uploadErr') + (e.message || 'unknown'), true);
+        // continue with others
+        continue;
+      }
+      uploaded.push({
+        storage_path: path,
+        organ: meta.organ,
+        modality: meta.modality,
+        plane: meta.plane,
+        sequence: meta.sequence || null,
+        structures: (meta.structures||[]).map(s => s.slug || s.label),
+        level: meta.level || null,
+        prompt: meta.prompt || null,
+        citation: meta.citation || null,
+      });
+      document.getElementById('progNow').textContent = i + 1;
+      document.getElementById('progFill').style.width = (((i+1)/total)*100) + '%';
+    }
+
+    if (!uploaded.length){
+      toast(t('bu.uploadErr') + 'no files uploaded', true);
+      goStep(3);
+      return;
+    }
+
+    // Register new structures (if any) into anatomical_structures_ext
+    const newStructs = collectNewStructures();
+    if (newStructs.length){
+      try {
+        await sb.from('anatomical_structures_ext').insert(newStructs.map(s => ({
+          slug: s.slug, label_en: s.label, submitted_by: user.id
+        })));
+      } catch(e){ console.warn('[bulk-upload] structures_ext', e); }
+    }
+
+    // Submit via RPC
+    try {
+      const { data: batchId, error } = await sb.rpc('submit_bulk_upload', { p_images: uploaded, p_notes: null });
+      if (error) throw error;
+      document.getElementById('doneCount').textContent = uploaded.length;
+      document.getElementById('progressBox').style.display = 'none';
+      document.getElementById('successBox').style.display = '';
+    } catch(e){
+      console.error('[bulk-upload] rpc', e);
+      toast(t('bu.submitErr') + (e.message || 'unknown'), true);
+      goStep(3);
+    }
+  }
+
+  function collectNewStructures(){
+    const map = {};
+    files.forEach(f => (effective(f).structures || []).forEach(s => {
+      if (s.isNew && s.slug && !map[s.slug]) map[s.slug] = { slug: s.slug, label: s.label };
+    }));
+    return Object.values(map);
+  }
+
+  // ── Step navigation ────────────────────────────
+  function goStep(n){
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
+    document.getElementById('stepEl'+n).classList.add('on');
+    document.getElementById('panel'+n).classList.add('on');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── i18n ──────────────────────────────────────
+  function applyI18n(){
+    const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+  }
+  if (window.OmniRadI18n) OmniRadI18n.onChange && OmniRadI18n.onChange(applyI18n);
+  applyI18n();
+  init();
+})();
+</script>
+</body>
+</html>
