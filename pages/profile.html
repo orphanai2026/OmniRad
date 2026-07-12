@@ -68,6 +68,20 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
   <h1 data-i18n="profile.h1">My profile</h1>
   <p class="lead" data-i18n="profile.lead">Your public details on the OmniRad platform. Admins assign roles; everything else here is yours to edit.</p>
 
+  <!-- Contribute shortcut card (admin / contributor only) -->
+  <a id="contributeCard" href="contribute.html" style="display:none;text-decoration:none;background:linear-gradient(135deg,var(--acc-sub),transparent);border:1px solid var(--acc-dim);border-radius:14px;padding:18px 22px;margin-bottom:18px;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap;color:inherit">
+    <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:220px">
+      <div style="width:46px;height:46px;border-radius:12px;background:var(--acc);color:var(--acc-ink);display:grid;place-items:center;flex-shrink:0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:2px" data-i18n="profile.contribTitle">Contribute to the Atlas</div>
+        <div style="font-size:12.5px;color:var(--text-s);line-height:1.5" data-i18n="profile.contribSub">Bulk-upload ChatGPT-generated images for medical review. <span id="contribStat" style="color:var(--acc);font-weight:600"></span></div>
+      </div>
+    </div>
+    <div style="color:var(--acc);font-weight:700;font-size:13px">→</div>
+  </a>
+
   <div class="card">
     <div class="section-t" data-i18n="profile.identity">Identity</div>
     <div class="avatar-row">
@@ -323,6 +337,19 @@ h1{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:700;letter-spacing:-.02em;ma
     $('whoEmail').textContent = email || cur.email || '';
     const role = cur.role || 'viewer';
     const roleTag = $('whoRole'); roleTag.className = 'role-tag ' + role; roleTag.textContent = role;
+    // Contribute shortcut — admin/contributor only
+    if (['admin','contributor'].includes(role)) {
+      const card = document.getElementById('contributeCard');
+      if (card) {
+        card.style.display = 'flex';
+        try {
+          const { data: stats } = await sb.rpc('contributor_stats');
+          if (stats && stats[0] && stats[0].submitted != null) {
+            document.getElementById('contribStat').textContent = '· ' + stats[0].approved + ' approved · ' + stats[0].pending + ' pending';
+          }
+        } catch(e) { /* silent */ }
+      }
+    }
     $('avaInitials').textContent = name.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase() || 'U';
     if (cur.avatar_url){ renderAvatar(); }
     else { renderAvatar(); }
