@@ -92,7 +92,7 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 .orient-p{bottom:10px;inset-inline-start:50%;transform:translateX(-50%)}
 .scale-bar{position:absolute;bottom:34px;inset-inline-end:12px;color:var(--anno);text-shadow:0 0 4px rgba(0,0,0,.9);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:end;pointer-events:none}
 .scale-bar-line{width:80px;height:2px;background:var(--anno);margin-inline-start:auto;margin-bottom:2px}
-.viewer-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-m);font-size:14px;text-align:center;padding:40px;pointer-events:none}
+.viewer-empty{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--text-m);font-size:14px;text-align:center;padding:16px;pointer-events:none;max-width:min(420px,90%);z-index:3}
 .viewer-empty > *{pointer-events:auto}
 .viewer-empty svg{width:60px;height:60px;stroke:var(--text-m);stroke-width:1;fill:none;margin-bottom:14px}
 /* Info panel */
@@ -497,7 +497,7 @@ function renderModBar(){
     btn.className = 'mod-tab' + (mod === state.modality ? ' on' : '');
     btn.textContent = mod;
     if (!available.includes(mod)) btn.classList.add('no-images');
-    btn.addEventListener('click', ()=>{ state.modality = mod; state.plane = ''; state.variant = ''; renderModBar(); renderSubPicker(); loadCurrent(); });
+    btn.addEventListener('click', ()=>{ state.modality = mod; state.plane = ''; state.variant = ''; renderModBar(); renderSubPicker(); (window.loadCurrent||loadCurrent)(); });
     bar.appendChild(btn);
   });
 }
@@ -523,14 +523,14 @@ function renderSubPicker(){
   const planeSel = $('planeSel'); planeSel.innerHTML = '';
   planes.forEach(p=>{ const o = document.createElement('option'); o.value = p; o.textContent = p; if (p===state.plane) o.selected = true; planeSel.appendChild(o); });
   if (!planes.includes(state.plane)) state.plane = planes[0] || '';
-  planeSel.onchange = e => { state.plane = e.target.value; state.variant = ''; renderSubPicker(); loadCurrent(); };
+  planeSel.onchange = e => { state.plane = e.target.value; state.variant = ''; renderSubPicker(); (window.loadCurrent||loadCurrent)(); };
 
   const variants = U.variantsFor(state.structId, state.modality, state.plane);
   const varSel = $('varSel'); varSel.innerHTML = '';
   if (!variants.length){ const o = document.createElement('option'); o.value=''; o.textContent='—'; varSel.appendChild(o); }
   variants.forEach(v=>{ const o = document.createElement('option'); o.value = v.variant; o.textContent = v.variant; if (v.variant===state.variant) o.selected = true; varSel.appendChild(o); });
   if (!variants.some(v=>v.variant===state.variant)) state.variant = (variants[0] && variants[0].variant) || '';
-  varSel.onchange = e => { state.variant = e.target.value; loadCurrent(); };
+  varSel.onchange = e => { state.variant = e.target.value; (window.loadCurrent||loadCurrent)(); };
 }
 
 /* ─────── Info panel + parts list ─────── */
@@ -944,6 +944,13 @@ selectStructure('brain');
     window.loadCurrent = function(){
       const st = currentStruct();
       if (badgeMount) badgeMount.innerHTML = '';
+      // Always refresh viewer annotations for current selection (so switching modality updates them even when the viewer is empty)
+      if (st){
+        try {
+          $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane || '—'}`;
+          $('anTR').innerHTML = `OmniRad · Atlas<br>${state.modality} · ${state.plane || '—'}`;
+        } catch(_){}
+      }
       if (st){
         // Match by canonical id first, then by English label
         const key = (st.id||'').toLowerCase().trim();
