@@ -342,6 +342,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 <script src="../modules/omnirad-search.js"></script>
 <script src="../modules/omnirad-typography.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
+<script src="../modules/omnirad-radlex.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>
 (function(){
@@ -815,14 +816,35 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       return;
     }
 
-    // Register new structures (if any) into anatomical_structures_ext
+    // Register new structures (if any) into anatomical_structures_ext + anatomy_review_queue
     const newStructs = collectNewStructures();
     if (newStructs.length){
+      // 1) Legacy table for autocomplete
       try {
         await sb.from('anatomical_structures_ext').insert(newStructs.map(s => ({
           slug: s.slug, label_en: s.label, submitted_by: user.id
         })));
       } catch(e){ console.warn('[bulk-upload] structures_ext', e); }
+      // 2) Sprint 3 — push each new term into the Anatomy Review Queue with an optional
+      //    RadLex auto-lookup (best-effort; skipped on network failure)
+      for (const s of newStructs){
+        try {
+          let radlexId = null, radlexLabel = null;
+          if (window.OmniRadRadLex){
+            const hit = await OmniRadRadLex.lookup(s.label);
+            if (hit && hit.id){ radlexId = hit.id; radlexLabel = hit.label; }
+          }
+          await sb.rpc('submit_anatomy_term', {
+            p_term_en: s.label,
+            p_term_ar: null,
+            p_organ: shared.organ || null,
+            p_radlex_id: radlexId,
+            p_radlex_label: radlexLabel,
+            p_ta2_code: null,
+            p_linked_image_ids: null
+          });
+        } catch(e){ console.warn('[bulk-upload] submit_anatomy_term', s.label, e); }
+      }
     }
 
     // Submit via RPC

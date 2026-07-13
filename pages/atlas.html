@@ -219,6 +219,7 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
     <div class="info-sub" id="infoSub">Radiologic anatomy · bilingual</div>
     <div id="atlasGrowth" style="margin:8px 0 12px"></div>
     <div id="communityBadge" style="margin:0 0 12px"></div>
+    <div id="structureFlag" style="margin:0 0 12px"></div>
     <h3 data-i18n="atlas.study">Study</h3>
     <div class="kv"><span class="k">Modality</span><span class="v" id="infoMod">—</span></div>
     <div class="kv"><span class="k">Plane</span><span class="v" id="infoPlane">—</span></div>
@@ -245,6 +246,7 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 <script src="../modules/structures.js"></script>
 <script src="../modules/speak.js"></script>
 <script src="../modules/omnirad-atlas-dynamic.js"></script>
+<script src="../modules/omnirad-flag.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    Anatomical parts per structure (bilingual, teaching-oriented).
@@ -1019,6 +1021,33 @@ selectStructure('brain');
       });
       mo.observe(emptyEl, { attributes:true, attributeFilter:['style'] });
     }
+
+    // 5b) Community flag button — Sprint 3 Layer 3 Quality
+    const flagMount = document.getElementById('structureFlag');
+    function renderFlagButton(){
+      if (!flagMount || !window.OmniRadFlag) return;
+      const st = currentStruct();
+      if (!st){ flagMount.innerHTML = ''; return; }
+      const isAr = (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
+      const label = st.en || st.id;
+      flagMount.innerHTML =
+        '<button type="button" id="__flagBtnLive" title="' + (isAr ? 'الإبلاغ عن مشكلة' : 'Report an issue') + '"' +
+        ' style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px dashed var(--border);color:var(--text-m);padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;transition:.15s;font-family:inherit">' +
+        '<span style="color:var(--warn,#f59e0b)">🚩</span>' +
+        '<span>' + (isAr ? 'الإبلاغ عن مشكلة في هذه البنية' : 'Report an issue') + '</span>' +
+        '</button>';
+      const btn = document.getElementById('__flagBtnLive');
+      if (btn) btn.addEventListener('click', () => OmniRadFlag.open(st.id, label));
+    }
+    // Re-render on structure change: wrap selectStructure too
+    const origSelect = window.selectStructure || selectStructure;
+    window.selectStructure = function(id){
+      const r = origSelect.apply(this, arguments);
+      setTimeout(renderFlagButton, 20);
+      return r;
+    };
+    renderFlagButton();
+    window.addEventListener('omnirad-lang', renderFlagButton);
 
     // 6) URL-param deep-linking — ?organ=brain&modality=CT&plane=Axial
     const params = new URLSearchParams(location.search);
