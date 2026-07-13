@@ -198,8 +198,12 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
         <div class="form-grid">
           <div class="field">
-            <label><span data-i18n="bu.f.organ">Organ / Region</span> <span class="req">*</span></label>
-            <select id="fOrgan"><option value="" data-i18n="bu.selectOne">Select…</option></select>
+            <label><span data-i18n="bu.f.organ">Organ / Region</span> <span class="req">*</span> <span class="hint" data-i18n="bu.f.organHint">— type to search 129+ structures</span></label>
+            <div class="chip-input" id="organCombo" style="cursor:text">
+              <input type="text" id="fOrganSearch" placeholder="Type organ or structure…" autocomplete="off" style="width:100%;background:transparent;border:0;color:var(--text);font:inherit;outline:none">
+              <div class="ac-list" id="organList"></div>
+            </div>
+            <select id="fOrgan" style="display:none"><option value=""></option></select>
           </div>
           <div class="field">
             <label><span data-i18n="bu.f.modality">Modality</span> <span class="req">*</span></label>
@@ -361,7 +365,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       'bu.dzTitle':'Drag & drop images here','bu.dzSub':'or click to browse — PNG / JPEG, up to 30 files','bu.dzBrowse':'Browse files',
       'bu.filesReady':'files ready','bu.cancel':'Cancel','bu.next':'Next: Shared metadata →','bu.back':'← Back',
       'bu.p2title':'Fill metadata for each image','bu.p2help':"Set shared defaults below (Apply to all), then fine-tune each image in its own card.",
-      'bu.f.organ':'Organ / Region','bu.f.modality':'Modality','bu.f.plane':'Anatomical plane','bu.f.sequence':'MRI sequence','bu.f.level':'Teaching level',
+      'bu.f.organ':'Organ / Region','bu.f.organHint':'— type to search 129+ structures','bu.f.modality':'Modality','bu.f.plane':'Anatomical plane','bu.f.sequence':'MRI sequence','bu.f.level':'Teaching level',
       'bu.f.structures':'Anatomical structures visible','bu.f.structuresHint':'— type to search RadLex dictionary; press Enter or click «Add new» for unlisted terms',
       'bu.f.prompt':'ChatGPT prompt used','bu.f.citation':'Citation / source','bu.selectOne':'Select…',
       'bu.applyTo':'Applies to','bu.images':'images','bu.next3':'Next: Review per-image →',
@@ -391,7 +395,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       'bu.dzTitle':'اسحب وأفلت الصور هنا','bu.dzSub':'أو انقر للاستعراض — PNG / JPEG، حتى 30 ملفاً','bu.dzBrowse':'استعراض الملفات',
       'bu.filesReady':'ملفات جاهزة','bu.cancel':'إلغاء','bu.next':'التالي: البيانات المشتركة ←','bu.back':'رجوع →',
       'bu.p2title':'املأ بيانات كل صورة','bu.p2help':'اضبط الافتراضيات المشتركة أدناه (طبّق على الكل)، ثم دقّق كل صورة في بطاقتها. الحقول المميّزة بـ * إلزامية.',
-      'bu.f.organ':'العضو / المنطقة','bu.f.modality':'المودالتي','bu.f.plane':'المستوى التشريحي','bu.f.sequence':'تسلسل MRI','bu.f.level':'المستوى التعليمي',
+      'bu.f.organ':'العضو / المنطقة','bu.f.organHint':'— اكتب للبحث في +١٢٩ بنية','bu.f.modality':'المودالتي','bu.f.plane':'المستوى التشريحي','bu.f.sequence':'تسلسل MRI','bu.f.level':'المستوى التعليمي',
       'bu.f.structures':'البنى التشريحية الظاهرة','bu.f.structuresHint':'— اكتب للبحث في قاموس RadLex؛ اضغط Enter أو «أضف جديد» لمصطلحات غير مدرجة',
       'bu.f.prompt':'برومبت ChatGPT المستخدم','bu.f.citation':'مرجع / مصدر','bu.selectOne':'اختر…',
       'bu.applyTo':'يُطبَّق على','bu.images':'صور','bu.next3':'التالي: مراجعة فردية ←',
@@ -455,36 +459,110 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     //         suggestions include RadLex terms (Gallbladder etc.) instead of falling
     //         back to "Add new" for everything.
     if (window.OMNIRAD_ANATOMY && OMNIRAD_ANATOMY.ready){ try { await OMNIRAD_ANATOMY.ready; } catch(_){} }
-    populateOrgans();
+    // legacy select-based populate replaced by combobox init above; keep placeholder call for order
+    if (typeof populateOrgans === 'function' && !document.getElementById('fOrganSearch')){
+      populateOrgans();
+    } else if (document.getElementById('fOrganSearch')){
+      populateOrgans();
+    }
     wireDropzone();
     wireForm();
     refreshPlaneOptions();  // initial
   }
 
-  // ── Populate organ dropdown from v2 dictionary ─────
+  // ── Populate organ combobox from v2 dictionary + regions ─────
   function populateOrgans(){
-    const sel = document.getElementById('fOrgan');
-    // FIX: pull anatomy data from the correct globals
-    //   • v2 exposes window.OMNIRAD_ANATOMY.{regions,structures}
-    //   • v1 exposes the same shape via anatomy-master.js
-    // (the previous \`__omniradStructuresV2\` name was wrong and always empty,
-    //  which is why every typed structure fell into "Add new".)
+    const hidden = document.getElementById('fOrgan');
+    const input  = document.getElementById('fOrganSearch');
+    const list   = document.getElementById('organList');
+    const wrap   = document.getElementById('organCombo');
+    if (!hidden || !input || !list || !wrap) return;
+
     const anatomy = window.OMNIRAD_ANATOMY || {};
     const structures = anatomy.structures || [];
     const regionsList = anatomy.regions || [];
-    const regions = regionsList.length
-      ? regionsList.map(r => r.en || r.id).filter(Boolean)
-      : [...new Set(structures.map(s => s.region).filter(Boolean))].sort();
-    if (!regions.length){
-      // fallback list
-      ['Head & Neck','Brain','Chest','Cardiac','Abdomen','Pelvis','Musculoskeletal','Spine','Vascular'].forEach(r => {
-        const o = document.createElement('option'); o.value = r; o.textContent = r; sel.appendChild(o);
-      });
-      return;
+
+    // Build unified searchable list:
+    //   • Every region (as a top-level organ pick)
+    //   • Every structure (can also be picked directly as a sub-organ)
+    const regionEntries = (regionsList.length
+        ? regionsList.map(r => ({ en: r.en || r.id, ar: r.ar || '', kind: 'region' }))
+        : [...new Set(structures.map(s => s.region).filter(Boolean))]
+            .sort().map(r => ({ en: r, ar: '', kind: 'region' })));
+    const structEntries = structures.map(s => ({
+      en: s.en || s.label_en || s.slug,
+      ar: s.ar || s.label_ar || '',
+      region: s.region || '',
+      kind: 'structure'
+    })).filter(e => e.en);
+
+    // Fallback list if dictionary hasn't loaded
+    if (!regionEntries.length && !structEntries.length){
+      ['Head & Neck','Brain','Chest','Cardiac','Abdomen','Pelvis','Musculoskeletal','Spine','Vascular']
+        .forEach(r => regionEntries.push({ en:r, ar:'', kind:'region' }));
     }
-    regions.forEach(r => {
-      const o = document.createElement('option'); o.value = r; o.textContent = r; sel.appendChild(o);
+    const items = [...regionEntries, ...structEntries];
+
+    let hi = -1;
+    let filtered = [];
+
+    function setValue(v){
+      hidden.innerHTML = '<option value="'+escapeHtml(v)+'" selected>'+escapeHtml(v)+'</option>';
+      hidden.value = v;
+      input.value = v;
+      list.classList.remove('on');
+      hidden.dispatchEvent(new Event('change', { bubbles:true }));
+    }
+
+    function render(){
+      const q = input.value.trim().toLowerCase();
+      hi = -1;
+      if (!q){
+        // On empty focus → show regions first (grouped)
+        filtered = regionEntries.slice(0, 40);
+      } else {
+        filtered = items.filter(it =>
+          (it.en||'').toLowerCase().includes(q) ||
+          (it.ar||'').includes(q)
+        ).slice(0, 40);
+      }
+      if (!filtered.length){
+        list.innerHTML = '<div class="ac-item" style="opacity:.5;pointer-events:none">'+
+          (t('bu.selectOne')||'No match')+'</div>';
+      } else {
+        list.innerHTML = filtered.map((it,i) => {
+          const badge = it.kind === 'region'
+            ? '<span style="font-size:9.5px;padding:2px 6px;background:var(--acc-sub);color:var(--acc);border-radius:4px;font-family:\'IBM Plex Mono\',monospace;letter-spacing:.05em">REGION</span>'
+            : (it.region ? '<span style="font-size:9.5px;opacity:.55">'+escapeHtml(it.region)+'</span>' : '');
+          return '<div class="ac-item" data-i="'+i+'">'+
+            '<span class="en">'+escapeHtml(it.en)+'</span>'+
+            '<span class="ar" style="display:inline-flex;gap:8px;align-items:center">'+
+              escapeHtml(it.ar)+' '+badge+
+            '</span>'+
+          '</div>';
+        }).join('');
+      }
+      list.classList.add('on');
+      list.querySelectorAll('.ac-item[data-i]').forEach(el => {
+        el.onclick = () => setValue(filtered[+el.dataset.i].en);
+      });
+    }
+
+    input.addEventListener('input', render);
+    input.addEventListener('focus', render);
+    input.addEventListener('keydown', e => {
+      const els = list.querySelectorAll('.ac-item[data-i]');
+      if (e.key === 'ArrowDown'){ e.preventDefault(); hi = Math.min(els.length-1, hi+1); els.forEach((el,i)=>el.classList.toggle('hi', i===hi)); }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); hi = Math.max(0, hi-1); els.forEach((el,i)=>el.classList.toggle('hi', i===hi)); }
+      else if (e.key === 'Enter'){
+        e.preventDefault();
+        if (hi >= 0 && els[hi]) els[hi].click();
+        else if (filtered.length) setValue(filtered[0].en);
+      }
+      else if (e.key === 'Escape'){ list.classList.remove('on'); input.blur(); }
     });
+    wrap.addEventListener('click', () => input.focus());
+    document.addEventListener('click', e => { if (!wrap.contains(e.target)) list.classList.remove('on'); });
   }
 
   // ── Step 1: Dropzone ──────────────────────────
