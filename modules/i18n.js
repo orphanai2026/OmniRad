@@ -51,6 +51,7 @@
       contact:      { en:'Contact',            ar:'التواصل' },
       contributors: { en:'Contributors',       ar:'المتعاونون' },
       contribute:   { en:'Contribute',         ar:'ساهم' },
+      gen:          { en:'Generate',           ar:'توليد' },
       profile:      { en:'My Profile',         ar:'ملفّي الشخصي' },
       language:     { en:'Language',           ar:'اللغة' },
       theme:        { en:'Theme',              ar:'الوضع' },
@@ -74,7 +75,8 @@
       review:       { en:'Review',             ar:'المراجعة' },
       admin:        { en:'Admin',              ar:'الإدارة' },
       studio:       { en:'Studio',             ar:'الاستوديو' },
-      adminConsole: { en:'Admin Console',      ar:'لوحة الإدارة' }
+      adminConsole: { en:'Admin Console',      ar:'لوحة الإدارة' },
+      anatomyReview:{ en:'Anatomy Queue',       ar:'طابور المصطلحات' }
     },
     home: {
       eyebrow:      { en:'Radiologic Anatomy Platform', ar:'منصّة التشريح الإشعاعي' },
