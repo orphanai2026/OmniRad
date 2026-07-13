@@ -499,10 +499,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         '<div class="tile-name">'+f.file.name+'</div>' +
       '</div>'
     )).join('');
-    document.getElementById('fileCount').textContent = files.length;
-    document.getElementById('toStep2').disabled = !files.length;
-    document.getElementById('applyCount').textContent = files.length;
-    document.getElementById('rowCount').textContent = files.length;
+    const fc = document.getElementById('fileCount');   if (fc) fc.textContent = files.length;
+    const t2 = document.getElementById('toStep2');     if (t2) t2.disabled = !files.length;
+    const ac = document.getElementById('applyCount');  if (ac) ac.textContent = files.length;
+    const rc = document.getElementById('rowCount');    if (rc) rc.textContent = files.length;
   }
   window.__buRemove = (id) => {
     files = files.filter(f => f.id !== id);
