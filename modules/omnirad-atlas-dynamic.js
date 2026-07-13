@@ -66,14 +66,24 @@
     } catch (_) { return ''; }
   }
 
-  /* Match rule: organ (case-insensitive) + modality + optional plane.
-     Prefers exact plane match; if none, returns most recent for the modality. */
+  /* Match rule (Sprint 3 upgrade — root fix for "approved image doesn't show"):
+     A row matches a structure if EITHER row.organ equals structId, OR any element
+     of row.structures[] equals structId (case-insensitive). Then modality must
+     match; plane preferred but optional. */
   function find(structId, modality, plane) {
     if (!cache || !cache.length) return null;
     const sId = norm(structId), sMod = norm(modality), sPlane = norm(plane);
-    const bag = cache.filter((r) =>
-      norm(r.organ) === sId && norm(r.modality) === sMod
-    );
+    const structMatches = (r) => {
+      if (norm(r.organ) === sId) return true;
+      if (Array.isArray(r.structures)) {
+        return r.structures.some((s) => {
+          const label = typeof s === 'string' ? s : (s && (s.label || s.slug || s.en));
+          return norm(label) === sId;
+        });
+      }
+      return false;
+    };
+    const bag = cache.filter((r) => structMatches(r) && norm(r.modality) === sMod);
     if (!bag.length) return null;
     if (sPlane) {
       const hit = bag.find((r) => norm(r.plane) === sPlane);
@@ -81,6 +91,7 @@
     }
     return bag[0]; // view is ordered by approved_at desc
   }
+
 
   function forOrgan(structId) {
     if (!cache) return [];
