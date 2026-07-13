@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRad — Anatomy Review Queue</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--acc-ink:#08100e;--ok:#4ade80;--warn:#f59e0b;--err:#f87171;--pending:#fbbf24}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--warn:#b45309;--err:#c53030;--pending:#a16207}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{text-decoration:none;color:var(--acc)} a:hover{color:var(--text)}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 22px 60px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.lead{color:var(--text-s);font-size:13.5px;line-height:1.65;margin-bottom:22px;max-width:70ch}
+.gate{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+.gate .icon{font-size:44px;margin-bottom:14px;color:var(--acc)}
+.gate h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate p{color:var(--text-s);font-size:13.5px;max-width:44ch;margin:0 auto 18px;line-height:1.65}
+.gate .cta{display:inline-block;padding:10px 20px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:13px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:22px}
+.stat{background:var(--bg-e);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.stat-v{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.stat-l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.filters{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.chip{padding:7px 14px;background:var(--bg-s);border:1px solid var(--border);color:var(--text-s);border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.chip:hover{color:var(--text);border-color:var(--acc-dim)}
+.chip.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+.card{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.term-en{font-size:15.5px;font-weight:700;color:var(--text);line-height:1.3}
+.term-ar{font-size:14.5px;color:var(--text-s);font-family:'Noto Sans Arabic',sans-serif;margin-top:2px}
+.rid-badge{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:6px;letter-spacing:.02em;flex-shrink:0;white-space:nowrap}
+.rid-badge.verified{background:rgba(74,222,128,.14);color:var(--ok);border:1px solid rgba(74,222,128,.35)}
+.rid-badge.missing{background:rgba(251,191,36,.12);color:var(--pending);border:1px solid rgba(251,191,36,.3)}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px}
+.meta-row span{font-size:10.5px;padding:3px 8px;background:var(--bg-s);border:1px solid var(--border-s);border-radius:6px;color:var(--text-s);font-family:'IBM Plex Mono',monospace}
+.rl-info{background:var(--bg-s);border:1px solid var(--border-s);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text-s);line-height:1.55}
+.rl-info-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;margin-bottom:5px}
+.contributor{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text-m);padding-top:4px;border-top:1px dashed var(--border-s)}
+.contributor .who{color:var(--text-s);font-weight:600}
+.actions{display:flex;gap:6px;margin-top:auto;flex-wrap:wrap;padding-top:4px}
+.btn{padding:8px 12px;border:1px solid var(--border);background:var(--bg-s);color:var(--text);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;flex:1;min-width:88px}
+.btn:hover{border-color:var(--acc)}
+.btn.ok{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.4);color:var(--ok)}
+.btn.ok:hover{background:rgba(74,222,128,.2)}
+.btn.warn{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.35);color:var(--warn)}
+.btn.warn:hover{background:rgba(251,191,36,.2)}
+.btn.err{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35);color:var(--err)}
+.btn.err:hover{background:rgba(248,113,113,.2)}
+.btn.ghost{background:transparent;color:var(--text-s);border:1px solid var(--border-s)}
+.btn.ghost:hover{color:var(--acc);border-color:var(--acc-dim)}
+.empty{text-align:center;padding:60px 20px;color:var(--text-m);font-size:13.5px;background:var(--bg-e);border:1px dashed var(--border);border-radius:12px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--acc);color:var(--acc-ink);padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:1000;display:none}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:900;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;padding:22px;max-width:460px;width:100%}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.modal p{font-size:12.5px;color:var(--text-s);line-height:1.6;margin-bottom:14px}
+.modal label{display:block;font-size:11.5px;font-weight:600;color:var(--text-s);margin-bottom:6px;margin-top:8px}
+.modal select,.modal textarea,.modal input[type=text]{width:100%;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:4px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--acc);border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;margin-inline-end:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="omnirad-nav-mount"></div>
+
+<div class="wrap">
+  <div id="gate" class="gate" style="display:none">
+    <div class="icon">🛡️</div>
+    <h2 id="gateTitle">Reviewer access only</h2>
+    <p id="gateMsg">This page is restricted to Reviewers and Administrators.</p>
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="eyebrow">Anatomy Review Queue</div>
+    <h1>Anatomical Terms — Pending Review</h1>
+    <p class="lead">Community-submitted anatomical terms awaiting your review. Each term is auto-checked against <strong>RadLex (BioPortal)</strong>. Approve verified terms to publish them to the dictionary — reject invalid or duplicate entries with a clear reason. The submitter is notified of every action.</p>
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="filters">
+      <button class="chip on" data-status="pending">⏳ Pending</button>
+      <button class="chip" data-status="approved">✓ Approved</button>
+      <button class="chip" data-status="rejected">✗ Rejected</button>
+      <button class="chip" data-status="flagged">🚩 Flagged</button>
+    </div>
+
+    <div id="listBox"></div>
+  </div>
+</div>
+
+<!-- Reject modal -->
+<div class="modal-bg" id="rejectModal">
+  <div class="modal">
+    <h3>Reject anatomical term</h3>
+    <p>Please provide a specific reason. The submitter will be notified.</p>
+    <label>Reason</label>
+    <select id="rejReasonKind">
+      <option value="duplicate">Duplicate of existing term</option>
+      <option value="not_anatomical">Not an anatomical structure</option>
+      <option value="misspelling">Misspelling or invalid form</option>
+      <option value="wrong_arabic">Incorrect Arabic translation</option>
+      <option value="no_radlex">No RadLex reference available</option>
+      <option value="other">Other</option>
+    </select>
+    <label>Notes</label>
+    <textarea id="rejNotes" rows="3" placeholder="Optional details..."></textarea>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="btn err" id="rejConfirm">Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <h3>Edit term before approval</h3>
+    <p>Verify and correct the term, Arabic translation, and RadLex ID before publishing.</p>
+    <label>English term</label>
+    <input type="text" id="edEn">
+    <label>Arabic translation</label>
+    <input type="text" id="edAr" style="font-family:'Noto Sans Arabic',sans-serif">
+    <label>Organ / region</label>
+    <input type="text" id="edOrgan">
+    <label>RadLex ID (e.g. RID9612)</label>
+    <input type="text" id="edRid" style="font-family:'IBM Plex Mono',monospace">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal('editModal')">Cancel</button>
+      <button class="btn" id="edLookup">🔍 Lookup RadLex</button>
+      <button class="btn ok" id="edSave">Save & Approve</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/i18n.js"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-radlex.js"></script>
+<script src="../modules/omnirad-avatars.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script>
+(function(){
+  const t = (en, ar) => ((window.OmniRadI18n && OmniRadI18n.lang === 'ar') ? ar : en);
+  let sb = null, currentStatus = 'pending', currentUser = null, currentRole = null;
+  let currentEditRow = null;
+
+  const $ = id => document.getElementById(id);
+  function toast(msg){ const el = $('toast'); el.textContent = msg; el.style.display='block'; setTimeout(()=> el.style.display='none', 3200); }
+  window.closeModal = id => $(id).classList.remove('on');
+  const escapeHtml = s => String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  async function init(){
+    let tries = 0;
+    while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+    sb = OmniRadAuth.client;
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session){
+      $('gate').style.display = '';
+      $('gateMsg').innerHTML = 'This page is restricted to Reviewers and Administrators.<br><br><a href="auth.html" class="cta">Sign in</a>';
+      return;
+    }
+    currentUser = session.user;
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', currentUser.id).maybeSingle();
+    currentRole = profile && profile.role;
+    if (!['admin','reviewer'].includes(currentRole)){
+      $('gate').style.display = '';
+      $('gateMsg').textContent = 'Your account does not have reviewer permissions.';
+      return;
+    }
+    $('content').style.display = '';
+    document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
+      c.classList.add('on'); currentStatus = c.dataset.status; loadList();
+    }));
+    loadStats();
+    loadList();
+  }
+
+  async function loadStats(){
+    try {
+      const { data, error } = await sb.rpc('anatomy_queue_stats');
+      if (error) throw error;
+      const s = data || {};
+      $('statsRow').innerHTML = [
+        ['pending','⏳ Pending'],
+        ['approved','✓ Approved'],
+        ['rejected','✗ Rejected'],
+        ['flagged','🚩 Flagged'],
+        ['verified','◎ RadLex Verified'],
+        ['this_week','↗ This Week']
+      ].map(([k,label]) =>
+        `<div class="stat"><div class="stat-v">${(s[k]||0).toLocaleString()}</div><div class="stat-l">${label}</div></div>`
+      ).join('');
+    } catch(e){ console.warn('[queue] stats failed', e.message); }
+  }
+
+  async function loadList(){
+    const box = $('listBox');
+    box.innerHTML = '<div class="empty"><span class="spinner"></span>Loading…</div>';
+    try {
+      const { data, error } = await sb.from('anatomy_review_queue')
+        .select('*')
+        .eq('status', currentStatus)
+        .order('submitted_at', { ascending: false })
+        .limit(60);
+      if (error) throw error;
+      if (!data.length){
+        box.innerHTML = `<div class="empty">No ${currentStatus} terms — 🎉</div>`;
+        return;
+      }
+      // Fetch submitter profiles
+      const uids = [...new Set(data.map(r => r.submitted_by).filter(Boolean))];
+      let profMap = {};
+      if (uids.length){
+        const { data: profs } = await sb.from('profiles').select('id,display_name,avatar_url').in('id', uids);
+        (profs||[]).forEach(p => { profMap[p.id] = p; });
+      }
+      box.innerHTML = '<div class="grid">' + data.map(r => renderCard(r, profMap[r.submitted_by])).join('') + '</div>';
+    } catch(e){
+      box.innerHTML = `<div class="empty">Error: ${e.message}</div>`;
+    }
+  }
+
+  function renderCard(row, submitter){
+    const verified = row.radlex_verified && row.radlex_id;
+    const ridBadge = verified
+      ? `<span class="rid-badge verified" title="Verified via BioPortal">✓ ${escapeHtml(row.radlex_id)}</span>`
+      : `<span class="rid-badge missing" title="Not verified against RadLex">◇ No RID</span>`;
+    const showActions = currentStatus === 'pending';
+    const meta = [
+      row.organ && `<span>${escapeHtml(row.organ)}</span>`,
+      row.ta2_code && `<span>TA2 ${escapeHtml(row.ta2_code)}</span>`,
+      row.flag_count > 0 && `<span style="color:var(--warn)">🚩 ${row.flag_count}</span>`,
+    ].filter(Boolean).join('');
+    const radlexBlock = row.radlex_label ? `
+      <div class="rl-info">
+        <div class="rl-info-title">RadLex reference</div>
+        <div><strong style="color:var(--text)">${escapeHtml(row.radlex_label)}</strong></div>
+      </div>` : '';
+    const notesBlock = row.review_notes ? `
+      <div class="rl-info" style="border-color:rgba(248,113,113,.3)">
+        <div class="rl-info-title" style="color:var(--err)">Review notes</div>
+        <div>${escapeHtml(row.review_notes)}</div>
+      </div>` : '';
+    const subName = submitter ? escapeHtml(submitter.display_name || 'Contributor') : (row.submitted_by ? 'Contributor' : 'Unknown');
+    const subDate = row.submitted_at ? new Date(row.submitted_at).toLocaleDateString() : '';
+    return `<div class="card" data-id="${row.id}">
+      <div class="card-head">
+        <div>
+          <div class="term-en">${escapeHtml(row.term_en)}</div>
+          ${row.term_ar ? `<div class="term-ar">${escapeHtml(row.term_ar)}</div>` : ''}
+        </div>
+        ${ridBadge}
+      </div>
+      ${meta ? `<div class="meta-row">${meta}</div>` : ''}
+      ${radlexBlock}
+      ${notesBlock}
+      <div class="contributor">
+        <span>Submitted by <span class="who">${subName}</span></span>
+        <span style="margin-inline-start:auto;color:var(--text-m)">${subDate}</span>
+      </div>
+      ${showActions ? `
+        <div class="actions">
+          <button class="btn ok" onclick="quickApprove('${row.id}')" ${verified ? '' : 'title="Approve without RadLex verification"'}>✓ Approve</button>
+          <button class="btn" onclick="openEdit('${row.id}')">✎ Edit</button>
+          <button class="btn err" onclick="openReject('${row.id}')">✗ Reject</button>
+        </div>
+      ` : ''}
+    </div>`;
+  }
+
+  window.quickApprove = async (id) => {
+    if (!confirm('Approve this term as-is?')) return;
+    try {
+      const { error } = await sb.rpc('approve_anatomy_term', { p_queue_id: id, p_notes: null });
+      if (error) throw error;
+      toast('✓ Term approved & submitter notified');
+      loadStats(); loadList();
+    } catch(e){ toast('Error: ' + e.message); }
+  };
+
+  window.openEdit = async (id) => {
+    const { data } = await sb.from('anatomy_review_queue').select('*').eq('id', id).maybeSingle();
+    if (!data) return;
+    currentEditRow = data;
+    $('edEn').value    = data.term_en || '';
+    $('edAr').value    = data.term_ar || '';
+    $('edOrgan').value = data.organ || '';
+    $('edRid').value   = data.radlex_id || '';
+    $('editModal').classList.add('on');
+  };
+
+  $('edLookup').addEventListener('click', async () => {
+    const term = $('edEn').value.trim();
+    if (!term) return toast('Enter English term first');
+    const btn = $('edLookup');
+    const orig = btn.textContent;
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Looking up…';
+    try {
+      const r = await OmniRadRadLex.lookup(term);
+      if (!r) return toast('No RadLex match found');
+      $('edRid').value = r.id || '';
+      if (!$('edEn').value.trim() && r.label) $('edEn').value = r.label;
+      toast(r.matched ? '✓ Exact match: ' + r.id : 'Nearest match: ' + r.id + ' (' + r.label + ')');
+    } catch(e){ toast('Lookup error: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = orig; }
+  });
+
+  $('edSave').addEventListener('click', async () => {
+    if (!currentEditRow) return;
+    const patch = {
+      term_en: $('edEn').value.trim(),
+      term_ar: $('edAr').value.trim() || null,
+      organ:   $('edOrgan').value.trim() || null,
+      radlex_id: $('edRid').value.trim() || null,
+      radlex_verified: !!$('edRid').value.trim()
+    };
+    if (!patch.term_en) return toast('English term is required');
+    try {
+      // Save edits
+      const { error: upErr } = await sb.from('anatomy_review_queue').update(patch).eq('id', currentEditRow.id);
+      if (upErr) throw upErr;
+      // Approve
+      const { error } = await sb.rpc('approve_anatomy_term', { p_queue_id: currentEditRow.id, p_notes: 'Edited during review' });
+      if (error) throw error;
+      closeModal('editModal');
+      toast('✓ Term edited & approved');
+      loadStats(); loadList();
+    } catch(e){ toast('Error: ' + e.message); }
+  });
+
+  window.openReject = (id) => {
+    $('rejReasonKind').value = 'duplicate';
+    $('rejNotes').value = '';
+    $('rejConfirm').onclick = () => doReject(id);
+    $('rejectModal').classList.add('on');
+  };
+  async function doReject(id){
+    const kind = $('rejReasonKind').value;
+    const notes = $('rejNotes').value.trim();
+    const label = document.querySelector('#rejReasonKind option:checked').textContent;
+    const reason = label + (notes ? ' — ' + notes : '');
+    try {
+      const { error } = await sb.rpc('reject_anatomy_term', { p_queue_id: id, p_reason: reason });
+      if (error) throw error;
+      closeModal('rejectModal');
+      toast('Term rejected & submitter notified');
+      loadStats(); loadList();
+    } catch(e){ toast('Error: ' + e.message); }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
