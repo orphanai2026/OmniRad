@@ -427,6 +427,18 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
   let mode = 'series'; // 'series' | 'individual'
   let shared = { organ:'', modality:'', plane:'', sequence:'', structures:[], level:'', prompt:'', citation:'' };
 
+  // Hoisted so wireDropzone's Next handler can call it (was previously trapped inside wireForm)
+  function captureShared(){
+    const g = id => document.getElementById(id);
+    shared.organ    = (g('fOrgan')||{}).value    || '';
+    shared.modality = (g('fModality')||{}).value || '';
+    shared.plane    = (g('fPlane')||{}).value    || '';
+    shared.sequence = (g('fSequence')||{}).value || '';
+    shared.level    = (g('fLevel')||{}).value    || '';
+    shared.prompt   = (g('fPrompt')||{}).value   || '';
+    shared.citation = (g('fCitation')||{}).value || '';
+  }
+
   // ── Init ──────────────────────────────────────
   async function init(){
     let tries = 0;
@@ -546,15 +558,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       toast('✓ Applied to all');
     });
 
-    function captureShared(){
-      shared.organ = document.getElementById('fOrgan').value;
-      shared.modality = document.getElementById('fModality').value;
-      shared.plane = document.getElementById('fPlane').value;
-      shared.sequence = document.getElementById('fSequence').value;
-      shared.level = document.getElementById('fLevel').value;
-      shared.prompt = document.getElementById('fPrompt').value;
-      shared.citation = document.getElementById('fCitation').value;
-    }
+    // captureShared() lives at outer scope (see top) so all handlers can reach it
 
     function renderReview(){
       const box = document.getElementById('reviewList');

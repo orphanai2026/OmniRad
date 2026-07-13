@@ -136,6 +136,9 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script>
 (function(){
+  /* review.html — patched 2026-07-13 (Sprint 3 cleanup)
+     - review_queue.id is UUID text; removed all Number(id) casts
+     - RPC parameter type is auto-detected by Supabase (text UUID passes through) */
   const STRINGS = {
     en: {
       'rev.eyebrow':'Review Queue','rev.title':'Pending Images',
@@ -291,7 +294,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
         structures: structuresText ? structuresText.split(',').map(s=>s.trim()).filter(Boolean) : [],
         prompt:     document.getElementById('ed-prompt-'+id).value.trim() || null
       };
-      const { error } = await sb.from('review_queue').update(patch).eq('id', Number(id));
+      const { error } = await sb.from('review_queue').update(patch).eq('id', id);
       if (error) throw error;
       toast('✓ Saved');
       loadList();
@@ -300,7 +303,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 
   window.doApprove = async id => {
     try {
-      const { error } = await sb.rpc('approve_bulk_upload_item', { p_review_id: Number(id) });
+      const { error } = await sb.rpc('approve_bulk_upload_item', { p_review_id: id });
       if (error) throw error;
       toast(t('rev.approved.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
@@ -317,7 +320,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const opts = document.querySelector('#rejReasonKind option:checked').textContent;
     const reason = opts + (notes ? ' — ' + notes : '');
     try {
-      const { error } = await sb.rpc('reject_to_archive', { p_review_id: Number(id), p_reason: reason });
+      const { error } = await sb.rpc('reject_to_archive', { p_review_id: id, p_reason: reason });
       if (error) throw error; closeModal('rejectModal'); toast(t('rev.rejected.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   }
@@ -330,7 +333,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const notes = document.getElementById('revNotes').value.trim();
     if (!notes){ toast(t('rev.err') + 'Please provide guidance.'); return; }
     try {
-      const { error } = await sb.rpc('request_review_revision', { p_review_id: Number(id), p_notes: notes });
+      const { error } = await sb.rpc('request_review_revision', { p_review_id: id, p_notes: notes });
       if (error) throw error; closeModal('revisionModal'); toast(t('rev.revision.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   }
