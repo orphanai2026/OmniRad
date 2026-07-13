@@ -21,7 +21,7 @@
 (function (global) {
   'use strict';
 
-  const BUCKET = 'omnirad-images';
+  const BUCKET = 'atlas';
   let cache = null;
   let cachedAt = 0;
   const TTL_MS = 60 * 1000; // 1 min
