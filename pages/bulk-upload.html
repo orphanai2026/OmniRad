@@ -454,13 +454,23 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     populateOrgans();
     wireDropzone();
     wireForm();
+    refreshPlaneOptions();  // initial
   }
 
   // ── Populate organ dropdown from v2 dictionary ─────
   function populateOrgans(){
     const sel = document.getElementById('fOrgan');
-    const structures = (window.__omniradStructuresV2 || window.__omniradStructures || []);
-    const regions = [...new Set(structures.map(s => s.region).filter(Boolean))].sort();
+    // FIX: pull anatomy data from the correct globals
+    //   • v2 exposes window.OMNIRAD_ANATOMY.{regions,structures}
+    //   • v1 exposes the same shape via anatomy-master.js
+    // (the previous \`__omniradStructuresV2\` name was wrong and always empty,
+    //  which is why every typed structure fell into "Add new".)
+    const anatomy = window.OMNIRAD_ANATOMY || {};
+    const structures = anatomy.structures || [];
+    const regionsList = anatomy.regions || [];
+    const regions = regionsList.length
+      ? regionsList.map(r => r.en || r.id).filter(Boolean)
+      : [...new Set(structures.map(s => s.region).filter(Boolean))].sort();
     if (!regions.length){
       // fallback list
       ['Head & Neck','Brain','Chest','Cardiac','Abdomen','Pelvis','Musculoskeletal','Spine','Vascular'].forEach(r => {
@@ -522,6 +532,30 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
   };
 
   // ── Step 2: Shared metadata ────────────────────
+  // FIX — planes vary by modality. Cross-sectional imaging (CT/MRI/US/PET/NM)
+  //        uses Axial/Coronal/Sagittal/Oblique/3D. Projectional imaging
+  //        (X-Ray/Angio/Mammo) uses PA/AP/Lateral/Oblique views.
+  const PLANES_BY_MODALITY = {
+    'CT':    ['Axial','Coronal','Sagittal','Oblique','3D'],
+    'MRI':   ['Axial','Coronal','Sagittal','Oblique','3D'],
+    'US':    ['Longitudinal','Transverse','Oblique','Sagittal','Coronal'],
+    'PET':   ['Axial','Coronal','Sagittal','3D'],
+    'NM':    ['Anterior','Posterior','Lateral','Oblique','3D'],
+    'X-Ray': ['PA','AP','Lateral','Oblique','Decubitus','Lordotic'],
+    'Angio': ['AP','Lateral','LAO','RAO','Cranial','Caudal'],
+    'Mammo': ['CC','MLO','ML','LM','XCCL']
+  };
+  function refreshPlaneOptions(){
+    const modSel = document.getElementById('fModality');
+    const planeSel = document.getElementById('fPlane');
+    if (!modSel || !planeSel) return;
+    const mod = modSel.value;
+    const list = PLANES_BY_MODALITY[mod] || ['Axial','Coronal','Sagittal','Oblique','3D'];
+    const cur = planeSel.value;
+    planeSel.innerHTML = '<option value="">Select…</option>' +
+      list.map(p => `<option value="${p}"${cur===p?' selected':''}>${p}</option>`).join('');
+  }
+
   function wireForm(){
     // Mode toggle
     document.getElementById('modeSeries').addEventListener('click', () => setMode('series'));
@@ -534,6 +568,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     });
     document.getElementById('fModality').addEventListener('change', e => {
       document.getElementById('seqField').style.display = e.target.value === 'MRI' ? '' : 'none';
+      refreshPlaneOptions();  // ← keep planes in sync with modality
     });
     setupStructureAutocomplete('structuresText', 'structuresInput', 'acList', s => {
       shared.structures = s;
@@ -564,7 +599,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       const box = document.getElementById('reviewList');
       box.innerHTML = files.map(f => {
         const m = effective(f);
-        const structs = (m.structures||[]).map(s => s.label || s).join(', ');
+        const structs = (m.structures||[]).map(s => (s && (s.label || s.en)) || String(s||'')).filter(Boolean).join(', ');
         return `<div class="row" style="grid-template-columns:80px 1fr">
           <img class="row-thumb" src="${f.previewUrl}">
           <div class="row-body">
@@ -626,7 +661,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     function showList(){
       const q = input.value.trim().toLowerCase();
       hiIdx = -1;
-      const all = (window.__omniradStructuresV2 || window.__omniradStructures || []);
+      const all = (window.OMNIRAD_ANATOMY && window.OMNIRAD_ANATOMY.structures) || [];
       const currentOrgan = (document.getElementById('fOrgan')||{}).value || '';
       const scoped = currentOrgan ? all.filter(s => !s.region || s.region === currentOrgan) : all;
       let matches;
