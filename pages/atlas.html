@@ -92,7 +92,8 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 .orient-p{bottom:10px;inset-inline-start:50%;transform:translateX(-50%)}
 .scale-bar{position:absolute;bottom:34px;inset-inline-end:12px;color:var(--anno);text-shadow:0 0 4px rgba(0,0,0,.9);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:end;pointer-events:none}
 .scale-bar-line{width:80px;height:2px;background:var(--anno);margin-inline-start:auto;margin-bottom:2px}
-.viewer-empty{color:var(--text-m);font-size:14px;text-align:center;padding:40px}
+.viewer-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-m);font-size:14px;text-align:center;padding:40px;pointer-events:none}
+.viewer-empty > *{pointer-events:auto}
 .viewer-empty svg{width:60px;height:60px;stroke:var(--text-m);stroke-width:1;fill:none;margin-bottom:14px}
 /* Info panel */
 .info{background:var(--bg-e);border-inline-start:1px solid var(--border);padding:16px 18px;overflow-y:auto}
