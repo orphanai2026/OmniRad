@@ -198,11 +198,12 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
         <div class="form-grid">
           <div class="field">
-            <label><span data-i18n="bu.f.organ">Organ / Region</span> <span class="req">*</span> <span class="hint" data-i18n="bu.f.organHint">— type to search 129+ structures</span></label>
+            <label><span data-i18n="bu.f.organ">Organ / Region</span> <span class="req">*</span></label>
             <div class="chip-input" id="organCombo" style="cursor:text">
               <input type="text" id="fOrganSearch" placeholder="Type organ or structure…" autocomplete="off" style="width:100%;background:transparent;border:0;color:var(--text);font:inherit;outline:none">
               <div class="ac-list" id="organList"></div>
             </div>
+            <div class="hint" data-i18n="bu.f.organHint" style="margin-top:4px;font-size:11px;color:var(--text-m)">— type to search 129+ structures</div>
             <select id="fOrgan" style="display:none"><option value=""></option></select>
           </div>
           <div class="field">
@@ -257,11 +258,12 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         </div>
 
         <div style="margin-top:16px" class="field">
-          <label><span data-i18n="bu.f.structures">Anatomical structures visible</span> <span class="req">*</span> <span class="hint" data-i18n="bu.f.structuresHint">— type to search RadLex dictionary; press Enter or click «Add new» for unlisted terms</span></label>
+          <label><span data-i18n="bu.f.structures">Anatomical structures visible</span> <span class="req">*</span></label>
           <div class="chip-input" id="structuresInput">
-            <input type="text" id="structuresText" placeholder="Type a structure…" autocomplete="off">
+            <input type="text" id="structuresText" placeholder="Click after picking organ, or type to search…" autocomplete="off">
             <div class="ac-list" id="acList"></div>
           </div>
+          <div class="hint" data-i18n="bu.f.structuresHint" style="margin-top:4px;font-size:11px;color:var(--text-m)">— pick organ first, then click here for the full list; type to filter; Enter or «Add new» for unlisted terms</div>
         </div>
 
         <div style="margin-top:16px" class="field">
