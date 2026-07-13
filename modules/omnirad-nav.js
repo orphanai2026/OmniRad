@@ -11,7 +11,7 @@
 (function () {
   if (window.__omniradNavMounted) return;
   window.__omniradNavMounted = true;
-  window.__omniradNavVersion = '2026-07-11-e';
+  window.__omniradNavVersion = '2026-07-13-sprint3';
 
   var script = document.currentScript;
   var BASE = (script && script.getAttribute('data-base')) || '';
@@ -35,6 +35,7 @@
     ]},
     { icon: '🔒', label: 'Admin', i18n:'nav.admin', role:['admin','contributor','reviewer'], items: [
       { href: 'pages/studio.html',    icon: '🎨', title: 'Studio',       sub: 'Prompt authoring',       i18n:'nav.studio', role:['admin','contributor','reviewer'] },
+      { href: 'pages/anatomy-review.html', icon: '🧬', title: 'Anatomy Queue', sub: 'Term review + RadLex',  i18n:'nav.anatomyReview', role:['admin','reviewer'] },
       { href: 'pages/admin.html',     icon: '🛡', title: 'Admin Console', sub: 'Users, content, review', i18n:'nav.adminConsole', role:['admin','reviewer'] }
     ]}
   ];
