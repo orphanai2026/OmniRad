@@ -941,9 +941,14 @@ selectStructure('brain');
     // 4) Wrap loadCurrent to prefer dynamic images + render community badge
     const badgeMount = document.getElementById('communityBadge');
     const origLoad = window.loadCurrent || loadCurrent;
+    let __loadToken = 0;  // ⚠ race guard — invalidates stale async image loads on rapid modality/plane switches
     window.loadCurrent = function(){
+      const myToken = ++__loadToken;   // any earlier onload/onerror becomes stale
       const st = currentStruct();
       if (badgeMount) badgeMount.innerHTML = '';
+      // Immediately clear the current image so the previous frame doesn't linger while the new one loads
+      state.img = null;
+      try { if (typeof draw === 'function') draw(); } catch(_){}
       // Always refresh viewer annotations for current selection (so switching modality updates them even when the viewer is empty)
       if (st){
         try {
@@ -965,8 +970,8 @@ selectStructure('brain');
             state.invert = false; state.measurements = [];
             $('valZoom').textContent = '1.00×';
             const el = new Image(); el.crossOrigin = 'anonymous';
-            el.onload  = () => { state.img = el; renderInfo(); draw(); };
-            el.onerror = () => { console.warn('[atlas] dynamic image load failed, falling back'); origLoad(); };
+            el.onload  = () => { if (myToken !== __loadToken) return; state.img = el; renderInfo(); draw(); };
+            el.onerror = () => { if (myToken !== __loadToken) return; console.warn('[atlas] dynamic image load failed, falling back'); origLoad(); };
             el.src = url;
             $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · Community`;
             $('anTR').innerHTML = `OmniRad · Atlas<br>${state.modality} · ${state.plane}`;
@@ -976,7 +981,21 @@ selectStructure('brain');
           }
         }
       }
-      return origLoad();
+      // Fallback to original loader; then belt-and-suspenders clear if we still land on empty
+      const result = origLoad();
+      try {
+        if ($('empty').style.display === 'block'){
+          state.img = null;
+          if (typeof draw === 'function') draw();
+          if (typeof renderInfo === 'function') renderInfo();
+        }
+      } catch(_){}
+      // Guard against any origLoad-created Image.onload that resolves LATE
+      // by re-checking token in a microtask
+      Promise.resolve().then(() => {
+        if (myToken !== __loadToken) return;
+      });
+      return result;
     };
 
     // 5) Smart empty-state — replace the default "Image not available" message
