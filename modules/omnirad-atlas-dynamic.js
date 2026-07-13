@@ -186,7 +186,7 @@
     const cta = ar ? 'رفع صور جماعي ←' : 'Bulk Upload →';
     return (
       '<div style="text-align:center;padding:24px 16px;max-width:360px;margin:0 auto">' +
-        '<div style="font-size:34px;color:var(--acc);margin-bottom:10px;opacity:.75">☁</div>' +
+        '<div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;background:var(--acc);color:var(--acc-ink);border-radius:12px;font-family:\'IBM Plex Mono\',monospace;font-size:20px;font-weight:800;letter-spacing:.02em;margin-bottom:14px;box-shadow:0 6px 22px rgba(45,212,200,.22)">OR</div>' +
         '<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">' + title + '</div>' +
         '<div style="font-size:12px;color:var(--text-s);line-height:1.6;margin-bottom:14px">' + desc + '</div>' +
         '<a href="' + link + '" style="display:inline-block;padding:9px 18px;background:var(--acc);color:var(--acc-ink);border-radius:8px;font-weight:700;font-size:12px;text-decoration:none;font-family:\'IBM Plex Mono\',monospace;letter-spacing:.03em">' + cta + '</a>' +
