@@ -66,8 +66,8 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 .chip-input{background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:6px;min-height:44px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;position:relative}
 .chip-input input{flex:1;min-width:120px;background:transparent;border:none;color:var(--text);font-size:12.5px;padding:5px 6px;font-family:inherit}
 .chip-input input:focus{outline:none}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 9px;background:var(--acc-sub);border:1px solid var(--acc-dim);color:var(--acc);border-radius:6px;font-size:11.5px;font-weight:600}
-.chip.new{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.4);color:var(--pending)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 9px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.5);color:var(--ok);border-radius:6px;font-size:11.5px;font-weight:600}
+.chip.new{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.5);color:var(--pending)}
 .chip button{background:none;border:none;color:inherit;cursor:pointer;font-size:14px;line-height:1;padding:0 4px;opacity:.7}
 .chip button:hover{opacity:1}
 .ac-list{position:absolute;top:100%;left:0;right:0;background:var(--bg-e);border:1px solid var(--border);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
@@ -683,7 +683,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       selected.forEach((s, i) => {
         const chip = document.createElement('span');
         chip.className = 'chip' + (s.isNew ? ' new' : '');
-        chip.innerHTML = (s.isNew ? '➕ ' : '') + escapeHtml(s.label) + ' <button type="button">×</button>';
+        chip.innerHTML = (s.isNew ? '➕ ' : '✓ ') + escapeHtml(s.label) + ' <button type="button">×</button>';
         chip.querySelector('button').onclick = () => { selected.splice(i,1); renderChips(); onChange(selected); };
         wrap.insertBefore(chip, input);
       });
