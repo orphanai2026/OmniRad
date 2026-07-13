@@ -451,6 +451,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     role = profile && profile.role;
     if (!['admin','contributor'].includes(role)){ document.getElementById('gate').style.display=''; return; }
     document.getElementById('content').style.display = '';
+    // FIX — wait for the anatomy dictionary to finish loading so autocomplete
+    //         suggestions include RadLex terms (Gallbladder etc.) instead of falling
+    //         back to "Add new" for everything.
+    if (window.OMNIRAD_ANATOMY && OMNIRAD_ANATOMY.ready){ try { await OMNIRAD_ANATOMY.ready; } catch(_){} }
     populateOrgans();
     wireDropzone();
     wireForm();
@@ -600,7 +604,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       box.innerHTML = files.map(f => {
         const m = effective(f);
         const structs = (m.structures||[]).map(s => (s && (s.label || s.en)) || String(s||'')).filter(Boolean).join(', ');
-        return `<div class="row" style="grid-template-columns:80px 1fr">
+        return `<div class="row" style="grid-template-columns:80px 1fr auto" data-review-id="${f.id}">
           <img class="row-thumb" src="${f.previewUrl}">
           <div class="row-body">
             <div class="row-name">${escapeHtml(f.file.name)}</div>
@@ -613,8 +617,36 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
             </div>
             ${m.prompt ? '<div class="row-meta" style="margin-top:6px;color:var(--text-s);font-family:IBM Plex Mono,monospace"><span style="max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHtml((m.prompt||'').slice(0,120))+(m.prompt.length>120?'…':'')+'</span></div>':''}
           </div>
+          <div class="row-actions">
+            <button class="btn-mini" data-edit="${f.id}" title="تعديل هذه الصورة / Edit">✎ Edit</button>
+            <button class="btn-mini" data-remove="${f.id}" title="إزالة من الدفعة / Remove" style="color:var(--err);border-color:rgba(248,113,113,.35)">× Remove</button>
+          </div>
         </div>`;
       }).join('');
+      // Wire edit/remove buttons
+      box.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
+        const id = b.getAttribute('data-edit');
+        goStep(2);
+        setTimeout(() => {
+          const row = document.querySelector('.row[data-id="'+id+'"]');
+          if (row){
+            row.scrollIntoView({behavior:'smooth', block:'center'});
+            row.style.transition = 'box-shadow .5s';
+            row.style.boxShadow = '0 0 0 2px var(--acc)';
+            setTimeout(()=> row.style.boxShadow='', 1500);
+            // Auto-open the override form for that row
+            const toggleBtn = row.querySelector('[data-act="toggle"]');
+            if (toggleBtn) toggleBtn.click();
+          }
+        }, 250);
+      }));
+      box.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
+        const id = b.getAttribute('data-remove');
+        if (!confirm('Remove this image from the batch?')) return;
+        files = files.filter(f => f.id !== id);
+        if (!files.length){ goStep(1); renderStrip(); return; }
+        renderReview();
+      }));
       document.getElementById('reviewCount').textContent = files.length;
     }
     document.getElementById('toStep4').addEventListener('click', submitBatch);
@@ -706,7 +738,21 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         e.preventDefault();
         if (hiIdx >= 0 && items[hiIdx]) items[hiIdx].click();
         else if (input.value.trim()){
-          selected.push({ label: input.value.trim(), isNew: true, slug: slugify(input.value.trim()) });
+          // FIX — before flagging as "new", try to resolve against the loaded
+          //        RadLex/anatomy dictionary. Match on en, ar, or aliases.
+          const raw = input.value.trim();
+          const norm = raw.toLowerCase();
+          const dict = (window.OMNIRAD_ANATOMY && OMNIRAD_ANATOMY.structures) || [];
+          const hit = dict.find(s =>
+            (s.en||'').toLowerCase() === norm ||
+            (s.ar||'') === raw ||
+            (Array.isArray(s.aliases) && s.aliases.some(a => (a||'').toLowerCase() === norm))
+          );
+          if (hit){
+            selected.push({ label: hit.en || raw, isNew: false, slug: hit.id || slugify(hit.en||raw), radlex: hit.radlex||null });
+          } else {
+            selected.push({ label: raw, isNew: true, slug: slugify(raw) });
+          }
           input.value=''; list.classList.remove('on'); renderChips();
         }
       }
