@@ -70,37 +70,58 @@ create or replace view public.atlas_series_v as
 grant select on public.atlas_series_v to anon, authenticated;
 
 -- ─── 3) series_lookup(series_id uuid) — ordered slices for viewer ─────────
-create or replace function public.series_lookup(p_series_id uuid)
-returns table (
-  id            bigint,
-  slice_index   int,
-  storage_path  text,
-  organ         text,
-  modality      text,
-  plane         text,
-  sequence      text,
-  series_name   text,
-  series_total  int,
-  structures    text[],
-  approved_at   timestamptz,
-  uploader_id   uuid,
-  reviewer_id   uuid
-)
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select
-    ai.id, ai.slice_index, ai.storage_path,
-    ai.organ, ai.modality, ai.plane, ai.sequence,
-    ai.series_name, ai.series_total, ai.structures,
-    ai.approved_at, ai.uploader_id, ai.reviewer_id
-  from public.atlas_images ai
-  where ai.series_id = p_series_id
-    and ai.approved_at is not null
-  order by ai.slice_index asc;
-$$;
+-- Detect actual id column type (bigint vs uuid) and build the function to match.
+drop function if exists public.series_lookup(uuid);
+
+do $$
+declare
+  id_type text;
+  fn_sql  text;
+begin
+  select data_type into id_type
+    from information_schema.columns
+   where table_schema='public'
+     and table_name='atlas_images'
+     and column_name='id';
+
+  raise notice '  · atlas_images.id detected type: %', id_type;
+
+  fn_sql := format($f$
+    create function public.series_lookup(p_series_id uuid)
+    returns table (
+      id            %s,
+      slice_index   int,
+      storage_path  text,
+      organ         text,
+      modality      text,
+      plane         text,
+      sequence      text,
+      series_name   text,
+      series_total  int,
+      structures    text[],
+      approved_at   timestamptz,
+      uploader_id   uuid,
+      reviewer_id   uuid
+    )
+    language sql
+    stable
+    security definer
+    set search_path = public
+    as $body$
+      select
+        ai.id, ai.slice_index, ai.storage_path,
+        ai.organ, ai.modality, ai.plane, ai.sequence,
+        ai.series_name, ai.series_total, ai.structures,
+        ai.approved_at, ai.uploader_id, ai.reviewer_id
+      from public.atlas_images ai
+      where ai.series_id = p_series_id
+        and ai.approved_at is not null
+      order by ai.slice_index asc;
+    $body$;
+  $f$, id_type);
+
+  execute fn_sql;
+end $$;
 
 grant execute on function public.series_lookup(uuid) to anon, authenticated;
 
