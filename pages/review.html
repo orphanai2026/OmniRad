@@ -256,7 +256,18 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 
   const REGIONS = ['Head & Neck','Brain','Chest','Cardiac','Abdomen','Pelvis','Musculoskeletal','Spine','Vascular'];
   const MODALITIES = ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'];
-  const PLANES = ['Axial','Coronal','Sagittal','Oblique','3D'];
+  // FIX — planes vary by modality (Sprint 3 UX): projectional vs cross-sectional.
+  const PLANES_BY_MOD = {
+    'CT':    ['Axial','Coronal','Sagittal','Oblique','3D'],
+    'MRI':   ['Axial','Coronal','Sagittal','Oblique','3D'],
+    'US':    ['Longitudinal','Transverse','Oblique','Sagittal','Coronal'],
+    'PET':   ['Axial','Coronal','Sagittal','3D'],
+    'NM':    ['Anterior','Posterior','Lateral','Oblique','3D'],
+    'X-Ray': ['PA','AP','Lateral','Oblique','Decubitus','Lordotic'],
+    'Angio': ['AP','Lateral','LAO','RAO','Cranial','Caudal'],
+    'Mammo': ['CC','MLO','ML','LM','XCCL']
+  };
+  const PLANES = ['Axial','Coronal','Sagittal','Oblique','3D']; // legacy fallback
   const SEQS = ['','T1','T2','FLAIR','DWI','ADC','T1+C','T2 fat-sat','STIR','GRE'];
 
   window.openEdit = (id) => {
@@ -266,12 +277,13 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     if (box.style.display === 'block'){ box.style.display='none'; return; }
     const row = JSON.parse(card.getAttribute('data-row').replace(/&quot;/g,'"'));
     const opts = (arr, cur) => arr.map(v => `<option value="${v}" ${v===cur?'selected':''}>${v||'—'}</option>`).join('');
+    const initialPlanes = PLANES_BY_MOD[row.modality] || PLANES;
     box.innerHTML = `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
         <label style="font-size:11px;color:var(--text-s)">Organ<select id="ed-organ-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...REGIONS], row.organ||'')}</select></label>
         <label style="font-size:11px;color:var(--text-s)">Modality<select id="ed-modality-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...MODALITIES], row.modality||'')}</select></label>
-        <label style="font-size:11px;color:var(--text-s)">Plane<select id="ed-plane-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...PLANES], row.plane||'')}</select></label>
-        <label style="font-size:11px;color:var(--text-s)">Sequence<select id="ed-sequence-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(SEQS, row.sequence||'')}</select></label>
+        <label style="font-size:11px;color:var(--text-s)">Plane<select id="ed-plane-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(['',...initialPlanes], row.plane||'')}</select></label>
+        <label id="ed-seq-wrap-${id}" style="font-size:11px;color:var(--text-s);display:${row.modality==='MRI'?'block':'none'}">Sequence<select id="ed-sequence-${id}" style="width:100%;margin-top:4px;padding:7px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px">${opts(SEQS, row.sequence||'')}</select></label>
       </div>
       <label style="font-size:11px;color:var(--text-s);display:block;margin-top:10px">Structures (comma-separated)<input id="ed-structures-${id}" type="text" value="${(row.structures||[]).join(', ').replace(/"/g,'&quot;')}" style="width:100%;margin-top:4px;padding:7px 9px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px"></label>
       <label style="font-size:11px;color:var(--text-s);display:block;margin-top:10px">Prompt<textarea id="ed-prompt-${id}" style="width:100%;margin-top:4px;padding:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:12px;min-height:60px;font-family:IBM Plex Mono,monospace">${(row.prompt||'').replace(/</g,'&lt;')}</textarea></label>
@@ -281,16 +293,37 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       </div>
     `;
     box.style.display = 'block';
+    // FIX — keep native <select> dropdowns from opening upward by ensuring
+    //        the form sits at the top of the viewport with plenty of space below.
+    try { box.scrollIntoView({behavior:'smooth', block:'start'}); } catch(_){}
+    // Sync plane options when modality changes within the edit form
+    const modEd = document.getElementById('ed-modality-'+id);
+    const planeEd = document.getElementById('ed-plane-'+id);
+    const seqWrapEd = document.getElementById('ed-seq-wrap-'+id);
+    const seqEd = document.getElementById('ed-sequence-'+id);
+    if (modEd && planeEd){
+      modEd.addEventListener('change', () => {
+        const list = PLANES_BY_MOD[modEd.value] || PLANES;
+        const cur = planeEd.value;
+        planeEd.innerHTML = ['', ...list].map(v => `<option value="${v}" ${v===cur?'selected':''}>${v||'—'}</option>`).join('');
+        // Show sequence field only for MRI
+        if (seqWrapEd) seqWrapEd.style.display = (modEd.value === 'MRI') ? 'block' : 'none';
+        if (modEd.value !== 'MRI' && seqEd) seqEd.value = '';
+      });
+    }
   };
 
   window.saveEdit = async (id) => {
     try {
       const structuresText = document.getElementById('ed-structures-'+id).value.trim();
+      const modVal = document.getElementById('ed-modality-'+id).value || null;
+      const seqEl  = document.getElementById('ed-sequence-'+id);
       const patch = {
         organ:      document.getElementById('ed-organ-'+id).value || null,
-        modality:   document.getElementById('ed-modality-'+id).value || null,
+        modality:   modVal,
         plane:      document.getElementById('ed-plane-'+id).value || null,
-        sequence:   document.getElementById('ed-sequence-'+id).value || null,
+        // Sequence is only meaningful for MRI — null out for every other modality
+        sequence:   (modVal === 'MRI' && seqEl && seqEl.value) ? seqEl.value : null,
         structures: structuresText ? structuresText.split(',').map(s=>s.trim()).filter(Boolean) : [],
         prompt:     document.getElementById('ed-prompt-'+id).value.trim() || null
       };
@@ -303,7 +336,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 
   window.doApprove = async id => {
     try {
-      const { error } = await sb.rpc('approve_bulk_upload_item', { p_review_id: id });
+      const { error } = await sb.rpc('approve_bulk_upload_item', { p_review_id: String(id) });
       if (error) throw error;
       toast(t('rev.approved.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
@@ -320,7 +353,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const opts = document.querySelector('#rejReasonKind option:checked').textContent;
     const reason = opts + (notes ? ' — ' + notes : '');
     try {
-      const { error } = await sb.rpc('reject_to_archive', { p_review_id: id, p_reason: reason });
+      const { error } = await sb.rpc('reject_to_archive', { p_review_id: String(id), p_reason: reason });
       if (error) throw error; closeModal('rejectModal'); toast(t('rev.rejected.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   }
@@ -333,7 +366,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     const notes = document.getElementById('revNotes').value.trim();
     if (!notes){ toast(t('rev.err') + 'Please provide guidance.'); return; }
     try {
-      const { error } = await sb.rpc('request_review_revision', { p_review_id: id, p_notes: notes });
+      const { error } = await sb.rpc('request_review_revision', { p_review_id: String(id), p_notes: notes });
       if (error) throw error; closeModal('revisionModal'); toast(t('rev.revision.done')); loadList();
     } catch(e){ toast(t('rev.err') + e.message); }
   }

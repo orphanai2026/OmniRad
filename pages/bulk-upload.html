@@ -985,19 +985,37 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       const rf = row.querySelector('.row-form');
       if (rf.classList.contains('on')) return;
       const eff = effective(f);
+      const showSeq = (eff.modality === 'MRI');
       rf.innerHTML = (
         '<div class="form-grid">' +
           '<div class="field"><label>'+t('bu.f.plane')+'</label><select data-k="plane">' + planeOpts(eff.plane) + '</select></div>' +
           '<div class="field"><label>'+t('bu.f.modality')+'</label><select data-k="modality">' + modOpts(eff.modality) + '</select></div>' +
-          '<div class="field"><label>'+t('bu.f.sequence')+'</label><select data-k="sequence">' + seqOpts(eff.sequence) + '</select></div>' +
+          '<div class="field" data-seq-wrap style="display:'+(showSeq?'':'none')+'"><label>'+t('bu.f.sequence')+'</label><select data-k="sequence">' + seqOpts(eff.sequence) + '</select></div>' +
         '</div>' +
         '<div class="field" style="margin-top:12px"><label>'+t('bu.f.prompt')+'</label><textarea data-k="prompt">'+escapeHtml(eff.prompt||'')+'</textarea></div>' +
         '<div style="margin-top:10px;text-align:end"><button class="btn-mini on" data-act="save">'+t('bu.saveOverride')+'</button></div>'
       );
       rf.classList.add('on');
+      // Live toggle: sequence field visible only for MRI
+      const modSel = rf.querySelector('[data-k="modality"]');
+      const seqWrap = rf.querySelector('[data-seq-wrap]');
+      const seqSel  = rf.querySelector('[data-k="sequence"]');
+      if (modSel && seqWrap){
+        modSel.addEventListener('change', () => {
+          const isMri = modSel.value === 'MRI';
+          seqWrap.style.display = isMri ? '' : 'none';
+          if (!isMri && seqSel) seqSel.value = '';
+        });
+      }
       rf.querySelector('[data-act="save"]').onclick = () => {
         const patch = {};
-        rf.querySelectorAll('[data-k]').forEach(el => { if (el.value && el.value !== effective(f)[el.dataset.k]) patch[el.dataset.k] = el.value; });
+        rf.querySelectorAll('[data-k]').forEach(el => {
+          const k = el.dataset.k;
+          // Skip sequence when modality ≠ MRI (row-level modality wins over shared)
+          const rowMod = (rf.querySelector('[data-k="modality"]')||{}).value;
+          if (k === 'sequence' && rowMod !== 'MRI') return;
+          if (el.value && el.value !== effective(f)[k]) patch[k] = el.value;
+        });
         f.override = Object.keys(patch).length ? patch : null;
         renderRows();
       };
