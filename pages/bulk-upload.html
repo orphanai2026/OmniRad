@@ -775,7 +775,33 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       hiIdx = -1;
       const all = (window.OMNIRAD_ANATOMY && window.OMNIRAD_ANATOMY.structures) || [];
       const currentOrgan = (document.getElementById('fOrgan')||{}).value || '';
-      const scoped = currentOrgan ? all.filter(s => !s.region || s.region === currentOrgan) : all;
+      const orgLc = currentOrgan.toLowerCase();
+      // Region match: exact, substring either way, or first word match
+      const regionMatch = s => {
+        if (!s.region) return true;
+        const r = String(s.region).toLowerCase();
+        return r === orgLc || r.includes(orgLc) || orgLc.includes(r) ||
+               r.split(/[\s\/&]+/).some(w => w && orgLc.includes(w)) ||
+               orgLc.split(/[\s\/&]+/).some(w => w && r.includes(w));
+      };
+      let scoped = currentOrgan ? all.filter(regionMatch) : all;
+      // Also treat the picked organ as a parent structure — include its children
+      if (currentOrgan){
+        const parentHits = all.filter(s =>
+          (s.en||'').toLowerCase() === orgLc ||
+          (s.ar||'') === currentOrgan ||
+          (s.parent||'').toLowerCase() === orgLc ||
+          (Array.isArray(s.aliases) && s.aliases.some(a => (a||'').toLowerCase() === orgLc))
+        );
+        if (parentHits.length){
+          const seen = new Set(scoped.map(s => s.slug || s.en));
+          parentHits.forEach(p => {
+            if (!seen.has(p.slug||p.en)){ scoped.push(p); seen.add(p.slug||p.en); }
+          });
+        }
+      }
+      // Fallback: if region filter empties the list, fall back to all
+      if (currentOrgan && scoped.length === 0) scoped = all;
       let matches;
       if (!q){
         // No query — if organ picked, show ALL scoped structures for that organ (up to 40)
