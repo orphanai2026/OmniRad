@@ -603,7 +603,19 @@
 .omr-sv-root{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center}
 .omr-sv-back{position:absolute;inset:0;background:rgba(3,7,18,.88);backdrop-filter:blur(4px)}
 .omr-sv-shell{position:relative;z-index:1;width:min(96vw,1600px);max-height:96vh;display:flex;flex-direction:column;background:#0f172a;border:1px solid rgba(148,163,184,.18);border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.55);overflow:hidden;font-family:'IBM Plex Sans','Noto Sans Arabic',sans-serif}
-.omr-sv-shell.atlas{width:min(98vw,1800px);height:96vh;max-height:96vh;display:flex;flex-direction:column;overflow:hidden}
+/* ═══════ Atlas mode: absolute-positioned regions (bulletproof layout) ═══════ */
+.omr-sv-shell.atlas{position:relative;width:min(98vw,1800px);height:96vh;display:block;overflow:hidden}
+.omr-sv-shell.atlas .omr-sv-head    {position:absolute;top:0;left:0;right:0;height:56px;padding:8px 16px;border-bottom:1px solid rgba(148,163,184,.14);box-sizing:border-box;z-index:3;background:#0f172a}
+.omr-sv-shell.atlas .omr-sv-body    {position:absolute;top:56px;left:0;right:0;bottom:210px;padding:10px;display:flex;gap:10px;box-sizing:border-box;overflow:hidden;z-index:1}
+.omr-sv-shell.atlas .omr-sv-strip   {position:absolute;left:0;right:0;bottom:120px;height:90px;padding:6px 12px;box-sizing:border-box;background:rgba(2,6,23,.72);border-top:1px solid rgba(148,163,184,.10);border-bottom:1px solid rgba(148,163,184,.10);display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;z-index:2}
+.omr-sv-shell.atlas .omr-sv-foot    {position:absolute;left:0;right:0;bottom:60px;height:60px;padding:8px 16px;box-sizing:border-box;border-top:none;border-bottom:1px solid rgba(148,163,184,.10);display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:2;background:#0f172a}
+.omr-sv-shell.atlas .omr-sv-rel-wrap{position:absolute;left:0;right:0;bottom:0;height:60px;padding:6px 16px;box-sizing:border-box;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;gap:10px;z-index:2;background:#0f172a}
+.omr-sv-shell.atlas .omr-sv-rel-wrap .omr-sv-rel-hdr{margin:0 8px 0 0;font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;font-weight:700;white-space:nowrap;flex:none}
+.omr-sv-shell.atlas .omr-sv-rel-wrap .omr-sv-rel-list{display:flex;gap:8px;flex:1 1 auto;overflow-x:auto}
+.omr-sv-shell.atlas .omr-sv-rel{min-width:150px;padding:4px 6px}
+.omr-sv-shell.atlas .omr-sv-rel img,.omr-sv-shell.atlas .omr-sv-rel-ph{width:32px;height:32px;aspect-ratio:1/1;flex:none}
+.omr-sv-shell.atlas .omr-sv-rel{flex-direction:row;align-items:center;gap:8px}
+.omr-sv-shell.atlas .omr-sv-rel-lbl{font-size:11px;flex:1;min-width:0}
 .omr-sv-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(148,163,184,.14)}
 .omr-sv-title{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:#e2e8f0;min-width:0;flex-wrap:wrap}
 .omr-sv-badge{background:rgba(45,212,200,.14);color:#2dd4c8;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(45,212,200,.35)}
@@ -622,13 +634,13 @@
 .omr-sv-btn.danger{color:#ef4444;border-color:rgba(239,68,68,.4)}
 /* Review mode 3-up */
 .omr-sv-3up{display:grid;grid-template-columns:1fr 1.8fr 1fr;gap:10px;padding:14px;flex:1;min-height:0}
-.omr-sv-pane{position:relative;background:#020617;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:280px}
+.omr-sv-pane{position:relative;background:#000;border-radius:8px;overflow:hidden;display:grid;place-items:center;min-height:280px}
 .omr-sv-pane.current{outline:2px solid #2dd4c8;outline-offset:-2px}
-.omr-sv-pane.empty{border:1px dashed rgba(148,163,184,.25)}
-.omr-sv-pane img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.omr-sv-pane.empty{border:1px dashed rgba(148,163,184,.25);background:#020617}
+.omr-sv-pane img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none;display:block;margin:auto}
 .omr-sv-placeholder{color:#64748b;font-size:12px;font-style:italic}
-/* Atlas mode body: side | stage | position (flex, not grid) */
-.omr-sv-body{display:flex;gap:10px;padding:12px;flex:1 1 auto;min-height:0;overflow:hidden}
+/* Atlas body sub-panels (children of the absolutely-positioned body) */
+.omr-sv-body{display:flex;gap:10px;padding:12px;min-height:0;overflow:hidden}
 .omr-sv-side{flex:0 0 220px;background:#020617;border-radius:8px;padding:12px;overflow-y:auto;color:#cbd5e1;font-size:12px;border:1px solid rgba(148,163,184,.10);min-height:0}
 .omr-sv-side-hdr{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:8px;font-weight:700}
 .omr-sv-side-body{display:flex;flex-wrap:wrap;gap:5px}
@@ -637,10 +649,10 @@
 .omr-sv-side-pearl,.omr-sv-side-pitfall{margin-top:12px;padding:8px 10px;border-radius:6px;font-size:11.5px;line-height:1.55}
 .omr-sv-side-pearl{background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.30);color:#10b981}
 .omr-sv-side-pitfall{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.30);color:#f59e0b}
-.omr-sv-stage{position:relative;flex:1 1 auto;background:#020617;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0;min-width:0;cursor:grab}
+.omr-sv-stage{position:relative;flex:1 1 auto;background:#000;border-radius:8px;overflow:hidden;display:block;min-height:0;min-width:0;cursor:grab}
 .omr-sv-stage:active{cursor:grabbing}
-.omr-sv-img-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;transform-origin:center center;transition:transform .06s linear, filter .12s}
-.omr-sv-img-wrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:crisp-edges}
+.omr-sv-img-wrap{position:absolute;inset:0;display:grid;place-items:center;background:#000;transform-origin:center center;transition:transform .06s linear, filter .12s;overflow:hidden}
+.omr-sv-img-wrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:crisp-edges;display:block;margin:auto}
 .omr-sv-wl-menu{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .omr-sv-wl-menu button{background:transparent;border:1px solid rgba(148,163,184,.2);color:#cbd5e1;padding:5px 10px;border-radius:5px;font:600 11px 'IBM Plex Sans',sans-serif;cursor:pointer}
 .omr-sv-wl-menu button.on{background:rgba(45,212,200,.16);border-color:rgba(45,212,200,.5);color:#2dd4c8}
@@ -692,8 +704,7 @@
 .omr-sv-root.fs .omr-sv-shell{width:98vw;max-height:98vh}
 .mono{font-family:'IBM Plex Mono',monospace}
 @media (max-width:1100px){
-  .omr-sv-body{flex-direction:column}
-  .omr-sv-side,.omr-sv-pos{display:none}
+  .omr-sv-shell.atlas .omr-sv-side,.omr-sv-shell.atlas .omr-sv-pos{display:none}
 }
 @media (max-width:820px){
   .omr-sv-3up{grid-template-columns:1fr}
