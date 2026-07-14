@@ -603,7 +603,12 @@
 .omr-sv-root{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center}
 .omr-sv-back{position:absolute;inset:0;background:rgba(3,7,18,.88);backdrop-filter:blur(4px)}
 .omr-sv-shell{position:relative;z-index:1;width:min(96vw,1600px);max-height:96vh;display:flex;flex-direction:column;background:#0f172a;border:1px solid rgba(148,163,184,.18);border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.55);overflow:hidden;font-family:'IBM Plex Sans','Noto Sans Arabic',sans-serif}
-.omr-sv-shell.atlas{width:min(98vw,1800px);max-height:98vh}
+.omr-sv-shell.atlas{width:min(98vw,1800px);height:96vh;max-height:96vh;display:grid;grid-template-rows:auto 1fr auto auto auto;grid-template-areas:'head' 'body' 'strip' 'foot' 'rel';overflow:hidden}
+.omr-sv-shell.atlas .omr-sv-head{grid-area:head}
+.omr-sv-shell.atlas .omr-sv-body{grid-area:body}
+.omr-sv-shell.atlas .omr-sv-strip{grid-area:strip}
+.omr-sv-shell.atlas .omr-sv-foot{grid-area:foot}
+.omr-sv-shell.atlas .omr-sv-rel-wrap{grid-area:rel}
 .omr-sv-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(148,163,184,.14)}
 .omr-sv-title{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:#e2e8f0;min-width:0;flex-wrap:wrap}
 .omr-sv-badge{background:rgba(45,212,200,.14);color:#2dd4c8;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(45,212,200,.35)}
@@ -628,8 +633,8 @@
 .omr-sv-pane img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none}
 .omr-sv-placeholder{color:#64748b;font-size:12px;font-style:italic}
 /* Atlas mode body */
-.omr-sv-body{display:grid;grid-template-columns:220px 1fr 68px;gap:10px;padding:12px;flex:1;min-height:0}
-.omr-sv-side{background:#020617;border-radius:8px;padding:12px;overflow-y:auto;color:#cbd5e1;font-size:12px;border:1px solid rgba(148,163,184,.10)}
+.omr-sv-body{display:grid;grid-template-columns:220px 1fr 68px;gap:10px;padding:12px;min-height:0;overflow:hidden}
+.omr-sv-side{background:#020617;border-radius:8px;padding:12px;overflow-y:auto;color:#cbd5e1;font-size:12px;border:1px solid rgba(148,163,184,.10);min-height:0}
 .omr-sv-side-hdr{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:8px;font-weight:700}
 .omr-sv-side-body{display:flex;flex-wrap:wrap;gap:5px}
 .omr-sv-struct{background:rgba(45,212,200,.10);color:#2dd4c8;padding:3px 8px;border-radius:6px;font-size:11px;border:1px solid rgba(45,212,200,.28);cursor:help}
@@ -637,21 +642,21 @@
 .omr-sv-side-pearl,.omr-sv-side-pitfall{margin-top:12px;padding:8px 10px;border-radius:6px;font-size:11.5px;line-height:1.55}
 .omr-sv-side-pearl{background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.30);color:#10b981}
 .omr-sv-side-pitfall{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.30);color:#f59e0b}
-.omr-sv-stage{position:relative;background:#020617;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:400px;cursor:grab}
+.omr-sv-stage{position:relative;background:#020617;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0;min-width:0;cursor:grab}
 .omr-sv-stage:active{cursor:grabbing}
 .omr-sv-img-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;transform-origin:center center;transition:transform .06s linear, filter .12s}
 .omr-sv-img-wrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:crisp-edges}
 .omr-sv-wl-menu{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .omr-sv-wl-menu button{background:transparent;border:1px solid rgba(148,163,184,.2);color:#cbd5e1;padding:5px 10px;border-radius:5px;font:600 11px 'IBM Plex Sans',sans-serif;cursor:pointer}
 .omr-sv-wl-menu button.on{background:rgba(45,212,200,.16);border-color:rgba(45,212,200,.5);color:#2dd4c8}
-.omr-sv-pos{background:#020617;border-radius:8px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid rgba(148,163,184,.10)}
+.omr-sv-pos{background:#020617;border-radius:8px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid rgba(148,163,184,.10);min-height:0}
 .omr-sv-pos-lbl{font-size:9.5px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
 .omr-sv-pos-bar{position:relative;flex:1;width:6px;background:rgba(148,163,184,.14);border-radius:3px;min-height:200px}
 .omr-sv-pos-dot{position:absolute;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#2dd4c8;box-shadow:0 0 0 3px rgba(45,212,200,.25);transition:top .18s}
 .omr-sv-pos-pct{font-size:11px;color:#2dd4c8;font-weight:700}
 .omr-sv-pos-word{font-size:9.5px;color:#94a3b8;writing-mode:vertical-rl;text-align:center}
 /* Filmstrip */
-.omr-sv-strip{display:flex;gap:5px;padding:8px 12px;overflow-x:auto;background:rgba(2,6,23,.5);border-top:1px solid rgba(148,163,184,.10);border-bottom:1px solid rgba(148,163,184,.10);scroll-snap-type:x proximity}
+.omr-sv-strip{display:flex;gap:5px;padding:8px 12px;overflow-x:auto;overflow-y:hidden;background:rgba(2,6,23,.5);border-top:1px solid rgba(148,163,184,.10);border-bottom:1px solid rgba(148,163,184,.10);scroll-snap-type:x proximity;flex:none}
 .omr-sv-strip::-webkit-scrollbar{height:6px}.omr-sv-strip::-webkit-scrollbar-thumb{background:rgba(45,212,200,.3);border-radius:3px}
 .omr-sv-thumb{position:relative;width:72px;height:72px;flex:none;border-radius:5px;overflow:hidden;background:#020617;border:2px solid transparent;cursor:pointer;transition:border-color .12s, transform .12s;scroll-snap-align:center}
 .omr-sv-thumb:hover{border-color:rgba(45,212,200,.5);transform:scale(1.04)}
@@ -692,6 +697,7 @@
 .omr-sv-root.fs .omr-sv-shell{width:98vw;max-height:98vh}
 .mono{font-family:'IBM Plex Mono',monospace}
 @media (max-width:1100px){
+  .omr-sv-shell.atlas{grid-template-rows:auto 1fr auto auto auto}
   .omr-sv-body{grid-template-columns:1fr}
   .omr-sv-side,.omr-sv-pos{display:none}
 }
