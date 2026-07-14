@@ -104,6 +104,7 @@ h1{font-size:clamp(1.8rem,3.6vw,2.3rem);font-weight:700;letter-spacing:-.02em;ma
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="../modules/omnirad-flag.js"></script>
 <script>
 const A = window.OMNIRAD_ANATOMY;
 const isAr = () => window.OmniRadI18n && OmniRadI18n.lang === 'ar';
@@ -215,6 +216,7 @@ function openDetail(id){
     <div class="row">
       <a class="btn primary" href="atlas.html?structure=${encodeURIComponent(s.id)}">${ar?'شاهد في الأطلس ↗':'View in Atlas ↗'}</a>
       <a class="btn" href="${radLink}" target="_blank" rel="noopener">${tt('dict.moreInfo')}</a>
+      ${window.OmniRadFlag ? OmniRadFlag.buttonHtml(s.id, s.en) : ''}
     </div>
     ${children.length ? `<div class="sec-t">${tt('dict.substructures')}</div><ul>${children.map(c=>`<li><a href="#" data-jump="${c.id}">${ar?c.ar:c.en}</a></li>`).join('')}</ul>` : ''}
     ${siblings.length ? `<div class="sec-t">${tt('dict.related')}</div><ul>${siblings.map(sib=>`<li><a href="#" data-jump="${sib.id}">${ar?sib.ar:sib.en}</a></li>`).join('')}</ul>` : ''}
@@ -223,6 +225,7 @@ function openDetail(id){
   document.getElementById('detailPanel').classList.add('on');
   document.querySelectorAll('.term').forEach(el => el.classList.toggle('on', el.dataset.tid === id));
   document.querySelectorAll('#detailPanel [data-jump]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); openDetail(a.dataset.jump); }));
+  if (window.OmniRadFlag) OmniRadFlag.mount();
   history.replaceState(null, '', '?term=' + encodeURIComponent(id));
 }
 window.openDetail = openDetail;
