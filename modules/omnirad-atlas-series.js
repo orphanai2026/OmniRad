@@ -17,7 +17,7 @@
   'use strict';
 
   const CACHE_TTL_MS = 60 * 1000;
-  const BUCKET = 'omnirad-images'; // matches supabase.js default (fallback to 'atlas')
+  const BUCKET = 'atlas'; // matches omnirad-atlas-dynamic.js (production bucket)
   let listCache = null;
   let listCacheAt = 0;
 
@@ -41,7 +41,7 @@
     try {
       return client.storage.from(BUCKET).getPublicUrl(storagePath).data.publicUrl;
     } catch(_){
-      try { return client.storage.from('atlas').getPublicUrl(storagePath).data.publicUrl; }
+      try { return client.storage.from('omnirad-images').getPublicUrl(storagePath).data.publicUrl; }
       catch(_){ return ''; }
     }
   }
