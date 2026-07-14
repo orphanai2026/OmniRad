@@ -220,6 +220,8 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
     <div id="atlasGrowth" style="margin:8px 0 12px"></div>
     <div id="communityBadge" style="margin:0 0 12px"></div>
     <div id="structureFlag" style="margin:0 0 12px"></div>
+    <!-- Sprint 4f: Series section (populated by omnirad-atlas-series.js) -->
+    <div id="atlasSeriesSection" style="margin:14px 0 6px"></div>
     <h3 data-i18n="atlas.study">Study</h3>
     <div class="kv"><span class="k">Modality</span><span class="v" id="infoMod">—</span></div>
     <div class="kv"><span class="k">Plane</span><span class="v" id="infoPlane">—</span></div>
@@ -251,6 +253,11 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 <script src="../modules/structures.js"></script>
 <script src="../modules/speak.js"></script>
 <script src="../modules/omnirad-atlas-dynamic.js"></script>
+<!-- Sprint 4f: Series Viewer + Atlas Series orchestrator -->
+<script src="../modules/omnirad-coherence.js"></script>
+<script src="../modules/omnirad-anatomy-ribbon.js"></script>
+<script src="../modules/omnirad-series-viewer.js"></script>
+<script src="../modules/omnirad-atlas-series.js"></script>
 <script src="../modules/omnirad-flag.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -1120,6 +1127,49 @@ selectStructure('brain');
     }
 
   } catch(e){ console.warn('[atlas] dynamic init error', e); }
+})();
+</script>
+<!-- ═════════ Sprint 4f: Atlas Series init & deep-link ═════════ -->
+<script>
+(async function initAtlasSeries(){
+  // Wait for auth client + module readiness
+  let tries = 0;
+  while (!(window.OmniRadAuth && OmniRadAuth.client && window.OmniRadAtlasSeries) && tries < 50){
+    await new Promise(r => setTimeout(r, 100)); tries++;
+  }
+  if (!window.OmniRadAtlasSeries){ console.warn('[atlas] Series module not ready'); return; }
+
+  // 1) Deep-link: ?series_id=X&slice=Y opens viewer immediately
+  try { await window.OmniRadAtlasSeries.handleUrl(); } catch(e){ console.warn('[atlas] handleUrl', e); }
+
+  // 2) Populate the Series section (scoped to current URL organ/modality if present)
+  try {
+    const url = new URL(location.href);
+    const opts = {
+      organ:    url.searchParams.get('organ')    || undefined,
+      modality: url.searchParams.get('modality') || undefined,
+      plane:    url.searchParams.get('plane')    || undefined,
+      limit:    12
+    };
+    const rows = await window.OmniRadAtlasSeries.list(opts);
+    const box  = document.getElementById('atlasSeriesSection');
+    if (!box) return;
+    if (!rows.length){ box.innerHTML = ''; return; }
+    const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+    const title = lang === 'ar' ? 'السلاسل التصويرية' : 'Series';
+    const sub   = lang === 'ar' ? 'اضغط أي سلسلة لفتح المشاهد الكامل' : 'Tap any series to open the full viewer';
+    box.innerHTML = `
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--text)">📚 ${title}</div>
+          <div style="font-size:10.5px;color:var(--text-m);margin-top:2px">${sub}</div>
+        </div>
+        <span style="font-size:10.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">${rows.length}</span>
+      </div>
+      <div class="atlas-series-grid" id="atlasSeriesGrid">${rows.map(window.OmniRadAtlasSeries.renderCard).join('')}</div>
+    `;
+    window.OmniRadAtlasSeries.attachClickHandlers(document.getElementById('atlasSeriesGrid'));
+  } catch(e){ console.warn('[atlas] series-section init', e); }
 })();
 </script>
 </body>
