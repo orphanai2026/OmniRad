@@ -293,6 +293,7 @@ body[dir="rtl"] .gen-en{display:none!important}body[dir="rtl"] .gen-ar{display:i
 <script src="../modules/omnirad-typography.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="../modules/omnirad-image-standard.js"></script>
 <script src="../modules/data/anatomy-dict.js"></script>
 <script src="../modules/data/anatomy-landmarks.js"></script>
 <script src="../modules/data/presets-acr.js"></script>
@@ -314,7 +315,10 @@ document.addEventListener('click', function(e){
     const negRow = document.getElementById('negRow');
     const negVisible = negRow && negRow.style.display !== 'none';
     const neg = negVisible ? (negEl && negEl.textContent || '').trim() : '';
-    const text = neg ? (body + '\n\nNegative prompt: ' + neg) : body;
+    const specBlock = (window.OmniRadImageStd && window.OmniRadImageStd.promptSpecBlock)
+      ? window.OmniRadImageStd.promptSpecBlock(isAr ? 'ar' : 'en')
+      : '';
+    const text = (neg ? (body + '\n\nNegative prompt: ' + neg) : body) + specBlock;
     try {
       localStorage.setItem('omnirad:last-prompt', text);
       localStorage.setItem('omnirad:last-prompt-lang', isAr ? 'ar' : 'en');
@@ -333,8 +337,13 @@ document.addEventListener('click', function(e){
   if (!b) return;
   const which = b.getAttribute('data-gpt');
   const el = document.getElementById(which === 'ar' ? 'outAr' : 'outEn');
-  const text = (el && el.textContent || '').trim();
-  if (!text){ alert('لا يوجد برومبت / No prompt yet'); return; }
+  const bodyText = (el && el.textContent || '').trim();
+  if (!bodyText){ alert('لا يوجد برومبت / No prompt yet'); return; }
+  // Append DICOM-compatible IMAGE SPECIFICATIONS block (Sprint 4g)
+  const specBlockCopy = (window.OmniRadImageStd && window.OmniRadImageStd.promptSpecBlock)
+    ? window.OmniRadImageStd.promptSpecBlock(which)
+    : '';
+  const text = bodyText + specBlockCopy;
   // Auto-save last prompt for history/reuse
   try {
     localStorage.setItem('omnirad:last-prompt', text);
