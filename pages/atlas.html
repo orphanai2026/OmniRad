@@ -566,12 +566,18 @@ function renderInfo(){
 /* ─────── Selection ─────── */
 function selectStructure(id){
   state.structId = id;
-  const av = U.modalitiesFor(id);
-  // CT default — fall back to first available if the structure has no CT
+  let av = [];
+  try { av = U.modalitiesFor(id) || []; } catch(_){ av = []; }
+  if (!Array.isArray(av)) av = [];
+  // Community/unknown structures: give them the full modality palette so tabs work
+  if (!av.length) av = ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'];
   state.modality = av.includes('CT') ? 'CT' : (av[0] || 'CT');
   state.plane = ''; state.variant = '';
-  renderSidebar($('search').value); renderModBar(); renderSubPicker();
-  loadCurrent();
+  try { renderSidebar($('search').value); } catch(e){ console.warn('[atlas] renderSidebar', e); }
+  try { renderModBar(); } catch(e){ console.warn('[atlas] renderModBar', e); }
+  try { renderSubPicker(); } catch(e){ console.warn('[atlas] renderSubPicker', e); }
+  try { renderInfo(); } catch(e){ console.warn('[atlas] renderInfo', e); }
+  try { loadCurrent(); } catch(e){ console.warn('[atlas] loadCurrent', e); }
 }
 
 /* ─────── Load current image ─────── */
