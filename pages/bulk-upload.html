@@ -209,6 +209,39 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
           </label>
           <input type="text" id="fSeriesName" placeholder="Brain CT — Normal — Axial" maxlength="120" style="width:100%">
         </div>
+
+        <!-- ═════ Standardized Naming System (LOINC + RadLex + DICOM CID) ═════ -->
+        <div id="namingWrap" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-s)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:12.5px;font-weight:700" data-i18n="bu.nm.title">Standardized naming (recommended)</div>
+              <div style="font-size:11px;color:var(--text-m);margin-top:2px" data-i18n="bu.nm.help">Pick a LOINC/RadLex template to make this series searchable across the platform.</div>
+            </div>
+            <button type="button" id="nmClear" class="btn-mini" style="font-size:10.5px;padding:5px 10px" data-i18n="bu.nm.clear">Clear</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="field" style="margin:0">
+              <label style="font-size:11px;color:var(--text-s)" data-i18n="bu.nm.region">Body region (DICOM CID 4031)</label>
+              <select id="nmRegion" style="width:100%"><option value="">—</option></select>
+            </div>
+            <div class="field" style="margin:0">
+              <label style="font-size:11px;color:var(--text-s)" data-i18n="bu.nm.modality">Modality (LOINC/RSNA)</label>
+              <select id="nmModality" style="width:100%"><option value="">—</option></select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:10px">
+            <label style="font-size:11px;color:var(--text-s)">
+              <span data-i18n="bu.nm.template">Series template</span>
+              <span class="hint" style="margin-inline-start:6px" data-i18n="bu.nm.templateHint">— search 7,000+ LOINC/RSNA procedures</span>
+            </label>
+            <div class="chip-input" id="nmTemplateBox" style="cursor:text;position:relative">
+              <input type="text" id="nmTemplateSearch" placeholder="e.g. CT Head WO contrast · دوبلر السباتي · MRI Brain W and WO" autocomplete="off" style="width:100%;background:transparent;border:0;color:var(--text);font:inherit;outline:none">
+              <div class="ac-list" id="nmTemplateList"></div>
+            </div>
+          </div>
+          <div id="nmBadge" style="margin-top:10px;min-height:28px"></div>
+        </div>
+
       </div>
       <div class="card">
         <h2><span class="k">02</span><span data-i18n="bu.p2title">Fill metadata for each image</span></h2>
@@ -360,6 +393,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="../modules/data/dicom-body-parts.js"></script>
+<script src="../modules/data/radiology-playbook.js"></script>
+<script src="../modules/data/radiology-arabic.js"></script>
+<script src="../modules/omnirad-naming.js"></script>
 <script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/data/anatomy-master.js"></script>
@@ -405,6 +442,11 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       'bu.seriesReorderHint':'Series mode: drag tiles to reorder — slice numbers assign automatically (01, 02, 03…).',
       'bu.needSeriesName':'Enter a series name before submitting.',
       'bu.needSeriesMin':'Series mode requires at least 2 slices — add more images or switch to Individual mode.',
+      'bu.nm.title':'Standardized naming (recommended)',
+      'bu.nm.help':'Pick a LOINC/RadLex template to make this series searchable across the platform.',
+      'bu.nm.clear':'Clear','bu.nm.region':'Body region (DICOM CID 4031)','bu.nm.modality':'Modality (LOINC/RSNA)',
+      'bu.nm.template':'Series template','bu.nm.templateHint':'— search 7,000+ LOINC/RSNA procedures',
+      'bu.nm.custom':'Custom naming — searchability reduced','bu.nm.noMatch':'No template matches. Enter a custom name below.',
     },
     ar: {
       'bu.eyebrow':'رفع جماعي','bu.title':'ارفع صوراً إلى الأطلس',
@@ -439,6 +481,11 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       'bu.seriesReorderHint':'وضع السلسلة: اسحب المربعات لإعادة الترتيب — أرقام الشرائح تُعطى تلقائياً (٠١، ٠٢، ٠٣…).',
       'bu.needSeriesName':'أدخل اسم السلسلة قبل الإرسال.',
       'bu.needSeriesMin':'وضع السلسلة يتطلّب شريحتين على الأقل — أضف صوراً أو انتقل لوضع «فردي».',
+      'bu.nm.title':'تسمية قياسية (موصى بها)',
+      'bu.nm.help':'اختر قالب LOINC/RadLex لجعل السلسلة قابلة للبحث في جميع أرجاء المنصّة.',
+      'bu.nm.clear':'مسح','bu.nm.region':'منطقة الجسم (DICOM CID 4031)','bu.nm.modality':'المودالتي (LOINC/RSNA)',
+      'bu.nm.template':'قالب السلسلة','bu.nm.templateHint':'— ابحث في +٧٠٠٠ إجراء من LOINC/RSNA',
+      'bu.nm.custom':'تسمية مخصّصة — قابلية البحث محدودة','bu.nm.noMatch':'لا قالب يطابق. أدخل اسماً مخصّصاً أدناه.',
     }
   };
   const t = k => {
@@ -459,6 +506,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
   let files = []; // {id, file, previewUrl, override:{}}
   let mode = 'series'; // 'series' | 'individual'
   let shared = { organ:'', modality:'', plane:'', sequence:'', structures:[], level:'', prompt:'', citation:'' };
+  let namingSel = null; // {loinc, rpid, en, ar, body_part_examined, series_technique, region, modality, tier}
 
   // Hoisted so wireDropzone's Next handler can call it (was previously trapped inside wireForm)
   function captureShared(){
@@ -496,6 +544,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     }
     wireDropzone();
     wireForm();
+    wireNamingPicker();
     refreshPlaneOptions();  // initial
   }
 
@@ -1039,6 +1088,138 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     document.getElementById('rowCount').textContent = files.length;
   }
 
+  // ── Standardized Naming Picker (LOINC + RadLex + DICOM CID) ─────────
+  function wireNamingPicker(){
+    const wait = setInterval(() => {
+      if (window.OmniRadNaming){ clearInterval(wait); initNamingPicker(); }
+    }, 60);
+    setTimeout(() => clearInterval(wait), 5000);
+  }
+
+  function initNamingPicker(){
+    const regSel  = document.getElementById('nmRegion');
+    const modSel  = document.getElementById('nmModality');
+    const search  = document.getElementById('nmTemplateSearch');
+    const list    = document.getElementById('nmTemplateList');
+    const badge   = document.getElementById('nmBadge');
+    const clrBtn  = document.getElementById('nmClear');
+    if (!regSel || !modSel || !search || !list || !badge) return;
+    const N = window.OmniRadNaming;
+
+    // Populate Region groups from DICOM CID + LOINC regions (union)
+    const groups = N.bodyPartGroups();
+    const loincRegions = N.regions();
+    let opts = '<option value="">—</option>';
+    opts += '<optgroup label="DICOM CID 4031 (Body Regions)">';
+    groups.forEach(g => { opts += `<option value="g:${g.id}">${g.en} — ${g.ar}</option>`; });
+    opts += '</optgroup><optgroup label="LOINC/RSNA Regions">';
+    loincRegions.forEach(r => { opts += `<option value="lr:${r.code}">${r.code} — ${r.ar} (${r.count})</option>`; });
+    opts += '</optgroup>';
+    regSel.innerHTML = opts;
+
+    // Populate Modality from LOINC playbook
+    const mods = N.modalities();
+    modSel.innerHTML = '<option value="">—</option>' +
+      mods.map(m => `<option value="${m.code}">${m.code} — ${m.ar} (${m.count})</option>`).join('');
+
+    // Filter helper: returns {modality, region} for search()
+    function getFilter(){
+      const rv = regSel.value || '';
+      let region = null;
+      if (rv.startsWith('lr:')) region = rv.slice(3);
+      // If DICOM group picked, we don't have a direct LOINC region — leave null,
+      // search still filters by text; that's OK.
+      return { modality: modSel.value || null, region };
+    }
+
+    function renderList(matches){
+      if (!matches.length){
+        list.innerHTML = '<div class="ac-item" style="opacity:.55;pointer-events:none">'+ t('bu.nm.noMatch') +'</div>';
+        list.classList.add('on');
+        return;
+      }
+      list.innerHTML = matches.map((m, i) => `
+        <div class="ac-item" data-i="${i}">
+          <span class="en">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--acc);margin-inline-end:6px">${m.loinc}</span>
+            ${escapeHtml(m.en)}
+          </span>
+          <span class="ar">${escapeHtml(m.ar)}</span>
+        </div>`).join('');
+      list.classList.add('on');
+      list.querySelectorAll('.ac-item[data-i]').forEach(el => {
+        el.onclick = () => selectTemplate(matches[+el.dataset.i]);
+      });
+    }
+
+    function doSearch(){
+      const q = search.value.trim();
+      const f = getFilter();
+      const matches = N.search(q, { modality: f.modality, region: f.region, limit: 40 });
+      renderList(matches);
+    }
+
+    function selectTemplate(m){
+      const resolved = N.resolve(m.loinc);
+      if (!resolved) return;
+      namingSel = {
+        loinc: resolved.loinc,
+        rpid:  resolved.rpid || '',
+        en:    resolved.en,
+        ar:    resolved.ar,
+        body_part_examined: '', // DICOM code (filled below if region group picked)
+        series_technique:  resolved.meta.timing || '',
+        region:            resolved.meta.region || '',
+        modality:          resolved.meta.modality || '',
+        tier:              'standard'
+      };
+      // If a DICOM group is picked and a specific body-part fits, we leave as-is;
+      // otherwise the user can refine later.
+      const rv = regSel.value || '';
+      if (rv.startsWith('g:')){ /* group only; no exact body-part yet */ }
+
+      // Reflect in UI
+      badge.innerHTML = N.renderBadge(resolved, (window.OmniRadI18n && OmniRadI18n.lang) || 'en');
+      search.value = resolved.en;
+      list.classList.remove('on');
+
+      // Auto-fill Series name (only if empty — don't overwrite user text)
+      const sn = document.getElementById('fSeriesName');
+      if (sn && !sn.value.trim()){
+        const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+        sn.value = lang === 'ar' ? resolved.ar : resolved.en;
+      }
+
+      // Sync legacy Modality field if empty
+      const legacyMod = document.getElementById('fModality');
+      if (legacyMod && !legacyMod.value){
+        const modMap = { 'CT':'CT','MR':'MRI','US':'US','XR':'X-Ray','NM':'NM','MG':'Mammo','PT':'PET','PT+CT':'PET','NM.SPECT+CT':'NM','DXA':'X-Ray','RF':'X-Ray' };
+        const val = modMap[resolved.meta.modality];
+        if (val){ legacyMod.value = val; refreshPlaneOptions(); document.getElementById('seqField').style.display = val==='MRI' ? '' : 'none'; }
+      }
+    }
+
+    function clearSelection(){
+      namingSel = null;
+      badge.innerHTML = '';
+      search.value = '';
+      regSel.value = '';
+      modSel.value = '';
+      list.classList.remove('on');
+    }
+
+    // Wire events
+    search.addEventListener('input', doSearch);
+    search.addEventListener('focus', doSearch);
+    regSel.addEventListener('change', doSearch);
+    modSel.addEventListener('change', doSearch);
+    clrBtn && clrBtn.addEventListener('click', clearSelection);
+    document.addEventListener('click', e => {
+      const box = document.getElementById('nmTemplateBox');
+      if (box && !box.contains(e.target)) list.classList.remove('on');
+    });
+  }
+
   // ── Step 4: Submit ─────────────────────────────
   async function submitBatch(){
     // Series-mode validation
@@ -1090,6 +1271,12 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         slice_index:  seriesId ? (i + 1) : null,
         series_name:  seriesName,
         series_total: seriesTotal,
+        // Standardized naming (null if user didn't pick a LOINC template)
+        loinc_code:          namingSel ? namingSel.loinc : null,
+        radlex_playbook_id:  namingSel ? namingSel.rpid  : null,
+        body_part_examined:  namingSel ? namingSel.body_part_examined : null,
+        series_technique:    namingSel ? namingSel.series_technique : null,
+        naming_tier:         namingSel ? namingSel.tier : (seriesName ? 'custom' : null),
       });
       document.getElementById('progNow').textContent = i + 1;
       document.getElementById('progFill').style.width = (((i+1)/total)*100) + '%';
