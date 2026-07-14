@@ -49,6 +49,7 @@
   .omr-vw.tool-pan canvas{cursor:grab}
   .omr-vw.tool-wl canvas{cursor:ns-resize}
   .omr-vw.tool-measure canvas,.omr-vw.tool-angle canvas,.omr-vw.tool-probe canvas,.omr-vw.tool-rect canvas,.omr-vw.tool-ellipse canvas,.omr-vw.tool-arrow canvas{cursor:crosshair}
+  .omr-vw.tool-text canvas{cursor:text}
   `;
   if (!document.getElementById('omr-vw-css')){
     const s = document.createElement('style'); s.id = 'omr-vw-css'; s.textContent = CSS; document.head.appendChild(s);
@@ -74,6 +75,7 @@
         <button class="omr-btn" data-tool="rect" title="Rect ROI">▢</button>
         <button class="omr-btn" data-tool="ellipse" title="Ellipse ROI">◯</button>
         <button class="omr-btn" data-tool="arrow" title="Arrow">↗</button>
+        <button class="omr-btn" data-tool="text" title="Text label">T</button>
         <button class="omr-btn" data-tool="probe" title="Probe (O)">•</button>
         <span class="sep"></span>
         <span class="omr-tv" data-role="ww">—</span>
@@ -164,6 +166,7 @@
         else if (m.type === 'ellipse' && m.points.length === 2){ const [a,b] = m.points; const e = document.createElementNS(NS,'ellipse'); e.setAttribute('cx', (a.x+b.x)/2); e.setAttribute('cy', (a.y+b.y)/2); e.setAttribute('rx', Math.abs(b.x-a.x)/2); e.setAttribute('ry', Math.abs(b.y-a.y)/2); e.setAttribute('fill','none'); e.setAttribute('stroke','#a78bfa'); e.setAttribute('stroke-width','2'); svg.appendChild(e); }
         else if (m.type === 'arrow' && m.points.length === 2){ const [a,b] = m.points; line(a,b,'#4ade80'); const ang = Math.atan2(b.y-a.y, b.x-a.x); const sz = 10; const p1 = {x:b.x-Math.cos(ang-Math.PI/7)*sz, y:b.y-Math.sin(ang-Math.PI/7)*sz}; const p2 = {x:b.x-Math.cos(ang+Math.PI/7)*sz, y:b.y-Math.sin(ang+Math.PI/7)*sz}; line(b,p1,'#4ade80'); line(b,p2,'#4ade80'); }
         else if (m.type === 'probe' && m.points.length === 1){ const p = m.points[0]; const c = document.createElementNS(NS,'circle'); c.setAttribute('cx',p.x); c.setAttribute('cy',p.y); c.setAttribute('r','5'); c.setAttribute('fill','none'); c.setAttribute('stroke','#a3e635'); c.setAttribute('stroke-width','1.5'); svg.appendChild(c); try { const px = ctx.getImageData(p.x, p.y, 1, 1).data; const gray = Math.round(px[0]*0.299 + px[1]*0.587 + px[2]*0.114); txt(p.x+10, p.y-6, 'g='+gray, '#a3e635'); } catch(e){} }
+        else if (m.type === 'text' && m.points.length === 1){ const p = m.points[0]; const c = document.createElementNS(NS,'circle'); c.setAttribute('cx',p.x); c.setAttribute('cy',p.y); c.setAttribute('r','2.5'); c.setAttribute('fill','#f8fafc'); svg.appendChild(c); txt(p.x+8, p.y+4, m.label, '#f8fafc'); }
       });
     }
     function refresh(){
@@ -199,6 +202,9 @@
         else { tmp.points.push(p); if (tmp.points.length === 3){ st.measurements.push(tmp); tmp = null; drawMeasurements(); } }
       } else if (st.tool === 'probe'){
         st.measurements.push({ type:'probe', points:[p] }); drawMeasurements();
+      } else if (st.tool === 'text'){
+        const label = window.prompt('Annotation text / نص التعليق:');
+        if (label && label.trim()){ st.measurements.push({ type:'text', points:[p], label:label.trim() }); drawMeasurements(); }
       }
     });
     window.addEventListener('mouseup', (e)=>{
