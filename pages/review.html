@@ -55,6 +55,51 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 .modal label{display:block;font-size:11.5px;font-weight:600;color:var(--text-s);margin-bottom:6px}
 .modal select,.modal textarea{width:100%;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:12px}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end}
+
+/* ───── Sprint 4e: Series Review Workbench ───── */
+.viewtoggle{display:inline-flex;background:var(--bg-s);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;margin-inline-start:auto}
+.viewtoggle button{padding:6px 12px;font-size:11px;font-weight:600;background:transparent;color:var(--text-s);border:none;border-radius:6px;cursor:pointer;font-family:inherit}
+.viewtoggle button.on{background:var(--acc);color:var(--acc-ink)}
+.section-hdr{margin:26px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border-s);display:flex;align-items:center;gap:10px}
+.section-hdr h2{font-size:14px;font-weight:700;color:var(--text);margin:0}
+.section-hdr .count{font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
+.series-card{background:var(--bg-e);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.series-hdr{position:sticky;top:var(--onav-h,56px);z-index:5;padding:12px 16px;background:linear-gradient(180deg,var(--bg-e),var(--bg-e) 80%,rgba(0,0,0,0));display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border-s)}
+.series-hdr .ico{width:32px;height:32px;border-radius:8px;background:var(--acc-sub);color:var(--acc);display:grid;place-items:center;font-size:16px;flex:none}
+.series-hdr .info{flex:1;min-width:0}
+.series-hdr .name{font-size:13.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.series-hdr .sub{font-size:11px;color:var(--text-m);margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+.series-hdr .cine{background:transparent;border:1px solid var(--border);color:var(--text-s);padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+.series-hdr .cine:hover{color:var(--acc);border-color:var(--acc)}
+.series-body{padding:14px 16px}
+.series-strip{display:grid;grid-auto-flow:column;grid-auto-columns:96px;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scroll-snap-type:x proximity}
+.series-strip::-webkit-scrollbar{height:8px}.series-strip::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.series-thumb{position:relative;aspect-ratio:1/1;background:var(--bg-s);border:1px solid var(--border-s);border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .12s, box-shadow .12s;scroll-snap-align:start}
+.series-thumb:hover{transform:scale(1.04);box-shadow:0 0 0 2px var(--acc)}
+.series-thumb.outlier{box-shadow:inset 0 0 0 2px #f59e0b}
+.series-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.series-thumb .num{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.72);color:#fff;padding:2px 6px;border-radius:4px;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.02em}
+.series-thumb .status{position:absolute;bottom:4px;right:4px;padding:1px 5px;border-radius:3px;font:700 9px/1 'IBM Plex Mono',monospace;letter-spacing:.05em}
+.series-thumb.approved .status{background:rgba(16,185,129,.85);color:#fff}
+.series-thumb.rejected .status{background:rgba(239,68,68,.85);color:#fff}
+.series-thumb.pending .status{display:none}
+.series-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.series-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border-s)}
+.series-actions .grow{flex:1}
+.confidence-inline{display:none;margin-top:10px;padding:10px 12px;background:var(--bg-s);border:1px solid rgba(251,191,36,.35);border-radius:8px}
+.confidence-inline.on{display:block}
+.confidence-inline .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.stars{display:inline-flex;gap:3px;font-size:20px;line-height:1}
+.stars .st{cursor:pointer;color:var(--text-m);transition:color .12s}
+.stars .st.on,.stars .st:hover,.stars .st:hover ~ .st{color:#fbbf24}
+.stars.reverse{flex-direction:row-reverse}
+.stars.reverse .st{transition:color .12s}
+.stars.reverse .st.on{color:#fbbf24}
+.ed-meta{display:none;margin-top:10px;padding:10px 12px;background:var(--bg-s);border:1px solid var(--border-s);border-radius:8px}
+.ed-meta.on{display:block}
+.ed-meta label{display:block;font-size:11px;color:var(--text-s);margin-bottom:4px;font-weight:600}
+.ed-meta input,.ed-meta select,.ed-meta textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit;margin-bottom:8px}
+.ed-meta textarea{min-height:44px;resize:vertical}
 </style>
 </head>
 <body>
@@ -78,6 +123,10 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       <button class="chip" data-status="approved" data-i18n="rev.approved">✓ Approved</button>
       <button class="chip" data-status="rejected" data-i18n="rev.rejected">✗ Rejected</button>
       <button class="chip" data-status="revision" data-i18n="rev.revision">↺ Revision</button>
+      <div class="viewtoggle" id="viewToggle">
+        <button data-view="grouped" class="on" data-i18n="rev.viewGrouped">📚 Grouped</button>
+        <button data-view="flat" data-i18n="rev.viewFlat">▤ Flat</button>
+      </div>
     </div>
 
     <div id="listBox"></div>
@@ -134,6 +183,15 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 <script src="../modules/omnirad-typography.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
+<!-- Sprint 4d: Standardized Naming System -->
+<script src="../modules/data/dicom-body-parts.js"></script>
+<script src="../modules/data/radiology-playbook.js"></script>
+<script src="../modules/data/radiology-arabic.js"></script>
+<script src="../modules/omnirad-naming.js"></script>
+<!-- Sprint 4e: Series Review Workbench -->
+<script src="../modules/omnirad-coherence.js"></script>
+<script src="../modules/omnirad-anatomy-ribbon.js"></script>
+<script src="../modules/omnirad-series-viewer.js"></script>
 <script>
 (function(){
   /* review.html — patched 2026-07-13 (Sprint 3 cleanup)
@@ -154,6 +212,14 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       'rev.emptyApproved':'No approved images yet.','rev.emptyRejected':'No rejected images.','rev.emptyRevision':'No revision requests.',
       'rev.approved.done':'Image approved and published to Atlas.','rev.rejected.done':'Image rejected. Uploader notified.',
       'rev.revision.done':'Revision requested. Uploader notified.','rev.err':'Error: ',
+      'rev.viewGrouped':'📚 Grouped','rev.viewFlat':'▤ Flat',
+      'rev.seriesLabel':'Series','rev.individualLabel':'Individual slices',
+      'rev.batchApprove':'✓✓ Approve series','rev.batchReject':'× Reject series','rev.reviewSlices':'👁 Review 3-up',
+      'rev.confPrompt':'Confidence < 4 — tell us briefly why (optional)',
+      'rev.confSaved':'Confidence recorded.',
+      'rev.eduPearl':'Teaching pearl (optional)','rev.eduPitfall':'Common pitfall (optional)','rev.eduKey':'Key teaching slice',
+      'rev.saveMeta':'Save educational metadata','rev.metaSaved':'Educational metadata saved.',
+      'rev.batchDone':'{a} approved · {s} skipped','rev.noSeries':'No pending series.','rev.noIndividual':'No pending individual slices.',
     },
     ar: {
       'rev.eyebrow':'قائمة المراجعة','rev.title':'الصور قيد المراجعة',
@@ -169,6 +235,14 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       'rev.emptyApproved':'لا صور معتمدة بعد.','rev.emptyRejected':'لا صور مرفوضة.','rev.emptyRevision':'لا طلبات إعادة مراجعة.',
       'rev.approved.done':'اعتُمدت الصورة ونُشرت في الأطلس.','rev.rejected.done':'رُفضت الصورة وأُخطر الرافع.',
       'rev.revision.done':'طُلبت إعادة المراجعة وأُخطر الرافع.','rev.err':'خطأ: ',
+      'rev.viewGrouped':'📚 مزجعة','rev.viewFlat':'▤ مسطّحة',
+      'rev.seriesLabel':'السلاسل','rev.individualLabel':'صور فردية',
+      'rev.batchApprove':'✓✓ اعتمد السلسلة','rev.batchReject':'× رفض السلسلة','rev.reviewSlices':'👁 مراجعة ثلاثية',
+      'rev.confPrompt':'الثقة أقل من ٤ — أخبرنا باختصار لماذا (اختياري)',
+      'rev.confSaved':'تم تسجيل درجة الثقة.',
+      'rev.eduPearl':'لؤلؤة تعليمية (اختياري)','rev.eduPitfall':'محذور شائع (اختياري)','rev.eduKey':'الشريحة التعليمية',
+      'rev.saveMeta':'حفظ البيانات التعليمية','rev.metaSaved':'حُفظت البيانات.',
+      'rev.batchDone':'اعتُمدت {a} · تُخطّت {s}','rev.noSeries':'لا سلاسل قيد المراجعة.','rev.noIndividual':'لا صور فردية قيد المراجعة.',
     }
   };
 
@@ -177,6 +251,7 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
     return (STRINGS[lang] && STRINGS[lang][k]) || (STRINGS.en && STRINGS.en[k]) || k;
   };
   let sb = null; let currentStatus = 'pending'; let currentUser = null; let currentRole = null;
+  let viewMode = (localStorage.getItem('omr:reviewView') === 'flat') ? 'flat' : 'grouped';
 
   function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.style.display = 'block'; setTimeout(()=>{ el.style.display = 'none'; }, 3200); }
   window.closeModal = id => document.getElementById(id).classList.remove('on');
@@ -199,6 +274,17 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       document.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
       c.classList.add('on'); currentStatus = c.dataset.status; loadList();
     }));
+    // View toggle (Grouped / Flat) — preference persisted per user in localStorage
+    document.querySelectorAll('#viewToggle button').forEach(b => {
+      if (b.dataset.view === viewMode) b.classList.add('on');
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#viewToggle button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        viewMode = b.dataset.view;
+        try { localStorage.setItem('omr:reviewView', viewMode); } catch(_){}
+        loadList();
+      });
+    });
     loadList();
   }
 
@@ -209,18 +295,364 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
       const { data, error } = await sb.from('review_queue')
         .select('*')
         .eq('status', currentStatus)
-        .order('created_at', { ascending: false }).limit(60);
+        .order('series_id', { ascending: true, nullsFirst: false })
+        .order('slice_index', { ascending: true, nullsFirst: false })
+        .order('created_at', { ascending: false }).limit(200);
       if (error) throw error;
       if (!data.length){
         const k = 'rev.empty' + currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
         box.innerHTML = '<div class="empty">'+ t(k) +'</div>';
         return;
       }
-      box.innerHTML = '<div class="grid">' + data.map(renderCard).join('') + '</div>';
+      // Grouped view: split by series_id, render series first then individual
+      if (viewMode === 'grouped' && currentStatus === 'pending'){
+        const groups = new Map();
+        const singles = [];
+        for (const r of data){
+          if (r.series_id){
+            if (!groups.has(r.series_id)) groups.set(r.series_id, []);
+            groups.get(r.series_id).push(r);
+          } else {
+            singles.push(r);
+          }
+        }
+        let html = '';
+        if (groups.size){
+          html += `<div class="section-hdr"><h2>📚 ${t('rev.seriesLabel')}</h2><span class="count">${groups.size} series · ${data.length - singles.length} slices</span></div>`;
+          for (const [sid, slices] of groups){
+            html += renderSeriesCard(sid, slices);
+          }
+        } else {
+          html += `<div class="section-hdr"><h2>📚 ${t('rev.seriesLabel')}</h2></div><div class="empty">${t('rev.noSeries')}</div>`;
+        }
+        if (singles.length){
+          html += `<div class="section-hdr" style="margin-top:32px"><h2>▤ ${t('rev.individualLabel')}</h2><span class="count">${singles.length} slices</span></div>`;
+          html += '<div class="grid">' + singles.map(renderCard).join('') + '</div>';
+        }
+        box.innerHTML = html;
+        wireSeriesCards();
+      } else {
+        box.innerHTML = '<div class="grid">' + data.map(renderCard).join('') + '</div>';
+      }
     } catch(e){
       box.innerHTML = '<div class="empty">'+ t('rev.err') + e.message +'</div>';
     }
   }
+
+  // Local index of pending rows keyed by series_id (used by wireSeriesCards)
+  const seriesIndex = new Map();
+
+  function publicUrl(path){
+    if (!path) return '';
+    return String(path).startsWith('http')
+      ? path
+      : sb.storage.from('atlas').getPublicUrl(path).data.publicUrl;
+  }
+
+  function renderSeriesCard(sid, slices){
+    // Sort by slice_index
+    slices.sort((a,b) => (a.slice_index||0) - (b.slice_index||0));
+    seriesIndex.set(sid, slices);
+    const first = slices[0] || {};
+    const total = first.series_total || slices.length;
+    const modality = first.modality || '—';
+    const plane = first.plane || '—';
+    const organ = first.organ || '—';
+    const name = first.series_name || `${organ} · ${modality} · ${plane}`;
+    const loinc = first.loinc_code || '';
+    const rpid  = first.radlex_playbook_id || '';
+    const tier  = first.naming_tier || (loinc ? 'standard' : (organ ? 'partial' : 'custom'));
+
+    // Coherence score
+    const coh = window.OmniRadCoherence ? window.OmniRadCoherence.score(
+      slices.map(s => ({ slice_index: s.slice_index, modality: s.modality, plane: s.plane, sequence: s.sequence, structures: s.structures || [] }))
+    ) : null;
+    const cohHtml = coh ? window.OmniRadCoherence.renderBadge(coh, (window.OmniRadI18n && OmniRadI18n.lang) || 'en') : '';
+
+    // Naming badge
+    let nameBadge = '';
+    if (window.OmniRadNaming){
+      if (loinc){
+        const resolved = window.OmniRadNaming.resolve(loinc);
+        if (resolved){
+          resolved.tier = 'standard';
+          nameBadge = window.OmniRadNaming.renderBadge(resolved, (window.OmniRadI18n && OmniRadI18n.lang) || 'en');
+        }
+      } else if (organ && organ !== '—'){
+        nameBadge = window.OmniRadNaming.renderBadge({ tier:'partial', region: organ }, (window.OmniRadI18n && OmniRadI18n.lang) || 'en');
+      } else {
+        nameBadge = window.OmniRadNaming.renderBadge(null, (window.OmniRadI18n && OmniRadI18n.lang) || 'en');
+      }
+    }
+
+    const thumbs = slices.map(s => {
+      const url = publicUrl(s.storage_path);
+      const isOut = coh && coh.outliers.includes(s.slice_index);
+      return `<div class="series-thumb pending ${isOut?'outlier':''}" data-sid="${sid}" data-slice="${s.slice_index}">
+        ${url ? `<img src="${url}" loading="lazy" alt="Slice ${s.slice_index}">` : ''}
+        <span class="num">${String(s.slice_index).padStart(2,'0')}/${String(total).padStart(2,'0')}</span>
+      </div>`;
+    }).join('');
+
+    const ribbonId = 'rib-' + sid.replace(/[^a-z0-9]/gi,'').slice(0,10);
+
+    return `<div class="series-card" data-sid="${sid}">
+      <header class="series-hdr">
+        <div class="ico">📚</div>
+        <div class="info">
+          <div class="name">${escapeHtml(name)}</div>
+          <div class="sub">${escapeHtml(modality)} · ${escapeHtml(plane)} · ${slices.length} slices</div>
+        </div>
+        ${cohHtml}
+        <button class="cine" data-cine="${sid}">▶ Cine</button>
+      </header>
+      <div class="series-body">
+        <div class="series-strip" data-sid="${sid}">${thumbs}</div>
+        <div id="${ribbonId}" class="series-ribbon"></div>
+        <div class="series-meta" style="margin-top:10px">
+          ${nameBadge}
+          ${loinc ? `<span class="meta"><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--acc)">LOINC ${loinc}${rpid?' · '+rpid:''}</span></span>` : ''}
+        </div>
+        <div class="series-actions">
+          <button class="btn ok grow" data-act="batch-approve" data-sid="${sid}">${t('rev.batchApprove')}</button>
+          <button class="btn" style="background:transparent;color:var(--acc);border:1px solid var(--acc)" data-act="open-viewer" data-sid="${sid}">${t('rev.reviewSlices')}</button>
+          <button class="btn err" data-act="batch-reject" data-sid="${sid}">${t('rev.batchReject')}</button>
+        </div>
+
+        <!-- Educational metadata (optional, inline before Approve) -->
+        <div class="ed-meta" data-ed="${sid}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div>
+              <label>${t('rev.eduPearl')}</label>
+              <textarea maxlength="200" data-k="teaching_pearl" placeholder="e.g. Note symmetric ventricles"></textarea>
+            </div>
+            <div>
+              <label>${t('rev.eduPitfall')}</label>
+              <textarea maxlength="200" data-k="common_pitfall" placeholder="e.g. Beam-hardening artifact can mimic hemorrhage"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-end">
+            <div style="flex:1">
+              <label>${t('rev.eduKey')}</label>
+              <select data-k="key_slice_index">
+                <option value="">—</option>
+                ${slices.map(s => `<option value="${s.slice_index}">${String(s.slice_index).padStart(2,'0')}</option>`).join('')}
+              </select>
+            </div>
+            <div style="flex:none">
+              <label>Confidence</label>
+              <div class="stars" data-stars="${sid}">
+                ${[1,2,3,4,5].map(n => `<span class="st" data-n="${n}">★</span>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="confidence-inline" data-conf-note="${sid}">
+            <div class="row" style="font-size:11.5px;color:var(--warn)">⚠ ${t('rev.confPrompt')}</div>
+            <input type="text" data-k="conf_note" placeholder="Optional short note">
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Wire series card interactions AFTER render (delegated for simplicity)
+  function wireSeriesCards(){
+    // Render anatomy ribbons
+    if (window.OmniRadAnatomyRibbon){
+      seriesIndex.forEach((slices, sid) => {
+        const el = document.getElementById('rib-' + sid.replace(/[^a-z0-9]/gi,'').slice(0,10));
+        if (!el) return;
+        window.OmniRadAnatomyRibbon.render(el,
+          slices.map(s => ({ slice_index: s.slice_index, structures: s.structures || [] })),
+          { onSliceClick: (idx) => openSeriesViewer(sid, idx) }
+        );
+      });
+    }
+    // Thumb click → open viewer
+    document.querySelectorAll('.series-thumb').forEach(el => {
+      el.addEventListener('click', () => {
+        const sid = el.getAttribute('data-sid');
+        const slice = parseInt(el.getAttribute('data-slice'), 10);
+        openSeriesViewer(sid, slice);
+      });
+    });
+    // Cine hover-autoplay (start after 800ms hover)
+    document.querySelectorAll('.series-card').forEach(card => {
+      let hoverTm = null; let cineTm = null; let strip = null; let idx = 0;
+      const startCine = () => {
+        strip = card.querySelector('.series-strip');
+        if (!strip) return;
+        const thumbs = strip.querySelectorAll('.series-thumb');
+        if (thumbs.length < 2) return;
+        idx = 0;
+        cineTm = setInterval(() => {
+          thumbs.forEach(t => t.classList.remove('cine-lit'));
+          thumbs[idx].classList.add('cine-lit');
+          thumbs[idx].scrollIntoView({ inline: 'center', block: 'nearest', behavior:'smooth' });
+          idx = (idx + 1) % thumbs.length;
+        }, 333);
+      };
+      const stopCine = () => {
+        if (cineTm){ clearInterval(cineTm); cineTm = null; }
+        if (strip) strip.querySelectorAll('.cine-lit').forEach(t => t.classList.remove('cine-lit'));
+      };
+      card.addEventListener('mouseenter', () => {
+        hoverTm = setTimeout(startCine, 800);
+      });
+      card.addEventListener('mouseleave', () => {
+        if (hoverTm){ clearTimeout(hoverTm); hoverTm = null; }
+        stopCine();
+      });
+      // Explicit ▶ button toggles cine as well
+      const cineBtn = card.querySelector('[data-cine]');
+      if (cineBtn){
+        cineBtn.addEventListener('click', () => {
+          if (cineTm) stopCine(); else startCine();
+        });
+      }
+    });
+    // Batch approve / reject / open viewer
+    document.querySelectorAll('[data-act="batch-approve"]').forEach(el => {
+      el.addEventListener('click', () => doBatchApprove(el.getAttribute('data-sid')));
+    });
+    document.querySelectorAll('[data-act="batch-reject"]').forEach(el => {
+      el.addEventListener('click', () => doBatchReject(el.getAttribute('data-sid')));
+    });
+    document.querySelectorAll('[data-act="open-viewer"]').forEach(el => {
+      el.addEventListener('click', () => openSeriesViewer(el.getAttribute('data-sid'), 0));
+    });
+    // Stars — confidence rating (conditional prompt when <4)
+    document.querySelectorAll('.stars[data-stars]').forEach(sc => {
+      const sid = sc.getAttribute('data-stars');
+      sc.querySelectorAll('.st').forEach(st => {
+        st.addEventListener('click', () => {
+          const n = parseInt(st.getAttribute('data-n'), 10);
+          sc.querySelectorAll('.st').forEach((x, i) => x.classList.toggle('on', i < n));
+          sc.dataset.value = String(n);
+          // Show "why?" note only if <4 (per Sprint 4e decision F=c)
+          const note = document.querySelector(`[data-conf-note="${sid}"]`);
+          if (note) note.classList.toggle('on', n < 4);
+        });
+      });
+    });
+    // Show educational-metadata block by default (optional inline per decision E=c)
+    document.querySelectorAll('.ed-meta').forEach(el => el.classList.add('on'));
+  }
+
+  function collectSeriesMeta(sid){
+    const box = document.querySelector(`[data-ed="${sid}"]`);
+    if (!box) return {};
+    const val = k => {
+      const el = box.querySelector(`[data-k="${k}"]`);
+      return el ? (el.value || '').trim() : '';
+    };
+    const stars = document.querySelector(`.stars[data-stars="${sid}"]`);
+    const conf = stars && stars.dataset.value ? parseInt(stars.dataset.value, 10) : null;
+    return {
+      teaching_pearl:      val('teaching_pearl') || null,
+      common_pitfall:      val('common_pitfall') || null,
+      key_slice_index:     val('key_slice_index') ? parseInt(val('key_slice_index'), 10) : null,
+      reviewer_confidence: (conf && conf >= 1 && conf <= 5) ? conf : null
+    };
+  }
+
+  async function doBatchApprove(sid){
+    const slices = seriesIndex.get(sid);
+    if (!slices || !slices.length) return;
+    const meta = collectSeriesMeta(sid);
+    // Coherence details (client-side snapshot)
+    let cohArg = null, cohScoreArg = null;
+    if (window.OmniRadCoherence){
+      const res = window.OmniRadCoherence.score(
+        slices.map(s => ({ slice_index: s.slice_index, modality: s.modality, plane: s.plane, sequence: s.sequence, structures: s.structures || [] }))
+      );
+      cohArg = res.layers || null;
+      cohScoreArg = res.score;
+    }
+    try {
+      const { data, error } = await sb.rpc('batch_approve_series', {
+        p_series_id: sid,
+        p_reviewer_confidence: meta.reviewer_confidence,
+        p_teaching_pearl:      meta.teaching_pearl,
+        p_common_pitfall:      meta.common_pitfall,
+        p_key_slice_index:     meta.key_slice_index,
+        p_coherence_score:     cohScoreArg,
+        p_coherence_details:   cohArg
+      });
+      if (error) throw error;
+      const summary = data || { approved: 0, skipped: 0 };
+      toast(t('rev.batchDone').replace('{a}', summary.approved).replace('{s}', summary.skipped));
+      loadList();
+    } catch(e){ toast(t('rev.err') + e.message); }
+  }
+
+  async function doBatchReject(sid){
+    const slices = seriesIndex.get(sid);
+    if (!slices || !slices.length) return;
+    const reason = prompt('Rejection reason for the whole series:');
+    if (!reason || !reason.trim()) return;
+    let ok = 0, skipped = 0;
+    for (const s of slices){
+      try {
+        const { error } = await sb.rpc('reject_to_archive', { p_review_id: String(s.id), p_reason: reason.trim() });
+        if (error) throw error;
+        ok++;
+      } catch(e){ skipped++; }
+    }
+    toast(`Rejected ${ok} · skipped ${skipped}`);
+    loadList();
+  }
+
+  function openSeriesViewer(sid, startIndex){
+    const slices = seriesIndex.get(sid);
+    if (!slices || !slices.length || !window.OmniRadSeriesViewer) return;
+    const first = slices[0];
+    // Coherence for outlier badges in viewer
+    let outliers = [];
+    if (window.OmniRadCoherence){
+      const res = window.OmniRadCoherence.score(
+        slices.map(s => ({ slice_index: s.slice_index, modality: s.modality, plane: s.plane, sequence: s.sequence, structures: s.structures || [] }))
+      );
+      outliers = res.outliers || [];
+    }
+    const startIdx = Math.max(0, slices.findIndex(s => s.slice_index === startIndex));
+    window.OmniRadSeriesViewer.open({
+      seriesName: first.series_name || (first.organ + ' · ' + first.modality),
+      modality: first.modality || '',
+      plane: first.plane || '',
+      loinc: first.loinc_code || '',
+      tier: first.naming_tier || (first.loinc_code ? 'standard' : (first.organ ? 'partial' : 'custom')),
+      outliers,
+      slices: slices.map(s => ({ slice_index: s.slice_index, url: publicUrl(s.storage_path), structures: s.structures || [] })),
+      startIndex: startIdx < 0 ? 0 : startIdx,
+      onApprove: async (slice) => {
+        try {
+          const row = slices.find(x => x.slice_index === slice.slice_index);
+          if (!row) return 'stop';
+          const { error } = await sb.rpc('approve_bulk_upload_item', { p_review_id: String(row.id) });
+          if (error) throw error;
+          toast(t('rev.approved.done'));
+        } catch(e){ toast(t('rev.err') + e.message); return 'stop'; }
+      },
+      onReject: async (slice) => {
+        try {
+          const row = slices.find(x => x.slice_index === slice.slice_index);
+          if (!row) return 'stop';
+          const r = prompt('Rejection reason:'); if (!r) return 'stop';
+          const { error } = await sb.rpc('reject_to_archive', { p_review_id: String(row.id), p_reason: r });
+          if (error) throw error;
+          toast(t('rev.rejected.done'));
+        } catch(e){ toast(t('rev.err') + e.message); return 'stop'; }
+      },
+      onEdit: (slice) => {
+        window.OmniRadSeriesViewer.close();
+        const row = slices.find(x => x.slice_index === slice.slice_index);
+        if (row){ openEdit(row.id); }
+      }
+    });
+  }
+
+  function escapeHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   function renderCard(row){
     const url = row.storage_path
