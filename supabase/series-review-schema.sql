@@ -60,7 +60,7 @@ create or replace view public.series_review_v as
     rq.series_id,
     max(rq.series_name)   as series_name,
     max(rq.series_total)  as series_total,
-    max(rq.batch_id)      as batch_id,
+    (array_agg(rq.batch_id) filter (where rq.batch_id is not null))[1] as batch_id,
     (array_agg(rq.uploader_id order by rq.slice_index))[1] as uploader_id,
     up.display_name       as uploader_name,
     up.avatar_url         as uploader_avatar,
