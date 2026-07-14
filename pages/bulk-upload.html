@@ -47,7 +47,14 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 
 /* Files strip */
 .files-strip{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.tile{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:var(--bg-s);border:1px solid var(--border-s)}
+.tile{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:var(--bg-s);border:1px solid var(--border-s);transition:transform .15s, box-shadow .15s}
+.tile.series-mode{cursor:grab}
+.tile.series-mode:active{cursor:grabbing}
+.tile.sortable-ghost{opacity:.35;transform:scale(.94)}
+.tile.sortable-chosen{box-shadow:0 0 0 2px var(--acc)}
+.tile-num{position:absolute;top:6px;left:6px;padding:3px 7px;background:rgba(0,0,0,.72);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.03em;border-radius:4px;pointer-events:none;z-index:2;backdrop-filter:blur(4px)}
+.series-hint{margin:10px 0 0;padding:10px 14px;background:var(--acc-sub);border:1px solid var(--acc);border-radius:8px;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:8px}
+.series-hint svg{flex-shrink:0}
 .tile img{width:100%;height:100%;object-fit:cover}
 .tile-x{position:absolute;top:5px;inset-inline-end:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:14px;line-height:1;display:grid;place-items:center}
 .tile-name{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font-size:9.5px;background:rgba(0,0,0,.7);color:#fff;font-family:'IBM Plex Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -167,6 +174,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
           <span class="browse" data-i18n="bu.dzBrowse">Browse files</span>
           <input type="file" id="fileInput" multiple accept="image/png,image/jpeg,image/webp">
         </label>
+        <div id="seriesHint" class="series-hint" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+          <span data-i18n="bu.seriesReorderHint">Series mode: drag tiles to reorder — slice numbers assign automatically (01, 02, 03…).</span>
+        </div>
         <div class="files-strip" id="filesStrip"></div>
       </div>
       <div class="actions">
@@ -190,6 +201,13 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
             <button type="button" class="btn-mini on" id="modeSeries" style="border:none;background:var(--acc);color:var(--acc-ink)" data-i18n="bu.modeSeries">Series</button>
             <button type="button" class="btn-mini" id="modeIndividual" style="border:none;background:transparent;color:var(--text)" data-i18n="bu.modeIndividual">Individual</button>
           </div>
+        </div>
+        <div id="seriesNameWrap" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-s)">
+          <label style="display:block;font-size:12px;font-weight:600;margin-bottom:6px">
+            <span data-i18n="bu.f.seriesName">Series name</span> <span class="req">*</span>
+            <span class="hint" style="font-weight:400;color:var(--text-m);margin-inline-start:6px" data-i18n="bu.f.seriesNameHint">— e.g. «Brain CT — Normal — Axial»</span>
+          </label>
+          <input type="text" id="fSeriesName" placeholder="Brain CT — Normal — Axial" maxlength="120" style="width:100%">
         </div>
       </div>
       <div class="card">
@@ -341,6 +359,7 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/data/anatomy-master.js"></script>
@@ -382,6 +401,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       'bu.needFiles':'Add at least one image first.','bu.needFields':'Please fill required fields (organ, modality, plane, structures).',
       'bu.uploadErr':'Upload error: ','bu.submitErr':'Submit error: ',
       'bu.override':'Override','bu.saveOverride':'Save override','bu.clearOverride':'Clear override','bu.newStruct':'Add new: ',
+      'bu.f.seriesName':'Series name','bu.f.seriesNameHint':'— e.g. «Brain CT — Normal — Axial»',
+      'bu.seriesReorderHint':'Series mode: drag tiles to reorder — slice numbers assign automatically (01, 02, 03…).',
+      'bu.needSeriesName':'Enter a series name before submitting.',
+      'bu.needSeriesMin':'Series mode requires at least 2 slices — add more images or switch to Individual mode.',
     },
     ar: {
       'bu.eyebrow':'رفع جماعي','bu.title':'ارفع صوراً إلى الأطلس',
@@ -412,6 +435,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       'bu.needFiles':'أضف صورة واحدة على الأقل.','bu.needFields':'الحقول المطلوبة: العضو، المودالتي، المستوى، البنى.',
       'bu.uploadErr':'خطأ في الرفع: ','bu.submitErr':'خطأ في الإرسال: ',
       'bu.override':'تعديل','bu.saveOverride':'حفظ التعديل','bu.clearOverride':'إلغاء التعديل','bu.newStruct':'أضف جديد: ',
+      'bu.f.seriesName':'اسم السلسلة','bu.f.seriesNameHint':'— مثلاً «دماغ CT — طبيعي — محوري»',
+      'bu.seriesReorderHint':'وضع السلسلة: اسحب المربعات لإعادة الترتيب — أرقام الشرائح تُعطى تلقائياً (٠١، ٠٢، ٠٣…).',
+      'bu.needSeriesName':'أدخل اسم السلسلة قبل الإرسال.',
+      'bu.needSeriesMin':'وضع السلسلة يتطلّب شريحتين على الأقل — أضف صوراً أو انتقل لوضع «فردي».',
     }
   };
   const t = k => {
@@ -598,8 +625,10 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
   function renderStrip(){
     const strip = document.getElementById('filesStrip');
-    strip.innerHTML = files.map(f => (
-      '<div class="tile" data-id="'+f.id+'">' +
+    const isSeries = mode === 'series';
+    strip.innerHTML = files.map((f, i) => (
+      '<div class="tile' + (isSeries ? ' series-mode' : '') + '" data-id="'+f.id+'">' +
+        (isSeries ? '<div class="tile-num">'+ pad2(i+1) +' / '+ pad2(files.length) +'</div>' : '') +
         '<img src="'+f.previewUrl+'">' +
         '<button class="tile-x" onclick="window.__buRemove(\''+f.id+'\')">×</button>' +
         '<div class="tile-name">'+f.file.name+'</div>' +
@@ -609,6 +638,32 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     const t2 = document.getElementById('toStep2');     if (t2) t2.disabled = !files.length;
     const ac = document.getElementById('applyCount');  if (ac) ac.textContent = files.length;
     const rc = document.getElementById('rowCount');    if (rc) rc.textContent = files.length;
+    // Show/hide reorder hint
+    const hint = document.getElementById('seriesHint');
+    if (hint) hint.style.display = (isSeries && files.length >= 2) ? '' : 'none';
+    // Attach drag-to-reorder for Series mode
+    attachSortable();
+  }
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  let _sortable = null;
+  function attachSortable(){
+    const strip = document.getElementById('filesStrip');
+    if (!strip) return;
+    if (_sortable){ try { _sortable.destroy(); } catch(_){} _sortable = null; }
+    if (mode !== 'series' || !window.Sortable || files.length < 2) return;
+    _sortable = window.Sortable.create(strip, {
+      animation: 180,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      filter: '.tile-x',
+      preventOnFilter: false,
+      onEnd: (evt) => {
+        if (evt.oldIndex === evt.newIndex) return;
+        const [moved] = files.splice(evt.oldIndex, 1);
+        files.splice(evt.newIndex, 0, moved);
+        renderStrip();
+      }
+    });
   }
   window.__buRemove = (id) => {
     files = files.filter(f => f.id !== id);
@@ -741,6 +796,11 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     document.getElementById('modeIndividual').style.background = m==='individual' ? 'var(--acc)' : 'transparent';
     document.getElementById('modeIndividual').style.color = m==='individual' ? 'var(--acc-ink)' : 'var(--text)';
     document.getElementById('modeHint').textContent = t(m==='series' ? 'bu.modeHintSeries' : 'bu.modeHintIndividual');
+    // Toggle Series name field
+    const sn = document.getElementById('seriesNameWrap');
+    if (sn) sn.style.display = m==='series' ? '' : 'none';
+    // Re-render tiles to add/remove slice badges and (re-)attach SortableJS
+    renderStrip();
     // In individual mode, structures & sequence become per-image (Step 3 will show full forms)
     // In series mode, structures are shared
     document.getElementById('toStep3').textContent = m==='individual'
@@ -963,6 +1023,17 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
 
   // ── Step 4: Submit ─────────────────────────────
   async function submitBatch(){
+    // Series-mode validation
+    let seriesId = null, seriesName = null, seriesTotal = null;
+    if (mode === 'series'){
+      if (files.length < 2){ toast(t('bu.needSeriesMin'), true); return; }
+      const nameEl = document.getElementById('fSeriesName');
+      seriesName = ((nameEl && nameEl.value) || '').trim();
+      if (!seriesName){ toast(t('bu.needSeriesName'), true); nameEl && nameEl.focus(); return; }
+      seriesId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : uuidFallback();
+      seriesTotal = files.length;
+    }
+
     goStep(4);
     const total = files.length;
     document.getElementById('progTotal').textContent = total;
@@ -996,6 +1067,11 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
         level: meta.level || null,
         prompt: meta.prompt || null,
         citation: meta.citation || null,
+        // Series metadata (null in Individual mode)
+        series_id:    seriesId,
+        slice_index:  seriesId ? (i + 1) : null,
+        series_name:  seriesName,
+        series_total: seriesTotal,
       });
       document.getElementById('progNow').textContent = i + 1;
       document.getElementById('progFill').style.width = (((i+1)/total)*100) + '%';
@@ -1058,6 +1134,16 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
       if (s.isNew && s.slug && !map[s.slug]) map[s.slug] = { slug: s.slug, label: s.label };
     }));
     return Object.values(map);
+  }
+
+  // RFC-4122-ish fallback for browsers without crypto.randomUUID
+  function uuidFallback(){
+    const b = new Uint8Array(16);
+    (crypto.getRandomValues || (a => { for (let i=0;i<a.length;i++) a[i] = Math.floor(Math.random()*256); }))(b);
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    const h = Array.from(b).map(x => x.toString(16).padStart(2,'0')).join('');
+    return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20,32);
   }
 
   // ── Step navigation ────────────────────────────
