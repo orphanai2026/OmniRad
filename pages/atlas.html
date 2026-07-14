@@ -940,6 +940,33 @@ selectStructure('brain');
       if (typeof renderSidebar === 'function') renderSidebar($('search') && $('search').value);
     }
 
+    // 3b) Load community-approved anatomy terms and inject as sidebar structures
+    try {
+      const sb = OmniRadAuth && OmniRadAuth.client;
+      if (sb){
+        const { data: approved } = await sb
+          .from('anatomy_approved_v')
+          .select('id,en,ar,region,radlex')
+          .limit(1000);
+        (approved || []).forEach(t => {
+          const key = (t.en||'').toLowerCase().trim();
+          if (!key) return;
+          if (S.some(s => (s.en||'').toLowerCase().trim() === key || s.id === t.id)) return;
+          S.push({
+            id: t.id || ('cm_' + key.replace(/[^a-z0-9]+/g,'_')),
+            en: t.en, ar: t.ar || t.en, icon: '⭐',
+            region: t.region || 'Contributed',
+            regionCanonical: canonicalRegion((t.region||'') + ' ' + (t.en||'')),
+            desc: 'Community-approved term' + (t.radlex ? ' · ' + t.radlex : ''),
+            _community: true, _radlex: t.radlex || null
+          });
+        });
+        if (approved && approved.length && typeof renderSidebar === 'function'){
+          renderSidebar($('search') && $('search').value);
+        }
+      }
+    } catch(e){ console.warn('[atlas] approved terms load failed', e && e.message); }
+
     // 4) Wrap loadCurrent to prefer dynamic images + render community badge
     const badgeMount = document.getElementById('communityBadge');
     const origLoad = window.loadCurrent || loadCurrent;
