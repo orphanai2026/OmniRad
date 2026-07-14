@@ -603,19 +603,16 @@
 .omr-sv-root{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center}
 .omr-sv-back{position:absolute;inset:0;background:rgba(3,7,18,.88);backdrop-filter:blur(4px)}
 .omr-sv-shell{position:relative;z-index:1;width:min(96vw,1600px);max-height:96vh;display:flex;flex-direction:column;background:#0f172a;border:1px solid rgba(148,163,184,.18);border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.55);overflow:hidden;font-family:'IBM Plex Sans','Noto Sans Arabic',sans-serif}
-/* ═══════ Atlas mode: absolute-positioned regions (bulletproof layout) ═══════ */
-.omr-sv-shell.atlas{position:relative;width:min(98vw,1800px);height:96vh;display:block;overflow:hidden}
-.omr-sv-shell.atlas .omr-sv-head    {position:absolute;top:0;left:0;right:0;height:56px;padding:8px 16px;border-bottom:1px solid rgba(148,163,184,.14);box-sizing:border-box;z-index:3;background:#0f172a}
-.omr-sv-shell.atlas .omr-sv-body    {position:absolute;top:56px;left:0;right:0;bottom:210px;padding:10px;display:flex;gap:10px;box-sizing:border-box;overflow:hidden;z-index:1}
-.omr-sv-shell.atlas .omr-sv-strip   {position:absolute;left:0;right:0;bottom:120px;height:90px;padding:6px 12px;box-sizing:border-box;background:rgba(2,6,23,.72);border-top:1px solid rgba(148,163,184,.10);border-bottom:1px solid rgba(148,163,184,.10);display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;z-index:2}
-.omr-sv-shell.atlas .omr-sv-foot    {position:absolute;left:0;right:0;bottom:60px;height:60px;padding:8px 16px;box-sizing:border-box;border-top:none;border-bottom:1px solid rgba(148,163,184,.10);display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:2;background:#0f172a}
-.omr-sv-shell.atlas .omr-sv-rel-wrap{position:absolute;left:0;right:0;bottom:0;height:60px;padding:6px 16px;box-sizing:border-box;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;gap:10px;z-index:2;background:#0f172a}
-.omr-sv-shell.atlas .omr-sv-rel-wrap .omr-sv-rel-hdr{margin:0 8px 0 0;font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;font-weight:700;white-space:nowrap;flex:none}
-.omr-sv-shell.atlas .omr-sv-rel-wrap .omr-sv-rel-list{display:flex;gap:8px;flex:1 1 auto;overflow-x:auto}
-.omr-sv-shell.atlas .omr-sv-rel{min-width:150px;padding:4px 6px}
-.omr-sv-shell.atlas .omr-sv-rel img,.omr-sv-shell.atlas .omr-sv-rel-ph{width:32px;height:32px;aspect-ratio:1/1;flex:none}
-.omr-sv-shell.atlas .omr-sv-rel{flex-direction:row;align-items:center;gap:8px}
-.omr-sv-shell.atlas .omr-sv-rel-lbl{font-size:11px;flex:1;min-width:0}
+/* ═══════ Atlas mode: flex column with proper shrink rules ═══════ */
+.omr-sv-shell.atlas{width:min(98vw,1800px);height:96vh;display:flex;flex-direction:column;overflow:hidden}
+.omr-sv-shell.atlas > .omr-sv-head    {flex:0 0 auto;min-height:56px;padding:8px 16px}
+.omr-sv-shell.atlas > .omr-sv-body    {flex:1 1 auto;min-height:0;padding:10px}
+.omr-sv-shell.atlas > .omr-sv-strip   {flex:0 0 90px;background:rgba(2,6,23,.72)}
+.omr-sv-shell.atlas > .omr-sv-foot    {flex:0 0 auto;min-height:52px;border-top:none;border-bottom:1px solid rgba(148,163,184,.10)}
+.omr-sv-shell.atlas > .omr-sv-rel-wrap{flex:0 0 auto;min-height:56px;padding:8px 16px}
+.omr-sv-shell.atlas .omr-sv-title{flex:1 1 auto;min-width:0}
+.omr-sv-shell.atlas .omr-sv-title > span:not(.omr-sv-badge):not(.omr-sv-tier){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.omr-sv-shell.atlas .omr-sv-actions{flex:0 0 auto}
 .omr-sv-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(148,163,184,.14)}
 .omr-sv-title{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:#e2e8f0;min-width:0;flex-wrap:wrap}
 .omr-sv-badge{background:rgba(45,212,200,.14);color:#2dd4c8;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(45,212,200,.35)}
