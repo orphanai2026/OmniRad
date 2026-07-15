@@ -361,42 +361,42 @@ const isAr = () => (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
 
 /* ─── Canonical region taxonomy (unified across the platform) ─── */
 const CANONICAL_REGIONS = [
-  'Head & Neck / CNS',
-  'Chest / Thorax',
-  'Cardiovascular',
+  'Head & Neck',
+  'Chest',
+  'Cardiovascular System',
   'Abdomen',
   'Pelvis',
   'Spine',
-  'Upper limb',
-  'Lower limb',
+  'Upper Extremity',
+  'Lower Extremity',
   'Breast'
 ];
 const CANONICAL_REGIONS_AR = {
-  'Head & Neck / CNS':'الرأس والرقبة / الجهاز العصبي',
-  'Chest / Thorax':'الصدر',
-  'Cardiovascular':'القلب والأوعية',
+  'Head & Neck':'الرأس والرقبة',
+  'Chest':'الصدر',
+  'Cardiovascular System':'الجهاز القلبي الوعائي',
   'Abdomen':'البطن',
   'Pelvis':'الحوض',
   'Spine':'العمود الفقري',
-  'Upper limb':'الطرف العلوي',
-  'Lower limb':'الطرف السفلي',
+  'Upper Extremity':'الطرف العلوي',
+  'Lower Extremity':'الطرف السفلي',
   'Breast':'الثدي'
 };
 function canonicalRegion(raw){
-  if (!raw) return 'Head & Neck / CNS';
+  if (!raw) return 'Head & Neck';
   const s = raw.toLowerCase();
-  if (/head|cns|brain|cerebell|ventric|skull|orbit|sinus|temporal|scalp|meninges|cranial|auditory canal|salivary|nasopharynx/.test(s)) return 'Head & Neck / CNS';
-  if (/neck|thyroid|larynx|pharynx|carotid space/.test(s)) return 'Head & Neck / CNS';
-  if (/heart|coronary|cardiac|thoracic aorta|pulmonary artery|pulmonary arteries/.test(s)) return 'Cardiovascular';
-  if (/vascular|artery|arteries|vein|veins|dvt|portal|aortic arch|iliac art|abdominal aorta|renal artery|mesenteric/.test(s)) return 'Cardiovascular';
-  if (/chest|thorax|lung|mediastin|pleura|diaphragm|thymus|trachea|bronch|rib|clavicle|chest wall/.test(s)) return 'Chest / Thorax';
+  if (/head|cns|brain|cerebell|ventric|skull|orbit|sinus|temporal|scalp|meninges|cranial|auditory canal|salivary|nasopharynx/.test(s)) return 'Head & Neck';
+  if (/neck|thyroid|larynx|pharynx|carotid space/.test(s)) return 'Head & Neck';
+  if (/heart|coronary|cardiac|thoracic aorta|pulmonary artery|pulmonary arteries/.test(s)) return 'Cardiovascular System';
+  if (/vascular|artery|arteries|vein|veins|dvt|portal|aortic arch|iliac art|abdominal aorta|renal artery|mesenteric/.test(s)) return 'Cardiovascular System';
+  if (/chest|thorax|lung|mediastin|pleura|diaphragm|thymus|trachea|bronch|rib|clavicle|chest wall/.test(s)) return 'Chest';
   if (/breast|mammo/.test(s)) return 'Breast';
   if (/abdom|liver|spleen|panc|kidney|renal|adrenal|gallbladder|bile|stomach|small intest|small bowel|colon|duodenum|appendix|peritone|mesenter|inferior vena/.test(s)) return 'Abdomen';
   if (/pelv|bladder|prostate|uter|ovar|testes|scrotum|penis|vagina|hip|sacroiliac|inguinal|femoral neck/.test(s)) return 'Pelvis';
   if (/spine|spinal|vertebra|disc|coccyx|craniocervical|facet/.test(s)) return 'Spine';
-  if (/shoulder|arm|elbow|forearm|wrist|hand|finger|scapho|humerus|radius|ulna|ac joint/.test(s)) return 'Upper limb';
-  if (/knee|leg|ankle|foot|toe|femur|tibia|fibula|calcaneus|achilles|patella/.test(s)) return 'Lower limb';
-  return 'Head & Neck / CNS';
+  if (/shoulder|arm|elbow|forearm|wrist|hand|finger|scapho|humerus|radius|ulna|ac joint/.test(s)) return 'Upper Extremity';
+  if (/knee|leg|ankle|foot|toe|femur|tibia|fibula|calcaneus|achilles|patella/.test(s)) return 'Lower Extremity';
+  return 'Head & Neck';
 }
 // Attach canonicalRegion to every static structure once
 S.forEach(s => { s.regionCanonical = canonicalRegion(s.en + ' ' + (s.region||'')); });
@@ -415,7 +415,7 @@ const DESC_AR = {
 const REGION_AR = {
   'Head & CNS':'الرأس والجهاز العصبي','Head & Neck':'الرأس والرقبة','Chest':'الصدر',
   'Abdomen':'البطن','Pelvis':'الحوض','Musculoskeletal':'الجهاز العضلي الهيكلي',
-  'Spine':'العمود الفقري','Upper limb':'الطرف العلوي','Lower limb':'الطرف السفلي'
+  'Spine':'العمود الفقري','Upper Extremity':'الطرف العلوي','Lower Extremity':'الطرف السفلي'
 };
 /* Arabic desc extension for expanded structures */
 Object.assign(DESC_AR, {
@@ -872,7 +872,7 @@ function mapDictToStructure(row){
   const partial = S.find(s => en.includes(s.en.toLowerCase()) || s.en.toLowerCase().includes(en));
   if (partial) return partial;
   // Region fallback
-  const regionMap = { Head:'brain', Neck:'neck', Chest:'thorax', Abdomen:'abdomen', Pelvis:'bladder', 'Spine':'lspine', 'Upper limb':'shoulder', 'Lower limb':'knee', 'Musculoskeletal':'bone' };
+  const regionMap = { Head:'brain', Neck:'neck', Chest:'thorax', Abdomen:'abdomen', Pelvis:'bladder', 'Spine':'lspine', 'Upper Extremity':'shoulder', 'Lower Extremity':'knee', 'Musculoskeletal':'bone' };
   const fallback = regionMap[region];
   return fallback ? S.find(s => s.id === fallback) : null;
 }
