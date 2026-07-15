@@ -126,6 +126,8 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
   <div class="modal">
     <h3>Edit term before approval</h3>
     <p>Verify and correct the term, Arabic translation, and RadLex ID before publishing.</p>
+    <label>Match to existing structure <span style="color:var(--text-m);font-weight:400;font-size:10.5px">— TA2 / RadLex · fills fields below</span></label>
+    <div id="edUnified" style="margin-bottom:12px"></div>
     <label>English term</label>
     <input type="text" id="edEn">
     <label>Arabic translation</label>
@@ -153,6 +155,32 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 <script src="../modules/omnirad-avatars.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
 <script src="../modules/omnirad-image-standard.js"></script>
+<script src="../modules/omnirad-unified-search.js"></script>
+<script>
+/* TA2/RadLex match search in the edit modal → fills edEn / edAr / edRid */
+(function(){
+  var mounted = false;
+  function mount(){
+    var host = document.getElementById('edUnified');
+    if (mounted || !host || !window.OmniRadUnified) return;
+    mounted = true;
+    window.OmniRadUnified.mountSearch(host, {
+      sources: ['anatomy'], limit: 8,
+      placeholder: 'Search TA2 structures — e.g. hippocampus · الحُصين',
+      onPick: function(rec){
+        var en = document.getElementById('edEn');
+        var ar = document.getElementById('edAr');
+        var rid = document.getElementById('edRid');
+        if (en) en.value = rec.label || '';
+        if (ar && rec.ar) ar.value = rec.ar;
+        if (rid && rec.rid) rid.value = rec.rid;
+      }
+    });
+  }
+  var iv = setInterval(function(){ if (window.OmniRadUnified){ clearInterval(iv); mount(); } }, 50);
+  setTimeout(function(){ clearInterval(iv); }, 6000);
+})();
+</script>
 <script>
 (function(){
   const t = (en, ar) => ((window.OmniRadI18n && OmniRadI18n.lang === 'ar') ? ar : en);
