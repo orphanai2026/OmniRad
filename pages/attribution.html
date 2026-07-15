@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Standards & Attribution · OmniRad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+:root,[data-theme="dark"]{--bg:#080e14;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.12);--acc-ink:#08100e;--border:rgba(45,212,200,.18);--border-s:rgba(232,240,245,.08);--panel:#101e2a;--panel-ov:#162030}
+[data-theme="dim"]{--bg:#dde4ec;--bg-e:#edf2f8;--bg-ov:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.1);--acc-ink:#fff;--border:rgba(15,58,58,.16);--border-s:rgba(15,58,58,.08);--panel:#fff;--panel-ov:#f6f9fc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic',system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:40px 22px 40px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
+h1{font-size:clamp(1.9rem,3.6vw,2.4rem);font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
+.lead{color:var(--text-s);font-size:14.5px;line-height:1.75;margin-bottom:30px;max-width:720px}
+.src{background:var(--bg-e);border:1px solid var(--border-s);border-radius:16px;padding:22px 24px;margin-bottom:14px}
+.src-hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.src-hd .abbr{font-size:18px;font-weight:800;color:var(--text)}
+.src-hd .ver{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--acc);background:var(--acc-sub);border-radius:999px;padding:3px 10px}
+.src-hd a{margin-inline-start:auto;color:var(--acc);text-decoration:none;font-size:12.5px;font-weight:600}
+.src-hd a:hover{text-decoration:underline}
+.src .full{font-size:13.5px;color:var(--text-s);margin-bottom:12px}
+.src .full .ar{display:block;direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif;color:var(--text-m);margin-top:2px}
+.src .grid{display:grid;grid-template-columns:110px 1fr;gap:8px 16px;font-size:13px;border-top:1px solid var(--border-s);padding-top:12px}
+.src .grid dt{color:var(--text-m);font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.src .grid dd{color:var(--text-s);line-height:1.6}
+.src .grid dd .ar{display:block;direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif;color:var(--text-m)}
+.license{background:var(--panel-ov);border:1px solid var(--border-s);border-radius:14px;padding:20px 22px;margin-top:24px;font-size:12.5px;color:var(--text-m);line-height:1.75;font-family:'IBM Plex Mono',monospace}
+.license b{color:var(--text-s)}
+.disc{margin-top:22px;padding:16px 18px;background:var(--acc-sub);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text-s);line-height:1.7}
+.disc .ar{display:block;direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif;margin-top:4px}
+</style>
+</head>
+<body data-omr-no-standards>
+<div class="wrap">
+  <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:7px;color:var(--text-m);text-decoration:none;font-size:12.5px;font-weight:600;margin-bottom:14px" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--text-m)'"><span style="font-size:15px">←</span><span data-i18n="common.back">Back</span></a>
+  <div class="eyebrow">OmniRad · Standards</div>
+  <h1 id="h1">Standards &amp; Attribution</h1>
+  <p class="lead" id="lead"></p>
+  <div id="sources"></div>
+  <div class="license" id="license"></div>
+  <div class="disc" id="disc"></div>
+</div>
+
+<script src="../modules/data/loinc-bridge.js"></script>
+<script src="../modules/i18n.js"></script>
+<script>window.SUPABASE_DISABLED=false;</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../modules/supabase.js"></script>
+<script src="../modules/omnirad-avatars.js"></script>
+<script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="../modules/omnirad-attribution.js"></script>
+<script>
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(){
+  const ar = window.OmniRadI18n && OmniRadI18n.lang==='ar';
+  const S = OmniRadAttribution.sources();
+  document.getElementById('h1').textContent = ar?'المصادر والإسناد':'Standards & Attribution';
+  document.getElementById('lead').textContent = ar
+    ? 'تُبنى OmniRad على مصادر مصطلحات قياسية معترف بها عالمياً؛ كل مصطلح تشريحي أو إجرائي قابل للتتبّع إلى مصدره الأصلي. تفي هذه الصفحة بالإسناد الذي تتطلّبه تراخيص تلك المصادر.'
+    : 'OmniRad builds on internationally recognized terminology standards; every anatomical and procedural term is traceable to its source ontology. This page fulfils the attribution required by those licenses.';
+  document.title = (ar?'المصادر والإسناد':'Standards & Attribution')+' · OmniRad';
+  const order = ['LOINC','RadLex','TA2','DICOM','WHO'];
+  document.getElementById('sources').innerHTML = order.filter(id=>S[id]).map(id=>{
+    const s=S[id];
+    return `<div class="src">
+      <div class="src-hd"><span class="abbr">${esc(s.abbr)}</span>${s.version?`<span class="ver">${esc(s.version)}</span>`:''}${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url.replace(/^https?:\/\//,''))} ↗</a>`:''}</div>
+      <div class="full">${esc(s.en)}<span class="ar">${esc(s.ar)}</span></div>
+      <dl class="grid">
+        <dt>${ar?'الجهة':'Owner'}</dt><dd>${esc(s.owner)}</dd>
+        <dt>${ar?'الاستخدام':'Used for'}</dt><dd>${esc(s.note_en)}<span class="ar">${esc(s.note_ar)}</span></dd>
+        ${s.license?`<dt>${ar?'الترخيص':'License'}</dt><dd><a href="${esc(s.license)}" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:none">${esc(s.license.replace(/^https?:\/\//,''))} ↗</a></dd>`:''}
+      </dl>
+    </div>`;
+  }).join('');
+  document.getElementById('license').innerHTML = '<b>LOINC® license notice</b><br>'+esc((window.OmniRadLoincBridge&&OmniRadLoincBridge.LICENSE)||'')+'<br><br><b>RadLex®</b> is a registered trademark of the Radiological Society of North America (RSNA). <b>Terminologia Anatomica</b> © FIPAT/IFAA. <b>DICOM</b> © NEMA. Use of these standards does not imply their endorsement of OmniRad.';
+  document.getElementById('disc').innerHTML = (ar
+    ? '⚕️ OmniRad أداة تعليمية بحتة — ليست للتشخيص أو الاستخدام السريري. جميع الحقوق © 2026 د. محمد سعيد الزهراني.'
+    : '⚕️ OmniRad is a purely educational tool — not for diagnosis or clinical use. © 2026 Dr. Mohammed Saeed Alzahrani.');
+}
+render();
+window.addEventListener('omnirad-lang', render);
+</script>
+</body>
+</html>

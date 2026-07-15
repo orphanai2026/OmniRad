@@ -8,257 +8,410 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
-:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.12);--acc-ink:#08100e;--border:rgba(45,212,200,.18);--border-s:rgba(232,240,245,.08);--panel:#101e2a;--panel-ov:#162030}
-[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.1);--acc-ink:#ffffff;--border:rgba(15,58,58,.16);--border-s:rgba(15,58,58,.08);--panel:#ffffff;--panel-ov:#f6f9fc}
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.12);--acc-ink:#08100e;--border:rgba(45,212,200,.18);--border-s:rgba(232,240,245,.08);--panel:#101e2a;--panel-ov:#162030;--latin:#c7a3ff;--latin-sub:rgba(199,163,255,.12)}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.1);--acc-ink:#ffffff;--border:rgba(15,58,58,.16);--border-s:rgba(15,58,58,.08);--panel:#ffffff;--panel-ov:#f6f9fc;--latin:#6d4bb0;--latin-sub:rgba(109,75,176,.1)}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
 body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:36px 22px 80px}
+.wrap{max-width:1240px;margin:0 auto;padding:36px 22px 40px}
+
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
 .eyebrow::before{content:'';width:24px;height:1px;background:var(--acc-dim)}
-h1{font-size:clamp(1.8rem,3.6vw,2.3rem);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
-.lead{color:var(--text-s);font-size:14.5px;line-height:1.7;margin-bottom:14px;max-width:780px}
-.ref{display:inline-flex;align-items:center;gap:9px;padding:10px 14px;background:var(--acc-sub);border:1px solid var(--acc-sub);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--acc);letter-spacing:.02em;margin-bottom:26px}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.lead{color:var(--text-s);font-size:14.5px;line-height:1.7;margin-bottom:16px;max-width:760px}
 
-.card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:20px 22px;margin-bottom:16px}
-.section-t{font-size:11px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:14px}
+/* Source provenance strip (Rosetta identity) */
+.sources{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.src-pill{display:inline-flex;align-items:center;gap:8px;padding:9px 13px;background:var(--bg-e);border:1px solid var(--border-s);border-radius:999px;font-size:11.5px;color:var(--text-s);text-decoration:none;transition:all .16s}
+.src-pill:hover{border-color:var(--acc);color:var(--acc)}
+.src-pill b{font-weight:700;color:var(--text)}
+.src-pill .v{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-m)}
+.src-pill:hover .v{color:var(--acc-dim)}
+.src-pill.attr{background:var(--acc-sub);border-color:transparent;color:var(--acc);font-weight:600}
 
-.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
-.search{flex:1;min-width:240px;padding:12px 15px;background:var(--panel-ov);border:1.5px solid var(--border-s);border-radius:10px;color:var(--text);font-family:inherit;font-size:14.5px;outline:none;transition:border-color .18s}
+/* Toolbar */
+.card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:16px;padding:18px 20px;margin-bottom:8px}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.search-wrap{flex:1;min-width:240px;position:relative}
+.search{width:100%;padding:13px 15px 13px 42px;background:var(--panel-ov);border:1.5px solid var(--border-s);border-radius:11px;color:var(--text);font-family:inherit;font-size:14.5px;outline:none;transition:border-color .18s}
+body[dir="rtl"] .search{padding:13px 42px 13px 15px}
 .search:focus{border-color:var(--acc)}
-.region-filter{display:flex;gap:6px;flex-wrap:wrap}
+.search-ic{position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:14px;color:var(--text-m);pointer-events:none}
+
+/* Language lens (segmented control) */
+.lens{display:inline-flex;background:var(--panel-ov);border:1.5px solid var(--border-s);border-radius:11px;padding:3px;gap:2px}
+.lens button{border:0;background:transparent;color:var(--text-s);font-family:inherit;font-weight:700;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.lens button.on{background:var(--acc);color:var(--acc-ink)}
+.lens .ar-lbl{font-family:'Noto Sans Arabic',sans-serif}
+
+.region-filter{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .region-btn{padding:7px 13px;border-radius:8px;border:1.5px solid var(--border-s);background:transparent;color:var(--text-s);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s}
 .region-btn:hover{border-color:var(--acc);color:var(--acc)}
 .region-btn.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
-.stats{margin-top:10px;font-size:11.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
+.stats{margin:14px 2px 0;font-size:11.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;display:flex;gap:14px;flex-wrap:wrap}
+.stats b{color:var(--acc)}
 
-.region-block{margin-top:22px}
-.region-title{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg,var(--acc-sub) 0%,transparent 70%);border-inline-start:3px solid var(--acc);border-radius:10px;margin-bottom:12px}
+/* Region blocks + grid */
+.region-block{margin-top:26px}
+.region-title{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg,var(--acc-sub) 0%,transparent 70%);border-inline-start:3px solid var(--acc);border-radius:10px;margin-bottom:14px}
 .region-title h2{margin:0;font-size:15px;font-weight:800;color:var(--text);letter-spacing:.01em}
 .region-title .count{background:var(--acc);color:var(--acc-ink);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800;font-family:'IBM Plex Mono',monospace;margin-inline-start:auto}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.term{padding:14px 15px;background:var(--panel);border:1px solid var(--border-s);border-radius:11px;transition:all .18s;cursor:pointer;position:relative}
-.term:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,212,200,.08)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:11px}
+.term{padding:15px 16px;background:var(--panel);border:1px solid var(--border-s);border-radius:13px;transition:all .18s;cursor:pointer;position:relative;overflow:hidden}
+.term::after{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;background:var(--acc);opacity:0;transition:opacity .18s}
+.term:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 10px 28px rgba(45,212,200,.09)}
+.term:hover::after,.term.on::after{opacity:1}
 .term.on{border-color:var(--acc);background:var(--acc-sub)}
-.term .en{font-size:14.5px;font-weight:800;color:var(--text);line-height:1.3;margin:0}
-.term .ar{font-size:13.5px;font-weight:700;color:var(--text-s);margin:4px 0 0;direction:rtl;text-align:right}
-.term .rank{margin-top:8px;font-size:10px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
-.term .parent{margin-top:3px;font-size:11px;color:var(--text-m)}
-.empty{padding:60px 20px;text-align:center;color:var(--text-m);font-size:13.5px}
+.term-head{display:flex;align-items:flex-start;gap:8px}
+.term .primary{flex:1;font-size:15.5px;font-weight:800;color:var(--text);line-height:1.3;min-width:0}
+.term .primary.rtl{direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif}
+.term .secondary{font-size:13px;font-weight:600;color:var(--text-m);margin-top:3px;line-height:1.35;transition:color .18s}
+.term .secondary.rtl{direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif}
+.term:hover .secondary{color:var(--text-s)}
+.term-foot{display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap}
+.rank-tag{font-size:9.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.prov{display:inline-flex;gap:4px;margin-inline-start:auto}
+.prov-chip{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.02em;padding:2px 5px;border-radius:4px;line-height:1;border:1px solid transparent}
+.prov-chip.ta2{color:var(--latin);background:var(--latin-sub);border-color:rgba(199,163,255,.25)}
+.prov-chip.rad{color:var(--acc);background:var(--acc-sub);border-color:var(--border)}
+.prov-chip.loinc{color:#fbbf24;background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.28)}
+.mini-speak{width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border-s);background:transparent;color:var(--text-m);cursor:pointer;transition:all .15s}
+.mini-speak:hover{color:var(--acc);border-color:var(--acc-dim);background:var(--acc-sub)}
 
-#detailPanel{position:fixed;top:calc(var(--onav-h,56px) + 12px);inset-inline-end:20px;width:360px;max-height:calc(100vh - var(--onav-h,56px) - 24px);overflow-y:auto;background:var(--bg-e);border:1.5px solid var(--acc);border-radius:14px;padding:20px;box-shadow:0 16px 48px rgba(0,0,0,.35);display:none;z-index:50}
-#detailPanel.on{display:block}
-#detailPanel .close{position:absolute;top:12px;inset-inline-end:14px;background:transparent;border:0;color:var(--text-m);font-size:22px;cursor:pointer;line-height:1;padding:0}
-#detailPanel .close:hover{color:var(--acc)}
-#detailPanel h3{margin:0 0 4px;font-size:19px;font-weight:800;color:var(--text)}
-#detailPanel .ar-title{font-size:16px;font-weight:700;color:var(--text-s);direction:rtl;text-align:right;margin:0 0 14px}
-#detailPanel .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-#detailPanel .chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--acc-sub);color:var(--acc)}
-#detailPanel .chip.rank{background:transparent;color:var(--text-m);border:1px solid var(--border-s)}
-#detailPanel .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-#detailPanel .btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text-s);cursor:pointer;text-decoration:none;transition:all .15s}
-#detailPanel .btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-sub)}
-#detailPanel .btn.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
-#detailPanel .btn.primary:hover{background:transparent;color:var(--acc)}
-#detailPanel .sec-t{margin-top:16px;font-size:10.5px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;font-weight:700}
-#detailPanel ul{list-style:none;padding:0;margin:6px 0 0}
-#detailPanel li a{display:block;padding:7px 0;color:var(--text-s);text-decoration:none;border-bottom:1px dashed var(--border-s);font-size:13px;transition:color .15s}
-#detailPanel li a:hover{color:var(--acc)}
-@media (max-width:960px){ #detailPanel{position:static;width:auto;max-height:none;margin:20px 0} }
+.empty{padding:70px 20px;text-align:center;color:var(--text-m);font-size:13.5px}
+
+/* Rosetta detail sheet */
+#sheet{position:fixed;top:calc(var(--onav-h,56px) + 12px);inset-inline-end:18px;width:404px;max-width:calc(100vw - 36px);max-height:calc(100vh - var(--onav-h,56px) - 24px);overflow-y:auto;background:var(--bg-e);border:1.5px solid var(--acc);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:none;z-index:60}
+#sheet.on{display:block}
+.sheet-scrim{position:fixed;inset:0;background:transparent;z-index:59;display:none}
+.sheet-scrim.on{display:block}
+.sheet-hd{position:sticky;top:0;background:linear-gradient(180deg,var(--bg-ov),var(--bg-e));border-bottom:1px solid var(--border-s);padding:18px 20px 16px;border-radius:18px 18px 0 0}
+.sheet-close{position:absolute;top:14px;inset-inline-end:14px;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;background:var(--panel-ov);border:1px solid var(--border-s);border-radius:8px;color:var(--text-m);font-size:18px;cursor:pointer;line-height:1}
+.sheet-close:hover{color:var(--acc);border-color:var(--acc-dim)}
+.sheet-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:12px}
+.rosetta-row{display:flex;align-items:center;gap:11px;padding:9px 0}
+.rosetta-row + .rosetta-row{border-top:1px dashed var(--border-s)}
+.rl-lang{width:52px;flex:none;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text-m);text-transform:uppercase}
+.rl-val{flex:1;min-width:0;font-size:18px;font-weight:800;color:var(--text);line-height:1.25}
+.rl-val.rtl{direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif}
+.rl-val.latin{color:var(--latin);font-style:italic;font-weight:700}
+.rl-val.muted{color:var(--text-m);font-size:14px;font-style:normal;font-weight:600}
+.spk{width:34px;height:34px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--border);background:var(--acc-sub);color:var(--acc);cursor:pointer;transition:all .15s}
+.spk:hover{background:var(--acc);color:var(--acc-ink)}
+.spk:disabled{opacity:.3;cursor:default;background:transparent}
+.spk.playing{animation:spkpulse 1s ease infinite}
+@keyframes spkpulse{0%,100%{box-shadow:0 0 0 0 var(--acc-dim)}50%{box-shadow:0 0 0 5px transparent}}
+
+.sheet-bd{padding:16px 20px 22px}
+.sec-t{margin:18px 0 9px;font-size:10px;color:var(--text-m);letter-spacing:.1em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;font-weight:700;display:flex;align-items:center;gap:8px}
+.sec-t::after{content:'';flex:1;height:1px;background:var(--border-s)}
+.code-line{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--panel);border:1px solid var(--border-s);border-radius:10px;margin-bottom:7px}
+.code-sys{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.code-sys .sys{font-size:12px;font-weight:700;color:var(--text)}
+.code-sys .desc{font-size:11px;color:var(--text-m)}
+.code-val{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;color:var(--acc);background:var(--acc-sub);border:1px solid var(--border);border-radius:7px;padding:4px 9px;cursor:copy;transition:all .14s;white-space:nowrap}
+.code-val:hover{background:var(--acc);color:var(--acc-ink)}
+.code-val.copied{background:#34d399;color:#04120c;border-color:#34d399}
+.code-val.none{color:var(--text-m);background:transparent;border-style:dashed;cursor:default}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--acc-sub);color:var(--acc)}
+.chip.rank{background:transparent;color:var(--text-m);border:1px solid var(--border-s)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12.5px;font-weight:700;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-s);cursor:pointer;text-decoration:none;transition:all .15s}
+.btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-sub)}
+.btn.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.btn.primary:hover{background:transparent;color:var(--acc)}
+#sheet ul{list-style:none;padding:0;margin:6px 0 0}
+#sheet li a{display:block;padding:8px 0;color:var(--text-s);text-decoration:none;border-bottom:1px dashed var(--border-s);font-size:13px;transition:color .15s}
+#sheet li a:hover{color:var(--acc)}
+.disc{margin-top:18px;font-size:10.5px;color:var(--text-m);line-height:1.6;padding-top:12px;border-top:1px solid var(--border-s)}
+@media (max-width:980px){ #sheet{position:fixed;inset:auto 0 0 0;top:auto;width:100%;max-width:100%;max-height:82vh;border-radius:18px 18px 0 0} .sheet-scrim{background:rgba(0,0,0,.5)} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:7px;color:var(--text-m);text-decoration:none;font-size:12.5px;font-weight:600;margin-bottom:14px;transition:color .15s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--text-m)'"><span style="font-size:15px">←</span><span data-i18n="dict.back">Back</span></a>
-  <div class="eyebrow" data-i18n="dict.eyebrow">OmniRad · Reference</div>
-  <h1 data-i18n="dict.title">Anatomical Dictionary</h1>
-  <p class="lead" data-i18n="dict.lead">Bilingual anatomical terminology — the unified reference used across every page. Click any term to see details; hover for a quick tooltip.</p>
-  <div class="ref">🔬 <span>Terminologia Anatomica (IFAA, 2019) + RadLex (RSNA)</span></div>
+  <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:7px;color:var(--text-m);text-decoration:none;font-size:12.5px;font-weight:600;margin-bottom:14px;transition:color .15s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--text-m)'"><span style="font-size:15px">←</span><span data-i18n="common.back">Back</span></a>
+  <div class="eyebrow">OmniRad · Reference</div>
+  <h1 id="pageTitle">Anatomical Dictionary</h1>
+  <p class="lead" id="pageLead">One anatomical concept, every terminology system — Arabic, English and Latin names side by side with pronunciation, cross-linked to LOINC, RadLex and Terminologia Anatomica.</p>
+
+  <div class="sources" id="sources"></div>
 
   <div class="card">
-    <div class="section-t" data-i18n="dict.filters">Search & filter</div>
     <div class="toolbar">
-      <input class="search" id="searchBox" placeholder="Search terms (English or Arabic)…" data-i18n-placeholder="dict.searchPh" autocomplete="off" spellcheck="false">
+      <div class="search-wrap">
+        <span class="search-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input class="search" id="searchBox" placeholder="Search Arabic · English · Latin…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="lens" id="lens" role="group" aria-label="Display language">
+        <button data-lens="en" class="on">EN</button>
+        <button data-lens="ar" class="ar-lbl">ع</button>
+        <button data-lens="la">Latin</button>
+      </div>
     </div>
-    <div class="region-filter" id="regionFilter" style="margin-top:10px"></div>
+    <div class="region-filter" id="regionFilter"></div>
     <div class="stats" id="stats"></div>
   </div>
 
   <div id="results"></div>
 </div>
 
-<aside id="detailPanel">
-  <button class="close" onclick="closeDetail()" aria-label="Close">×</button>
-  <div id="detailContent"></div>
-</aside>
+<div class="sheet-scrim" id="scrim" onclick="closeSheet()"></div>
+<aside id="sheet" role="dialog" aria-modal="false" aria-label="Term details"></aside>
 
 <script src="../modules/data/anatomy-master.js"></script>
 <script src="../modules/data/anatomy-master-v2.js"></script>
+<script src="../modules/data/radiology-arabic.js"></script>
+<script src="../modules/data/loinc-bridge.js"></script>
 <script src="../modules/omnirad-term.js"></script>
 <script src="../modules/omnirad-search.js"></script>
 <script src="../modules/omnirad-typography.js"></script>
+<script src="../modules/speak.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../modules/i18n.js"></script>
 <script src="../modules/supabase.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
 <script src="../modules/omnirad-nav.js" data-base="../"></script>
+<script src="../modules/omnirad-attribution.js"></script>
 <script src="../modules/omnirad-flag.js"></script>
+
+<!-- Curated Latin (Terminologia Anatomica) names for high-frequency structures.
+     Medical accuracy: only verified TA2 Latin terms; unknown → gracefully omitted. -->
+<script src="../modules/data/anatomy-latin.js"></script>
+
 <script>
 const A = window.OMNIRAD_ANATOMY;
+const BR = window.OmniRadLoincBridge;
+const LAT = window.OMNIRAD_LATIN || {};
+const T = k => (window.OmniRadI18n ? OmniRadI18n.t(k) : k);
 const isAr = () => window.OmniRadI18n && OmniRadI18n.lang === 'ar';
+let lens = 'en';          // display language for the grid: en | ar | la
 let activeRegion = 'all';
 let query = '';
 
-if (window.OmniRadI18n && OmniRadI18n.dicts){
-  Object.assign(OmniRadI18n.dicts.en, {
-    'dict.eyebrow':'OmniRad · Reference',
-    'dict.title':'Anatomical Dictionary',
-    'dict.lead':'Bilingual anatomical terminology — the unified reference used across every page. Click any term to see details; hover for a quick tooltip.',
-    'dict.searchPh':'Search terms (English or Arabic)…',
-    'dict.filters':'Search & filter',
-    'dict.all':'All',
-    'dict.stats':'Showing {n} of {total} terms',
-    'dict.related':'Related structures','dict.substructures':'Substructures','dict.partOf':'Part of',
-    'dict.noResults':'No terms match your search.',
-    'nav.dictionary':'Dictionary',
-    'dict.moreInfo':'More info (Radiopaedia) ↗',
-    'dict.back':'Back'
-  });
-  Object.assign(OmniRadI18n.dicts.ar, {
-    'dict.eyebrow':'أومنيراد · مرجعية',
-    'dict.title':'القاموس التشريحي',
-    'dict.lead':'المصطلحات التشريحية ثنائية اللغة — المرجعية الموحّدة المستخدمة في كل صفحات المنصّة. اضغط أي مصطلح لرؤية التفاصيل، وحوّم عليه لمعلومات سريعة.',
-    'dict.searchPh':'ابحث بالإنجليزية أو العربية…',
-    'dict.filters':'بحث وتصفية',
-    'dict.all':'الكل',
-    'dict.stats':'يعرض {n} من أصل {total} مصطلح',
-    'dict.related':'أعضاء ذات صلة','dict.substructures':'أجزاء فرعية','dict.partOf':'جزء من',
-    'dict.noResults':'لا توجد مصطلحات تطابق البحث.',
-    'nav.dictionary':'القاموس',
-    'dict.moreInfo':'مزيد من المعلومات (Radiopaedia) ↗',
-    'dict.back':'رجوع'
-  });
-  if (typeof OmniRadI18n.apply === 'function') OmniRadI18n.apply();
+/* RadLex RID → LOINC focus (imaging focus axis) for cross-referencing */
+const RID2FOCUS = new Map();
+if (BR && BR.axes) BR.axes.focus.forEach(f => { if (f.rid) RID2FOCUS.set(f.rid, f); });
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function latinOf(s){ return LAT[s.id] || (s.ta2 && LAT['ta2:'+s.ta2]) || LAT['en:'+String(s.en||'').toLowerCase().trim()] || null; }
+
+/* ── Pronunciation (Web Speech + Google TTS fallback for Arabic) ── */
+let arVoiceKnown = null;
+function hasArVoice(){
+  if (arVoiceKnown !== null) return arVoiceKnown;
+  try { arVoiceKnown = ('speechSynthesis' in window) && speechSynthesis.getVoices().some(v=>/^ar/i.test(v.lang)); }
+  catch(_){ arVoiceKnown = false; }
+  return arVoiceKnown;
+}
+if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => { arVoiceKnown = null; };
+function speak(text, lang, btn){
+  if (!text) return;
+  if (btn){ btn.classList.add('playing'); setTimeout(()=>btn.classList.remove('playing'), 1400); }
+  const useLang = lang || 'en';
+  if (window.OmniRadSpeak && OmniRadSpeak.supported && !(useLang==='ar' && !hasArVoice())){
+    OmniRadSpeak.say(text, useLang); return;
+  }
+  try { new Audio('https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(text)+'&tl='+useLang+'&client=tw-ob').play(); } catch(_){}
+}
+window.__omrSpeak = speak;
+
+/* ── Sources strip ── */
+function renderSources(){
+  const S = window.OmniRadAttribution ? OmniRadAttribution.sources() : {};
+  const order = ['LOINC','RadLex','TA2','WHO'];
+  const attrHref = 'attribution.html';
+  const pills = order.filter(id=>S[id]).map(id => {
+    const s = S[id];
+    return `<a class="src-pill" href="${esc(s.url)}" target="_blank" rel="noopener"><b>${esc(s.abbr)}</b>${s.version?`<span class="v">${esc(s.version)}</span>`:''}</a>`;
+  }).join('');
+  document.getElementById('sources').innerHTML = pills +
+    `<a class="src-pill attr" href="${attrHref}">${esc(T('standards.full'))} →</a>`;
 }
 
-function tt(key, subs){ const I = window.OmniRadI18n; let s = (I && I.t) ? I.t(key) : key; if (subs) Object.keys(subs).forEach(k => { s = s.replace('{'+k+'}', subs[k]); }); return s; }
-
+/* ── Region filter ── */
 function renderRegionFilter(){
   const box = document.getElementById('regionFilter');
   const ar = isAr();
-  const buttons = [{ id:'all', label: tt('dict.all') }].concat(A.regions.map(r => ({ id: r.id, label: ar ? r.ar : r.en })));
-  box.innerHTML = buttons.map(b => `<button class="region-btn ${b.id===activeRegion?'on':''}" data-region="${b.id}">${b.label}</button>`).join('');
-  box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { activeRegion = b.dataset.region; renderRegionFilter(); renderResults(); }));
+  const btns = [{id:'all', label: ar?'الكل':'All'}].concat(A.regions.map(r=>({id:r.id,label:ar?r.ar:r.en})));
+  box.innerHTML = btns.map(b=>`<button class="region-btn ${b.id===activeRegion?'on':''}" data-region="${b.id}">${esc(b.label)}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{activeRegion=b.dataset.region;renderRegionFilter();renderResults();}));
 }
 
+/* ── Grid ── */
+function primaryName(s){
+  if (lens==='ar') return {val:s.ar, cls:'rtl'};
+  if (lens==='la'){ const l=latinOf(s); return l?{val:l,cls:'latin-txt'}:{val:s.en,cls:''}; }
+  return {val:s.en, cls:''};
+}
+function secondaryName(s){
+  if (lens==='ar') return {val:s.en, cls:'', lang:'en'};
+  if (lens==='la') return {val:s.ar, cls:'rtl', lang:'ar'};
+  return {val:s.ar, cls:'rtl', lang:'ar'};
+}
+function provChips(s){
+  const chips=[];
+  if (s.ta2) chips.push('<span class="prov-chip ta2" title="Terminologia Anatomica">TA2</span>');
+  if (s.radlex) chips.push('<span class="prov-chip rad" title="RadLex '+esc(s.radlex)+'">RadLex</span>');
+  if (s.radlex && RID2FOCUS.has(s.radlex)) chips.push('<span class="prov-chip loinc" title="LOINC/RSNA imaging focus">LOINC</span>');
+  return chips.join('');
+}
 function renderResults(){
-  const ar = isAr();
   const q = query.trim().toLowerCase();
-  const filtered = A.structures.filter(s => {
-    if (activeRegion !== 'all' && s.region !== activeRegion) return false;
+  const filtered = A.structures.filter(s=>{
+    if (activeRegion!=='all' && s.region!==activeRegion) return false;
     if (!q) return true;
-    return s.en.toLowerCase().includes(q) || s.ar.includes(q) || (s.aliases||[]).some(a => a.toLowerCase().includes(q));
+    const lat = (latinOf(s)||'').toLowerCase();
+    return s.en.toLowerCase().includes(q) || (s.ar||'').includes(query.trim()) || lat.includes(q) || (s.aliases||[]).some(a=>String(a).toLowerCase().includes(q));
   });
-  document.getElementById('stats').textContent = tt('dict.stats', { n: filtered.length, total: A.structures.length });
+  const laCount = A.structures.filter(latinOf).length;
+  document.getElementById('stats').innerHTML =
+    `<span><b>${filtered.length}</b> / ${A.structures.length} ${isAr()?'مصطلح':'terms'}</span>`+
+    `<span>${isAr()?'مصدر':'sources'}: <b>4</b></span>`+
+    `<span>${isAr()?'أسماء لاتينية':'Latin names'}: <b>${laCount}</b></span>`+
+    `<span>${isAr()?'البيانات':'data'}: <b>${esc(A.source||'v1')}</b></span>`;
   const container = document.getElementById('results');
-  if (!filtered.length){ container.innerHTML = '<div class="empty">' + tt('dict.noResults') + '</div>'; return; }
-  const groups = {};
-  filtered.forEach(s => { (groups[s.region] = groups[s.region] || []).push(s); });
-  let html = '';
-  A.regions.forEach(r => {
-    const items = groups[r.id]; if (!items || !items.length) return;
-    html += `<div class="region-block">
-      <div class="region-title">
-        <h2>${ar ? r.ar : r.en}</h2>
-        <span class="count">${items.length}</span>
-      </div>
-      <div class="grid">`;
-    items.forEach(s => {
-      const parent = s.parent ? A.byId[s.parent] : null;
-      html += `<div class="term" data-tid="${s.id}">
-        <div class="en">${s.en}</div>
-        <div class="ar">${s.ar}</div>
-        <div class="rank">${s.rank}${parent ? ' · '+(ar?parent.ar:parent.en) : ''}</div>
+  if (!filtered.length){ container.innerHTML = `<div class="empty">${isAr()?'لا توجد مصطلحات تطابق البحث.':'No terms match your search.'}</div>`; return; }
+  const groups={}; filtered.forEach(s=>{(groups[s.region]=groups[s.region]||[]).push(s);});
+  let html='';
+  A.regions.forEach(r=>{
+    const items=groups[r.id]; if(!items||!items.length) return;
+    html += `<div class="region-block"><div class="region-title"><h2>${esc(isAr()?r.ar:r.en)}</h2><span class="count">${items.length}</span></div><div class="grid">`;
+    items.forEach(s=>{
+      const p=primaryName(s), sec=secondaryName(s);
+      const spkLang = lens==='ar' ? 'ar' : 'en';
+      const spkText = lens==='ar' ? s.ar : s.en;
+      html += `<div class="term" data-tid="${esc(s.id)}">
+        <div class="term-head">
+          <div class="primary ${p.cls==='rtl'?'rtl':''}" ${p.cls==='latin-txt'?'style="color:var(--latin);font-style:italic"':''}>${esc(p.val)}</div>
+          <button class="mini-speak" title="Listen" data-spk="${esc(spkText)}" data-spklang="${spkLang}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg></button>
+        </div>
+        <div class="secondary ${sec.cls==='rtl'?'rtl':''}">${esc(sec.val)}</div>
+        <div class="term-foot"><span class="rank-tag">${esc(s.rank||'')}</span><span class="prov">${provChips(s)}</span></div>
       </div>`;
     });
     html += '</div></div>';
   });
   container.innerHTML = html;
-  container.querySelectorAll('.term').forEach(el => {
-    el.addEventListener('click', () => openDetail(el.dataset.tid));
-    el.addEventListener('mouseenter', () => { if (window.OmniRadTerm) OmniRadTerm.show(el.dataset.tid, el); });
+  container.querySelectorAll('.term').forEach(el=>{
+    el.addEventListener('click', e=>{ if(e.target.closest('.mini-speak')) return; openSheet(el.dataset.tid); });
+    el.addEventListener('mouseenter', ()=>{ if(window.OmniRadTerm) OmniRadTerm.show(el.dataset.tid, el); });
   });
+  container.querySelectorAll('.mini-speak').forEach(b=>b.addEventListener('click', e=>{ e.stopPropagation(); speak(b.dataset.spk, b.dataset.spklang, b); }));
 }
 
-function openDetail(id){
-  const s = A.byId[id]; if (!s) return;
+/* ── Rosetta detail sheet ── */
+function codeLine(sys, desc, val, copy){
+  const valHtml = val
+    ? `<span class="code-val" data-copy="${esc(copy||val)}" title="Copy">${esc(val)}</span>`
+    : `<span class="code-val none">—</span>`;
+  return `<div class="code-line"><div class="code-sys"><span class="sys">${esc(sys)}</span><span class="desc">${esc(desc)}</span></div>${valHtml}</div>`;
+}
+function openSheet(id){
+  const s = A.byId(id); if(!s) return;
   const ar = isAr();
-  const region = A.regions.find(r => r.id === s.region);
-  const parent = s.parent ? A.byId[s.parent] : null;
-  const children = A.structures.filter(x => x.parent === s.id);
-  const siblings = A.structures.filter(x => x.region === s.region && x.parent === s.parent && x.id !== s.id).slice(0, 6);
-  const radLink = 'https://radiopaedia.org/search?q=' + encodeURIComponent(s.en);
+  const region = A.regions.find(r=>r.id===s.region);
+  const parent = s.parent ? A.byId(s.parent) : null;
+  const children = A.structures.filter(x=>x.parent===s.id);
+  const siblings = A.structures.filter(x=>x.region===s.region && x.parent===s.parent && x.id!==s.id).slice(0,6);
+  const latin = latinOf(s);
+  const focus = (s.radlex && RID2FOCUS.get(s.radlex)) || null;
+  const radLink = 'https://radiopaedia.org/search?q='+encodeURIComponent(s.en);
+
+  const rl = (label, val, cls, lang) => {
+    const disabled = (!val || lang==='la');
+    return `<div class="rosetta-row">
+      <span class="rl-lang">${label}</span>
+      <span class="rl-val ${cls||''} ${!val?'muted':''}">${esc(val||'—')}</span>
+      <button class="spk" ${disabled?'disabled':''} title="Listen" ${!disabled?`data-spk="${esc(val)}" data-spklang="${lang}"`:''}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+      </button></div>`;
+  };
 
   const html = `
-    <h3>${s.en}</h3>
-    <div class="ar-title">${s.ar}</div>
+  <div class="sheet-hd">
+    <button class="sheet-close" onclick="closeSheet()" aria-label="Close">×</button>
+    <div class="sheet-eyebrow">Rosetta · ${esc(ar?region.ar:region.en)}</div>
+    ${rl('EN', s.en, '', 'en')}
+    ${rl('عربي', s.ar, 'rtl', 'ar')}
+    ${rl('Latin', latin, 'latin', 'la')}
+  </div>
+  <div class="sheet-bd">
     <div class="meta">
-      <span class="chip">${ar ? region.ar : region.en}</span>
-      <span class="chip rank">${s.rank}</span>
+      <span class="chip">${esc(ar?region.ar:region.en)}</span>
+      <span class="chip rank">${esc(s.rank||'')}</span>
+      ${s.needs_review?`<span class="chip rank" style="color:#fbbf24;border-color:rgba(251,191,36,.4)">${ar?'قيد المراجعة':'under review'}</span>`:''}
     </div>
-    ${parent ? `<div class="sec-t">${tt('dict.partOf')}</div><ul><li><a href="#" data-jump="${parent.id}">${ar?parent.ar:parent.en}</a></li></ul>` : ''}
-    <div class="row">
-      <button class="btn" onclick="speakBtn('en','${s.en.replace(/'/g,"\\'")}')">🔊 EN</button>
-      <button class="btn" onclick="speakBtn('ar','${s.ar.replace(/'/g,"\\'")}')">🔊 AR</button>
-    </div>
+
+    <div class="sec-t">${ar?'أنظمة الترميز':'Coding systems'}</div>
+    ${codeLine('Terminologia Anatomica', ar?'المرجع التشريحي (TA2)':'Anatomical reference (TA2)', s.ta2||'', s.ta2)}
+    ${codeLine('RadLex', ar?'مُعجم RSNA الإشعاعي':'RSNA radiology lexicon', s.radlex||'', s.radlex)}
+    ${focus
+      ? codeLine('LOINC / RSNA', (ar?'بؤرة تصوير في ':'imaging focus in ')+focus.count+(ar?' إجراء':' procedures'), 'RID '+focus.rid, focus.rid)
+      : codeLine('LOINC / RSNA', ar?'لا يوجد ربط بؤرة تصوير':'no imaging-focus mapping', '', '')}
+
+    ${parent?`<div class="sec-t">${ar?'جزء من':'Part of'}</div><ul><li><a href="#" data-jump="${esc(parent.id)}">${esc(ar?parent.ar:parent.en)}</a></li></ul>`:''}
+    ${children.length?`<div class="sec-t">${ar?'أجزاء فرعية':'Substructures'}</div><ul>${children.map(c=>`<li><a href="#" data-jump="${esc(c.id)}">${esc(ar?c.ar:c.en)}</a></li>`).join('')}</ul>`:''}
+    ${siblings.length?`<div class="sec-t">${ar?'بنى ذات صلة':'Related'}</div><ul>${siblings.map(x=>`<li><a href="#" data-jump="${esc(x.id)}">${esc(ar?x.ar:x.en)}</a></li>`).join('')}</ul>`:''}
+
     <div class="row">
       <a class="btn primary" href="atlas.html?structure=${encodeURIComponent(s.id)}">${ar?'شاهد في الأطلس ↗':'View in Atlas ↗'}</a>
-      <a class="btn" href="${radLink}" target="_blank" rel="noopener">${tt('dict.moreInfo')}</a>
-      ${window.OmniRadFlag ? OmniRadFlag.buttonHtml(s.id, s.en) : ''}
+      <a class="btn" href="${radLink}" target="_blank" rel="noopener">Radiopaedia ↗</a>
+      ${window.OmniRadFlag?OmniRadFlag.buttonHtml(s.id,s.en):''}
     </div>
-    ${children.length ? `<div class="sec-t">${tt('dict.substructures')}</div><ul>${children.map(c=>`<li><a href="#" data-jump="${c.id}">${ar?c.ar:c.en}</a></li>`).join('')}</ul>` : ''}
-    ${siblings.length ? `<div class="sec-t">${tt('dict.related')}</div><ul>${siblings.map(sib=>`<li><a href="#" data-jump="${sib.id}">${ar?sib.ar:sib.en}</a></li>`).join('')}</ul>` : ''}
-  `;
-  document.getElementById('detailContent').innerHTML = html;
-  document.getElementById('detailPanel').classList.add('on');
-  document.querySelectorAll('.term').forEach(el => el.classList.toggle('on', el.dataset.tid === id));
-  document.querySelectorAll('#detailPanel [data-jump]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); openDetail(a.dataset.jump); }));
-  if (window.OmniRadFlag) OmniRadFlag.mount();
-  history.replaceState(null, '', '?term=' + encodeURIComponent(id));
+    <p class="disc">${ar?'⚕️ أداة تعليمية — ليست للتشخيص أو الاستخدام السريري. المصطلحات وفق TA2 · RadLex® (RSNA) · LOINC® 2.82 (Regenstrief).':'⚕️ Educational tool — not for diagnosis or clinical use. Terminology per TA2 · RadLex® (RSNA) · LOINC® 2.82 (Regenstrief).'}</p>
+  </div>`;
+
+  const sheet = document.getElementById('sheet');
+  sheet.innerHTML = html;
+  sheet.classList.add('on');
+  document.getElementById('scrim').classList.add('on');
+  document.querySelectorAll('.term').forEach(el=>el.classList.toggle('on', el.dataset.tid===id));
+  sheet.querySelectorAll('.spk[data-spk]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.spk,b.dataset.spklang,b)));
+  sheet.querySelectorAll('[data-jump]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openSheet(a.dataset.jump);}));
+  sheet.querySelectorAll('.code-val[data-copy]').forEach(c=>c.addEventListener('click',()=>{
+    if(navigator.clipboard){ navigator.clipboard.writeText(c.dataset.copy).catch(()=>{}); c.classList.add('copied'); const o=c.textContent; setTimeout(()=>{c.classList.remove('copied');},900); }
+  }));
+  if(window.OmniRadFlag) OmniRadFlag.mount();
+  history.replaceState(null,'','?term='+encodeURIComponent(id));
 }
-window.openDetail = openDetail;
-window.closeDetail = () => {
-  document.getElementById('detailPanel').classList.remove('on');
-  document.querySelectorAll('.term').forEach(el => el.classList.remove('on'));
-  history.replaceState(null, '', location.pathname);
+window.openSheet = openSheet;
+window.closeSheet = () => {
+  document.getElementById('sheet').classList.remove('on');
+  document.getElementById('scrim').classList.remove('on');
+  document.querySelectorAll('.term').forEach(el=>el.classList.remove('on'));
+  history.replaceState(null,'',location.pathname);
 };
-window.speakBtn = (lang, text) => {
-  if ('speechSynthesis' in window){
-    try {
-      const voices = speechSynthesis.getVoices();
-      const v = voices.find(vc => (lang==='ar' ? /^ar/i : /^en/i).test(vc.lang));
-      const u = new SpeechSynthesisUtterance(text);
-      if (v) u.voice = v;
-      u.lang = lang === 'ar' ? 'ar-SA' : 'en-US'; u.rate = 0.9;
-      speechSynthesis.cancel(); speechSynthesis.speak(u);
-      return;
-    } catch(e){}
-  }
-  try {
-    const url = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(text) + '&tl=' + lang + '&client=tw-ob';
-    new Audio(url).play();
-  } catch(e){}
-};
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSheet(); });
 
-document.getElementById('searchBox').addEventListener('input', e => { query = e.target.value; renderResults(); });
-window.addEventListener('omnirad-lang', () => { renderRegionFilter(); renderResults(); });
-renderRegionFilter();
-renderResults();
+/* ── Lens ── */
+document.getElementById('lens').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  lens=b.dataset.lens;
+  document.getElementById('lens').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  renderResults();
+}));
 
+/* ── i18n page chrome ── */
+function applyLang(){
+  const ar=isAr();
+  document.getElementById('pageTitle').textContent = ar?'القاموس التشريحي':'Anatomical Dictionary';
+  document.getElementById('pageLead').textContent = ar
+    ? 'مفهوم تشريحي واحد بكل أنظمة المصطلحات — الاسم بالعربية والإنجليزية واللاتينية جنباً إلى جنب مع النطق الصوتي، مربوطاً بـ LOINC و RadLex والمصطلحات التشريحية الدولية.'
+    : 'One anatomical concept, every terminology system — Arabic, English and Latin names side by side with pronunciation, cross-linked to LOINC, RadLex and Terminologia Anatomica.';
+  document.getElementById('searchBox').placeholder = ar?'ابحث بالعربية · الإنجليزية · اللاتينية…':'Search Arabic · English · Latin…';
+  document.title = (ar?'القاموس التشريحي':'Anatomical Dictionary')+' · OmniRad';
+  renderSources(); renderRegionFilter(); renderResults();
+}
+window.addEventListener('omnirad-lang', applyLang);
+window.addEventListener('omnirad:anatomy-ready', renderResults);
+
+document.getElementById('searchBox').addEventListener('input', e=>{ query=e.target.value; renderResults(); });
+
+applyLang();
 const params = new URLSearchParams(location.search);
-if (params.get('term')) setTimeout(() => openDetail(params.get('term')), 200);
+if (params.get('term')) setTimeout(()=>openSheet(params.get('term')), 250);
 </script>
 </body>
 </html>
