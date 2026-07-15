@@ -89,14 +89,14 @@ const state = { structId:(S[0]&&S[0].id)||'brain', cols:2, sync:true, cells:[], 
   const REGION_AR = {
     'Head & CNS':'الرأس والجهاز العصبي','Head & Neck':'الرأس والرقبة','Chest':'الصدر',
     'Abdomen':'البطن','Pelvis':'الحوض','Musculoskeletal':'الجهاز العضلي الهيكلي',
-    'Spine':'العمود الفقري','Upper limb':'الطرف العلوي','Lower limb':'الطرف السفلي'
+    'Spine':'العمود الفقري','Upper Extremity':'الطرف العلوي','Lower Extremity':'الطرف السفلي'
   };
   const isAr = () => (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
   function rebuild(){
     const ar = isAr();
     const groups = {};
     S.forEach(s => { const k = s.region || 'Other'; (groups[k] = groups[k] || []).push(s); });
-    const order = ['Head & CNS','Head & Neck','Chest','Abdomen','Pelvis','Spine','Upper limb','Lower limb','Musculoskeletal'];
+    const order = ['Head & CNS','Head & Neck','Chest','Abdomen','Pelvis','Spine','Upper Extremity','Lower Extremity','Musculoskeletal'];
     const keys = Object.keys(groups).sort((a,b)=>{
       const ia = order.indexOf(a), ib = order.indexOf(b);
       return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
