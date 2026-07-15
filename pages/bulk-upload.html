@@ -1173,14 +1173,14 @@ textarea{resize:vertical;min-height:76px;font-family:'IBM Plex Mono',monospace;f
     opts += '<optgroup label="DICOM CID 4031 (Body Regions)">';
     groups.forEach(g => { opts += `<option value="g:${g.id}">${g.en} — ${g.ar}</option>`; });
     opts += '</optgroup><optgroup label="LOINC/RSNA Regions">';
-    loincRegions.forEach(r => { opts += `<option value="lr:${r.code}">${r.code} — ${r.ar} (${r.count})</option>`; });
+    loincRegions.forEach(r => { opts += `<option value="lr:${r.code}">${r.code} — ${r.ar}</option>`; });
     opts += '</optgroup>';
     regSel.innerHTML = opts;
 
     // Populate Modality from LOINC playbook
     const mods = N.modalities();
     modSel.innerHTML = '<option value="">—</option>' +
-      mods.map(m => `<option value="${m.code}">${m.code} — ${m.ar} (${m.count})</option>`).join('');
+      mods.map(m => `<option value="${m.code}">${m.code} — ${m.ar}</option>`).join('');
 
     // Filter helper: returns {modality, region} for search()
     function getFilter(){
