@@ -302,6 +302,35 @@
     </span>`;
   }
 
+  // ── Code chip (number-free display rule ⑤) ──────────────────────────
+  // Name is the hero; the code stays hidden until the ⌗ affordance is
+  // hovered/focused (keyboard-accessible), then shows a copyable mono chip.
+  //   renderCodeChip('Heart', {system:'LOINC', code:'24553-9', rid:'RID1385'})
+  function renderCodeChip(name, opts){
+    opts = opts || {};
+    const sys  = opts.system || 'LOINC';
+    const code = opts.code || '';
+    const rid  = opts.rid || '';
+    const codeStr = [code ? sys + ' ' + code : '', rid].filter(Boolean).join(' · ');
+    if (!codeStr){ return `<span class="omr-term"><span class="omr-term-name">${esc(name)}</span></span>`; }
+    const copyVal = esc(code || rid);
+    return `<span class="omr-term">`
+      + `<span class="omr-term-name">${esc(name)}</span>`
+      + `<button type="button" class="omr-code-toggle" aria-label="${esc(name)} — reveal standard code" title="Reveal code" data-copy="${copyVal}">⌗</button>`
+      + `<span class="omr-code-chip" role="status">${esc(codeStr)}</span>`
+      + `</span>`;
+  }
+
+  // Delegated copy-on-click for any [data-copy] chip toggle.
+  if (typeof document !== 'undefined'){
+    document.addEventListener('click', function(e){
+      const t = e.target.closest && e.target.closest('.omr-code-toggle[data-copy]');
+      if (!t) return;
+      const v = t.getAttribute('data-copy');
+      if (v && navigator.clipboard){ navigator.clipboard.writeText(v).catch(()=>{}); t.classList.add('omr-copied'); setTimeout(()=>t.classList.remove('omr-copied'), 1100); }
+    });
+  }
+
   // ── Default badge CSS (injected once — override via .omr-badge classes) ─
   const CSS = `
 .omr-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:11.5px;font-family:'IBM Plex Sans','Noto Sans Arabic',sans-serif;font-weight:500;line-height:1;border:1px solid transparent;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -312,6 +341,13 @@
 .omr-badge-code{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.02em;opacity:.95}
 .omr-badge-sep{opacity:.35;margin:0 2px}
 .omr-badge-name{opacity:.9;overflow:hidden;text-overflow:ellipsis}
+.omr-term{display:inline-flex;align-items:center;gap:6px;max-width:100%}
+.omr-term-name{overflow:hidden;text-overflow:ellipsis}
+.omr-code-toggle{flex:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border:1px solid rgba(148,163,184,.28);border-radius:5px;background:transparent;color:#94a3b8;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1;cursor:pointer;opacity:.55;transition:opacity .15s,color .15s,border-color .15s}
+.omr-code-toggle:hover,.omr-code-toggle:focus-visible{opacity:1;color:#2dd4c8;border-color:rgba(45,212,200,.5);outline:none}
+.omr-code-toggle.omr-copied{color:#34d399;border-color:rgba(52,211,153,.6)}
+.omr-code-chip{flex:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.02em;color:#94a3b8;background:rgba(148,163,184,.10);border:1px solid rgba(148,163,184,.22);border-radius:5px;padding:2px 7px;max-width:0;overflow:hidden;white-space:nowrap;opacity:0;transform:translateX(-4px);transition:max-width .22s ease,opacity .18s,transform .18s;pointer-events:none}
+.omr-term:hover .omr-code-chip,.omr-term:focus-within .omr-code-chip{max-width:280px;opacity:1;transform:none}
 `;
   function injectCss(){
     if (document.getElementById('omr-naming-css')) return;
@@ -333,7 +369,7 @@
     ready: () => readyPromise,
     modalities, regions, bodyPartGroups, bodyParts,
     search, resolve, compose, autoSuggest,
-    qualityTier, renderBadge
+    qualityTier, renderBadge, renderCodeChip
   };
 
   if (typeof window !== 'undefined') window.OmniRadNaming = API;

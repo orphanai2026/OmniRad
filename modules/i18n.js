@@ -183,6 +183,17 @@
       recommended:  { en:'Recommended imaging', ar:'التصوير الموصى به' },
       urgent:       { en:'urgent',              ar:'عاجل' },
       elective:     { en:'elective',            ar:'اختياري' }
+    },
+    standards: {
+      strip:        { en:'Terminology standards', ar:'مصادر المصطلحات القياسية' },
+      full:         { en:'Standards & Attribution', ar:'المصادر والإسناد' },
+      terminology:  { en:'Terminology', ar:'المصطلحات' },
+      eduOnly:      { en:'Educational use only', ar:'للاستخدام التعليمي فقط' },
+      title:        { en:'Standards & Attribution', ar:'المصادر والإسناد' },
+      lead:         { en:'OmniRad builds on internationally recognized terminology standards. Every anatomical and procedural term is traceable to its source ontology. This page fulfils the attribution required by those licenses.',
+                      ar:'تُبنى OmniRad على مصادر مصطلحات قياسية معترف بها عالمياً. كل مصطلح تشريحي أو إجرائي قابل للتتبّع إلى مصدره. تفي هذه الصفحة بالإسناد الذي تتطلّبه تراخيص تلك المصادر.' },
+      whatFor:      { en:'What it provides', ar:'ما الذي يوفّره' },
+      license:      { en:'License & attribution', ar:'الترخيص والإسناد' }
     }
   };
 
