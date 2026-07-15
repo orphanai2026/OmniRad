@@ -34,16 +34,16 @@
     search:     window.OMNIRAD_ANATOMY.search
   };
 
-  // Canonical regions (identical to v1 — keep frontend labels stable)
+  // Canonical regions — labels aligned to DICOM CID 4031 + LOINC/RSNA + RadLex (IDs immutable)
   const REGIONS = (V1 && V1.regions.length) ? V1.regions : [
-    { id:'head-cns',   en:'Head & Neck / CNS',  ar:'الرأس والرقبة / الجهاز العصبي', order:1 },
-    { id:'chest',      en:'Chest / Thorax',     ar:'الصدر',                          order:2 },
-    { id:'cardio',     en:'Cardiovascular',     ar:'القلب والأوعية',                 order:3 },
+    { id:'head-cns',   en:'Head & Neck',           ar:'الرأس والرقبة',          order:1 },
+    { id:'chest',      en:'Chest',                 ar:'الصدر',                  order:2 },
+    { id:'cardio',     en:'Cardiovascular System', ar:'الجهاز القلبي الوعائي',  order:3 },
     { id:'abdomen',    en:'Abdomen',            ar:'البطن',                          order:4 },
     { id:'pelvis',     en:'Pelvis',             ar:'الحوض',                          order:5 },
     { id:'spine',      en:'Spine',              ar:'العمود الفقري',                  order:6 },
-    { id:'upper-limb', en:'Upper limb',         ar:'الطرف العلوي',                   order:7 },
-    { id:'lower-limb', en:'Lower limb',         ar:'الطرف السفلي',                   order:8 },
+    { id:'upper-limb', en:'Upper Extremity',    ar:'الطرف العلوي',                   order:7 },
+    { id:'lower-limb', en:'Lower Extremity',    ar:'الطرف السفلي',                   order:8 },
     { id:'breast',     en:'Breast',             ar:'الثدي',                          order:9 }
   ];
 
