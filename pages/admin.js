@@ -28,6 +28,7 @@
     en: {
       'admin.sections':'Sections','admin.dash':'Dashboard','admin.dashLead':'Platform overview — content and user activity.',
       'admin.users':'Users','admin.usersLead':'Manage roles and user access.',
+      'admin.perms':'Permissions','admin.permsLead':'Assign role presets and fine-tune per-user capabilities.',
       'admin.library':'Images','admin.libraryLead':'Approve, reject or delete generated images.',
       'admin.mnemo':'Mnemonics','admin.mnemoLead':'Curated memory aids indexed by structure.',
       'admin.cards':'Cards','admin.cardsLead':'Learning cards for Daily quiz and SRS.',
@@ -76,6 +77,7 @@
     ar: {
       'admin.sections':'الأقسام','admin.dash':'اللوحة','admin.dashLead':'نظرة عامة — المحتوى ونشاط المستخدمين.',
       'admin.users':'المستخدمون','admin.usersLead':'إدارة الأدوار ووصول المستخدمين.',
+      'admin.perms':'الصلاحيات','admin.permsLead':'إسناد قوالب الأدوار وضبط صلاحيات كل مستخدم بدقّة.',
       'admin.library':'الصور','admin.libraryLead':'اعتماد أو رفض أو حذف الصور المولّدة.',
       'admin.mnemo':'المخططات الذهنية','admin.mnemoLead':'أدوات تذكّر تعليمية محددة حسب العضو.',
       'admin.cards':'البطاقات','admin.cardsLead':'بطاقات تعلّم للاختبار اليومي والتكرار المتباعد.',
@@ -164,6 +166,7 @@
   function refreshCurrentTab(){
     if (currentTab === 'dash') loadDashboard();
     else if (currentTab === 'users') loadUsers();
+    else if (currentTab === 'perms') loadPermissions();
     else if (currentTab === 'library') loadImages();
     else if (currentTab === 'mnemo') loadMnemonics();
     else if (currentTab === 'cards') loadCards();
@@ -171,7 +174,7 @@
     else if (currentTab === 'contacts') loadContacts();
     else if (currentTab === 'access') renderAccessMatrix();
     else if (currentTab === 'activity') loadActivity();
-    const map = { dash:'admin.dash', users:'admin.users', library:'admin.library', mnemo:'admin.mnemo', cards:'admin.cards', contrib:'admin.contrib', contacts:'admin.contacts', settings:'admin.settings', access:'admin.access', activity:'admin.activity' };
+    const map = { dash:'admin.dash', users:'admin.users', perms:'admin.perms', library:'admin.library', mnemo:'admin.mnemo', cards:'admin.cards', contrib:'admin.contrib', contacts:'admin.contacts', settings:'admin.settings', access:'admin.access', activity:'admin.activity' };
     $('secTitle').textContent = t(map[currentTab]);
     $('secLead').textContent = t(map[currentTab] + 'Lead');
   }
@@ -635,9 +638,204 @@
 
 
 
+  /* ═══════════════════════════════════════════════════════════
+     Permissions console — role presets + per-user overrides
+     Data: permission_catalog · role_presets · profiles.permissions
+     Save: rpc admin_set_permissions(p_user, p_role, p_overrides)
+     ═══════════════════════════════════════════════════════════ */
+  const GRP_META = {
+    access:  { icon:'🔓', en:'Access',           ar:'الوصول',        color:'#60a5fa' },
+    content: { icon:'✍️', en:'Content',          ar:'المحتوى',       color:'#4ade80' },
+    review:  { icon:'✅', en:'Review & Publish',  ar:'المراجعة والنشر', color:'#f472b6' },
+    admin:   { icon:'⚙️', en:'Administration',    ar:'الإدارة',       color:'#f5b942' }
+  };
+  const ROLE_ORDER = ['viewer','trial','contributor','reviewer','admin'];
+  const ROLE_LBL = { viewer:{en:'Viewer',ar:'مشاهد'}, trial:{en:'Trial',ar:'تجريبي'}, contributor:{en:'Contributor',ar:'مساهم'}, reviewer:{en:'Reviewer',ar:'مراجع'}, admin:{en:'Admin',ar:'أدمن'} };
+  const OWNER_EMAIL = 'omniradai@gmail.com';
+  let perm = { users:[], catalog:[], presets:{}, selId:null, q:'', filter:'all', dirty:false };
+
+  function pAvatarColors(id){
+    const pal=[['#2dd4c8','#08100e'],['#f472b6','#1a0a12'],['#60a5fa','#0a1020'],['#fbbf24','#1a1405'],['#a78bfa','#12081a'],['#4ade80','#06140a']];
+    let h=0; const s=String(id||''); for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return pal[h%pal.length];
+  }
+  function pInitials(u){ const n=(u.display_name||u.email||'?'); return n.split(/[\s@.]+/).filter(w=>w&&!/^(dr\.?|mr\.?|ms\.?)$/i.test(w)).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+  function pName(u){ return u.display_name || (u.email||'').split('@')[0]; }
+  function pIsOwner(u){ return (u.email||'').toLowerCase()===OWNER_EMAIL; }
+  function pOverrides(u){ return (u.permissions && typeof u.permissions==='object') ? u.permissions : {}; }
+  function pHasCustom(u){ return Object.keys(pOverrides(u)).length>0; }
+  function pEffective(u){
+    const base=new Set(perm.presets[u.role]||[]);
+    Object.entries(pOverrides(u)).forEach(([k,v])=>{ if(v===true||v==='true') base.add(k); else base.delete(k); });
+    if(u.role==='admin') perm.catalog.forEach(c=>base.add(c.cap));
+    return base;
+  }
+  function pCatMeta(cap){ return perm.catalog.find(c=>c.cap===cap); }
+  function pIsLocked(u,c){ return c.baseline || (pIsOwner(u) && ['manage_users','platform_settings','admin_console'].includes(c.cap)); }
+  function pSel(){ return perm.users.find(u=>u.id===perm.selId) || perm.users[0]; }
+
+  async function loadPermissions(){
+    const box = $('permsConsole');
+    box.innerHTML = '<div class="empty">'+t('empty.loading')+'</div>';
+    try {
+      const [cat, pres, usr] = await Promise.all([
+        sb.from('permission_catalog').select('*').order('sort'),
+        sb.from('role_presets').select('*'),
+        sb.from('profiles').select('id,email,display_name,role,permissions,created_at').order('created_at')
+      ]);
+      if (cat.error) throw cat.error;
+      perm.catalog = cat.data||[];
+      perm.presets = {}; (pres.data||[]).forEach(r=>{ perm.presets[r.role]=r.caps||[]; });
+      perm.users = usr.data||[];
+      if (!perm.users.some(u=>u.id===perm.selId)) perm.selId = perm.users[0] && perm.users[0].id;
+      renderPerms();
+    } catch(e){ box.innerHTML = '<div class="empty">Error: '+e.message+'</div>'; }
+  }
+
+  function renderPerms(){
+    const ar = isAr();
+    const box = $('permsConsole');
+    const sel = pSel();
+    if (!sel){ box.innerHTML = '<div class="empty">'+t('empty.users')+'</div>'; return; }
+    const eff = pEffective(sel);
+    const presetSet = new Set(perm.presets[sel.role]||[]);
+    const total = perm.catalog.length;
+    const granted = eff.size;
+    const C = 188.5, ringOff = (C*(1-granted/(total||1))).toFixed(1);
+
+    const roleBadge = (role)=>{ const c=role==='admin'?'#2dd4c8':(role==='reviewer'||role==='contributor')?'#60a5fa':role==='trial'?'#f5b942':'rgba(232,240,245,.5)';
+      return `font-size:9.5px;font-weight:700;font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:${c};background:${c}1f;border:1px solid ${c}44`; };
+
+    // user list
+    const q=perm.q.trim().toLowerCase();
+    const list = perm.users
+      .filter(u=> perm.filter==='all'||u.role===perm.filter)
+      .filter(u=> !q || (u.display_name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q))
+      .map(u=>{ const [bg,fg]=pAvatarColors(u.id); const on=u.id===perm.selId;
+        return `<div class="pc-urow${on?' on':''}" data-uid="${u.id}">
+          <div class="pc-av" style="width:40px;height:40px;background:linear-gradient(135deg,${bg},${bg}99);color:${fg};font-size:15px">${pInitials(u)}</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${pName(u)}</div>
+          <div style="font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.email||'—'}</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="${roleBadge(u.role)}">${ROLE_LBL[u.role]?ROLE_LBL[u.role][ar?'ar':'en']:u.role}</span>
+          ${pHasCustom(u)?'<span style="font-size:8px;font-weight:700;color:#f5b942;font-family:\'IBM Plex Mono\',monospace;letter-spacing:.05em">● CUSTOM</span>':''}</div>
+        </div>`; }).join('') || '<div class="empty">'+t('empty.users')+'</div>';
+
+    const chip=(active,label,val)=>`<button class="btn small ghost" data-pf="${val}" style="border-radius:999px;padding:5px 10px;font-size:10.5px${active?';background:var(--acc);color:var(--acc-ink);border-color:var(--acc)':''}">${label}</button>`;
+    const filters = ['all',...ROLE_ORDER].map(r=>chip(perm.filter===r, r==='all'?'all':(ROLE_LBL[r].en.toLowerCase()), r)).join('');
+
+    // ladder
+    const selIdx=ROLE_ORDER.indexOf(sel.role);
+    const ladder = ROLE_ORDER.map((r,i)=>{ const reached=i<=selIdx, active=sel.role===r;
+      return `<button class="pc-step" data-role="${r}" style="color:${active?'var(--acc)':reached?'var(--text)':'var(--text-m)'};border-top:2px solid ${reached?'var(--acc)':'var(--border-s)'}">
+        <span style="width:11px;height:11px;border-radius:50%;margin-bottom:7px;background:${reached?'var(--acc)':'rgba(232,240,245,.16)'};box-shadow:${active?'0 0 0 4px rgba(45,212,200,.22)':'none'}"></span>
+        <span style="font-weight:700;font-size:13px">${ROLE_LBL[r].en}</span><span style="opacity:.55;font-size:10.5px">${ROLE_LBL[r].ar}</span></button>`; }).join('');
+
+    // spectrum
+    const grps = ['access','content','review','admin'];
+    const spectrum = grps.map(g=>{ const gc=perm.catalog.filter(c=>c.grp===g); const gg=gc.filter(c=>eff.has(c.cap)).length; const pct=gc.length?Math.round(gg/gc.length*100):0; const m=GRP_META[g];
+      return `<div style="flex:1;background:var(--bg-e);border:1px solid var(--border-s);border-radius:12px;padding:12px 14px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;color:var(--text-s)">${ar?m.ar:m.en}</span><span style="font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:${m.color}">${gg}/${gc.length}</span></div>
+        <div style="height:5px;border-radius:999px;background:rgba(232,240,245,.08);overflow:hidden"><div style="width:${pct}%;height:100%;background:${m.color};border-radius:999px;box-shadow:0 0 8px ${m.color}66;transition:width .5s"></div></div></div>`; }).join('');
+
+    // groups
+    const groupsHtml = grps.map(g=>{ const m=GRP_META[g]; const gc=perm.catalog.filter(c=>c.grp===g); const gg=gc.filter(c=>eff.has(c.cap)).length;
+      const rows = gc.map((c,ci)=>{ const on=eff.has(c.cap); const ov=!c.baseline&&(on!==presetSet.has(c.cap)); const locked=pIsLocked(sel,c);
+        return `<div class="pc-caprow" style="${on?'box-shadow:inset 3px 0 0 '+m.color+'aa;':''}${ci<gc.length-1?'border-bottom:1px solid var(--border-s)':''}">
+          <span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${on?m.color:'rgba(232,240,245,.16)'};box-shadow:${on?'0 0 8px '+m.color+'88':'none'}"></span>
+          <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:600">${ar?c.label_ar:c.label_en}</span>
+          ${ov?'<span style="font-size:8px;font-weight:700;color:#f5b942;background:rgba(245,185,66,.12);border:1px solid rgba(245,185,66,.3);padding:1px 6px;border-radius:999px;font-family:\'IBM Plex Mono\',monospace;letter-spacing:.05em">CUSTOM</span>':''}
+          ${locked?'<span style="font-size:9px;color:var(--text-m)">🔒</span>':''}</div>
+          <div style="font-size:11px;color:var(--text-m);margin-top:2px">${ar?c.label_en:c.label_ar}</div></div>
+          <div class="pc-toggle${on?' on':''}${locked?' locked':''}" ${locked?'':'data-cap="'+c.cap+'"'}></div></div>`; }).join('');
+      return `<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+        <span style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:13px;background:${m.color}1f;border:1px solid ${m.color}3a">${m.icon}</span>
+        <span style="font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">${ar?m.ar:m.en}</span>
+        <span style="flex:1;height:1px;background:var(--border-s)"></span><span style="font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:${m.color}">${gg}/${gc.length}</span></div>
+        <div style="background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;overflow:hidden">${rows}</div></div>`; }).join('');
+
+    // explanation table
+    const explRows = perm.catalog.map(c=>{ const m=GRP_META[c.grp]||{}; const inRoles=ROLE_ORDER.filter(r=>(perm.presets[r]||[]).includes(c.cap));
+      return `<tr><td><span class="cap-id">${c.cap}</span><div style="font-size:12px;font-weight:600;margin-top:3px">${ar?c.label_ar:c.label_en}</div></td>
+        <td><span style="font-size:10px;font-weight:700;color:${m.color};text-transform:uppercase;font-family:'IBM Plex Mono',monospace">${ar?(m.ar||c.grp):(m.en||c.grp)}</span></td>
+        <td style="font-size:12px;color:var(--text-s);line-height:1.5;max-width:280px">${ar?c.desc_ar:c.desc_en}</td>
+        <td style="font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">${c.affects||'—'}</td>
+        <td style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-s)">${inRoles.map(r=>ROLE_LBL[r].en[0]).join(' ')||'—'}</td></tr>`; }).join('');
+
+    const [sbg,sfg]=pAvatarColors(sel.id);
+    box.innerHTML = `
+      <div class="pc-wrap">
+        <aside class="pc-userlist">
+          <input id="permSearch" value="${perm.q.replace(/"/g,'&quot;')}" placeholder="${ar?'بحث…':'Search users…'}" style="width:100%;padding:9px 12px;background:var(--bg-s);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13px;margin-bottom:10px">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">${filters}</div>
+          ${list}
+        </aside>
+        <div class="pc-detail">
+          <div style="display:flex;align-items:center;gap:18px">
+            <div class="pc-av" style="width:60px;height:60px;background:linear-gradient(135deg,${sbg},${sbg}99);color:${sfg};font-size:23px;border-radius:18px">${pInitials(sel)}</div>
+            <div style="flex:1"><div style="font-size:20px;font-weight:700;letter-spacing:-.02em">${pName(sel)}${pIsOwner(sel)?' <span title="Platform owner">🛡️</span>':''}</div>
+            <div style="font-size:12.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">${sel.email||'—'}</div>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:center"><span style="${roleBadge(sel.role)}">${ROLE_LBL[sel.role]?ROLE_LBL[sel.role][ar?'ar':'en']:sel.role}</span>
+            <span style="font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">${pHasCustom(sel)?(ar?'· استثناءات مخصّصة':'· custom overrides'):(ar?'· وفق الدور':'· inherits role')}</span></div></div>
+            <div style="position:relative;width:92px;height:92px;flex-shrink:0"><svg width="92" height="92" viewBox="0 0 96 96" style="transform:rotate(-90deg)">
+              <circle cx="48" cy="48" r="30" fill="none" stroke="rgba(232,240,245,.09)" stroke-width="7"/>
+              <circle cx="48" cy="48" r="30" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="${ringOff}" style="transition:stroke-dashoffset .5s;filter:drop-shadow(0 0 5px rgba(45,212,200,.5))"/></svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:22px;font-weight:800;color:var(--acc);font-family:'IBM Plex Mono',monospace;line-height:1">${granted}</div><div style="font-size:9.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">/ ${total}</div></div></div>
+          </div>
+          <div style="display:flex;gap:10px">${spectrum}</div>
+          <div style="background:linear-gradient(135deg,#0d1721,#0b131c);border:1px solid var(--border);border-radius:16px;padding:18px 20px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px"><span style="font-size:10.5px;font-weight:700;color:var(--acc);letter-spacing:.12em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace">${ar?'سلّم الامتيازات':'Privilege ladder'}</span><span style="font-size:10px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">least → most</span></div>
+            <div style="display:flex;align-items:stretch">${ladder}</div>
+            <div style="font-size:11.5px;color:var(--text-s);line-height:1.6;margin-top:14px"><span style="color:#f5b942">ⓘ</span> ${ar?'اختر قالباً لتعبئة الصلاحيات؛ أي مفتاح يخالف القالب يصبح استثناءً مخصّصاً.':'Pick a preset to fill capabilities. Any toggle that differs becomes a custom override.'}</div>
+          </div>
+          ${groupsHtml}
+          <div style="display:flex;gap:10px;align-items:center;margin-top:8px;padding-top:16px;border-top:1px solid var(--border-s)">
+            ${pHasCustom(sel)?`<button class="btn ghost" id="permReset">↺ ${ar?'إرجاع للدور':'Reset to role'}</button>`:''}
+            <span style="flex:1"></span>
+            <button class="btn" id="permSave" style="padding:10px 22px">${ar?'حفظ التغييرات':'Save changes'}</button>
+          </div>
+          <div class="section-card" style="margin-top:20px">
+            <div class="section-head"><h2>${ar?'شرح الصلاحيات':'Capability reference'}</h2></div>
+            <div style="overflow-x:auto"><table class="pc-explain" style="min-width:680px"><thead><tr>
+              <th>${ar?'الصلاحية':'Capability'}</th><th>${ar?'المجموعة':'Group'}</th><th>${ar?'الوصف':'Description'}</th><th>${ar?'يؤثّر على':'Affects'}</th><th>${ar?'الأدوار':'Roles'}</th>
+            </tr></thead><tbody>${explRows}</tbody></table>
+            <div style="font-size:11px;color:var(--text-m);margin-top:10px;font-family:'IBM Plex Mono',monospace">${ar?'الأدوار: V=مشاهد T=تجريبي C=مساهم R=مراجع A=أدمن':'Roles: V=Viewer T=Trial C=Contributor R=Reviewer A=Admin'}</div></div>
+          </div>
+        </div>
+      </div>`;
+
+    // ── bind ──
+    const s=$('permSearch'); if(s) s.addEventListener('input',e=>{ perm.q=e.target.value; renderPerms(); const n=$('permSearch'); if(n){ n.focus(); n.setSelectionRange(n.value.length,n.value.length);} });
+    box.querySelectorAll('[data-pf]').forEach(b=>b.addEventListener('click',()=>{ perm.filter=b.dataset.pf; renderPerms(); }));
+    box.querySelectorAll('[data-uid]').forEach(r=>r.addEventListener('click',()=>{ perm.selId=r.dataset.uid; renderPerms(); }));
+    box.querySelectorAll('[data-role]').forEach(b=>b.addEventListener('click',()=>permApplyRole(b.dataset.role)));
+    box.querySelectorAll('[data-cap]').forEach(t2=>t2.addEventListener('click',()=>permToggle(t2.dataset.cap)));
+    const rst=$('permReset'); if(rst) rst.addEventListener('click',permReset);
+    const sv=$('permSave'); if(sv) sv.addEventListener('click',permSave);
+  }
+
+  function permToggle(cap){
+    const u=pSel(); if(!u) return;
+    const eff=pEffective(u); const on=eff.has(cap);
+    const presetHas=(perm.presets[u.role]||[]).includes(cap);
+    const ov={...pOverrides(u)}; const val=!on;
+    if(val===presetHas) delete ov[cap]; else ov[cap]=val;
+    u.permissions=ov; perm.dirty=true; renderPerms();
+  }
+  function permApplyRole(role){ const u=pSel(); if(!u) return; u.role=role; u.permissions={}; perm.dirty=true; renderPerms(); }
+  function permReset(){ const u=pSel(); if(!u) return; u.permissions={}; perm.dirty=true; renderPerms(); }
+  async function permSave(){
+    const u=pSel(); if(!u) return;
+    if (pIsOwner(u) && u.role!=='admin'){ alert(t('adm.protectedOwner')||'Owner is protected.'); return; }
+    try {
+      const { error } = await sb.rpc('admin_set_permissions', { p_user:u.id, p_role:u.role, p_overrides:pOverrides(u) });
+      if (error) throw error;
+      perm.dirty=false; toast(t('saved')); loadPermissions();
+    } catch(e){ alert('Save error: '+e.message); }
+  }
+
   /* ─── Boot ─── */
   function boot(){
     applyI18n();
+    if (window.OmniRadPerms) OmniRadPerms.ready().then(()=>OmniRadPerms.applyGates(document.querySelector('.side')));
     qa('.side-item').forEach(el => el.addEventListener('click', () => setTab(el.dataset.tab)));
     loadDashboard();
   }

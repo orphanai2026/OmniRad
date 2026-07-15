@@ -89,6 +89,28 @@ tr:hover td{background:var(--bg-ov)}
 .empty{padding:36px;text-align:center;color:var(--text-m);font-size:13px}
 .toast{position:fixed;bottom:20px;inset-inline-end:20px;background:var(--acc);color:var(--acc-ink);padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;z-index:70;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transform:translateY(20px);transition:.24s}
 .toast.on{opacity:1;transform:translateY(0)}
+
+/* ─── Permissions console ─── */
+.pc-wrap{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.pc-wrap{grid-template-columns:1fr}}
+.pc-userlist{background:var(--bg-e);border:1px solid var(--border-s);border-radius:14px;padding:12px;max-height:74vh;overflow-y:auto}
+.pc-urow{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:11px;cursor:pointer;margin-bottom:3px;position:relative;transition:background .12s}
+.pc-urow:hover{background:var(--bg-ov)}
+.pc-urow.on{background:var(--acc-sub);box-shadow:inset 3px 0 0 var(--acc),inset 0 0 0 1px var(--acc-dim)}
+.pc-av{border-radius:11px;display:grid;place-items:center;font-weight:800;flex-shrink:0;color:#08100e}
+.pc-detail{display:flex;flex-direction:column;gap:18px}
+.pc-toggle{position:relative;width:44px;height:25px;border-radius:999px;background:rgba(232,240,245,.13);cursor:pointer;transition:background .2s,box-shadow .2s;flex-shrink:0;border:1px solid var(--border-s)}
+.pc-toggle::after{content:'';position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:var(--text);transition:transform .24s cubic-bezier(.34,1.56,.64,1)}
+body[dir=rtl] .pc-toggle::after{left:auto;right:2px}
+.pc-toggle.on{background:linear-gradient(135deg,var(--acc),#1aa89e);border-color:var(--acc);box-shadow:0 0 14px rgba(45,212,200,.4)}
+.pc-toggle.on::after{transform:translateX(19px);background:#08100e}
+body[dir=rtl] .pc-toggle.on::after{transform:translateX(-19px)}
+.pc-toggle.locked{opacity:.35;cursor:not-allowed;box-shadow:none}
+.pc-caprow{display:flex;align-items:center;gap:13px;padding:13px 16px;transition:background .14s}
+.pc-caprow:hover{background:var(--bg-ov)}
+.pc-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;cursor:pointer;border:none;background:transparent;font-family:inherit}
+.pc-explain td{vertical-align:top}
+.pc-explain .cap-id{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--acc)}
 </style>
 </head>
 <body>
@@ -107,6 +129,7 @@ tr:hover td{background:var(--bg-ov)}
     <div class="side-h" data-i18n="admin.sections">Sections</div>
     <div class="side-item on" data-tab="dash"><span class="ico">📊</span><span data-i18n="admin.dash">Dashboard</span></div>
     <div class="side-item"       data-tab="users"><span class="ico">👥</span><span data-i18n="admin.users">Users</span></div>
+    <div class="side-item"       data-tab="perms" data-perm="manage_users"><span class="ico">🔑</span><span data-i18n="admin.perms">Permissions</span></div>
     <div class="side-item"       data-tab="library"><span class="ico">🖼️</span><span data-i18n="admin.library">Images</span></div>
     <div class="side-item"       data-tab="mnemo"><span class="ico">📚</span><span>Mnemonics</span></div>
     <div class="side-item"       data-tab="cards"><span class="ico">🃏</span><span data-i18n="admin.cards">Cards</span></div>
@@ -142,6 +165,11 @@ tr:hover td{background:var(--bg-ov)}
         </div>
         <div id="usersTable"></div>
       </div>
+    </section>
+
+    <!-- PERMISSIONS CONSOLE -->
+    <section id="secPerms" class="section">
+      <div id="permsConsole"></div>
     </section>
 
     <!-- LIBRARY (cloud) -->
@@ -304,6 +332,7 @@ tr:hover td{background:var(--bg-ov)}
 <script src="../modules/data/radiology-playbook.js"></script>
 <script src="../modules/data/radiology-arabic.js"></script>
 <script src="../modules/omnirad-naming.js"></script>
+<script src="../modules/omnirad-perms.js"></script>
 <script src="./admin.js"></script>
 </body>
 </html>
