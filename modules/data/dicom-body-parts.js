@@ -15,8 +15,8 @@
   "groups": [
     {
       "id": "HEAD_NECK",
-      "en": "Head & Neck / CNS",
-      "ar": "الرأس والرقبة / الجهاز العصبي المركزي",
+      "en": "Head & Neck",
+      "ar": "الرأس والرقبة",
       "items": [
         {
           "code": "BRAIN",
@@ -209,7 +209,7 @@
     },
     {
       "id": "CHEST",
-      "en": "Chest / Thorax",
+      "en": "Chest",
       "ar": "الصدر",
       "items": [
         {
