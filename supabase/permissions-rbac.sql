@@ -70,7 +70,7 @@ create or replace function public.has_permission(p_user uuid, p_cap text)
 returns boolean
 language sql stable security definer set search_path = public as $$
   with p as (
-    select role, coalesce(permissions,'{}'::jsonb) as perms
+    select role::text as role, coalesce(permissions,'{}'::jsonb) as perms
     from public.profiles where id = p_user
   )
   select case
@@ -94,7 +94,7 @@ $$;
 create or replace function public.effective_permissions(p_user uuid)
 returns text[]
 language sql stable security definer set search_path = public as $$
-  with p as (select role, coalesce(permissions,'{}'::jsonb) perms from public.profiles where id=p_user),
+  with p as (select role::text as role, coalesce(permissions,'{}'::jsonb) perms from public.profiles where id=p_user),
   base as (select unnest(rp.caps) cap from public.role_presets rp where rp.role=(select role from p)),
   overrides_on  as (select key cap from jsonb_each_text((select perms from p)) where value='true'),
   overrides_off as (select key cap from jsonb_each_text((select perms from p)) where value='false')
@@ -124,7 +124,7 @@ begin
     raise exception 'invalid role: %', p_role;
   end if;
 
-  select email, role into v_target_email, v_old_role from public.profiles where id=p_user;
+  select email, role::text into v_target_email, v_old_role from public.profiles where id=p_user;
 
   -- owner protection: cannot demote or strip the platform owner
   if lower(coalesce(v_target_email,'')) = 'omniradai@gmail.com'
@@ -133,7 +133,7 @@ begin
   end if;
 
   update public.profiles
-    set role = coalesce(p_role, role),
+    set role = coalesce(p_role::user_role, role),
         permissions = coalesce(p_overrides, '{}'::jsonb)
     where id = p_user;
 
