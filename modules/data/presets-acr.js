@@ -237,7 +237,7 @@ window.OMNIRAD_PRESETS = [
   /* ═══ MSK ═══ */
   { id:'xray-wrist-fracture', category:'Musculoskeletal',
     en:'Wrist fracture — X-Ray wrist PA/Lateral', ar:'كسر رسغ — أشعة رسغ PA/جانبية',
-    region:'Upper limb', organ:'Wrist', modality:'X-Ray', view:'PA', laterality:'Right',
+    region:'Upper Extremity', organ:'Wrist', modality:'X-Ray', view:'PA', laterality:'Right',
     normalPath:'Pathological', pathCase:'Fracture', style:'Realistic radiographic scan', labels:'No labels',
     confidence:'Established', acrScore:9,
     whyEn:'Two-view radiography is first-line for suspected wrist fracture.',
@@ -245,7 +245,7 @@ window.OMNIRAD_PRESETS = [
 
   { id:'mri-shoulder-cuff', category:'Musculoskeletal',
     en:'Rotator cuff tear — MRI shoulder', ar:'تمزّق الكفة المدوّرة — MRI كتف',
-    region:'Upper limb', organ:'Shoulder', modality:'MRI', view:'Coronal', sequence:'PD fat-sat', laterality:'Right',
+    region:'Upper Extremity', organ:'Shoulder', modality:'MRI', view:'Coronal', sequence:'PD fat-sat', laterality:'Right',
     normalPath:'Pathological', pathCase:'Rotator cuff tear', style:'Realistic radiographic scan', labels:'No labels',
     confidence:'Established', acrScore:8,
     whyEn:'MRI PD fat-sat sequences are optimal for evaluating rotator cuff tears.',
@@ -253,7 +253,7 @@ window.OMNIRAD_PRESETS = [
 
   { id:'mri-knee-acl', category:'Musculoskeletal',
     en:'ACL tear — MRI knee', ar:'تمزّق الرباط الصليبي الأمامي — MRI ركبة',
-    region:'Lower limb', organ:'Knee', modality:'MRI', view:'Sagittal', sequence:'PD fat-sat', laterality:'Right',
+    region:'Lower Extremity', organ:'Knee', modality:'MRI', view:'Sagittal', sequence:'PD fat-sat', laterality:'Right',
     normalPath:'Pathological', pathCase:'ACL tear', style:'Realistic radiographic scan', labels:'No labels',
     confidence:'Established', acrScore:9,
     whyEn:'MRI is the reference standard for ACL and meniscal injuries.',
