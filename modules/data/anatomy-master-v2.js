@@ -50,6 +50,45 @@
   const slug = s => String(s||'').toLowerCase().trim()
     .replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').slice(0,64);
 
+  // ── Region label canonicalization (DICOM CID 4031 + LOINC/RSNA + RadLex) ──
+  // Radical guard: rewrites ANY legacy region label reaching the loader from
+  // ANY source (Supabase view, sessionStorage, snapshot, v1) to the standard
+  // term, so no page can ever display a pre-unification label.
+  const REGION_CANON = {
+    'head & neck / cns':'Head & Neck',
+    'head and neck / cns':'Head & Neck',
+    'head & neck/cns':'Head & Neck',
+    'chest / thorax':'Chest',
+    'chest/thorax':'Chest',
+    'thorax':'Chest',
+    'cardiovascular':'Cardiovascular System',
+    'upper limb':'Upper Extremity',
+    'lower limb':'Lower Extremity'
+  };
+  const REGION_CANON_AR = {
+    'الرأس والرقبة / الجهاز العصبي':'الرأس والرقبة',
+    'الرأس والرقبة / الجهاز العصبي المركزي':'الرأس والرقبة',
+    'القلب والأوعية':'الجهاز القلبي الوعائي'
+  };
+  function canonRegion(v){
+    if (!v) return v;
+    return REGION_CANON[String(v).toLowerCase().trim()] || v;
+  }
+  function canonAr(v){
+    if (!v) return v;
+    return REGION_CANON_AR[String(v).trim()] || v;
+  }
+  // Apply to every structure row (region field + any label that IS a legacy region)
+  function canonicalize(list){
+    if (!Array.isArray(list)) return list;
+    for (const s of list){
+      if (s && s.region) s.region = canonRegion(s.region);
+      if (s && s.en)     s.en     = canonRegion(s.en);
+      if (s && s.ar)     s.ar     = canonAr(s.ar);
+    }
+    return list;
+  }
+
   function toV1Shape(row){
     return {
       id:      row.ta2_id ? `ta2-${row.ta2_id.replace(/\./g,'_')}` : slug(row.name_en),
@@ -66,6 +105,7 @@
   }
 
   function mount(structures, source){
+    canonicalize(structures);
     const byId = new Map(structures.map(s => [s.id, s]));
 
     function search(q, lang){
