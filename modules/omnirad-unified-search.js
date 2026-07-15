@@ -187,15 +187,27 @@
     if(state.laterality && state.laterality!=='Unspecified')arParts.push((ar&&ar.get('laterality',state.laterality))||state.laterality);
     var arName = arParts.join(' ');
     // LOINC code resolve (best-effort via OmniRadNaming search)
-    var loinc='', rpid='';
+    var loinc='', rpid='', resolved=null;
     if(NM() && state.modality){
       try{
         var hits = NM().search([state.modality, anat].filter(Boolean).join(' '), {modality: state.modality, region: (b&&b.axes&&!state.focus)?state.region:null, limit:1});
-        if(hits && hits[0]){ loinc=hits[0].loinc; rpid=hits[0].rpid; }
+        if(hits && hits[0]){ loinc=hits[0].loinc; rpid=hits[0].rpid; resolved=NM().resolve(loinc); }
       }catch(_){}
     }
+    // DB-facing fields (match bulk-upload namingSel contract exactly).
+    // body_part_examined ← focus/organ (fall back to region); series_technique ← LOINC timing or laterality.
+    var lat = (state.laterality && state.laterality!=='Unspecified') ? state.laterality : '';
+    var body_part_examined = anat || '';
+    var series_technique = (resolved && resolved.meta && resolved.meta.timing) || lat || '';
     var tier = loinc ? 'standard' : (state.modality || state.region) ? 'partial' : 'custom';
-    return { en:en, ar:arName, loinc:loinc, rpid:rpid, tier:tier };
+    return {
+      en:en, ar:arName, loinc:loinc, rpid:rpid, tier:tier,
+      modality: state.modality || (resolved && resolved.meta && resolved.meta.modality) || '',
+      region: state.region || (resolved && resolved.meta && resolved.meta.region) || '',
+      laterality: lat,
+      body_part_examined: body_part_examined,
+      series_technique: series_technique
+    };
   }
 
   function mountBuilder(el, opts){
