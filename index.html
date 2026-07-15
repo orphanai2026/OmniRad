@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OmniRad — index.html (uses shared nav + i18n) -->
+<!-- OmniRad — index.html (Unified Lens hero · uses shared nav + i18n) -->
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -7,172 +7,270 @@
 <meta name="description" content="OmniRad — Multimodal Radiologic Anatomy Platform">
 <title>OmniRad — Multimodal Radiologic Anatomy</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
 :root,[data-theme="dark"]{
-  --bg:#080e14; --bg-s:#0c1520; --bg-e:#101e2a; --bg-ov:#162030;
-  --text:#e8f0f5; --text-s:rgba(232,240,245,0.65); --text-m:rgba(232,240,245,0.38);
-  --acc:#2dd4c8; --acc-dim:rgba(45,212,200,0.55); --acc-sub:rgba(45,212,200,0.10);
-  --border:rgba(45,212,200,0.12); --border-s:rgba(232,240,245,0.08);
-  --nav-bg:rgba(8,14,20,0.92); --acc-ink:#08100e;
-  --r:6px; --r-lg:10px; --onav-h:56px;
+  --bg:#05090e; --bg-s:#0a121b; --bg-e:#101e2a; --bg-ov:#162030;
+  --text:#e8f0f5; --text-s:rgba(232,240,245,.65); --text-m:rgba(232,240,245,.4);
+  --acc:#2dd4c8; --acc-dim:rgba(45,212,200,.55); --acc-sub:rgba(45,212,200,.10);
+  --border:rgba(45,212,200,.14); --border-s:rgba(232,240,245,.08);
+  --nav-bg:rgba(5,9,14,.92); --acc-ink:#08100e; --onav-h:56px;
 }
 [data-theme="dim"]{
   --bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--bg-ov:#d6dde6;
-  --text:#0f1e2a;--text-s:rgba(15,30,42,0.65);--text-m:rgba(15,30,42,0.42);
-  --acc:#0b6b64;--acc-dim:rgba(11,107,100,0.55);
-  --acc-sub:rgba(11,107,100,0.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,0.1);
-  --nav-bg:rgba(237,242,248,0.92); --acc-ink:#ffffff;
+  --text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);
+  --acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.1);
+  --border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);
+  --nav-bg:rgba(237,242,248,.92);--acc-ink:#fff;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;padding-top:var(--onav-h);
-  background:radial-gradient(ellipse at top,rgba(45,212,200,.05),transparent 60%),radial-gradient(ellipse at bottom,rgba(203,164,58,.04),transparent 60%),var(--bg);}
-[data-theme="dim"] body{background:radial-gradient(ellipse at top,rgba(11,107,100,.06),transparent 60%),var(--bg);filter:none;}
-body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif;}
-a{text-decoration:none;color:inherit;}
-img{display:block;}
+  background:radial-gradient(ellipse at 72% 8%,rgba(45,212,200,.06),transparent 55%),var(--bg)}
+body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
+a{text-decoration:none;color:var(--acc)}
+a:hover{color:#5fe6dc}
+img{display:block}
+.ar{font-family:'Noto Sans Arabic',sans-serif;line-height:1.55}
+.mono{font-family:'IBM Plex Mono',monospace}
 
-.hero{position:relative;overflow:hidden;min-height:calc(92vh - var(--onav-h));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:60px 32px 40px;max-width:1000px;margin:0 auto;}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--acc-dim);}
-.hero-h1{font-size:clamp(2.6rem,6vw,4.4rem);font-weight:700;line-height:1.05;letter-spacing:-0.04em;color:var(--text);text-shadow:0 2px 20px rgba(0,0,0,.15);}
-.hero-h1 .acc{color:var(--acc);}
-.hero-desc{font-size:16px;color:var(--text-s);line-height:1.75;max-width:58ch;}
-.hero-desc strong{color:var(--text);font-weight:600;}
-.hero-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r);background:var(--acc);color:var(--acc-ink);font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.btn-primary:hover{background:rgba(45,212,200,0.85);transform:translateY(-1px);}
-.btn-primary svg{width:17px;height:17px;}
-.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:var(--r);background:transparent;color:var(--text-s);font-size:15px;font-weight:500;border:1px solid rgba(232,240,245,0.2);cursor:pointer;transition:all .15s;white-space:nowrap;}
-.btn-secondary:hover{border-color:var(--acc-dim);color:var(--acc);background:var(--acc-sub);}
-.btn-secondary svg{width:17px;height:17px;}
+/* HERO */
+.hero{max-width:1360px;margin:0 auto;padding:52px 40px 40px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;min-height:calc(94vh - var(--onav-h))}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:24px}
+.eyebrow::before{content:'';width:26px;height:1px;background:var(--acc-dim)}
+.hero h1{font-size:clamp(2.6rem,5vw,4.4rem);line-height:.98;letter-spacing:-.045em;font-weight:700;color:var(--text)}
+.hero h1 .acc{color:var(--acc)}
+.hero .subar{font-size:clamp(1.2rem,2vw,1.7rem);font-weight:700;color:var(--text);margin-top:16px}
+.hero .desc{font-size:15.5px;color:var(--text-s);max-width:46ch;margin-top:18px}
+.hero .desc strong{color:var(--text);font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.btn-p{display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:10px;background:var(--acc);color:var(--acc-ink);font-size:16px;font-weight:700;box-shadow:0 12px 40px rgba(45,212,200,.28)}
+.btn-p:hover{color:var(--acc-ink);transform:translateY(-1px)}
+.btn-s{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:10px;color:var(--text);font-size:16px;font-weight:600;border:1px solid rgba(232,240,245,.24)}
+.btn-s:hover{color:var(--text);border-color:var(--acc-dim);background:var(--acc-sub)}
+.hstats{display:flex;gap:28px;flex-wrap:wrap;margin-top:40px}
+.hstats .n{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.hstats .l{font-size:12px;color:var(--text-m);font-weight:600}
+.hstats .sep{width:1px;background:var(--border-s)}
 
-.mod-strip-wrap{max-width:1100px;margin:0 auto;padding:0 32px 56px;}
-.mod-strip-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);font-family:'IBM Plex Mono',monospace;text-align:center;margin-bottom:18px;}
-.mod-strip{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
-.mod-pill{display:flex;flex-direction:column;align-items:center;gap:9px;padding:16px 8px;border-radius:var(--r-lg);background:var(--bg-e);border:1px solid var(--border-s);transition:.2s;cursor:pointer;}
-.mod-pill:hover{border-color:var(--acc-dim);transform:translateY(-2px);background:var(--bg-ov);}
-.mod-pill-thumb{width:100%;aspect-ratio:1;border-radius:8px;background:linear-gradient(135deg,var(--bg-e),var(--bg-ov));display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--acc);letter-spacing:.04em;border:1px solid var(--border-s);transition:.2s}
-.mod-pill:hover .mod-pill-thumb{border-color:var(--acc-dim);color:var(--acc);transform:scale(1.02)}
-.mod-pill-name{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.02em;font-family:'IBM Plex Mono',monospace;}
+/* LENS */
+.lens{position:relative;height:640px;border-radius:18px;overflow:hidden;cursor:crosshair;
+  background:radial-gradient(ellipse at 50% 44%,#0a141d,#04080c 72%);border:1px solid var(--border);box-shadow:0 40px 110px rgba(0,0,0,.55)}
+.lens .layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.lens .base{filter:brightness(.55) contrast(1.03)}
+.lens .reveal{position:absolute;inset:0;-webkit-mask-image:radial-gradient(circle 190px at var(--mx,50%) var(--my,45%),#000 55%,rgba(0,0,0,.4) 74%,transparent 83%);mask-image:radial-gradient(circle 190px at var(--mx,50%) var(--my,45%),#000 55%,rgba(0,0,0,.4) 74%,transparent 83%)}
+.lens .rev-l{position:absolute;inset:0;opacity:0;transition:opacity .35s}
+.lens .rev-l.on{opacity:1}
+.lens .tint{position:absolute;inset:0;background:radial-gradient(circle 190px at var(--mx,50%) var(--my,45%),rgba(45,212,200,.1),transparent 60%)}
+.lens .ring{position:absolute;left:var(--mx,50%);top:var(--my,45%);width:380px;height:380px;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid rgba(45,212,200,.5);box-shadow:0 0 45px rgba(45,212,200,.22),inset 0 0 34px rgba(45,212,200,.1);pointer-events:none}
+.lens .ring::before,.lens .ring::after{content:'';position:absolute;background:rgba(45,212,200,.28)}
+.lens .ring::before{top:50%;left:8%;right:8%;height:1px}
+.lens .ring::after{left:50%;top:8%;bottom:8%;width:1px}
+.lens .tabs{position:absolute;top:16px;left:50%;transform:translateX(-50%);display:flex;gap:5px;background:rgba(4,8,12,.65);border:1px solid rgba(45,212,200,.22);border-radius:999px;padding:5px;backdrop-filter:blur(6px);z-index:6}
+.lens .tabs button{padding:8px 15px;border:0;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--text-s);font-family:'IBM Plex Mono',monospace;transition:.15s}
+.lens .tabs button.on{background:var(--acc);color:var(--acc-ink)}
+.lens .tabs button[data-mod="anat"]{font-family:'Noto Sans Arabic',sans-serif;font-weight:700}
+.lens .hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:12.5px;color:var(--acc);background:rgba(4,8,12,.6);border:1px solid rgba(45,212,200,.3);padding:7px 14px;border-radius:999px;pointer-events:none;animation:beat 2.4s infinite;font-family:'Noto Sans Arabic',sans-serif}
+@keyframes beat{0%,100%{opacity:.6}50%{opacity:1}}
 
-.stats-bar{background:var(--bg-s);border-top:1px solid var(--border-s);}
-.stats-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);}
-.stat-cell{padding:20px 28px;border-right:1px solid var(--border-s);display:flex;align-items:center;gap:14px;transition:.15s;}
-.stat-cell:last-child{border-right:none;}
-.stat-cell:hover{background:var(--bg-e);}
-.stat-icon-wrap{width:44px;height:44px;border-radius:50%;background:var(--acc-sub);border:1px solid var(--border);display:grid;place-items:center;flex-shrink:0;}
-.stat-icon-wrap svg{width:22px;height:22px;color:var(--acc);}
-.stat-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.03em;line-height:1.1;}
-.stat-label{font-size:12px;color:var(--acc);font-weight:600;margin-top:1px;}
-.stat-sub{font-size:11px;color:var(--text-m);margin-top:2px;}
+/* SECTIONS */
+.section{max-width:1200px;margin:0 auto;padding:20px 40px 40px}
+.sec-head{text-align:center;margin-bottom:34px}
+.sec-head .k{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-family:'IBM Plex Mono',monospace}
+.sec-head h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;letter-spacing:-.02em;margin-top:8px}
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:var(--bg-e);border:1px solid var(--border-s);border-radius:16px;padding:26px 24px;transition:.18s}
+.card:hover{border-color:var(--acc-dim);transform:translateY(-3px)}
+.card .ic{width:44px;height:44px;border-radius:11px;background:var(--acc-sub);border:1px solid var(--border);display:grid;place-items:center;color:var(--acc);margin-bottom:16px}
+.card .ic svg{width:22px;height:22px}
+.card h3{font-size:16px;font-weight:700}
+.card .h3ar{font-size:14px;color:var(--acc);font-weight:600;margin-top:2px;font-family:'Noto Sans Arabic',sans-serif}
+.card p{font-size:13px;color:var(--text-s);line-height:1.65;margin-top:10px}
 
-footer{padding:22px 40px;border-top:1px solid var(--border-s);display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;flex-wrap:wrap;gap:12px;}
-.footer-logo{display:flex;align-items:center;gap:8px;}
-.footer-mark{width:22px;height:22px;background:var(--acc);border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--acc-ink);}
-.footer-name{font-size:13px;font-weight:600;color:var(--text-s);}
-.footer-meta{font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace;}
+/* standards */
+.stripe{border-top:1px solid var(--border-s);border-bottom:1px solid var(--border-s);background:var(--bg-s);overflow:hidden;margin-top:20px}
+.stripe .track{display:flex;width:max-content;animation:marq 28s linear infinite;padding:16px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--text-m)}
+.stripe .track span.grp{display:flex;gap:38px;padding-inline-end:38px}
+@keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border-s);border-radius:3px;}
+/* stats bar */
+.stats-bar{background:var(--bg-s);border-top:1px solid var(--border-s)}
+.stats-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-cell{padding:22px 28px;border-inline-end:1px solid var(--border-s);display:flex;align-items:center;gap:14px}
+.stat-cell:last-child{border-inline-end:none}
+.stat-icon{width:44px;height:44px;border-radius:50%;background:var(--acc-sub);border:1px solid var(--border);display:grid;place-items:center;flex-shrink:0}
+.stat-icon svg{width:22px;height:22px;color:var(--acc)}
+.stat-val{font-size:20px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.stat-label{font-size:12px;color:var(--acc);font-weight:600;margin-top:1px}
+.stat-sub{font-size:11px;color:var(--text-m);margin-top:2px}
 
-@media(max-width:900px){ .mod-strip{grid-template-columns:repeat(4,1fr);} .stats-inner{grid-template-columns:repeat(2,1fr);} }
-@media(max-width:768px){ .hero{padding:44px 22px 32px;min-height:auto;} footer{flex-direction:column;align-items:flex-start;} }
-@media(max-width:520px){ .mod-strip{grid-template-columns:repeat(2,1fr);} .stats-inner{grid-template-columns:1fr;} .stat-cell{border-right:none;border-bottom:1px solid var(--border-s);} }
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;}}
+footer{padding:24px 40px;border-top:1px solid var(--border-s);display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;flex-wrap:wrap;gap:12px}
+.footer-logo{display:flex;align-items:center;gap:8px}
+.footer-mark{width:22px;height:22px;background:var(--acc);border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--acc-ink)}
+.footer-name{font-size:13px;font-weight:600;color:var(--text-s)}
+.footer-meta{font-size:11px;color:var(--text-m);font-family:'IBM Plex Mono',monospace}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-s);border-radius:3px}
+
+@media(max-width:900px){.hero{grid-template-columns:1fr;gap:32px}.lens{height:520px}.feat{grid-template-columns:1fr 1fr}.stats-inner{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.feat{grid-template-columns:1fr}.stats-inner{grid-template-columns:1fr}.stat-cell{border-inline-end:none;border-bottom:1px solid var(--border-s)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
 </style>
 
 <script src="modules/i18n.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="modules/supabase.js"></script>
 <script src="modules/omnirad-nav.js" data-base=""></script>
-<script src="modules/omnirad-atlas-dynamic.js"></script>
+<script src="modules/omnirad-atlas-dynamic.js?v=loinc-r2"></script>
 </head>
 <body>
 
 <main>
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow" data-i18n="home.eyebrow">Radiologic Anatomy Platform</div>
-    <h1 class="hero-h1"><span data-i18n="home.h1a">Every structure.</span><br><span class="acc" data-i18n="home.h1b">Every modality.</span> <span data-i18n="home.h1c">One place.</span></h1>
-    <p class="hero-desc" data-i18n="home.desc">
-      Explore any anatomical structure across CT, MRI, Ultrasound, <strong>X-Ray</strong>,
-      Nuclear Medicine and more — and compare them side by side, the way radiologists actually see them.
-    </p>
-    <div class="hero-cta">
-      <a href="pages/atlas.html" class="btn-primary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        <span data-i18n="home.openAtlas">Open Atlas</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div>
+      <div class="eyebrow">Radiologic Anatomy · Reimagined</div>
+      <h1>See inside.<br><span class="acc">Every</span> way.</h1>
+      <div class="subar ar" dir="rtl">انظر إلى الداخل — <span style="color:var(--acc)">بكل عين تراها الأشعة.</span></div>
+      <p class="desc ar" dir="rtl">مرّر العدسة لتكشف تشريح الجسم، وبدّل المودالتي لترى البنية نفسها بالتشريح أو الأشعة أو الرنين أو المقطعية. أطلس ثلاثي اللغة مبني على <strong>RadLex · RSNA · TA2 · LOINC</strong> — الأول من نوعه في الوطن العربي.</p>
+      <div class="cta">
+        <a href="pages/atlas.html" class="btn-p ar">افتح الأطلس <span class="mono">→</span></a>
+        <a href="pages/dictionary.html" class="btn-s ar">استكشف القاموس</a>
+      </div>
+      <div class="hstats">
+        <div><div class="n">8</div><div class="l ar">مودالتي</div></div>
+        <div class="sep"></div>
+        <div><div class="n">250+</div><div class="l ar">مصطلح تشريحي</div></div>
+        <div class="sep"></div>
+        <div><div class="n mono">3-lang</div><div class="l ar">عربي·إنجليزي·لاتيني</div></div>
+      </div>
+    </div>
+
+    <!-- Unified lens -->
+    <div class="lens" id="lens">
+      <img class="layer base" src="assets/body-exterior.png" alt="Human body exterior">
+      <div class="reveal">
+        <img class="layer rev-l on" data-modlayer="anat" src="assets/body-anatomy.png" alt="Internal anatomy">
+        <img class="layer rev-l" data-modlayer="xray" src="assets/body-xray.png" alt="Full-body X-ray">
+        <img class="layer rev-l" data-modlayer="mri" src="assets/body-mri.png" alt="Full-body MRI">
+        <img class="layer rev-l" data-modlayer="ct" src="assets/body-ct.png" alt="Full-body CT">
+        <div class="tint"></div>
+      </div>
+      <div class="ring"></div>
+      <div class="tabs" id="lensTabs">
+        <button data-mod="anat" class="on">تشريح</button>
+        <button data-mod="xray">X-RAY</button>
+        <button data-mod="mri">MRI</button>
+        <button data-mod="ct">CT</button>
+      </div>
+      <div class="hint ar">مرّر العدسة لتكشف الداخل + بدّل المودالتي</div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="sec-head">
+      <div class="k">The platform</div>
+      <h2 class="ar" dir="rtl">كل ما يحتاجه فهم التشريح الإشعاعي</h2>
+    </div>
+    <div class="feat">
+      <a href="pages/atlas.html" class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <h3>Atlas</h3><div class="h3ar" dir="rtl">أطلس متعدّد المودالتي</div>
+        <p class="ar" dir="rtl">كل بنية عبر ٨ مودالتي بأدوات نافذة/مستوى احترافية وعارض سلاسل.</p>
       </a>
-      <a href="pages/comparison.html" class="btn-secondary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l-3 4 3 4M19 8l3 4-3 4"/></svg>
-        <span data-i18n="home.compare">Compare Modalities</span>
+      <a href="pages/dictionary.html" class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
+        <h3>Dictionary</h3><div class="h3ar" dir="rtl">قاموس Rosetta ثلاثي اللغة</div>
+        <p class="ar" dir="rtl">عربي · إنجليزي · لاتيني — مرتبط بـTA2 و RadLex و LOINC ككوكبة تفاعلية.</p>
+      </a>
+      <a href="pages/comparison.html" class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M5 8l-3 4 3 4M19 8l3 4-3 4"/></svg></div>
+        <h3>RadCompare</h3><div class="h3ar" dir="rtl">مقارنة جنباً لجنب</div>
+        <p class="ar" dir="rtl">قارن المودالتي والحالات على لوحة عمل بأسلوب PACS.</p>
+      </a>
+      <a href="pages/daily.html" class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        <h3>Learn</h3><div class="h3ar" dir="rtl">تعلّم بالتكرار المتباعد</div>
+        <p class="ar" dir="rtl">مختصرات · تحدٍّ يومي · حالات سريرية وفق ACR.</p>
       </a>
     </div>
   </section>
 
-  <div class="mod-strip-wrap">
-    <div class="mod-strip-label" data-i18n="home.browseBy">Browse by modality</div>
-    <div class="mod-strip">
-      <a href="pages/atlas.html?modality=ct"    class="mod-pill"><div class="mod-pill-thumb">CT</div><span class="mod-pill-name">CT</span></a>
-      <a href="pages/atlas.html?modality=mri"   class="mod-pill"><div class="mod-pill-thumb">MRI</div><span class="mod-pill-name">MRI</span></a>
-      <a href="pages/atlas.html?modality=us"    class="mod-pill"><div class="mod-pill-thumb">US</div><span class="mod-pill-name">US</span></a>
-      <a href="pages/atlas.html?modality=xray"  class="mod-pill"><div class="mod-pill-thumb">X-R</div><span class="mod-pill-name">X-RAY</span></a>
-      <a href="pages/atlas.html?modality=nm"    class="mod-pill"><div class="mod-pill-thumb">NM</div><span class="mod-pill-name">NM</span></a>
-      <a href="pages/atlas.html?modality=angio" class="mod-pill"><div class="mod-pill-thumb">AG</div><span class="mod-pill-name">ANGIO</span></a>
-      <a href="pages/atlas.html?modality=mammo" class="mod-pill"><div class="mod-pill-thumb">MG</div><span class="mod-pill-name">MAMMO</span></a>
-      <a href="pages/atlas.html?modality=pet"   class="mod-pill"><div class="mod-pill-thumb">PET</div><span class="mod-pill-name">PET</span></a>
+  <!-- STANDARDS -->
+  <div class="stripe">
+    <div class="track">
+      <span class="grp"><span>RadLex®</span><span>·</span><span>RSNA</span><span>·</span><span>ACR APPROPRIATENESS</span><span>·</span><span>ESR iGuide</span><span>·</span><span>TA2</span><span>·</span><span>DICOM PS3.x</span><span>·</span><span>LOINC 2.82</span><span>·</span><span>WHO UMD</span><span>·</span></span>
+      <span class="grp"><span>RadLex®</span><span>·</span><span>RSNA</span><span>·</span><span>ACR APPROPRIATENESS</span><span>·</span><span>ESR iGuide</span><span>·</span><span>TA2</span><span>·</span><span>DICOM PS3.x</span><span>·</span><span>LOINC 2.82</span><span>·</span><span>WHO UMD</span><span>·</span></span>
     </div>
   </div>
 
+  <!-- LIVE STATS -->
   <div class="stats-bar">
     <div class="stats-inner">
-      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div><div class="stat-val">8</div><div class="stat-label">Modalities</div><div class="stat-sub">CT · MRI · US · X-Ray · NM · PET · Angio · Mammo</div></div></div>
-      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div><div class="stat-val">AR / EN</div><div class="stat-label">Bilingual</div><div class="stat-sub">Arabic &amp; English</div></div></div>
-      <div class="stat-cell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><div class="stat-val">SM-2</div><div class="stat-label">Spaced repetition</div><div class="stat-sub">Science-based learning</div></div></div>
-      <div class="stat-cell" id="growthStatCell"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><div class="stat-val" id="growthTotal">—</div><div class="stat-label" data-i18n="home.growing">Growing atlas</div><div class="stat-sub" id="growthSub" data-i18n="home.growingSub">New structures added regularly</div></div></div>
+      <div class="stat-cell"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div><div class="stat-val">8</div><div class="stat-label ar">مودالتي</div><div class="stat-sub">CT·MRI·US·X-Ray·NM·PET·Angio·Mammo</div></div></div>
+      <div class="stat-cell"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg></div><div><div class="stat-val mono">AR / EN</div><div class="stat-label ar">ثنائي اللغة</div><div class="stat-sub ar">عربي وإنجليزي</div></div></div>
+      <div class="stat-cell"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><div class="stat-val mono">SM-2</div><div class="stat-label ar">تكرار متباعد</div><div class="stat-sub ar">تعلّم قائم على العلم</div></div></div>
+      <div class="stat-cell"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><div class="stat-val" id="growthTotal">—</div><div class="stat-label ar">أطلس ينمو</div><div class="stat-sub ar" id="growthSub">صور جديدة تُضاف بمراجعة الخبراء</div></div></div>
     </div>
   </div>
 </main>
 
 <footer>
-  <div class="footer-logo"><div class="footer-mark">OR</div><span class="footer-name">OmniRad — v3.9</span></div>
-  <span class="footer-meta">© 2026 · <span data-i18n="common.educational">Educational use only</span></span>
+  <div class="footer-logo"><div class="footer-mark">OR</div><span class="footer-name">OmniRad — v4.0</span></div>
+  <span class="footer-meta ar" dir="rtl">© 2026 · للأغراض التعليمية فقط — ليست للتشخيص</span>
 </footer>
 
 <script>
-(async function initHomeGrowth(){
-  try {
-    let tries = 0;
-    while ((!window.OmniRadAuth || !OmniRadAuth.client || !window.OmniRadAtlasDynamic) && tries < 50){
-      await new Promise(r => setTimeout(r, 80)); tries++;
-    }
-    if (!window.OmniRadAtlasDynamic) return;
-    const s = await OmniRadAtlasDynamic.stats();
-    if (!s) return;
-    const ar = () => (window.OmniRadI18n && OmniRadI18n.lang === 'ar');
-    const render = () => {
+/* Unified lens: pointer reveal + idle vertical scan + modality tabs */
+(function(){
+  const lens = document.getElementById('lens');
+  if(!lens) return;
+  const set = (x,y)=>{ lens.style.setProperty('--mx', x+'px'); lens.style.setProperty('--my', y+'px'); };
+  const cw = ()=>lens.clientWidth, ch = ()=>lens.clientHeight;
+  set(cw()*0.5, ch()*0.4);
+  let idle = true, t = 1.2, raf;
+  const drift = ()=>{
+    if(idle){ t += 0.007; set(cw()*(0.5+0.05*Math.cos(t*0.7)), ch()*(0.5+0.34*Math.sin(t*0.9))); }
+    raf = requestAnimationFrame(drift);
+  };
+  drift();
+  let it;
+  lens.addEventListener('pointermove', e=>{
+    idle = false;
+    const r = lens.getBoundingClientRect();
+    set(e.clientX - r.left, e.clientY - r.top);
+    clearTimeout(it); it = setTimeout(()=>{ idle = true; t = 1.2; }, 1800);
+  });
+  const tabs = lens.querySelectorAll('#lensTabs button');
+  const layers = lens.querySelectorAll('.rev-l');
+  const activate = m=>{
+    layers.forEach(l=> l.classList.toggle('on', l.getAttribute('data-modlayer')===m));
+    tabs.forEach(tb=> tb.classList.toggle('on', tb.getAttribute('data-mod')===m));
+  };
+  tabs.forEach(tb=> tb.addEventListener('click', ()=> activate(tb.getAttribute('data-mod'))));
+})();
+
+/* Live growth counter (Supabase) */
+(async function initGrowth(){
+  try{
+    let n=0;
+    while((!window.OmniRadAtlasDynamic) && n<50){ await new Promise(r=>setTimeout(r,80)); n++; }
+    if(!window.OmniRadAtlasDynamic) return;
+    const s = await OmniRadAtlasDynamic.stats(); if(!s) return;
+    const ar = ()=> (window.OmniRadI18n && OmniRadI18n.lang==='ar');
+    const render = ()=>{
       const isAr = ar();
-      const total = s.total_images || 0;
-      const contrib = s.contributors || 0;
-      const week = s.this_week || 0;
-      const totalEl = document.getElementById('growthTotal');
-      const subEl = document.getElementById('growthSub');
-      if (totalEl) totalEl.textContent = total.toLocaleString(isAr ? 'ar' : 'en');
-      if (subEl){
-        const parts = [];
-        parts.push('⤴ +' + week.toLocaleString(isAr ? 'ar' : 'en') + ' ' + (isAr ? 'هذا الأسبوع' : 'this week'));
-        parts.push(contrib.toLocaleString(isAr ? 'ar' : 'en') + ' ' + (isAr ? 'مساهم' : (contrib === 1 ? 'contributor' : 'contributors')));
-        subEl.textContent = parts.join(' · ');
-      }
+      const total = s.total_images||0, contrib = s.contributors||0, week = s.this_week||0;
+      const te=document.getElementById('growthTotal'), se=document.getElementById('growthSub');
+      if(te) te.textContent = total.toLocaleString(isAr?'ar':'en');
+      if(se) se.textContent = '↗ +' + week.toLocaleString(isAr?'ar':'en') + (isAr?' هذا الأسبوع · ':' this week · ') + contrib.toLocaleString(isAr?'ar':'en') + (isAr?' مساهم':' contributors');
     };
     render();
     window.addEventListener('omnirad-lang', render);
-  } catch(e){ console.warn('[home] growth counter error', e); }
+  }catch(e){ console.warn('[home] growth', e); }
 })();
 </script>
-
 </body>
 </html>
