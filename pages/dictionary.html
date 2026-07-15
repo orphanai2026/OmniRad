@@ -354,7 +354,9 @@ function openSheet(id){
   let lines='', nodes='';
   function node(x,y,r,label,sub2,jumpId,pColor,delay){
     pColor = pColor || color;
-    lines += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${pColor}" stroke-opacity=".3" stroke-width="1.5"/>`;
+    const dx=x-cx, dy=y-cy, d=Math.hypot(dx,dy)||1, ux=dx/d, uy=dy/d;
+    const x1=(cx+cr*ux).toFixed(1), y1=(cy+cr*uy).toFixed(1), x2=(x-r*ux).toFixed(1), y2=(y-r*uy).toFixed(1);
+    lines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${pColor}" stroke-opacity=".32" stroke-width="1.5"/>`;
     nodes += `<g class="cs-float ${jumpId?'cs-node':''}" style="animation-delay:${delay||0}s" ${jumpId?`data-jump="${esc(jumpId)}"`:''}>`
       + `<circle cx="${x}" cy="${y}" r="${r}" fill="${pColor}" fill-opacity=".14" stroke="${pColor}" stroke-opacity=".75" stroke-width="1.6" style="filter:drop-shadow(0 0 7px ${pColor}66)"/>`
       + `<text x="${x}" y="${y+(sub2?-3:4)}" text-anchor="middle" fill="var(--text,#e8f0f5)" font-size="12" font-weight="700" font-family="IBM Plex Sans, sans-serif">${esc(label)}</text>`
@@ -374,11 +376,11 @@ function openSheet(id){
     const R=170, x=Math.round(cx+R*Math.cos(a)), y=Math.round(cy+R*Math.sin(a));
     node(x,y,24, symbolOf(c.en), '', c.id, color, -(i*0.8+1));
   });
-  // orbit rings (rotating dashes) + a couple of orbiting moons
-  const orbits = `<g class="cs-orbits-a"><circle class="cs-orbit" cx="${cx}" cy="${cy}" r="150"/></g>`
-    + `<g class="cs-orbits-b"><circle class="cs-orbit" cx="${cx}" cy="${cy}" r="212"/></g>`
-    + `<g class="cs-moon"><circle cx="${cx+150}" cy="${cy}" r="3" fill="${color}" fill-opacity=".7"/></g>`
-    + `<g class="cs-moon" style="animation-duration:18s"><circle cx="${cx-212}" cy="${cy}" r="2.5" fill="${color}" fill-opacity=".5"/></g>`;
+  // orbit rings (rotating dashes) with a moon riding each ring (off the node axes)
+  const m1x=(cx+150*Math.cos(-0.9)).toFixed(1), m1y=(cy+150*Math.sin(-0.9)).toFixed(1);
+  const m2x=(cx+212*Math.cos(2.3)).toFixed(1), m2y=(cy+212*Math.sin(2.3)).toFixed(1);
+  const orbits = `<g class="cs-orbits-a"><circle class="cs-orbit" cx="${cx}" cy="${cy}" r="150"/><circle cx="${m1x}" cy="${m1y}" r="3.5" fill="${color}" fill-opacity=".75"/></g>`
+    + `<g class="cs-orbits-b"><circle class="cs-orbit" cx="${cx}" cy="${cy}" r="212"/><circle cx="${m2x}" cy="${m2y}" r="2.5" fill="${color}" fill-opacity=".5"/></g>`;
   // centre — pulsing halo + glowing gently-breathing core
   const centerG = `<circle class="cs-pulse" cx="${cx}" cy="${cy}" r="${cr}" fill="none" stroke="${color}" stroke-width="2"/>`
     + `<g class="cs-core"><circle cx="${cx}" cy="${cy}" r="${cr}" fill="${sub}" stroke="${color}" stroke-width="2.5" style="filter:drop-shadow(0 0 16px ${color}88)"/>`
