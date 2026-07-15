@@ -74,11 +74,25 @@
     if (!cache || !cache.length) return null;
     const sId = norm(structId), sMod = norm(modality), sPlane = norm(plane);
     const structMatches = (r) => {
+      // Direct organ match
       if (norm(r.organ) === sId) return true;
+      // Substring match on organ (e.g. "Chest / Thorax" contains "chest")
+      if (norm(r.organ).indexOf(sId) !== -1 || sId.indexOf(norm(r.organ)) !== -1) {
+        // require at least 4 chars to avoid false positives
+        if (sId.length >= 4 && norm(r.organ).length >= 4) return true;
+      }
+      // Structures array match (plural/singular tolerant)
       if (Array.isArray(r.structures)) {
         return r.structures.some((s) => {
           const label = typeof s === 'string' ? s : (s && (s.label || s.slug || s.en));
-          return norm(label) === sId;
+          const n = norm(label);
+          if (!n) return false;
+          if (n === sId) return true;
+          // plural/singular tolerance: "lung" ↔ "lungs"
+          if (n + 's' === sId || sId + 's' === n) return true;
+          if (n.endsWith('s') && n.slice(0,-1) === sId) return true;
+          if (sId.endsWith('s') && sId.slice(0,-1) === n) return true;
+          return false;
         });
       }
       return false;
