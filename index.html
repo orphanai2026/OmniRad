@@ -112,6 +112,7 @@ html[dir="rtl"] .hero .desc{font-size:16.5px;line-height:1.85;max-width:46ch}
 .hero .hl{display:block;font-size:clamp(1.35rem,2vw,1.95rem);color:var(--acc);font-weight:700;margin-top:12px;line-height:1.2}
 .hero .desc{font-size:15.5px;color:var(--text-s);max-width:44ch;margin-top:20px;text-wrap:pretty}
 .hero .desc b{color:var(--text);font-weight:600}
+.hero .desc bdi{unicode-bidi:isolate;white-space:nowrap}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
 .btn-p{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 26px;border-radius:12px;
   background:linear-gradient(135deg,#3ee0d4,var(--acc));color:var(--acc-ink);font-size:16px;font-weight:700;
@@ -298,7 +299,7 @@ html[dir="ltr"] [data-en]{display:revert}
     <h1><span data-ar>شاهد ما وراء الصورة</span><span data-en>See Beyond the Image</span>
       <span class="hl"><span data-ar>تعلّم التشريح الإشعاعي بذكاء</span><span data-en>Learn Radiologic Anatomy Intelligently</span></span></h1>
     <p class="desc">
-      <span data-ar>منصّة تعليمية ذكية تجمع أطلساً تشريحياً تفاعلياً، ومقارنة متعدّدة الوسائط، ورؤى مدعومة بالذكاء الاصطناعي — عبر <b>الأشعة السينية · CT · MRI · الموجات فوق الصوتية · PET/CT</b>.</span>
+      <span data-ar>منصّة تعليمية ذكية تجمع أطلساً تشريحياً تفاعلياً، ومقارنة متعدّدة الوسائط، ورؤى مدعومة بالذكاء الاصطناعي عبر <b><bdi>الأشعة السينية</bdi> · <bdi>CT</bdi> · <bdi>MRI</bdi> · <bdi>الموجات فوق الصوتية</bdi> · <bdi>PET/CT</bdi></b>.</span>
       <span data-en>An intelligent educational platform combining an interactive anatomy atlas, multimodality comparison, and AI-supported insights across <b>X-ray · CT · MRI · ultrasound · PET/CT</b>.</span>
     </p>
     <div class="cta">
