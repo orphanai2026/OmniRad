@@ -73,7 +73,7 @@ body[dir="rtl"] .info-title-row{padding-inline-start:0;padding-inline-end:38px}
 .viewer.dragging{cursor:grabbing}
 .viewer.tool-zoom canvas{cursor:zoom-in}
 .viewer.tool-pan canvas{cursor:grab}
-.viewer.tool-wl canvas{cursor:ns-resize}
+.viewer.tool-bc canvas{cursor:ns-resize}
 .viewer.tool-measure canvas{cursor:crosshair}
 .viewer.tool-angle canvas{cursor:crosshair}
 .viewer.tool-probe canvas{cursor:crosshair}
@@ -195,25 +195,21 @@ body{background:transparent!important}
     </div>
     <div class="tool-bar">
       <div class="tg"><span class="tl" data-i18n="atlas.tool">Tool</span>
-        <button class="tb on" data-tool="wl" title="Window / Level" data-i18n="tools.wl">WL</button>
+        <button class="tb on" data-tool="bc" title="Brightness / Contrast (drag: ↔ bright · ↕ contrast)">B/C</button>
         <button class="tb"    data-tool="zoom" title="Zoom" data-i18n="tools.zoom">ZOOM</button>
         <button class="tb"    data-tool="pan"  title="Pan" data-i18n="tools.pan">PAN</button>
         <button class="tb"    data-tool="measure" title="Measure" data-i18n="tools.measure">RULER</button>
         <button class="tb"    data-tool="angle" title="Angle" data-i18n="tools.angle">ANGLE</button>
         <button class="tb"    data-tool="probe" title="Pixel probe" data-i18n="tools.probe">PROBE</button>
       </div>
-      <div class="tg"><span class="tl" data-i18n="atlas.preset">Preset</span>
-        <select id="presetSel" style="padding:4px 7px;background:var(--bg-s);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700">
-          <option value="">Custom</option>
-          <option value="brain">Brain (80/40)</option>
-          <option value="soft">Soft tissue (400/40)</option>
-          <option value="abd">Abdomen (400/60)</option>
-          <option value="lung">Lung (1500/-600)</option>
-          <option value="bone">Bone (2000/400)</option>
-          <option value="mri">MRI (280/120)</option>
-        </select>
+      <div class="tg"><span class="tl">Bright</span>
+        <input type="range" id="bcBright" min="-100" max="100" value="0" step="1" style="width:78px;accent-color:var(--acc);cursor:pointer">
+        <span class="tv" id="valBright">0</span>
       </div>
-      <div class="tg"><span class="tl">WW</span><span class="tv" id="valWW">—</span><span class="tl">WL</span><span class="tv" id="valWL">—</span></div>
+      <div class="tg"><span class="tl">Contrast</span>
+        <input type="range" id="bcContrast" min="-100" max="100" value="0" step="1" style="width:78px;accent-color:var(--acc);cursor:pointer">
+        <span class="tv" id="valContrast">0</span>
+      </div>
       <div class="tg"><span class="tl">Zoom</span><span class="tv" id="valZoom">1.00×</span></div>
       <div class="tg">
         <button class="tb" id="btnInvert" title="Invert" data-i18n="tools.invert">INVERT</button>
@@ -229,7 +225,7 @@ body{background:transparent!important}
       </div>
     </div>
 
-    <div class="viewer tool-wl" id="viewer">
+    <div class="viewer tool-bc" id="viewer">
       <canvas id="cv"></canvas>
       <svg class="overlay" id="ovl" width="100%" height="100%" preserveAspectRatio="none"></svg>
       <div class="anno anno-tl" id="anTL"></div>
@@ -261,7 +257,7 @@ body{background:transparent!important}
     <div class="kv"><span class="k">Modality</span><span class="v" id="infoMod">—</span></div>
     <div class="kv"><span class="k">Plane</span><span class="v" id="infoPlane">—</span></div>
     <div class="kv"><span class="k">Variant</span><span class="v" id="infoVar">—</span></div>
-    <div class="kv"><span class="k">WW / WL</span><span class="v" id="infoWL">—</span></div>
+    <div class="kv"><span class="k">Bright / Contrast</span><span class="v" id="infoWL">—</span></div>
     <h3 data-i18n="atlas.about">About</h3>
     <p id="infoDesc"><span data-i18n="atlas.chooseStruct">Select a structure to begin.</span></p>
     <h3 data-i18n-title="atlas.parts">Anatomical parts <span id="partCount" style="color:var(--text-m);font-weight:400"></span></h3>
@@ -368,7 +364,7 @@ const PARTS = {
     { en:'Cortical margin', ar:'الحافة القشرية', color:'#4ade80' }
   ]
 };
-/* All possible modalities we teach — used to render greyed "coming soon" tabs. */
+/* All modalities we may teach — used only for ordering the dynamic tabs. */
 const ALL_MODALITIES = ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'];
 
 const $ = id => document.getElementById(id);
@@ -380,13 +376,13 @@ const state = {
   modality: '',
   plane: '',
   variant: '',
-  tool: 'wl',
+  tool: 'bc',
   invert: false,
   overlays: true,
   labelsOn: true,
   zoom: 1, panX: 0, panY: 0,
   rotate: 0, flipH: false, flipV: false,
-  ww: 300, wl: 150,
+  brightness: 0, contrast: 0,
   magnifier: false, magPos: null,
   img: null,
   imgCache: {},
@@ -538,15 +534,30 @@ function renderSidebar(filter){
 }
 window.addEventListener('omnirad-lang', ()=>{ renderSidebar($('search') && $('search').value); renderInfo(); });
 
-/* ─────── Modality tabs — ALL enabled, CT default ─────── */
+/* ─────── Modality tabs — DYNAMIC: only modalities that have images ─────── */
+function availableModalities(structId){
+  const set = new Set();
+  try { (U.modalitiesFor(structId)||[]).forEach(m=>set.add(m)); } catch(_){}
+  const st = S.find(s=>s.id===structId);
+  const key = (structId||'').toLowerCase().trim();
+  const enKey = st ? (st.en||'').toLowerCase().trim() : '';
+  if (window.OmniRadAtlasDynamic && OmniRadAtlasDynamic.find){
+    ALL_MODALITIES.forEach(m=>{
+      if (set.has(m)) return;
+      try { if (OmniRadAtlasDynamic.find(key, m) || (enKey && OmniRadAtlasDynamic.find(enKey, m))) set.add(m); } catch(_){}
+    });
+  }
+  return ALL_MODALITIES.filter(m=>set.has(m));
+}
 function renderModBar(){
   const bar = $('modBar'); bar.innerHTML = '';
-  const available = U.modalitiesFor(state.structId);
-  ALL_MODALITIES.forEach(mod =>{
+  let avail = availableModalities(state.structId);
+  if (!avail.length) avail = [state.modality || 'CT'];
+  if (!avail.includes(state.modality)) state.modality = avail[0];
+  avail.forEach(mod =>{
     const btn = document.createElement('button');
     btn.className = 'mod-tab' + (mod === state.modality ? ' on' : '');
     btn.textContent = mod;
-    if (!available.includes(mod)) btn.classList.add('no-images');
     btn.addEventListener('click', ()=>{ state.modality = mod; state.plane = ''; state.variant = ''; renderModBar(); renderSubPicker(); (window.loadCurrent||loadCurrent)(); });
     bar.appendChild(btn);
   });
@@ -594,7 +605,7 @@ function renderInfo(){
   $('infoMod').textContent = state.modality || '—';
   $('infoPlane').textContent = state.plane || '—';
   $('infoVar').textContent = state.variant || '—';
-  $('infoWL').textContent = state.ww + ' / ' + state.wl;
+  $('infoWL').textContent = state.brightness + ' / ' + state.contrast;
   const desc = ar ? (DESC_AR[st.id] || st.desc || '') : (st.desc || '');
   const descEl = $('infoDesc'); descEl.textContent = desc; descEl.setAttribute('dir', ar ? 'rtl' : 'ltr');
   // parts list
@@ -614,12 +625,9 @@ function renderInfo(){
 /* ─────── Selection ─────── */
 function selectStructure(id){
   state.structId = id;
-  let av = [];
-  try { av = U.modalitiesFor(id) || []; } catch(_){ av = []; }
-  if (!Array.isArray(av)) av = [];
-  // Community/unknown structures: give them the full modality palette so tabs work
-  if (!av.length) av = ['CT','MRI','US','X-Ray','NM','PET','Angio','Mammo'];
-  state.modality = av.includes('CT') ? 'CT' : (av[0] || 'CT');
+  let av = availableModalities(id);
+  if (!av.length) av = ['CT'];
+  state.modality = av.includes('CT') ? 'CT' : av[0];
   state.plane = ''; state.variant = '';
   try { renderSidebar($('search').value); } catch(e){ console.warn('[atlas] renderSidebar', e); }
   try { renderModBar(); } catch(e){ console.warn('[atlas] renderModBar', e); }
@@ -634,13 +642,14 @@ function loadCurrent(){
   if (!img){ state.img = null; $('empty').style.display = 'block'; $('emptyText').textContent = 'No image for this combination yet.'; renderInfo(); draw(); return; }
   $('empty').style.display = 'none';
   state.zoom = 1; state.panX = 0; state.panY = 0;
-  state.ww = img.ww; state.wl = img.wl; state.invert = false;
+  state.brightness = 0; state.contrast = 0; state.invert = false;
   state.measurements = [];
-  $('valWW').textContent = state.ww; $('valWL').textContent = state.wl; $('valZoom').textContent = '1.00×';
+  syncBCInputs();
+  $('valZoom').textContent = '1.00×';
   const st = currentStruct();
   $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · ${state.variant}`;
   $('anTR').innerHTML = `OmniRad · Atlas<br>${state.modality} · ${state.plane}`;
-  $('anBL').innerHTML = `WW: <span id="anWW">${state.ww}</span><br>WL: <span id="anWL">${state.wl}</span>`;
+  $('anBL').innerHTML = `Bright: <span id="anB">${state.brightness}</span><br>Contrast: <span id="anC">${state.contrast}</span>`;
   $('anBR').innerHTML = `Zoom: <span id="anZ">1.00×</span><br>Educational only`;
   const cached = state.imgCache[img.path];
   const done = (el)=>{ state.img = el; renderInfo(); draw(); };
@@ -672,29 +681,39 @@ function draw(){
   ctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
   ctx.drawImage(state.img, -iw/2, -ih/2, iw, ih);
   ctx.restore();
-  try {
-    const id = ctx.getImageData(0, 0, w, h); const d = id.data;
-    const minV = state.wl - state.ww/2, maxV = state.wl + state.ww/2;
-    for (let i = 0; i < d.length; i += 4){
-      const g = (d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114);
-      let v = (g - minV) / (maxV - minV);
-      v = Math.max(0, Math.min(1, v));
-      if (state.invert) v = 1 - v;
-      const out = Math.round(v * 255);
-      d[i] = d[i+1] = d[i+2] = out;
-    }
-    ctx.putImageData(id, 0, 0);
-  } catch(e){}
+  if (state.invert || state.brightness !== 0 || state.contrast !== 0){
+    try {
+      const id = ctx.getImageData(0, 0, w, h); const d = id.data;
+      const cf = (259 * (state.contrast + 255)) / (255 * (259 - state.contrast));
+      const bo = state.brightness * 2.55;
+      for (let i = 0; i < d.length; i += 4){
+        for (let k = 0; k < 3; k++){
+          let v = cf * (d[i+k] - 128) + 128 + bo;
+          if (state.invert) v = 255 - v;
+          d[i+k] = v < 0 ? 0 : v > 255 ? 255 : v;
+        }
+      }
+      ctx.putImageData(id, 0, 0);
+    } catch(e){}
+  }
   drawMeasurements();
   updateVals();
 }
+function syncBCInputs(){
+  const b = $('bcBright'), c = $('bcContrast');
+  if (b) b.value = state.brightness;
+  if (c) c.value = state.contrast;
+  const vb = $('valBright'), vc = $('valContrast');
+  if (vb) vb.textContent = state.brightness;
+  if (vc) vc.textContent = state.contrast;
+}
 function updateVals(){
-  const anWW = $('anWW'), anWL = $('anWL'), anZ = $('anZ');
-  if (anWW) anWW.textContent = state.ww;
-  if (anWL) anWL.textContent = state.wl;
+  const anZ = $('anZ'), anB = $('anB'), anC = $('anC');
+  if (anB) anB.textContent = state.brightness;
+  if (anC) anC.textContent = state.contrast;
   if (anZ)  anZ.textContent  = state.zoom.toFixed(2) + '×';
-  $('valWW').textContent = state.ww; $('valWL').textContent = state.wl; $('valZoom').textContent = state.zoom.toFixed(2) + '×';
-  $('infoWL').textContent = state.ww + ' / ' + state.wl;
+  $('valZoom').textContent = state.zoom.toFixed(2) + '×';
+  const iwl = $('infoWL'); if (iwl) iwl.textContent = state.brightness + ' / ' + state.contrast;
 }
 
 /* ─────── Measurements (ruler / angle / probe) ─────── */
@@ -776,8 +795,8 @@ function localPt(e){
 cv.addEventListener('mousedown', (e)=>{
   if (!state.img) return;
   const p = localPt(e);
-  if (state.tool === 'wl' || state.tool === 'zoom' || state.tool === 'pan'){
-    drag = { x:e.clientX, y:e.clientY, ww:state.ww, wl:state.wl, zoom:state.zoom, panX:state.panX, panY:state.panY };
+  if (state.tool === 'bc' || state.tool === 'zoom' || state.tool === 'pan'){
+    drag = { x:e.clientX, y:e.clientY, b:state.brightness, c:state.contrast, zoom:state.zoom, panX:state.panX, panY:state.panY };
     viewer.classList.add('dragging');
   } else if (state.tool === 'measure'){
     tmpMeasure = { type:'ruler', points:[p] };
@@ -798,7 +817,7 @@ window.addEventListener('mouseup', (e)=>{
 window.addEventListener('mousemove', (e)=>{
   if (drag){
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (state.tool === 'wl'){ state.ww = Math.max(1, Math.round(drag.ww + dx * 2)); state.wl = Math.round(drag.wl + dy * 2); }
+    if (state.tool === 'bc'){ state.brightness = Math.max(-100, Math.min(100, Math.round(drag.b + dx * 0.4))); state.contrast = Math.max(-100, Math.min(100, Math.round(drag.c - dy * 0.4))); syncBCInputs(); }
     else if (state.tool === 'zoom'){ state.zoom = Math.max(0.25, Math.min(6, drag.zoom * (1 + dy * -0.005))); }
     else if (state.tool === 'pan'){ state.panX = drag.panX + dx; state.panY = drag.panY + dy; }
     draw();
@@ -810,7 +829,7 @@ document.querySelectorAll('[data-tool]').forEach(b=>{
   b.addEventListener('click', ()=>{
     document.querySelectorAll('[data-tool]').forEach(x=>x.classList.remove('on'));
     b.classList.add('on'); state.tool = b.dataset.tool;
-    viewer.classList.remove('tool-wl','tool-zoom','tool-pan','tool-measure','tool-angle','tool-probe');
+    viewer.classList.remove('tool-bc','tool-zoom','tool-pan','tool-measure','tool-angle','tool-probe');
     viewer.classList.add('tool-' + state.tool);
     tmpMeasure = null;
   });
@@ -823,15 +842,16 @@ $('btnReset').addEventListener('click', ()=>{
   state.zoom = 1; state.panX = 0; state.panY = 0;
   state.rotate = 0; state.flipH = false; state.flipV = false;
   state.invert = false; state.measurements = []; state.magnifier = false;
+  state.brightness = 0; state.contrast = 0;
   state.plane = ''; state.variant = '';
   $('btnInvert').classList.remove('on');
   $('btnMag').classList.remove('on');
-  $('presetSel').value = '';
-  // Force default tool back to WL
+  syncBCInputs();
+  // Force default tool back to B/C
   document.querySelectorAll('[data-tool]').forEach(x=>x.classList.remove('on'));
-  const wlBtn = document.querySelector('[data-tool="wl"]'); if (wlBtn){ wlBtn.classList.add('on'); state.tool = 'wl'; }
-  viewer.classList.remove('tool-zoom','tool-pan','tool-measure','tool-angle','tool-probe');
-  viewer.classList.add('tool-wl');
+  const bcBtn = document.querySelector('[data-tool="bc"]'); if (bcBtn){ bcBtn.classList.add('on'); state.tool = 'bc'; }
+  viewer.classList.remove('tool-wl','tool-zoom','tool-pan','tool-measure','tool-angle','tool-probe');
+  viewer.classList.add('tool-bc');
   renderSubPicker();
   loadCurrent();
 });
@@ -848,7 +868,7 @@ $('btnSnap').addEventListener('click', ()=>{
 window.addEventListener('keydown', (e)=>{
   if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
   const k = e.key.toLowerCase();
-  const map = { w:'wl', z:'zoom', p:'pan', l:'measure', a:'angle', o:'probe' };
+  const map = { b:'bc', z:'zoom', p:'pan', l:'measure', a:'angle', o:'probe' };
   if (map[k]){ const b = document.querySelector('[data-tool="'+map[k]+'"]'); if (b) b.click(); }
   else if (k === 'r'){ state.rotate = (state.rotate + 90) % 360; draw(); }
   else if (k === 'h'){ state.flipH = !state.flipH; draw(); }
@@ -861,11 +881,9 @@ window.addEventListener('keydown', (e)=>{
 });
 $('btnLabels').addEventListener('click', ()=>{ state.labelsOn = !state.labelsOn; $('btnLabels').classList.toggle('on', state.labelsOn); $('btnLabels').textContent = 'LABELS: ' + (state.labelsOn ? 'ON' : 'OFF'); $('parts').style.display = state.labelsOn ? '' : 'none'; });
 
-/* Preset windows */
-$('presetSel').addEventListener('change', (e)=>{
-  const p = { brain:[80,40], soft:[400,40], abd:[400,60], lung:[1500,-600], bone:[2000,400], mri:[280,120] }[e.target.value];
-  if (p){ state.ww = p[0]; state.wl = p[1]; draw(); }
-});
+/* Brightness / Contrast (cosmetic — valid on 8-bit teaching PNGs; no HU claim) */
+$('bcBright').addEventListener('input', (e)=>{ state.brightness = parseInt(e.target.value)||0; $('valBright').textContent = state.brightness; draw(); });
+$('bcContrast').addEventListener('input', (e)=>{ state.contrast = parseInt(e.target.value)||0; $('valContrast').textContent = state.contrast; draw(); });
 
 $('search').addEventListener('input', (e)=>{
   const val = (e.target.value || '').trim();
@@ -975,6 +993,9 @@ selectStructure('brain');
     // 2) Load approved images
     const rows = await OmniRadAtlasDynamic.load();
 
+    // 2b) Re-render modality tabs now that dynamic images are known
+    try { if (typeof renderModBar === 'function'){ renderModBar(); renderSubPicker(); } } catch(_){}
+
     // 3) Auto-register unknown organs as virtual structures so the sidebar shows them
     if (rows && rows.length){
       const orgs = new Set(rows.map(r => (r.organ||'').toLowerCase().trim()).filter(Boolean));
@@ -1051,6 +1072,7 @@ selectStructure('brain');
             $('empty').style.display = 'none';
             state.zoom = 1; state.panX = 0; state.panY = 0;
             state.invert = false; state.measurements = [];
+            state.brightness = 0; state.contrast = 0; if (typeof syncBCInputs === 'function') syncBCInputs();
             $('valZoom').textContent = '1.00×';
             const el = new Image(); el.crossOrigin = 'anonymous';
             el.onload  = () => { if (myToken !== __loadToken) return; state.img = el; renderInfo(); draw(); };
@@ -1058,6 +1080,7 @@ selectStructure('brain');
             el.src = url;
             $('anTL').innerHTML = `<strong>${st.en}</strong><br>${state.modality} · ${state.plane} · Community`;
             $('anTR').innerHTML = `OmniRad · Atlas<br>${state.modality} · ${state.plane}`;
+            $('anBL').innerHTML = `Bright: <span id="anB">${state.brightness}</span><br>Contrast: <span id="anC">${state.contrast}</span>`;
             $('anBR').innerHTML = `Zoom: <span id="anZ">1.00×</span><br>Educational only`;
             if (badgeMount) badgeMount.innerHTML = OmniRadAtlasDynamic.badgeHtml(hit);
             return;
