@@ -105,7 +105,11 @@ img{display:block;max-width:100%}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--acc-dim)}
 .hero h1{font-family:var(--f-head),system-ui,sans-serif;font-size:clamp(2.4rem,3.6vw,3.9rem);line-height:1.05;letter-spacing:-.02em;font-weight:800}
 html[dir="ltr"] .hero h1{letter-spacing:-.03em;line-height:1.0}
-.hero .hl{display:block;font-size:clamp(1.4rem,2.2vw,2.1rem);color:var(--acc);font-weight:700;margin-top:12px;line-height:1.2}
+html[dir="rtl"] .hero h1{letter-spacing:0;line-height:1.28;font-weight:700}
+html[dir="rtl"] .hero .hl{letter-spacing:0;line-height:1.5;margin-top:16px}
+html[dir="rtl"] .eyebrow{letter-spacing:.02em}
+html[dir="rtl"] .hero .desc{font-size:16.5px;line-height:1.85;max-width:46ch}
+.hero .hl{display:block;font-size:clamp(1.35rem,2vw,1.95rem);color:var(--acc);font-weight:700;margin-top:12px;line-height:1.2}
 .hero .desc{font-size:15.5px;color:var(--text-s);max-width:44ch;margin-top:20px;text-wrap:pretty}
 .hero .desc b{color:var(--text);font-weight:600}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
