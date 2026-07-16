@@ -47,7 +47,7 @@
   .omr-vw .omr-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(232,240,245,.4);font-size:12px;text-align:center;padding:20px;font-family:'IBM Plex Mono',monospace}
   .omr-vw.tool-zoom canvas{cursor:zoom-in}
   .omr-vw.tool-pan canvas{cursor:grab}
-  .omr-vw.tool-wl canvas{cursor:ns-resize}
+  .omr-vw.tool-bc canvas{cursor:ns-resize}
   .omr-vw.tool-measure canvas,.omr-vw.tool-angle canvas,.omr-vw.tool-probe canvas,.omr-vw.tool-rect canvas,.omr-vw.tool-ellipse canvas,.omr-vw.tool-arrow canvas{cursor:crosshair}
   .omr-vw.tool-text canvas{cursor:text}
   `;
@@ -63,10 +63,10 @@
     const showAnno = opts.showAnno !== false;
     const compact = !!opts.compact;
 
-    const root = document.createElement('div'); root.className = 'omr-vw tool-wl';
+    const root = document.createElement('div'); root.className = 'omr-vw tool-bc';
     root.innerHTML = `
       ${showToolbar ? `<div class="omr-tb${compact?' compact':''}">
-        <button class="omr-btn on" data-tool="wl" title="Window/Level (W)">WL</button>
+        <button class="omr-btn on" data-tool="bc" title="Brightness/Contrast (B)">B/C</button>
         <button class="omr-btn" data-tool="zoom" title="Zoom (Z)">Z</button>
         <button class="omr-btn" data-tool="pan" title="Pan (P)">PAN</button>
         <span class="sep"></span>
@@ -78,8 +78,8 @@
         <button class="omr-btn" data-tool="text" title="Text label">T</button>
         <button class="omr-btn" data-tool="probe" title="Probe (O)">•</button>
         <span class="sep"></span>
-        <span class="omr-tv" data-role="ww">—</span>
-        <span class="omr-tv" data-role="wl">—</span>
+        <span class="omr-tv" data-role="bright">B 0</span>
+        <span class="omr-tv" data-role="contrast">C 0</span>
         <span class="omr-tv" data-role="zoom">1.00×</span>
         <span class="sep"></span>
         <button class="omr-btn" data-act="rotate" title="Rotate 90° (R)">↻</button>
@@ -113,8 +113,8 @@
     const svg = root.querySelector('.omr-ovl');
     const empty = root.querySelector('[data-role="empty"]');
     const els = {
-      ww: root.querySelector('[data-role="ww"]'),
-      wl: root.querySelector('[data-role="wl"]'),
+      bright: root.querySelector('[data-role="bright"]'),
+      contrast: root.querySelector('[data-role="contrast"]'),
       zoom: root.querySelector('[data-role="zoom"]'),
       tl: root.querySelector('[data-role="anno-tl"]'),
       tr: root.querySelector('[data-role="anno-tr"]'),
@@ -123,7 +123,7 @@
     };
 
     const st = {
-      tool:'wl', ww:300, wl:150, zoom:1, panX:0, panY:0,
+      tool:'bc', brightness:0, contrast:0, zoom:1, panX:0, panY:0,
       rotate:0, flipH:false, flipV:false, invert:false, magnifier:false,
       img:null, imgPath:'', measurements:[], name:''
     };
@@ -140,17 +140,21 @@
       ctx.scale(st.flipH ? -1 : 1, st.flipV ? -1 : 1);
       ctx.drawImage(st.img, -iw/2, -ih/2, iw, ih);
       ctx.restore();
-      try {
-        const id = ctx.getImageData(0,0,w,h); const d = id.data;
-        const minV = st.wl - st.ww/2, maxV = st.wl + st.ww/2;
-        for (let i = 0; i < d.length; i += 4){
-          const g = d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114;
-          let v = (g - minV) / (maxV - minV); v = Math.max(0, Math.min(1, v));
-          if (st.invert) v = 1 - v;
-          const out = Math.round(v * 255); d[i] = d[i+1] = d[i+2] = out;
-        }
-        ctx.putImageData(id, 0, 0);
-      } catch(e){}
+      if (st.invert || st.brightness !== 0 || st.contrast !== 0){
+        try {
+          const id = ctx.getImageData(0,0,w,h); const d = id.data;
+          const cf = (259 * (st.contrast + 255)) / (255 * (259 - st.contrast));
+          const bo = st.brightness * 2.55;
+          for (let i = 0; i < d.length; i += 4){
+            for (let k = 0; k < 3; k++){
+              let v = cf * (d[i+k] - 128) + 128 + bo;
+              if (st.invert) v = 255 - v;
+              d[i+k] = v < 0 ? 0 : v > 255 ? 255 : v;
+            }
+          }
+          ctx.putImageData(id, 0, 0);
+        } catch(e){}
+      }
       drawMeasurements();
       refresh();
     }
@@ -170,10 +174,10 @@
       });
     }
     function refresh(){
-      if (els.ww) els.ww.textContent = 'WW '+st.ww;
-      if (els.wl) els.wl.textContent = 'WL '+st.wl;
+      if (els.bright) els.bright.textContent = 'B '+st.brightness;
+      if (els.contrast) els.contrast.textContent = 'C '+st.contrast;
       if (els.zoom) els.zoom.textContent = st.zoom.toFixed(2)+'×';
-      if (els.bl) els.bl.innerHTML = `WW: ${st.ww}<br>WL: ${st.wl}`;
+      if (els.bl) els.bl.innerHTML = `Bright: ${st.brightness}<br>Contrast: ${st.contrast}`;
       if (els.br) els.br.innerHTML = `Zoom: ${st.zoom.toFixed(2)}×`;
     }
     function fit(){
@@ -193,8 +197,8 @@
     canvas.addEventListener('mousedown', (e)=>{
       if (!st.img) return;
       const p = localPt(e);
-      if (['wl','zoom','pan'].includes(st.tool)){
-        drag = { x:e.clientX, y:e.clientY, ww:st.ww, wl:st.wl, zoom:st.zoom, panX:st.panX, panY:st.panY };
+      if (['bc','zoom','pan'].includes(st.tool)){
+        drag = { x:e.clientX, y:e.clientY, b:st.brightness, c:st.contrast, zoom:st.zoom, panX:st.panX, panY:st.panY };
       } else if (['measure','rect','ellipse','arrow'].includes(st.tool)){
         tmp = { type:st.tool==='measure'?'ruler':st.tool, points:[p] };
       } else if (st.tool === 'angle'){
@@ -216,10 +220,11 @@
     window.addEventListener('mousemove', (e)=>{
       if (drag){
         const dx = e.clientX-drag.x, dy = e.clientY-drag.y;
-        if (st.tool === 'wl'){
-          st.ww = Math.max(1, Math.round(drag.ww + dx*2)); st.wl = Math.round(drag.wl + dy*2);
-          if (opts.onWLChange) opts.onWLChange(st.ww, st.wl);
-          if (opts.linkKey) broadcastLink(opts.linkKey, api, { ww:st.ww, wl:st.wl });
+        if (st.tool === 'bc'){
+          st.brightness = Math.max(-100, Math.min(100, Math.round(drag.b + dx*0.4)));
+          st.contrast = Math.max(-100, Math.min(100, Math.round(drag.c - dy*0.4)));
+          if (opts.onWLChange) opts.onWLChange(st.brightness, st.contrast);
+          if (opts.linkKey) broadcastLink(opts.linkKey, api, { brightness:st.brightness, contrast:st.contrast });
         } else if (st.tool === 'zoom'){
           st.zoom = Math.max(0.25, Math.min(6, drag.zoom * (1 + dy * -0.005)));
           if (opts.linkKey) broadcastLink(opts.linkKey, api, { zoom:st.zoom });
@@ -259,7 +264,7 @@
       load(path, cfg){
         cfg = cfg || {};
         st.imgPath = path; st.name = cfg.name || '';
-        if (cfg.ww) st.ww = cfg.ww; if (cfg.wl) st.wl = cfg.wl;
+        st.brightness = 0; st.contrast = 0;
         st.zoom = 1; st.panX = 0; st.panY = 0; st.rotate = 0; st.flipH = false; st.flipV = false; st.invert = false; st.measurements = [];
         if (els.tl) els.tl.innerHTML = cfg.title || '';
         if (els.tr) els.tr.innerHTML = cfg.subtitle || '';
@@ -270,9 +275,9 @@
         img.src = path;
       },
       setTool(t){ st.tool = t; root.className = 'omr-vw tool-'+t; root.querySelectorAll('[data-tool]').forEach(b => b.classList.toggle('on', b.dataset.tool === t)); },
-      setWL(ww, wl){ if (ww != null) st.ww = ww; if (wl != null) st.wl = wl; draw(); },
+      setBC(b, c){ if (b != null) st.brightness = b; if (c != null) st.contrast = c; draw(); },
       setZoom(z){ st.zoom = Math.max(0.25, Math.min(6, z)); draw(); },
-      reset(){ st.zoom = 1; st.panX = 0; st.panY = 0; st.rotate = 0; st.flipH = false; st.flipV = false; st.invert = false; st.measurements = []; draw(); },
+      reset(){ st.zoom = 1; st.panX = 0; st.panY = 0; st.rotate = 0; st.flipH = false; st.flipV = false; st.invert = false; st.brightness = 0; st.contrast = 0; st.measurements = []; draw(); },
       state: () => ({...st}),
       destroy(){ try { ro && ro.disconnect(); } catch(e){} root.remove(); if (opts.linkKey && LINK[opts.linkKey]) LINK[opts.linkKey].delete(api); }
     };
@@ -283,7 +288,7 @@
 
   function broadcastLink(key, sender, changes){
     const set = LINK[key]; if (!set) return;
-    set.forEach(v => { if (v === sender) return; if (changes.ww != null || changes.wl != null) v.setWL(changes.ww, changes.wl); if (changes.zoom != null) v.setZoom(changes.zoom); });
+    set.forEach(v => { if (v === sender) return; if (changes.brightness != null || changes.contrast != null) v.setBC(changes.brightness, changes.contrast); if (changes.zoom != null) v.setZoom(changes.zoom); });
   }
 
   g.OmniRadViewer = { create, LINK };
