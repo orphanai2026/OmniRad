@@ -15,7 +15,7 @@
   --text:#e8f0f5; --text-s:rgba(232,240,245,.66); --text-m:rgba(232,240,245,.42);
   --acc:#2dd4c8; --acc-2:#17d4cf; --acc-dim:rgba(45,212,200,.55); --acc-sub:rgba(45,212,200,.09);
   --border:rgba(45,212,200,.15); --border-s:rgba(232,240,245,.08);
-  --nav-bg:rgba(4,8,13,.82); --acc-ink:#04120f; --nav-h:72px;
+  --nav-bg:rgba(4,8,13,.82); --acc-ink:#04120f; --nav-h:56px;
   --card:rgba(13,25,38,.72);
 }
 [data-theme="dim"]{
@@ -285,27 +285,7 @@ html[dir="ltr"] [data-en]{display:revert}
   <div class="glow"></div><div class="grid"></div><div class="beam"></div><div class="motif"></div><div class="motif motif-2"></div><div class="skyline"></div><div class="vignette"></div>
 </div>
 
-<!-- HEADER -->
-<header class="nav">
-  <div class="brand"><div class="mark">OR</div><span class="name">OmniRad</span></div>
-  <nav class="nav-links">
-    <a class="active" href="pages/atlas.html"><i class="i" data-ic="atlas"></i><span data-ar>الأطلس</span><span data-en>Atlas</span></a>
-    <a href="pages/comparison.html"><i class="i" data-ic="compare"></i><span data-ar>المقارنة</span><span data-en>Compare</span></a>
-    <a href="pages/dictionary.html"><i class="i" data-ic="dictionary"></i><span data-ar>القاموس</span><span data-en>Dictionary</span></a>
-    <a href="pages/daily.html"><i class="i" data-ic="learn"></i><span data-ar>التعلّم</span><span data-en>Learn</span></a>
-    <a href="pages/ai-chat.html"><i class="i" data-ic="ai"></i><span data-ar>المساعد الذكي</span><span data-en>AI Assistant</span></a>
-    <a href="pages/clinic.html"><i class="i" data-ic="tools"></i><span data-ar>الأدوات</span><span data-en>Tools</span></a>
-  </nav>
-  <div class="nav-spacer"></div>
-  <div class="nav-right">
-    <div class="edu-badge"><i class="i" data-ic="shield"></i><span data-ar>تعليمي فقط</span><span data-en>Educational only</span></div>
-    <a class="ico-btn" href="pages/dictionary.html" aria-label="بحث / Search"><i class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg></i></a>
-    <button class="lang" id="langBtn" aria-label="Switch language"><i class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path></svg></i><span data-ar>English</span><span data-en>العربية</span></button>
-    <button class="ico-btn" id="themeBtn" aria-label="تبديل المظهر / Toggle theme"><i class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.1 5.1l1.5 1.5M17.4 17.4l1.5 1.5M18.9 5.1l-1.5 1.5M6.6 17.4l-1.5 1.5"></path></svg></i></button>
-    <a class="ico-btn" href="pages/profile.html" aria-label="الإشعارات / Notifications"><i class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 4.5 2 5.5 2 5.5H4s2-1 2-5.5"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></i></a>
-    <a class="user" href="pages/profile.html" style="text-decoration:none">MS</a>
-  </div>
-</header>
+<!-- HEADER injected by modules/omnirad-nav.js (shared unified nav) -->
 
 <main class="hero">
   <!-- LEFT COPY -->
@@ -436,26 +416,19 @@ html[dir="ltr"] [data-en]{display:revert}
   <span class="foot-meta"><span data-ar>© 2026 · للأغراض التعليمية فقط — ليست للتشخيص</span><span data-en>© 2026 · Educational use only — not for diagnosis</span></span>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="modules/i18n.js"></script>
+<script src="modules/supabase.js"></script>
+<script src="modules/data/anatomy-master.js?v=loinc-r2"></script>
+<script src="modules/omnirad-search.js"></script>
+<script src="modules/omnirad-avatars.js"></script>
+<script src="modules/omnirad-nav.js" data-base=""></script>
 <script>
 /* Inline SVG icons (CSS mask unsupported in this preview) */
 (function(){var cache={};document.querySelectorAll('.i[data-ic]').forEach(function(el){var k=el.dataset.ic;(cache[k]||(cache[k]=fetch('index-assets/icons/'+k+'.svg').then(function(r){return r.text();}))).then(function(t){el.innerHTML=t;});});})();
 
-/* Language toggle: single tree, clean per-language direction */
-(function(){
-  const btn=document.getElementById('langBtn'), h=document.documentElement;
-  btn.addEventListener('click',()=>{
-    const ar = h.getAttribute('dir')==='rtl';
-    h.setAttribute('dir', ar?'ltr':'rtl');
-    h.setAttribute('lang', ar?'en':'ar');
-  });
-})();
-
-/* Theme toggle: dark <-> dim */
-(function(){
-  const btn=document.getElementById('themeBtn'), h=document.documentElement;
-  if(!btn) return;
-  btn.addEventListener('click',()=>{ h.setAttribute('data-theme', h.getAttribute('data-theme')==='dim'?'dark':'dim'); });
-})();
+/* Language + theme are owned by the shared nav (modules/omnirad-nav.js).
+   i18n.js flips <html dir/lang>, which drives the page's data-ar/data-en spans. */
 
 /* Modality switch */
 (function(){
