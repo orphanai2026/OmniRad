@@ -1,0 +1,37 @@
+OmniRad — Proprietary License (All Rights Reserved)
+Copyright © 2026 Mohammed Saeed Alzahrani (محمد سعيد الزهراني). All rights reserved.
+
+1. SCOPE
+   This license covers the OmniRad platform source code: all HTML, JavaScript,
+   CSS, SQL migrations, configuration, and build scripts in this repository
+   ("the Software"), excluding educational content assets (imaging plates,
+   anatomical dictionary entries, generated illustrations) which are licensed
+   separately under docs/LICENSE-CONTENT.md.
+
+2. RIGHTS RESERVED
+   No part of the Software may be copied, modified, merged, published,
+   distributed, sublicensed, or sold, in whole or in part, without the prior
+   written permission of the copyright holder. No license, express or implied,
+   to any intellectual property rights is granted by this document except as
+   explicitly stated.
+
+3. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE
+   USE OF THE SOFTWARE.
+
+4. MEDICAL / EDUCATIONAL DISCLAIMER
+   OmniRad is an educational tool for radiological anatomy training. It is NOT
+   a diagnostic device and must not be used for clinical decision-making,
+   patient diagnosis, or treatment planning. See docs/IP.md §5 for the full
+   disclaimer required on every page of the platform.
+
+5. GOVERNING LAW
+   This license is governed by the laws of the Kingdom of Saudi Arabia.
+   Copyright and trademark protection are sought locally through the Saudi
+   Authority for Intellectual Property (SAIP); no international filing is in
+   effect as of this document's date.
+
+Contact for licensing inquiries: the copyright holder, Mohammed Saeed Alzahrani.
