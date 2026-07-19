@@ -11,7 +11,7 @@
 (function () {
   if (window.__omniradNavMounted) return;
   window.__omniradNavMounted = true;
-  window.__omniradNavVersion = '2026-07-13-sprint3';
+  window.__omniradNavVersion = '2026-07-19-footer';
 
   var script = document.currentScript;
   var BASE = (script && script.getAttribute('data-base')) || '';
@@ -112,7 +112,11 @@
     '.onav-mm a:hover,.onav-mm a.active{color:var(--acc,#2dd4c8);background:var(--acc-sub,rgba(45,212,200,.10))}',
     '@media(max-width:1200px){.onav-edu span{display:none}.onav-edu{padding:5px 8px}}',
     '@media(max-width:900px){.onav-links,.onav-edu{display:none}.onav-ham{display:flex}}',
-    '@media(max-width:768px){.onav-un{display:none}}'
+    '@media(max-width:768px){.onav-un{display:none}}',
+    '.onav-foot{border-top:1px solid var(--border-s,rgba(232,240,245,.08));padding:18px 22px;margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--text-m,rgba(232,240,245,.5));font-size:11.5px;line-height:1.6}',
+    '.onav-foot a{color:var(--acc,#2dd4c8);text-decoration:none}',
+    '.onav-foot a:hover{text-decoration:underline}',
+    '.onav-foot .onav-foot-warn{font-weight:600;color:var(--text-s,rgba(232,240,245,.7))}'
   ].join('');
   document.head.appendChild(css);
 
@@ -164,9 +168,16 @@
   mm.innerHTML = '<div class="onav-mmg">Explore</div><ul>' + mmCore + '</ul>' + mmGroups +
     '<div class="onav-mmg">Account</div><ul><li><a href="' + abs('index.html') + '#about">ℹ️ About</a></li><li><a href="' + abs('pages/auth.html') + '">🔐 Sign Out</a></li></ul>';
 
+  var foot = document.createElement('footer');
+  foot.className = 'onav-foot';
+  foot.innerHTML =
+    '<div class="onav-foot-warn">⚠ OmniRad — Educational tool only; not for diagnostic or clinical use.<br>أداة تعليمية بحتة — ليست للتشخيص أو الاستخدام السريري.</div>' +
+    '<div>© 2026 Mohammed Saeed Alzahrani · All rights reserved · <a href="' + abs('LICENSE') + '">LICENSE</a> · <a href="' + abs('docs/IP.md') + '">IP Notice</a></div>';
+
   function mount() {
     document.body.insertBefore(nav, document.body.firstChild);
     document.body.insertBefore(mm, nav.nextSibling);
+    document.body.appendChild(foot);
     // ensure page content clears the fixed nav
     if (!document.querySelector('.page,[data-onav-pad]')) {
       document.body.style.paddingTop = document.body.style.paddingTop || 'var(--onav-h)';
