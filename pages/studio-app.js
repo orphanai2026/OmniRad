@@ -47,7 +47,7 @@
       'fields.modality': 'Modality', 'fields.view': 'View / Plane', 'fields.laterality': 'Laterality',
       'fields.sex': 'Sex', 'fields.age': 'Age group', 'fields.purpose': 'Clinical purpose',
       'fields.region': 'Anatomical region', 'fields.organ': 'Organ', 'fields.slice': 'Slice level (optional)',
-      'fields.callouts': 'Structures to label (optional)', 'fields.normalPath': 'Normal / pathological',
+      'fields.callouts': 'Structures to label (optional)', 'fields.seriesOn': 'Generate as series (multiple anatomical levels in one prompt)', 'fields.normalPath': 'Normal / pathological',
       'fields.pathCase': 'Expected pathology', 'fields.style': 'Rendering style', 'fields.labels': 'Labels',
       'fields.labelLang': 'Label language', 'fields.segmentation': 'Segmentation overlay',
       'fields.learner': 'Learner level', 'fields.lang': 'Prompt language', 'fields.negOn': 'Include Negative prompt (recommended)',
@@ -76,7 +76,7 @@
       'fields.modality': 'المودلتي', 'fields.view': 'المقطع / المستوى', 'fields.laterality': 'الجانب',
       'fields.sex': 'الجنس', 'fields.age': 'الفئة العمرية', 'fields.purpose': 'الغرض السريري',
       'fields.region': 'المنطقة التشريحية', 'fields.organ': 'العضو', 'fields.slice': 'مستوى المقطع (اختياري)',
-      'fields.callouts': 'تراكيب للتسمية (اختياري)', 'fields.normalPath': 'طبيعي / مرضي',
+      'fields.callouts': 'تراكيب للتسمية (اختياري)', 'fields.seriesOn': 'توليد كسلسلة (عدّة مستويات تشريحية في برومبت واحد)', 'fields.normalPath': 'طبيعي / مرضي',
       'fields.pathCase': 'الحالة المرضية المتوقّعة', 'fields.style': 'نمط الصورة', 'fields.labels': 'الوسم',
       'fields.labelLang': 'لغة التسميات', 'fields.segmentation': 'التقطيع/التلوين',
       'fields.learner': 'مستوى المتعلّم', 'fields.lang': 'لغة البرومبت', 'fields.negOn': 'تضمين Negative prompt (موصى به)',
@@ -141,7 +141,7 @@
     region:'',organ:'',slice:'',callouts:'',
     normalPath:'Normal',pathCase:'',
     style:'Educational illustration',labels:'With anatomical labels',labelLang:'Both',
-    segmentation:'None',learner:'Student',lang:'Both',negOn:true,
+    segmentation:'None',learner:'Student',lang:'Both',negOn:true,seriesOn:false,
     sequence:'T2',phase:'Non-contrast',window:'Soft tissue',
     usMode:'B-mode grayscale',tracer:'F-18 FDG',stain:'H&E',
     magnification:'×10',sliceThickness:'Per protocol',fluoroContrast:'Barium contrast',
@@ -295,6 +295,10 @@
   function arOpt(k, v){ const arr = OPT[k]; if (!Array.isArray(arr)) return v; const o = arr.find(x=>x.v===v); return o ? o.ar : v; }
   function build(){
     const s = state.s;
+    if (s.seriesOn){
+      const entry = window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(s.organ);
+      if (entry) return buildSeries(entry);
+    }
     const style = s.style.toLowerCase();
     const view = s.view;
     const modality = s.modality;
@@ -338,11 +342,48 @@
   function suggestedName(){
     const clean = x => (x||'').toString().replace(/[^A-Za-z0-9-]+/g,'_').replace(/^_+|_+$/g,'');
     const s = state.s;
+    const entry = s.seriesOn && window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(s.organ);
     const parts = [
       s.organ || 'unspecified', s.modality, s.view,
       s.normalPath === 'Normal' ? 'Normal' : (s.pathCase || 'Pathological')
     ].map(clean).filter(Boolean);
+    if (entry) return parts.join('_') + `_Series${entry.slices.length}.png`;
     return parts.join('_') + '.png';
+  }
+
+  /* ─── Series prompt builder (multiple anatomical levels, one combined prompt) ─── */
+  function buildSeries(entry){
+    const s = state.s;
+    const N = entry.slices.length;
+    const modAr = arOpt('modality', s.modality);
+    const viewAr = arOpt('view', s.view) || s.view;
+    const lat = s.laterality === 'N/A' ? '' : (s.laterality === 'Right' ? 'right ' : s.laterality === 'Left' ? 'left ' : s.laterality === 'Bilateral' ? 'bilateral ' : 'midline ');
+    const patient = `${s.sex.toLowerCase()} ${s.age.toLowerCase()}`;
+    const patientAr = `${arOpt('sex', s.sex)} ${arOpt('age', s.age)}`;
+    const levelsEn = entry.slices.map((lv,i) => `${i+1}. ${lv.en}`).join('\n');
+    const levelsAr = entry.slices.map((lv,i) => `${i+1}. ${lv.ar}`).join('\n');
+    const en = `Generate ${N} separate individual images (not a collage) of a ${lat}${s.modality} ${s.view} view of the ${entry.en}, ${patient} patient, ${s.purpose.toLowerCase()}. Each image must show one distinct anatomical level, in this exact order:\n${levelsEn}\nEach image: 1024×1024, black background, no text or labels, no watermarks, anatomically accurate, high detail, professional medical teaching material at ${s.learner.toLowerCase()} level. Output all ${N} images as separate images in the same response, in the listed order.`;
+    const ar_ = `ولّد ${N} صورة منفصلة (وليست Collage واحداً) لـ${modAr} ${viewAr} لـ${entry.ar}، لمريض ${patientAr}، ${arOpt('purpose', s.purpose)}. كل صورة تُظهر مستوى تشريحياً مختلفاً، بهذا الترتيب بالضبط:\n${levelsAr}\nكل صورة: 1024×1024، خلفية سوداء، بلا نصوص أو تسميات، بلا علامات مائية، دقيقة تشريحياً، تفاصيل عالية، مادة تعليمية طبية احترافية لمستوى ${arOpt('learner', s.learner)}. أخرج كل الصور الـ${N} كصور منفصلة في نفس الردّ وبنفس الترتيب المذكور.`;
+    const neg = 'no watermarks, no distortion, no anatomical inaccuracies, no artifacts, no text overlay, no logos, no signatures, no collage, no grid layout, no low-quality rendering, no blurry regions';
+    return { en, ar: ar_, neg };
+  }
+
+  function renderSeriesInfo(){
+    const box = $('seriesInfo'); if (!box) return;
+    const s = state.s;
+    if (!s.seriesOn){ box.style.display = 'none'; return; }
+    const entry = window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(s.organ);
+    box.style.display = 'block';
+    if (!entry){
+      box.innerHTML = `<div class="warn" style="display:flex"><span class="wi">⚠️</span><div>${isAr() ? 'مستويات السلسلة غير مُعرَّفة لهذا العضو بعد — اختر عضواً من القائمة الجاهزة أو استخدم برومبت فردي.' : 'Series levels are not yet defined for this organ — pick one of the ready organs, or use a single prompt.'}</div></div>`;
+      return;
+    }
+    const items = entry.slices.map((lv,i) => `<li>${i+1}. ${isAr() ? lv.ar : lv.en}</li>`).join('');
+    box.innerHTML = `<div style="background:var(--acc-sub, rgba(45,212,200,.08));border:1px solid var(--acc);border-radius:10px;padding:12px 14px">
+      <div style="font-weight:800;font-size:12px;color:var(--acc);margin-bottom:6px">${isAr() ? `سلسلة ${entry.slices.length} مستويات — ${entry.ar}` : `${entry.slices.length}-level series — ${entry.en}`}</div>
+      <ol style="margin:0;padding-inline-start:18px;font-size:12.5px;line-height:1.7;color:var(--text)">${items}</ol>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-s)">${isAr() ? 'سماكة وصفية (مرجع ACR):' : 'Descriptive thickness (ACR reference):'} ${entry.thicknessNote}</div>
+    </div>`;
   }
 
   /* ─── Warnings (modality × organ / purpose) ─── */
@@ -372,6 +413,7 @@
     }
     $('negRow').style.display = state.s.negOn ? 'block' : 'none';
     $('fname').textContent = suggestedName();
+    renderSeriesInfo();
     // Neg tag on copy buttons
     qa('.neg-tag').forEach(el => el.style.display = state.s.negOn ? 'inline' : 'none');
     // Warnings

@@ -202,7 +202,15 @@ body{background:transparent!important}
 
     <!-- STEP 1 -->
     <div class="panel on" id="panel1">
-      <div class="card">
+      <div class="card" id="seriesPickCard">
+        <h2><span class="k">01a</span><span data-i18n="bu.sp.title">Predefined anatomical series (optional)</span></h2>
+        <div class="cardhelp" data-i18n="bu.sp.help">Pick an organ with predefined levels to get numbered, pre-labeled upload slots — order comes from the slot, never from the file name.</div>
+        <select id="seriesOrganPick" style="max-width:420px">
+          <option value="" data-i18n="bu.sp.none">— None (freeform upload) —</option>
+        </select>
+        <div id="seriesSlotsWrap" style="display:none;margin-top:16px"></div>
+      </div>
+      <div class="card" id="freeformCard">
         <h2><span class="k">01</span><span data-i18n="bu.p1title">Select the images to upload</span></h2>
         <div class="cardhelp" data-i18n="bu.p1help">Up to 30 images per batch. PNG or JPEG. Max 4 MB each. Files are uploaded to your private review area first — nothing is public until a reviewer approves.</div>
         <label class="dropzone" id="dz">
@@ -426,6 +434,7 @@ body{background:transparent!important}
         <div style="font-size:12.5px;color:var(--text-s)" data-i18n="bu.uploadingSub">Please keep this tab open until upload finishes.</div>
         <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
         <div class="progress-txt"><span id="progNow">0</span> / <span id="progTotal">0</span></div>
+        <div id="visionResults" style="margin-top:14px;text-align:start;display:flex;flex-direction:column;gap:6px"></div>
       </div>
 
       <div class="success" id="successBox" style="display:none">
@@ -451,6 +460,7 @@ body{background:transparent!important}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="../modules/data/dicom-body-parts.js?v=loinc-r2"></script>
+<script src="../modules/data/series-slices.js"></script>
 <script src="../modules/data/radiology-playbook.js"></script>
 <script src="../modules/data/radiology-arabic.js"></script>
 <script src="../modules/data/loinc-bridge.js"></script>
@@ -471,6 +481,12 @@ body{background:transparent!important}
   const STRINGS = {
     en: {
       'bu.eyebrow':'Bulk Upload','bu.title':'Upload images to the Atlas',
+      'bu.sp.title':'Predefined anatomical series (optional)',
+      'bu.sp.help':'Pick an organ with predefined levels to get numbered, pre-labeled upload slots — order comes from the slot, never from the file name.',
+      'bu.sp.none':'— None (freeform upload) —',
+      'bu.sp.slotHint':'Drag an image here or click — slot order is fixed, independent of file name.',
+      'bu.sp.incomplete':'Fill every labeled slot before continuing.',
+      'bu.sp.visionChecking':'AI Vision Check running…','bu.sp.visionMatch':'Matches declared level','bu.sp.visionMismatch':'Possible mismatch — reviewer should double-check',
       'bu.modeTitle':'Batch mode','bu.modeSeries':'Series','bu.modeIndividual':'Individual',
       'bu.modeHintSeries':'Series: same organ, different slices — shared metadata + auto slice index.',
       'bu.modeHintIndividual':'Individual: each image gets its own metadata from the start (Step 2 skipped for shared values).',
@@ -512,6 +528,12 @@ body{background:transparent!important}
     },
     ar: {
       'bu.eyebrow':'رفع جماعي','bu.title':'ارفع صوراً إلى الأطلس',
+      'bu.sp.title':'سلسلة تشريحية جاهزة (اختياري)',
+      'bu.sp.help':'اختر عضواً بمستويات مُعرَّفة مسبقاً للحصول على خانات رفع مرقّمة وموسومة — الترتيب من الخانة نفسها لا من اسم الملف.',
+      'bu.sp.none':'— بلا (رفع حرّ) —',
+      'bu.sp.slotHint':'اسحب صورة هنا أو انقر — ترتيب الخانة ثابت، بلا علاقة باسم الملف.',
+      'bu.sp.incomplete':'املأ كل خانة موسومة قبل المتابعة.',
+      'bu.sp.visionChecking':'جارٍ فحص AI Vision…','bu.sp.visionMatch':'يطابق المستوى المُعلَن','bu.sp.visionMismatch':'اشتباه — يُنصح المراجع بالتحقّق',
       'bu.modeTitle':'وضع الدفعة','bu.modeSeries':'سلسلة','bu.modeIndividual':'فردي',
       'bu.modeHintSeries':'سلسلة: نفس العضو، شرائح مختلفة — بيانات موحّدة + ترقيم شرائح تلقائي.',
       'bu.modeHintIndividual':'فردي: كل صورة لها بياناتها الخاصة من البداية (تُتخطّى الخطوة ٢).',
@@ -571,6 +593,8 @@ body{background:transparent!important}
   let mode = 'series'; // 'series' | 'individual'
   let shared = { organ:'', modality:'', plane:'', sequence:'', structures:[], level:'', prompt:'', citation:'' };
   let namingSel = null; // {loinc, rpid, en, ar, body_part_examined, series_technique, region, modality, tier}
+  let seriesOrganEntry = null; // predefined series entry (OMNIRAD_SERIES_SLICES) or null for freeform
+  let seriesSlotFiles = []; // [{index, levelEn, levelAr, file, previewUrl, vision:null|{match,confidence,reason}}]
 
   // Hoisted so wireDropzone's Next handler can call it (was previously trapped inside wireForm)
   function captureShared(){
@@ -608,8 +632,106 @@ body{background:transparent!important}
     }
     wireDropzone();
     wireForm();
+    wireSeriesPicker();
     wireNamingPicker();
     refreshPlaneOptions();  // initial
+  }
+
+  // ── Predefined series picker (Step 1a) ─────────
+  function wireSeriesPicker(){
+    const sel = document.getElementById('seriesOrganPick');
+    if (!sel || !window.OMNIRAD_SERIES_SLICES) return;
+    const ar = (window.OmniRadI18n && OmniRadI18n.lang) === 'ar';
+    OMNIRAD_SERIES_SLICES.list.forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e.key;
+      opt.textContent = (ar ? e.ar : e.en) + ' (' + e.slices.length + (ar ? ' مستويات' : ' levels') + ')';
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', () => {
+      seriesOrganEntry = sel.value ? OMNIRAD_SERIES_SLICES.list.find(e => e.key === sel.value) : null;
+      const freeform = document.getElementById('freeformCard');
+      const wrap = document.getElementById('seriesSlotsWrap');
+      if (seriesOrganEntry){
+        freeform.style.display = 'none';
+        wrap.style.display = '';
+        seriesSlotFiles = seriesOrganEntry.slices.map((s,i) => ({ index:i+1, levelEn:s.en, levelAr:s.ar, file:null, previewUrl:null, vision:null }));
+        paintSlots();
+      } else {
+        freeform.style.display = '';
+        wrap.style.display = 'none';
+        seriesSlotFiles = [];
+        renderStrip();
+        const modeIndBtn = document.getElementById('modeIndividual');
+        if (modeIndBtn){ modeIndBtn.disabled = false; modeIndBtn.style.opacity = ''; modeIndBtn.title = ''; }
+      }
+    });
+  }
+
+  function pad2s(n, total){ const w = String(total).length < 2 ? 2 : String(total).length; return String(n).padStart(w,'0'); }
+
+  function paintSlots(){
+    const wrap = document.getElementById('seriesSlotsWrap');
+    if (!wrap) return;
+    const ar = (window.OmniRadI18n && OmniRadI18n.lang) === 'ar';
+    const total = seriesSlotFiles.length;
+    wrap.innerHTML =
+      '<div class="series-hint" style="display:flex"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>' + t('bu.sp.slotHint') + '</span></div>' +
+      '<div class="files-strip" style="margin-top:10px">' +
+      seriesSlotFiles.map((s,i) => {
+        const label = ar ? s.levelAr : s.levelEn;
+        const visionBadge = s.vision
+          ? (s.vision.match
+              ? '<div style="position:absolute;bottom:6px;inset-inline-end:6px;z-index:3;background:rgba(74,222,128,.92);color:#08100e;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:5px" title="'+escapeHtml(s.vision.reason||'')+'">✓ '+t('bu.sp.visionMatch')+'</div>'
+              : '<div style="position:absolute;bottom:6px;inset-inline-end:6px;z-index:3;background:rgba(245,158,11,.94);color:#08100e;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:5px" title="'+escapeHtml(s.vision.reason||'')+'">⚠ '+t('bu.sp.visionMismatch')+'</div>')
+          : (s.checking ? '<div style="position:absolute;bottom:6px;inset-inline-end:6px;z-index:3;background:rgba(0,0,0,.7);color:#fff;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px">⏳ '+t('bu.sp.visionChecking')+'</div>' : '');
+        return '<div class="tile" data-slot-i="'+i+'" style="border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+          (s.previewUrl
+            ? '<img src="'+s.previewUrl+'">'
+            : '<div style="font-size:11px;color:var(--text-s);line-height:1.4;text-align:center;padding:8px"><b>'+pad2s(s.index,total)+'/'+pad2s(total,total)+'</b><br>'+escapeHtml(label)+'</div>') +
+          '<div class="tile-num">'+pad2s(s.index,total)+'/'+pad2s(total,total)+'</div>' +
+          (s.previewUrl ? '<button class="tile-x" data-slot-clear="'+i+'">×</button>' : '') +
+          visionBadge +
+          '<input type="file" accept="image/png,image/jpeg,image/webp" data-slot-input="'+i+'" style="position:absolute;inset:0;opacity:0;cursor:pointer">' +
+        '</div>';
+      }).join('') +
+      '</div>';
+    wrap.querySelectorAll('[data-slot-input]').forEach(inp => {
+      inp.addEventListener('click', e => e.stopPropagation());
+      inp.addEventListener('change', e => { const f = e.target.files[0]; if (f) setSlotFile(+inp.dataset.slotInput, f); });
+    });
+    wrap.querySelectorAll('.tile').forEach(el => {
+      el.addEventListener('dragover', e => { e.preventDefault(); el.style.borderColor = 'var(--acc)'; });
+      el.addEventListener('dragleave', () => { el.style.borderColor = 'var(--border)'; });
+      el.addEventListener('drop', e => {
+        e.preventDefault(); el.style.borderColor = 'var(--border)';
+        const f = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) setSlotFile(+el.dataset.slotI, f);
+      });
+    });
+    wrap.querySelectorAll('[data-slot-clear]').forEach(b => {
+      b.addEventListener('click', e => {
+        e.stopPropagation();
+        const i = +b.dataset.slotClear;
+        seriesSlotFiles[i].file = null; seriesSlotFiles[i].previewUrl = null; seriesSlotFiles[i].vision = null;
+        paintSlots();
+      });
+    });
+    const t2 = document.getElementById('toStep2');
+    if (t2) t2.disabled = !seriesSlotFiles.every(s => s.file);
+  }
+
+  async function setSlotFile(i, f){
+    if (!f || !/^image\//.test(f.type)) return;
+    if (f.size > MAX_SIZE){ toast(t('bu.tooBig') + f.name, true); return; }
+    let dim = { ok:true, level:'ok' };
+    if (window.OmniRadImageStd){
+      try { dim = await window.OmniRadImageStd.validateFile(f); if (!dim.ok){ toast('⚠ ' + f.name + ' — ' + dim.reason, true); return; } } catch(_){}
+    }
+    seriesSlotFiles[i].file = f;
+    seriesSlotFiles[i].previewUrl = URL.createObjectURL(f);
+    seriesSlotFiles[i].vision = null;
+    paintSlots();
   }
 
   // ── Populate organ combobox from v2 dictionary + regions ─────
@@ -716,6 +838,33 @@ body{background:transparent!important}
     dz.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
     input.addEventListener('change', e => handleFiles(e.target.files));
     document.getElementById('toStep2').addEventListener('click', () => {
+      if (seriesOrganEntry){
+        if (!seriesSlotFiles.every(s => s.file)){ toast(t('bu.sp.incomplete'), true); return; }
+        files = seriesSlotFiles.map(s => ({
+          id: 'f'+Math.random().toString(36).slice(2,9),
+          file: s.file, previewUrl: s.previewUrl, override: null,
+          sliceLevelEn: s.levelEn, sliceLevelAr: s.levelAr, slotIndex: s.index
+        }));
+        mode = 'series';
+        shared.organ = seriesOrganEntry.en;
+        shared.modality = shared.modality || seriesOrganEntry.defaultModality;
+        setTimeout(() => {
+          const nameEl = document.getElementById('fSeriesName');
+          if (nameEl && !nameEl.value.trim()) nameEl.value = seriesOrganEntry.en + ' — Series';
+          const om = document.getElementById('fOrganSearch'), oh = document.getElementById('fOrgan');
+          if (om){ om.value = seriesOrganEntry.en; }
+          if (oh){ oh.innerHTML = '<option value="'+seriesOrganEntry.en+'" selected>'+seriesOrganEntry.en+'</option>'; oh.value = seriesOrganEntry.en; }
+          const mS = document.getElementById('fModality');
+          if (mS && !mS.value){ mS.value = seriesOrganEntry.defaultModality; refreshPlaneOptions(); }
+          setMode('series');
+          const modeIndBtn = document.getElementById('modeIndividual');
+          if (modeIndBtn){ modeIndBtn.disabled = true; modeIndBtn.style.opacity = '.4'; modeIndBtn.title = ((window.OmniRadI18n && OmniRadI18n.lang) === 'ar') ? 'مقفل — سلسلة محدَّدة مسبقاً' : 'Locked — predefined series selected'; }
+        }, 0);
+        captureShared();
+        renderRows();
+        goStep(2);
+        return;
+      }
       if (!files.length){ toast(t('bu.needFiles'), true); return; }
       // Populate shared from any existing values, then render per-image cards
       captureShared();
@@ -1397,6 +1546,7 @@ body{background:transparent!important}
     goStep(4);
     const total = files.length;
     document.getElementById('progTotal').textContent = total;
+    const visionBox = document.getElementById('visionResults'); if (visionBox) visionBox.innerHTML = '';
     const uploaded = [];
 
     for (let i = 0; i < files.length; i++){
@@ -1417,6 +1567,17 @@ body{background:transparent!important}
         // continue with others
         continue;
       }
+      let vision = null;
+      if (f.sliceLevelEn){
+        renderVisionRow(i, total, f.sliceLevelEn, 'checking');
+        try {
+          const { data, error: vErr } = await sb.functions.invoke('vision-check', {
+            body: { storage_path: path, bucket: 'atlas', expected_en: f.sliceLevelEn, expected_ar: f.sliceLevelAr, modality: meta.modality }
+          });
+          if (!vErr && data && typeof data.match === 'boolean') vision = data;
+        } catch(e){ console.warn('[bulk-upload] vision-check', e); }
+        renderVisionRow(i, total, f.sliceLevelEn, vision ? (vision.match ? 'match' : 'mismatch') : 'skipped', vision);
+      }
       uploaded.push({
         storage_path: path,
         organ: meta.organ,
@@ -1427,6 +1588,9 @@ body{background:transparent!important}
         level: meta.level || null,
         prompt: meta.prompt || null,
         citation: meta.citation || null,
+        slice_level_en: f.sliceLevelEn || null,
+        slice_level_ar: f.sliceLevelAr || null,
+        vision: vision,
         // Series metadata (null in Individual mode)
         series_id:    seriesId,
         slice_index:  seriesId ? (i + 1) : null,
@@ -1484,6 +1648,20 @@ body{background:transparent!important}
     try {
       const { data: batchId, error } = await sb.rpc('submit_bulk_upload', { p_images: uploaded, p_notes: null });
       if (error) throw error;
+      // Persist slice level + AI Vision Check results (additive RPC — safe if it fails, non-blocking)
+      for (const u of uploaded){
+        if (!u.slice_level_en && !u.vision) continue;
+        try {
+          await sb.rpc('record_vision_check', {
+            p_storage_path: u.storage_path,
+            p_match: u.vision ? u.vision.match : null,
+            p_confidence: u.vision ? u.vision.confidence : null,
+            p_reason: u.vision ? u.vision.reason : null,
+            p_slice_level_en: u.slice_level_en,
+            p_slice_level_ar: u.slice_level_ar
+          });
+        } catch(e){ console.warn('[bulk-upload] record_vision_check', e); }
+      }
       document.getElementById('doneCount').textContent = uploaded.length;
       document.getElementById('progressBox').style.display = 'none';
       document.getElementById('successBox').style.display = '';
@@ -1500,6 +1678,21 @@ body{background:transparent!important}
       if (s.isNew && s.slug && !map[s.slug]) map[s.slug] = { slug: s.slug, label: s.label };
     }));
     return Object.values(map);
+  }
+
+  function renderVisionRow(i, total, levelEn, status, vision){
+    const box = document.getElementById('visionResults');
+    if (!box) return;
+    let row = box.querySelector('[data-vr="'+i+'"]');
+    if (!row){
+      row = document.createElement('div');
+      row.setAttribute('data-vr', i);
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border-radius:8px;background:var(--bg-s);border:1px solid var(--border-s)';
+      box.appendChild(row);
+    }
+    const icon = status === 'checking' ? '⏳' : status === 'match' ? '✅' : status === 'mismatch' ? '⚠️' : '·';
+    const reason = vision && vision.reason ? ' — ' + escapeHtml(vision.reason) : '';
+    row.innerHTML = '<span>'+icon+'</span><span style="font-family:\'IBM Plex Mono\',monospace;color:var(--text-s)">'+pad2s(i+1,total)+'/'+pad2s(total,total)+'</span><span>'+escapeHtml(levelEn)+reason+'</span>';
   }
 
   // RFC-4122-ish fallback for browsers without crypto.randomUUID
