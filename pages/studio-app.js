@@ -314,15 +314,19 @@
     const purposeAr = arOpt('purpose', s.purpose);
     const findings = s.normalPath === 'Normal' ? 'normal appearance' : (s.pathCase ? `showing ${s.pathCase}` : 'pathological findings');
     const findingsAr = s.normalPath === 'Normal' ? 'مظهر طبيعي' : (s.pathCase ? `تُظهر ${s.pathCase}` : 'موجودات مرضية');
-    const callouts = s.callouts ? `, labeled: ${s.callouts}` : '';
-    const calloutsAr = s.callouts ? `، مع تسميات: ${s.callouts}` : '';
+    const labeled = s.labels === 'With anatomical labels';
+    // Callouts only make sense WITH labels; ignored (and the field hidden) otherwise.
+    const callouts = (labeled && s.callouts) ? `, specifically labeling: ${s.callouts}` : '';
+    const calloutsAr = (labeled && s.callouts) ? `، مع تسمية محدّدة لـ: ${s.callouts}` : '';
     const slice = s.slice ? ` at ${s.slice}` : '';
     const sliceAr = s.slice ? ` عند ${s.slice}` : '';
-    const labelLang = s.labels === 'With anatomical labels' ? (s.labelLang === 'Both' ? 'bilingual (English + Arabic) ' : s.labelLang === 'Arabic' ? 'Arabic ' : 'English ') : '';
-    const labels = s.labels === 'With anatomical labels' ? `, with clear ${labelLang}anatomical labels` : ', no labels';
-    const labelsAr = s.labels === 'With anatomical labels' ? `، مع تسميات تشريحية واضحة${s.labelLang==='English'?' بالإنجليزية':s.labelLang==='Arabic'?' بالعربية':' بالعربية والإنجليزية'}` : '، بدون تسميات';
-    const seg = s.segmentation === 'None' ? '' : `, with ${s.segmentation.toLowerCase()}`;
-    const segAr = s.segmentation === 'None' ? '' : `، مع ${arOpt('segmentation', s.segmentation)}`;
+    const labelLang = labeled ? (s.labelLang === 'Both' ? 'bilingual (English + Arabic) ' : s.labelLang === 'Arabic' ? 'Arabic ' : 'English ') : '';
+    const labels = labeled ? `, with clear ${labelLang}anatomical labels` : ', no text or labels';
+    const labelsAr = labeled ? `، مع تسميات تشريحية واضحة${s.labelLang==='English'?' بالإنجليزية':s.labelLang==='Arabic'?' بالعربية':' بالعربية والإنجليزية'}` : '، بدون نصوص أو تسميات';
+    // Segmentation is itself a labeling/annotation overlay — suppress it when "No labels".
+    const segOn = labeled && s.segmentation !== 'None';
+    const seg = segOn ? `, with ${s.segmentation.toLowerCase()}` : '';
+    const segAr = segOn ? `، مع ${arOpt('segmentation', s.segmentation)}` : '';
     // Modality-specific tech
     let tech = '', techAr = '';
     if (modality === 'MRI'){ tech = `, ${s.sequence} sequence, ${s.sliceThickness} slice thickness`; techAr = `، تسلسل ${s.sequence}، سماكة ${s.sliceThickness}`; }
@@ -333,7 +337,9 @@
     else if (modality === 'Fluoroscopy'){ tech = `, ${s.fluoroContrast}`; techAr = `، ${arOpt('fluoroContrast',s.fluoroContrast)}`; }
     else if (modality === 'Histology'){ tech = `, ${s.stain} stain at ${s.magnification}`; techAr = `، صبغة ${s.stain} بتكبير ${s.magnification}`; }
 
-    const en = `${s.style} of a ${lat}${modality} ${view} ${view === 'Axial' ? 'section' : 'view'} of the ${region ? region + ', ' : ''}${organ}${slice}, ${patient} patient, ${purpose.toLowerCase()}, ${findings}${callouts}${labels}${seg}${tech}. Anatomically accurate, high detail, professional medical teaching material at ${s.learner.toLowerCase()} level, high resolution 4K, clean neutral background.`;
+    const CROSS = ['Axial','Coronal','Sagittal','Oblique'];
+    const viewNoun = CROSS.includes(view) ? 'section' : (view === 'Slide' ? 'micrograph' : 'projection');
+    const en = `${s.style} of a ${lat}${modality} ${view} ${viewNoun} of the ${region ? region + ', ' : ''}${organ}${slice}, ${patient} patient, ${purpose.toLowerCase()}, ${findings}${callouts}${labels}${seg}${tech}. Anatomically accurate, high detail, professional medical teaching material at ${s.learner.toLowerCase()} level, high resolution 4K, clean neutral background.`;
     const ar_ = `${arOpt('style', s.style)} لـ${modAr} ${viewAr} لـ${region ? region + '، ' : ''}${organ}${sliceAr}، لمريض ${patientAr}، ${purposeAr}، ${findingsAr}${calloutsAr}${labelsAr}${segAr}${techAr}. دقيق تشريحياً، تفاصيل عالية، مادة تعليمية طبية لمستوى ${arOpt('learner', s.learner)}، دقة عالية 4K، خلفية محايدة نظيفة.`;
     const neg = 'no watermarks, no distortion, no anatomical inaccuracies, no artifacts, no text overlay, no logos, no signatures, no low-quality rendering, no blurry regions';
     return { en, ar: ar_, neg };
@@ -358,12 +364,22 @@
     const modAr = arOpt('modality', s.modality);
     const viewAr = arOpt('view', s.view) || s.view;
     const lat = s.laterality === 'N/A' ? '' : (s.laterality === 'Right' ? 'right ' : s.laterality === 'Left' ? 'left ' : s.laterality === 'Bilateral' ? 'bilateral ' : 'midline ');
+    const latAr = s.laterality === 'N/A' ? '' : (s.laterality === 'Right' ? 'الأيمن ' : s.laterality === 'Left' ? 'الأيسر ' : s.laterality === 'Bilateral' ? 'ثنائي الجانب ' : 'خط الوسط ');
     const patient = `${s.sex.toLowerCase()} ${s.age.toLowerCase()}`;
     const patientAr = `${arOpt('sex', s.sex)} ${arOpt('age', s.age)}`;
+    // Carry the modality technical protocol across the whole series (medically
+    // correct — every slice shares one acquisition protocol).
+    let tech = '', techAr = '';
+    if (s.modality === 'MRI'){ tech = `, ${s.sequence} sequence`; techAr = `، تسلسل ${s.sequence}`; }
+    else if (s.modality === 'CT'){ tech = `, ${s.phase} phase, ${s.window} window`; techAr = `، مرحلة ${arOpt('phase',s.phase)}، نافذة ${arOpt('window',s.window)}`; }
+    else if (s.modality === 'PET/CT' || s.modality === 'Nuclear Medicine'){ tech = `, ${s.tracer} tracer`; techAr = `، متتبّع ${s.tracer}`; }
+    else if (s.modality === 'Ultrasound'){ tech = `, ${s.usMode}`; techAr = `، ${arOpt('usMode',s.usMode)}`; }
+    // Series output is a clean unlabeled stack for the atlas viewer — this is
+    // intentional and overrides Labels/Segmentation/Style (noted in the UI).
     const levelsEn = entry.slices.map((lv,i) => `${i+1}. ${lv.en}`).join('\n');
     const levelsAr = entry.slices.map((lv,i) => `${i+1}. ${lv.ar}`).join('\n');
-    const en = `Generate ${N} separate individual images (not a collage) of a ${lat}${s.modality} ${s.view} view of the ${entry.en}, ${patient} patient, ${s.purpose.toLowerCase()}. Each image must show one distinct anatomical level, in this exact order:\n${levelsEn}\nEach image: 1024×1024, black background, no text or labels, no watermarks, anatomically accurate, high detail, professional medical teaching material at ${s.learner.toLowerCase()} level. Output all ${N} images as separate images in the same response, in the listed order.`;
-    const ar_ = `ولّد ${N} صورة منفصلة (وليست Collage واحداً) لـ${modAr} ${viewAr} لـ${entry.ar}، لمريض ${patientAr}، ${arOpt('purpose', s.purpose)}. كل صورة تُظهر مستوى تشريحياً مختلفاً، بهذا الترتيب بالضبط:\n${levelsAr}\nكل صورة: 1024×1024، خلفية سوداء، بلا نصوص أو تسميات، بلا علامات مائية، دقيقة تشريحياً، تفاصيل عالية، مادة تعليمية طبية احترافية لمستوى ${arOpt('learner', s.learner)}. أخرج كل الصور الـ${N} كصور منفصلة في نفس الردّ وبنفس الترتيب المذكور.`;
+    const en = `Generate ${N} separate individual images (not a collage) of a ${lat}${s.modality} ${s.view} section of the ${entry.en}, ${patient} patient, ${s.purpose.toLowerCase()}${tech}. Each image must show one distinct anatomical level, in this exact order:\n${levelsEn}\nEach image: 1024×1024, black background, no text or labels, no watermarks, anatomically accurate, consistent acquisition protocol across all levels, high detail, professional medical teaching material at ${s.learner.toLowerCase()} level. Output all ${N} images as separate images in the same response, in the listed order.`;
+    const ar_ = `ولّد ${N} صورة منفصلة (وليست Collage واحداً) لمقطع ${modAr} ${viewAr} لـ${latAr}${entry.ar}، لمريض ${patientAr}، ${arOpt('purpose', s.purpose)}${techAr}. كل صورة تُظهر مستوى تشريحياً مختلفاً، بهذا الترتيب بالضبط:\n${levelsAr}\nكل صورة: 1024×1024، خلفية سوداء، بلا نصوص أو تسميات، بلا علامات مائية، دقيقة تشريحياً، بروتوكول تصوير موحّد عبر كل المستويات، تفاصيل عالية، مادة تعليمية طبية احترافية لمستوى ${arOpt('learner', s.learner)}. أخرج كل الصور الـ${N} كصور منفصلة في نفس الردّ وبنفس الترتيب المذكور.`;
     const neg = 'no watermarks, no distortion, no anatomical inaccuracies, no artifacts, no text overlay, no logos, no signatures, no collage, no grid layout, no low-quality rendering, no blurry regions';
     return { en, ar: ar_, neg };
   }
@@ -379,10 +395,14 @@
       return;
     }
     const items = entry.slices.map((lv,i) => `<li>${i+1}. ${isAr() ? lv.ar : lv.en}</li>`).join('');
+    const overrideMsg = isAr()
+      ? 'وضع السلسلة يفرض: خلفية سوداء موحّدة، بلا تسميات/تلوين، حجم 1024×1024 — لأن الأطلس يعرضها كمكدّس نظيف. (تُنقل تقنية المودالتي: التسلسل/المرحلة/النافذة.)'
+      : 'Series mode enforces: uniform black background, no labels/segmentation, 1024×1024 — the atlas shows them as a clean stack. (Modality technique — sequence/phase/window — is carried over.)';
     box.innerHTML = `<div style="background:var(--acc-sub, rgba(45,212,200,.08));border:1px solid var(--acc);border-radius:10px;padding:12px 14px">
       <div style="font-weight:800;font-size:12px;color:var(--acc);margin-bottom:6px">${isAr() ? `سلسلة ${entry.slices.length} مستويات — ${entry.ar}` : `${entry.slices.length}-level series — ${entry.en}`}</div>
       <ol style="margin:0;padding-inline-start:18px;font-size:12.5px;line-height:1.7;color:var(--text)">${items}</ol>
       <div style="margin-top:8px;font-size:11px;color:var(--text-s)">${isAr() ? 'سماكة وصفية (مرجع ACR):' : 'Descriptive thickness (ACR reference):'} ${entry.thicknessNote}</div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--acc-dim);font-size:11px;color:var(--warn);line-height:1.6"><strong>ⓘ</strong> ${overrideMsg}</div>
     </div>`;
   }
 
@@ -398,11 +418,44 @@
     if (s.modality === 'Endoscopy' && !gi && s.organ) warns.push(isAr()?'التنظير مناسب للجهاز الهضمي/التنفسي.':'Endoscopy is appropriate for GI/airway.');
     if (s.modality === 'Angiography' && !vascular && s.organ) warns.push(isAr()?'التصوير الوعائي مخصّص للأوعية.':'Angiography is vascular-specific.');
     if (s.purpose === 'Treatment planning' && !['CT','MRI','PET/CT'].includes(s.modality)) warns.push(isAr()?'التخطيط العلاجي يحتاج CT / MRI / PET-CT.':'Treatment planning requires CT / MRI / PET-CT.');
+    // CT window vs organ coherence (soft)
+    if (s.modality === 'CT' && s.organ){
+      if (s.window === 'Lung' && !/(lung|thorax|chest|bronch|pleura)/i.test(s.organ)) warns.push(isAr()?'نافذة الرئة غير معتادة لهذا العضو — تحقّق من البروتوكول.':'Lung window is unusual for this organ — check the protocol.');
+      if (s.window === 'Bone' && !skeletal) warns.push(isAr()?'نافذة العظم مخصّصة للهيكل العظمي عادةً.':'Bone window is normally for skeletal structures.');
+      if (s.window === 'Brain' && !/(brain|head|cerebr|skull|intracranial)/i.test(s.organ)) warns.push(isAr()?'نافذة الدماغ مخصّصة للرأس/الدماغ.':'Brain window is specific to head/brain.');
+    }
+    // Paired-organ laterality reminder (soft)
+    const paired = /(kidney|kidneys|renal|lung|ovary|ovaries|adrenal|breast|testis|femur|humerus|hand|foot|knee|shoulder|hip|elbow|ankle|wrist)/i.test(s.organ);
+    if (paired && ['N/A','Midline'].includes(s.laterality)) warns.push(isAr()?'هذا عضو مزدوج — حدّد الجانب (يمين/يسار/ثنائي).':'This is a paired organ — set laterality (Right/Left/Bilateral).');
+    // Series thickness hint
+    if (s.seriesOn && window.OMNIRAD_SERIES_SLICES){
+      const e = OMNIRAD_SERIES_SLICES.find(s.organ);
+      if (e && ['CT','MRI'].includes(s.modality) && s.sliceThickness && s.sliceThickness !== 'Per protocol'){
+        warns.push(isAr()?`السماكة الموصى بها لهذه السلسلة: ${e.thicknessNote}`:`Recommended thickness for this series: ${e.thicknessNote}`);
+      }
+    }
     return warns;
+  }
+
+  /* ─── Field interdependency sync (hide fields that contradict current choices) ─── */
+  function syncFieldVisibility(){
+    const s = state.s;
+    const labeled = s.labels === 'With anatomical labels';
+    const seriesActive = s.seriesOn && window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(s.organ);
+    // Callouts + Label-language only relevant WITH labels and NOT in series mode.
+    const showCallouts = labeled && !seriesActive;
+    const showLabelLang = labeled && !seriesActive;
+    // Segmentation is a labeling overlay — irrelevant with No-labels or in series.
+    const showSeg = labeled && !seriesActive;
+    const setVis = (id, on) => { const el = $(id); if (el) el.style.display = on ? '' : 'none'; };
+    setVis('fCallouts', showCallouts);
+    setVis('fLabelLang', showLabelLang);
+    setVis('fSegmentation', showSeg);
   }
 
   /* ─── Render ─── */
   function render(){
+    syncFieldVisibility();
     const b = build();
     $('outEn').textContent = b.en;
     $('outAr').textContent = b.ar;
@@ -463,7 +516,7 @@
       const avail = OPT.view[state.s.modality] || OPT.view._default;
       if (!avail.some(o=>o.v===state.s.view)) state.s.view = avail[0].v;
       populate();
-    } else if (k === 'normalPath'){ populate(); }
+    } else if (k === 'normalPath'){ if (state.s.normalPath === 'Normal') state.s.pathCase = ''; populate(); }
     render();
   }
 
