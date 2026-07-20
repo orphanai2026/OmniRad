@@ -559,7 +559,13 @@
     root.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
+    // Some browsers don't paint the fixed-position modal correctly on the
+    // frame it's first shown (needs a forced reflow) — nudge it once.
+    requestAnimationFrame(() => { void root.offsetHeight; render(); });
   }
+
+  function onResize(){ if (state) render(); }
 
   function openAtlas(opts){
     opts = opts || {};
@@ -584,6 +590,7 @@
     root.style.display = 'none';
     document.body.style.overflow = '';
     document.removeEventListener('keydown', onKey);
+    window.removeEventListener('resize', onResize);
     // Exit fullscreen if we entered
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch(_){}
     // Clear URL params (atlas mode)
