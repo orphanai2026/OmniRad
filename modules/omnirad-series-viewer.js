@@ -407,15 +407,11 @@
 
   function toggleFullscreen(){
     if (!root) return;
-    // Prefer native Fullscreen API for atlas mode (larger real estate)
-    if (state && state.mode === 'atlas' && document.fullscreenEnabled){
-      try {
-        if (!document.fullscreenElement) root.requestFullscreen();
-        else document.exitFullscreen();
-        return;
-      } catch(_){}
-    }
+    // Pure CSS-class fullscreen (no native Fullscreen API — it re-parents the
+    // node and breaks pointer coordinates, chrome hiding, and image sizing).
+    // The overlay is already position:fixed;inset:0, so a class is all we need.
     root.classList.toggle('fs');
+    render();
   }
 
   function zoomBy(delta){
@@ -518,7 +514,7 @@
   function onKey(e){
     if (!state || root.style.display === 'none') return;
     switch (e.key){
-      case 'Escape': close(); break;
+      case 'Escape': if (root.classList.contains('fs')){ root.classList.remove('fs'); render(); } else { close(); } break;
       case 'ArrowRight': go(document.dir==='rtl' ? -1 : +1); break;
       case 'ArrowLeft':  go(document.dir==='rtl' ? +1 : -1); break;
       case 'ArrowDown':  if (state.mode==='atlas'){ e.preventDefault(); go(+1); } break;
@@ -706,10 +702,11 @@
 .omr-sv-root.fs .omr-sv-3up{grid-template-columns:1fr}
 .omr-sv-root.fs .omr-sv-3up > .omr-sv-pane:not(.current){display:none}
 .omr-sv-root.fs .omr-sv-shell{width:98vw;max-height:98vh}
-.omr-sv-root.fs .omr-sv-shell.atlas{height:98vh}
+.omr-sv-root.fs .omr-sv-shell.atlas{width:100vw;height:100vh;max-height:100vh;border:none;border-radius:0}
 .omr-sv-root.fs .omr-sv-shell.atlas > .omr-sv-strip,
 .omr-sv-root.fs .omr-sv-shell.atlas > .omr-sv-foot,
 .omr-sv-root.fs .omr-sv-shell.atlas .omr-sv-side{display:none}
+.omr-sv-root.fs .omr-sv-shell.atlas > .omr-sv-body{padding:6px}
 .mono{font-family:'IBM Plex Mono',monospace}
 @media (max-width:1100px){
   .omr-sv-shell.atlas .omr-sv-side,.omr-sv-shell.atlas .omr-sv-pos{display:none}
