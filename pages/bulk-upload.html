@@ -460,7 +460,7 @@ body{background:transparent!important}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="../modules/data/dicom-body-parts.js?v=loinc-r2"></script>
-<script src="../modules/data/series-slices.js"></script>
+<script src="../modules/data/series-slices.js?v=series-v2"></script>
 <script src="../modules/data/radiology-playbook.js"></script>
 <script src="../modules/data/radiology-arabic.js"></script>
 <script src="../modules/data/loinc-bridge.js"></script>
@@ -486,6 +486,7 @@ body{background:transparent!important}
       'bu.sp.none':'— None (freeform upload) —',
       'bu.sp.slotHint':'Drag an image here or click — slot order is fixed, independent of file name.',
       'bu.sp.incomplete':'Fill every labeled slot before continuing.',
+      'bu.sp.addLevel':'Add level','bu.sp.addLevelHint':'— for extra slices beyond the standard protocol','bu.sp.addLevelPrompt':'Name of the additional level (e.g. «Mid-hepatic»):',
       'bu.sp.visionChecking':'AI Vision Check running…','bu.sp.visionMatch':'Matches declared level','bu.sp.visionMismatch':'Possible mismatch — reviewer should double-check',
       'bu.modeTitle':'Batch mode','bu.modeSeries':'Series','bu.modeIndividual':'Individual',
       'bu.modeHintSeries':'Series: same organ, different slices — shared metadata + auto slice index.',
@@ -533,6 +534,7 @@ body{background:transparent!important}
       'bu.sp.none':'— بلا (رفع حرّ) —',
       'bu.sp.slotHint':'اسحب صورة هنا أو انقر — ترتيب الخانة ثابت، بلا علاقة باسم الملف.',
       'bu.sp.incomplete':'املأ كل خانة موسومة قبل المتابعة.',
+      'bu.sp.addLevel':'إضافة مستوى','bu.sp.addLevelHint':'— لشرائح إضافية خارج البروتوكول القياسي','bu.sp.addLevelPrompt':'اسم المستوى الإضافي (مثل «منتصف الكبد»):',
       'bu.sp.visionChecking':'جارٍ فحص AI Vision…','bu.sp.visionMatch':'يطابق المستوى المُعلَن','bu.sp.visionMismatch':'اشتباه — يُنصح المراجع بالتحقّق',
       'bu.modeTitle':'وضع الدفعة','bu.modeSeries':'سلسلة','bu.modeIndividual':'فردي',
       'bu.modeHintSeries':'سلسلة: نفس العضو، شرائح مختلفة — بيانات موحّدة + ترقيم شرائح تلقائي.',
@@ -695,8 +697,19 @@ body{background:transparent!important}
           '<input type="file" accept="image/png,image/jpeg,image/webp" data-slot-input="'+i+'" style="position:absolute;inset:0;opacity:0;cursor:pointer">' +
         '</div>';
       }).join('') +
+      '</div>' +
+      '<div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+        '<button type="button" id="addLevelBtn" class="btn-mini" style="border:1px dashed var(--acc-dim);background:var(--acc-sub);color:var(--acc);padding:6px 12px;border-radius:7px;font-weight:700;cursor:pointer">➕ ' + t('bu.sp.addLevel') + '</button>' +
+        (total > 0 ? '<span style="font-size:10.5px;color:var(--text-m)">' + t('bu.sp.addLevelHint') + '</span>' : '') +
       '</div>';
-    wrap.querySelectorAll('[data-slot-input]').forEach(inp => {
+    const addBtn = wrap.querySelector('#addLevelBtn');
+    if (addBtn) addBtn.addEventListener('click', () => {
+      const ar2 = (window.OmniRadI18n && OmniRadI18n.lang) === 'ar';
+      const label = (prompt(t('bu.sp.addLevelPrompt')) || '').trim();
+      if (!label) return;
+      seriesSlotFiles.push({ index: seriesSlotFiles.length + 1, levelEn: label, levelAr: label, file: null, previewUrl: null, vision: null, custom: true });
+      paintSlots();
+    });
       inp.addEventListener('click', e => e.stopPropagation());
       inp.addEventListener('change', e => { const f = e.target.files[0]; if (f) setSlotFile(+inp.dataset.slotInput, f); });
     });
@@ -859,6 +872,13 @@ body{background:transparent!important}
           setMode('series');
           const modeIndBtn = document.getElementById('modeIndividual');
           if (modeIndBtn){ modeIndBtn.disabled = true; modeIndBtn.style.opacity = '.4'; modeIndBtn.title = ((window.OmniRadI18n && OmniRadI18n.lang) === 'ar') ? 'مقفل — سلسلة محدَّدة مسبقاً' : 'Locked — predefined series selected'; }
+          // Auto-suggest expected anatomical structures for this predefined series
+          // (editable — the reviewer confirms/edits). Sourced from series-slices.js.
+          try {
+            const names = window.OMNIRAD_SERIES_SLICES && window.OMNIRAD_SERIES_SLICES.structuresFor
+              ? window.OMNIRAD_SERIES_SLICES.structuresFor(seriesOrganEntry) : [];
+            if (names.length && window.__buSeedStructures){ window.__buSeedStructures(names); }
+          } catch(e){ console.warn('[bulk-upload] seed structures', e); }
         }, 0);
         captureShared();
         renderRows();
@@ -1110,6 +1130,29 @@ body{background:transparent!important}
     let hiIdx = -1;
 
     window.__buClearStructures = () => { selected = []; renderChips(); };
+
+    // Auto-seed structures from a predefined series' expected list (editable).
+    // Resolves each name against the dictionary; unmatched become plain chips.
+    window.__buSeedStructures = (names) => {
+      if (!Array.isArray(names) || !names.length) return;
+      const dict = (window.OMNIRAD_ANATOMY && window.OMNIRAD_ANATOMY.structures) || [];
+      const have = new Set(selected.map(s => (s.slug||s.label||'').toLowerCase()));
+      names.forEach(nm => {
+        const norm = String(nm||'').trim().toLowerCase();
+        if (!norm) return;
+        const hit = dict.find(s =>
+          (s.en||'').toLowerCase() === norm ||
+          (s.label_en||'').toLowerCase() === norm ||
+          (Array.isArray(s.aliases) && s.aliases.some(a => (a||'').toLowerCase() === norm))
+        );
+        const item = hit
+          ? { label: hit.en || hit.label_en || nm, isNew: false, slug: hit.id || hit.slug || slugify(hit.en||nm), radlex: hit.radlex||null }
+          : { label: nm, isNew: false, slug: slugify(nm) };
+        const k = (item.slug||item.label||'').toLowerCase();
+        if (!have.has(k)){ have.add(k); selected.push(item); }
+      });
+      renderChips();
+    };
 
     function renderChips(){
       wrap.querySelectorAll('.chip').forEach(c => c.remove());
