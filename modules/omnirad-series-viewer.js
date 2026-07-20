@@ -37,6 +37,18 @@
   function pad2(n){ return String(n).padStart(2, '0'); }
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
+  // ── Radiological orientation markers (per plane) ──────────────────────
+  //   Convention (ACR / radiological): patient's LEFT is displayed on the
+  //   viewer's RIGHT. Returns edge letters {l,r,t,b} or null if not applicable.
+  function orientationMarkers(plane){
+    const p = (plane || '').toLowerCase();
+    if (p.includes('axial') || p.includes('transverse')) return { l:'R', r:'L', t:'A', b:'P' };
+    if (p.includes('coronal') || p.includes('pa') || p.includes('ap') || p.includes('frontal')) return { l:'R', r:'L', t:'S', b:'I' };
+    if (p.includes('sagittal') || p.includes('lateral')) return { l:'A', r:'P', t:'S', b:'I' };
+    if (p.includes('oblique')) return { l:'R', r:'L', t:'S', b:'I' };
+    return null; // projectional views without a defined convention (e.g. mammo CC/MLO)
+  }
+
   // ── W/L presets (CT-only; approximated as CSS brightness/contrast) ────
   //   Reference: ACR Appropriateness Criteria + typical PACS defaults
   const WL_PRESETS = {
@@ -249,6 +261,7 @@
             <button class="omr-sv-btn" data-act="zoomin"  title="+ (${isAr?'تكبير':'Zoom in'})">+</button>
             <button class="omr-sv-btn" data-act="reset"   title="R (${isAr?'إعادة':'Reset'})">↺</button>
             <button class="omr-sv-btn" data-act="overlay" title="H (${isAr?'إخفاء الطبقات':'Toggle overlay'})">${olv===0?'👁':olv===1?'⊙':'○'}</button>
+            ${orientationMarkers(state.plane) ? `<button class="omr-sv-btn ${state.orient!==false?'on':''}" data-act="orient" title="${isAr?'ماركر الاتجاه R/L':'Orientation R/L'} (O)">R/L</button>` : ''}
             <button class="omr-sv-btn" data-act="snap"    title="${isAr?'حفظ لقطة':'Snapshot'}">⎙</button>
             <button class="omr-sv-btn" data-act="cine"    title="Space">${cineTimer?'⏸':'▶'}</button>
             <button class="omr-sv-btn" data-act="full"    title="F (${isAr?'ملء الشاشة':'Fullscreen'})">⛶</button>
@@ -270,6 +283,13 @@
                  style="filter:${filterCss};transform:${transformCss}">
               <img src="${esc(cur.url)}" alt="Slice ${esc(cur.slice_index)}" draggable="false">
             </div>
+            ${(state.orient !== false && orientationMarkers(state.plane)) ? (()=>{ const m = orientationMarkers(state.plane); return `
+              <div class="omr-sv-orient" aria-hidden="true">
+                <span class="omr-sv-orient-l">${m.l}</span>
+                <span class="omr-sv-orient-r">${m.r}</span>
+                <span class="omr-sv-orient-t">${m.t}</span>
+                <span class="omr-sv-orient-b">${m.b}</span>
+              </div>`; })() : ''}
             ${showOv ? `
               <div class="omr-sv-ov tl">
                 <div>OmniRad · ${esc(state.seriesName || '')}</div>
@@ -312,7 +332,7 @@
             <label class="mono">FPS ${state.fps||8}</label>
             <input type="range" min="5" max="15" step="1" value="${state.fps||8}" data-fps>
           </div>
-          <div class="omr-sv-hint mono">↑↓ ${isAr?'شريحة':'slice'} · Wheel · Ctrl+Wheel ${isAr?'تكبير':'zoom'} · Space cine · I invert · L W/L · H overlay · R reset · Esc</div>
+          <div class="omr-sv-hint mono">↑↓ ${isAr?'شريحة':'slice'} · Wheel · Ctrl+Wheel ${isAr?'تكبير':'zoom'} · Space cine · I invert · L W/L · H overlay · O R/L · R reset · Esc</div>
         </footer>
 
         ${relHtml ? `
@@ -335,6 +355,8 @@
     root.querySelector('[data-act="reset"]').addEventListener('click', resetView);
     root.querySelector('[data-act="invert"]').addEventListener('click', () => { state.invert = !state.invert; render(); persistState(); });
     root.querySelector('[data-act="overlay"]').addEventListener('click', () => { state.overlayLvl = (state.overlayLvl+1) % 3; render(); persistState(); });
+    const orientBtn = root.querySelector('[data-act="orient"]');
+    if (orientBtn) orientBtn.addEventListener('click', () => { state.orient = state.orient===false; render(); persistState(); });
     root.querySelector('[data-act="wl"]').addEventListener('click', (e) => { e.stopPropagation(); state.wlMenu = !state.wlMenu; render(); });
     root.querySelector('[data-act="snap"]').addEventListener('click', snapshot);
     root.querySelectorAll('[data-wl]').forEach(b => b.addEventListener('click', () => {
@@ -527,6 +549,7 @@
       case 'i': case 'I': if (state.mode==='atlas'){ state.invert = !state.invert; render(); persistState(); } break;
       case 'l': case 'L': if (state.mode==='atlas'){ state.wlMenu = !state.wlMenu; render(); } break;
       case 'h': case 'H': if (state.mode==='atlas'){ state.overlayLvl = (state.overlayLvl+1)%3; render(); persistState(); } break;
+      case 'o': case 'O': if (state.mode==='atlas' && orientationMarkers(state.plane)){ state.orient = state.orient===false; render(); persistState(); } break;
       case 'a': case 'A': if (state.mode!=='atlas') trigger('onApprove'); break;
       case 'e': case 'E': if (state.mode!=='atlas') trigger('onEdit'); break;
       case 'f': case 'F': toggleFullscreen(); break;
@@ -652,6 +675,12 @@
 .omr-sv-side-pitfall{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.30);color:#f59e0b}
 .omr-sv-stage{position:relative;flex:1 1 auto;background:#000;border-radius:8px;overflow:hidden;display:block;min-height:0;min-width:0;cursor:grab}
 .omr-sv-stage:active{cursor:grabbing}
+.omr-sv-orient{position:absolute;inset:0;pointer-events:none;z-index:4}
+.omr-sv-orient span{position:absolute;font:800 15px/1 'IBM Plex Mono',monospace;color:#fbbf24;text-shadow:0 0 4px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.9);letter-spacing:.02em}
+.omr-sv-orient-l{left:10px;top:50%;transform:translateY(-50%)}
+.omr-sv-orient-r{right:10px;top:50%;transform:translateY(-50%)}
+.omr-sv-orient-t{top:8px;left:50%;transform:translateX(-50%)}
+.omr-sv-orient-b{bottom:8px;left:50%;transform:translateX(-50%)}
 .omr-sv-img-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;transform-origin:center center;transition:transform .06s linear, filter .12s;overflow:hidden}
 .omr-sv-img-wrap img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:crisp-edges;display:block}
 .omr-sv-wl-menu{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5)}
