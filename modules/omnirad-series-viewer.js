@@ -615,7 +615,7 @@
 .omr-sv-shell.atlas > .omr-sv-head    {flex:0 0 auto;min-height:56px;padding:8px 16px}
 .omr-sv-shell.atlas > .omr-sv-body    {flex:1 1 auto;min-height:0;padding:10px}
 .omr-sv-shell.atlas > .omr-sv-strip   {flex:0 0 90px;background:rgba(2,6,23,.72)}
-.omr-sv-shell.atlas > .omr-sv-foot    {flex:0 0 auto;min-height:52px;border-top:none;border-bottom:1px solid rgba(148,163,184,.10)}
+.omr-sv-shell.atlas > .omr-sv-foot    {flex:0 0 56px;max-height:56px;overflow:hidden;border-top:none;border-bottom:1px solid rgba(148,163,184,.10)}
 .omr-sv-shell.atlas > .omr-sv-rel-wrap{flex:0 0 auto;min-height:56px;padding:8px 16px}
 .omr-sv-shell.atlas .omr-sv-title{flex:1 1 auto;min-width:0}
 .omr-sv-shell.atlas .omr-sv-title > span:not(.omr-sv-badge):not(.omr-sv-tier){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
