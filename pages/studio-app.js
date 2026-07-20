@@ -174,6 +174,20 @@
     else { $('gateTitle').textContent = t('studio.gateDenied'); $('gateMsg').textContent = t('studio.gateDeniedMsg'); $('gateCta').style.display='none'; }
   }
 
+  /* ─── Smart laterality (medical logic per organ type) ───
+     paired  → separate L/R organs (kidney, adrenal, breast, limbs…): offer Right/Left/Bilateral
+     central → single midline organ (liver, pancreas, heart, bladder…): force N/A (no side)
+     unknown → free (all options) */
+  const PAIRED_RE = /(kidney|kidneys|renal|adrenal|suprarenal|ovary|ovaries|testis|testes|breast|lung|hemithorax|humerus|radius|ulna|femur|tibia|fibula|hand|foot|clavicle|scapula|knee|shoulder|hip|elbow|ankle|wrist|orbit|parotid|submandibular|iliac|kidney)/i;
+  const CENTRAL_RE = /(liver|spleen|pancreas|heart|cardiac|aorta|ivc|inferior vena cava|esophagus|oesophagus|stomach|trachea|bladder|uterus|prostate|rectum|thyroid isthmus|brainstem|pons|midbrain|medulla|corpus callosum|third ventricle|pituitary|sacrum|coccyx|sternum|vertebra|spine|cord)/i;
+  function lateralityClass(organ){
+    const o = (organ||'').toLowerCase();
+    if (!o) return 'unknown';
+    if (PAIRED_RE.test(o)) return 'paired';
+    if (CENTRAL_RE.test(o)) return 'central';
+    return 'unknown';
+  }
+
   /* ─── Populate selects + datalists ─── */
   function populate(){
     const ar = isAr();
@@ -182,6 +196,13 @@
       const k = sel.dataset.key;
       let opts = OPT[k];
       if (k === 'view') opts = OPT.view[state.s.modality] || OPT.view._default;
+      if (k === 'laterality'){
+        const cls = lateralityClass(state.s.organ);
+        if (cls === 'paired') opts = OPT.laterality.filter(o => ['Right','Left','Bilateral'].includes(o.v));
+        else if (cls === 'central') opts = OPT.laterality.filter(o => ['N/A','Midline'].includes(o.v));
+        // force a valid value if current one is now illegal
+        if (opts && !opts.some(o => o.v === state.s[k])) state.s[k] = opts[0].v;
+      }
       if (!opts) return;
       sel.innerHTML = opts.map(o => `<option value="${o.v}">${label(o)}</option>`).join('');
       sel.value = state.s[k];
@@ -424,9 +445,6 @@
       if (s.window === 'Bone' && !skeletal) warns.push(isAr()?'نافذة العظم مخصّصة للهيكل العظمي عادةً.':'Bone window is normally for skeletal structures.');
       if (s.window === 'Brain' && !/(brain|head|cerebr|skull|intracranial)/i.test(s.organ)) warns.push(isAr()?'نافذة الدماغ مخصّصة للرأس/الدماغ.':'Brain window is specific to head/brain.');
     }
-    // Paired-organ laterality reminder (soft)
-    const paired = /(kidney|kidneys|renal|lung|ovary|ovaries|adrenal|breast|testis|femur|humerus|hand|foot|knee|shoulder|hip|elbow|ankle|wrist)/i.test(s.organ);
-    if (paired && ['N/A','Midline'].includes(s.laterality)) warns.push(isAr()?'هذا عضو مزدوج — حدّد الجانب (يمين/يسار/ثنائي).':'This is a paired organ — set laterality (Right/Left/Bilateral).');
     // Series thickness hint
     if (s.seriesOn && window.OMNIRAD_SERIES_SLICES){
       const e = OMNIRAD_SERIES_SLICES.find(s.organ);
@@ -507,9 +525,9 @@
       const inp = $('inpOrganCustom');
       if (v === CUSTOM){ if (inp){ inp.style.display=''; inp.focus(); } render(); return; }
       if (inp) inp.style.display = 'none';
-      state.s.organ = v; render(); return;
+      state.s.organ = v; populate(); render(); return;
     }
-    if (k === 'organCustom'){ state.s.organ = v.trim(); render(); return; }
+    if (k === 'organCustom'){ state.s.organ = v.trim(); populate(); render(); return; }
 
     state.s[k] = v;
     if (k === 'modality'){ // reset view to sensible default for modality
