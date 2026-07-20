@@ -706,6 +706,10 @@
 .omr-sv-root.fs .omr-sv-3up{grid-template-columns:1fr}
 .omr-sv-root.fs .omr-sv-3up > .omr-sv-pane:not(.current){display:none}
 .omr-sv-root.fs .omr-sv-shell{width:98vw;max-height:98vh}
+.omr-sv-root.fs .omr-sv-shell.atlas{height:98vh}
+.omr-sv-root.fs .omr-sv-shell.atlas > .omr-sv-strip,
+.omr-sv-root.fs .omr-sv-shell.atlas > .omr-sv-foot,
+.omr-sv-root.fs .omr-sv-shell.atlas .omr-sv-side{display:none}
 .mono{font-family:'IBM Plex Mono',monospace}
 @media (max-width:1100px){
   .omr-sv-shell.atlas .omr-sv-side,.omr-sv-shell.atlas .omr-sv-pos{display:none}
