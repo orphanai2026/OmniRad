@@ -567,11 +567,12 @@
     opts = opts || {};
     opts.mode = 'atlas';
     opts.fps = opts.fps || 8;
-    // Restore persisted state if available
+    // Restore persisted state if available — but ALWAYS open at fit-to-view
+    // (zoom 1, no pan). Restoring a stale zoom made images open cropped.
     const persisted = loadPersistedState(opts.seriesId);
     if (persisted){
       Object.assign(opts, {
-        zoom: persisted.zoom, panX: persisted.panX, panY: persisted.panY,
+        zoom: 1, panX: 0, panY: 0,
         invert: persisted.invert, wl: persisted.wl,
         overlayLvl: persisted.overlayLvl, fps: persisted.fps
       });
@@ -651,8 +652,8 @@
 .omr-sv-side-pitfall{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.30);color:#f59e0b}
 .omr-sv-stage{position:relative;flex:1 1 auto;background:#000;border-radius:8px;overflow:hidden;display:block;min-height:0;min-width:0;cursor:grab}
 .omr-sv-stage:active{cursor:grabbing}
-.omr-sv-img-wrap{position:absolute;inset:0;display:grid;place-items:center;background:#000;transform-origin:center center;transition:transform .06s linear, filter .12s;overflow:hidden}
-.omr-sv-img-wrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:crisp-edges;display:block;margin:auto}
+.omr-sv-img-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;transform-origin:center center;transition:transform .06s linear, filter .12s;overflow:hidden}
+.omr-sv-img-wrap img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:crisp-edges;display:block}
 .omr-sv-wl-menu{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .omr-sv-wl-menu button{background:transparent;border:1px solid rgba(148,163,184,.2);color:#cbd5e1;padding:5px 10px;border-radius:5px;font:600 11px 'IBM Plex Sans',sans-serif;cursor:pointer}
 .omr-sv-wl-menu button.on{background:rgba(45,212,200,.16);border-color:rgba(45,212,200,.5);color:#2dd4c8}
