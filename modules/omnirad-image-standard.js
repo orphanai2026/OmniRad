@@ -148,9 +148,27 @@
 
   // ── Prompt-appended IMAGE SPECIFICATIONS block ───────────────────────
   //  Injected read-only into every prompt produced by Studio to force
-  //  ChatGPT to produce DICOM-uniform output.
-  function promptSpecBlock(lang){
+  //  ChatGPT to produce uniform output. Adapts to the prompt's intent:
+  //   • labeled teaching image → allow labels/annotations + light background
+  //   • clean atlas / series image → strict pure-black, no labels (DICOM-like)
+  function promptSpecBlock(lang, opts){
+    opts = opts || (window.OmniRadStudioState) || {};
+    const labeled = !!opts.labeled && !opts.series; // series is always clean
     if (lang === 'ar'){
+      if (labeled){
+        return `
+
+═══ IMAGE SPECIFICATIONS (mandatory · إلزامي) ═══
+• Size: exactly 1024 × 1024 pixels — الحجم بالضبط ١٠٢٤×١٠٢٤ بكسل
+• Aspect ratio: 1:1 (square) — نسبة ١:١ (مربّع)
+• Format: PNG — high fidelity — تنسيق PNG بجودة عالية
+• Background: clean light neutral teaching background — خلفية تعليمية فاتحة محايدة
+• Anatomical structure centered, filling 70-85% of frame — البنية التشريحية في المنتصف
+• Labels must be legible and correctly placed — التسميات واضحة وموضوعة بدقة على التراكيب الصحيحة
+• Anatomically accurate, high fidelity — دقيق تشريحياً وعالي الجودة
+• Do NOT add rulers, dimension marks, scale bars, or R/L side markers — ممنوع المسطرة أو ماركر الجهة (يضيفه العارض)
+• Single view only per image — منظر واحد فقط لكل صورة`;
+      }
       return `
 
 ═══ IMAGE SPECIFICATIONS (mandatory · إلزامي) ═══
@@ -161,7 +179,21 @@
 • Anatomical structure centered, filling 70-85% of frame — البنية التشريحية في المنتصف
 • No borders, no watermarks, no annotations, no text overlays — بدون إطارات أو نصوص أو علامات مائية
 • Grayscale radiographic look — greyscale realism per modality — تدرّج رمادي واقعي حسب المودالتي
-• Do NOT add rulers, arrows, labels, or dimension marks — ممنوع إضافة مسطرة أو سهام أو تسميات`;
+• Do NOT add rulers, arrows, labels, dimension marks, or R/L side markers — ممنوع مسطرة أو سهام أو تسميات أو ماركر جهة`;
+    }
+    if (labeled){
+      return `
+
+═══ IMAGE SPECIFICATIONS (mandatory) ═══
+• Size: exactly 1024 × 1024 pixels
+• Aspect ratio: 1:1 (square)
+• Format: PNG, high fidelity, no compression artifacts
+• Background: clean light neutral teaching background
+• Anatomical structure centered, filling 70-85% of the frame
+• Labels must be legible, unobstructed, and correctly placed on their structures
+• Anatomically accurate, high detail, professional teaching quality
+• Do NOT add rulers, dimension marks, scale bars, or R/L side markers (the viewer overlays orientation)
+• Single view only per image — no multi-panel montages`;
     }
     return `
 
@@ -173,7 +205,7 @@
 • Anatomical structure centered, filling 70-85% of the frame
 • No borders, no watermarks, no annotations, no text overlays
 • Grayscale radiographic look consistent with the modality (HU-like for CT, T1/T2 for MRI, etc.)
-• Do NOT add rulers, arrows, labels, dimension marks, or scale bars
+• Do NOT add rulers, arrows, labels, dimension marks, scale bars, or R/L side markers
 • Do NOT include multi-panel montages — single view only per image`;
   }
 
