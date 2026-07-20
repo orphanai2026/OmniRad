@@ -478,6 +478,15 @@
     $('outEn').textContent = b.en;
     $('outAr').textContent = b.ar;
     $('outNeg').textContent = b.neg;
+    // Expose current output-shaping flags so the appended IMAGE SPECIFICATIONS
+    // block can adapt (labeled teaching image vs clean atlas/series image).
+    const seriesActiveNow = state.s.seriesOn && window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(state.s.organ);
+    window.OmniRadStudioState = {
+      labeled: state.s.labels === 'With anatomical labels',
+      series: !!seriesActiveNow,
+      style: state.s.style,
+      modality: state.s.modality
+    };
     // Wire anatomical intelligence on the prompt output
     if (window.OmniRadTerm && OmniRadTerm.linkText){
       try { OmniRadTerm.linkText($('outEn')); OmniRadTerm.linkText($('outAr')); } catch(e){}
