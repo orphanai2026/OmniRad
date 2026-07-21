@@ -31,6 +31,13 @@ h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin
 .card-img img{width:100%;height:100%;object-fit:cover;display:block}
 .card-img .placeholder{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-m);font-size:12px}
 .badge{position:absolute;top:9px;inset-inline-start:9px;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(0,0,0,.6);color:#fff;font-family:'IBM Plex Mono',monospace}
+.vbadge{position:absolute;top:9px;inset-inline-end:9px;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.02em;display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.vbadge.ok{background:rgba(16,185,129,.9);color:#04150f}
+.vbadge.warn{background:rgba(245,158,11,.92);color:#1a1200}
+.vdot{position:absolute;top:3px;inset-inline-end:3px;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;font-size:8px;font-weight:900;box-shadow:0 0 0 2px rgba(0,0,0,.55);z-index:2}
+.vdot.ok{background:#10b981;color:#04150f}
+.vdot.warn{background:#f59e0b;color:#1a1200}
+.series-vsum{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap}
 .card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .card-title{font-size:14px;font-weight:700}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
@@ -213,7 +220,7 @@ body{background:transparent!important}
 <script src="../modules/supabase.js"></script>
 <script src="../modules/data/anatomy-master.js?v=loinc-r2"></script>
 <script src="../modules/data/anatomy-master-v2.js?v=loinc-r2"></script>
-<script src="../modules/omnirad-term.js"></script>
+<script src="../modules/omnirad-term.js?v=resolveid"></script>
 <script src="../modules/omnirad-search.js"></script>
 <script src="../modules/omnirad-typography.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
@@ -427,6 +434,7 @@ body{background:transparent!important}
       const isOut = coh && coh.outliers.includes(s.slice_index);
       return `<div class="series-thumb pending ${isOut?'outlier':''}" data-sid="${sid}" data-slice="${s.slice_index}">
         ${url ? `<img src="${url}" loading="lazy" alt="Slice ${s.slice_index}">` : ''}
+        ${visionDot(s)}
         <span class="num">${String(s.slice_index).padStart(2,'0')}/${String(total).padStart(2,'0')}</span>
       </div>`;
     }).join('');
@@ -441,6 +449,7 @@ body{background:transparent!important}
           <div class="sub">${escapeHtml(modality)} · ${escapeHtml(plane)} · ${slices.length} slices</div>
         </div>
         ${cohHtml}
+        ${visionSummary(slices)}
         <button class="cine" data-cine="${sid}">▶ Cine</button>
       </header>
       <div class="series-body">
@@ -691,6 +700,35 @@ body{background:transparent!important}
 
   function escapeHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+  // ── AI Vision Check indicators (early-warning only; human decision is final) ──
+  //   Reads vision_match / vision_confidence / vision_reason / vision_checked_at
+  //   from review_queue (series-vision-schema.sql).
+  function visionArLang(){ return (window.OmniRadI18n && OmniRadI18n.lang) === 'ar'; }
+  function visionConfPct(c){ if (c == null) return null; return c <= 1 ? Math.round(c*100) : Math.round(c); }
+  function visionBadge(row){
+    if (!row || !row.vision_checked_at) return '';
+    const ar = visionArLang();
+    const conf = visionConfPct(row.vision_confidence);
+    const confTxt = conf != null ? ' ' + conf + '%' : '';
+    if (row.vision_match === true)  return `<div class="vbadge ok" title="${ar?'فحص الرؤية الذكية: مطابق':'AI Vision: matches metadata'}">✓ Vision${confTxt}</div>`;
+    if (row.vision_match === false) return `<div class="vbadge warn" title="${escapeHtml((ar?'فحص الرؤية: اشتباه — ':'AI Vision: possible mismatch — ')+(row.vision_reason||''))}">⚠ Vision?${confTxt}</div>`;
+    return '';
+  }
+  function visionDot(row){
+    if (!row || row.vision_match == null) return '';
+    const ar = visionArLang();
+    if (row.vision_match === true)  return `<span class="vdot ok" title="${ar?'مطابق':'matches'}">✓</span>`;
+    return `<span class="vdot warn" title="${escapeHtml(row.vision_reason||(ar?'اشتباه':'possible mismatch'))}">!</span>`;
+  }
+  function visionSummary(slices){
+    const checked = slices.filter(s => s.vision_checked_at);
+    if (!checked.length) return '';
+    const ok = slices.filter(s => s.vision_match === true).length;
+    const flag = slices.filter(s => s.vision_match === false).length;
+    const warn = flag > 0;
+    return `<span class="series-vsum" style="background:${warn?'rgba(245,158,11,.15)':'rgba(16,185,129,.15)'};color:${warn?'#f59e0b':'#10b981'}" title="AI Vision Check">👁 ${ok}✓${flag?' · '+flag+'⚠':''}</span>`;
+  }
+
   function renderCard(row){
     const url = row.storage_path
       ? (String(row.storage_path).startsWith('http') ? row.storage_path : sb.storage.from('atlas').getPublicUrl(row.storage_path).data.publicUrl)
@@ -702,6 +740,7 @@ body{background:transparent!important}
       <div class="card-img">
         ${url ? `<img src="${url}" alt="">` : `<div class="placeholder">No image</div>`}
         <div class="badge">${(row.modality||'—').toUpperCase()}</div>
+        ${visionBadge(row)}
       </div>
       <div class="card-body">
         <div class="card-title">${(row.organ||'—')} · ${(row.plane||'—')}</div>
