@@ -389,7 +389,7 @@ document.addEventListener('click', function(e){
     const isAr = document.body.dir === 'rtl';
     const el = document.getElementById(isAr ? 'outAr' : 'outEn') || document.getElementById('outEn');
     const body = (el && el.textContent || '').trim();
-    if (!body){ alert('لا يوجد برومبت / No prompt yet'); return; }
+    if (!body){ (window.OmniRadToast||alert)('لا يوجد برومبت / No prompt yet', 'err'); return; }
     // Include Negative prompt — critical for image generation quality
     const negEl = document.getElementById('outNeg');
     const negRow = document.getElementById('negRow');
@@ -418,7 +418,7 @@ document.addEventListener('click', function(e){
   const which = b.getAttribute('data-gpt');
   const el = document.getElementById(which === 'ar' ? 'outAr' : 'outEn');
   const bodyText = (el && el.textContent || '').trim();
-  if (!bodyText){ alert('لا يوجد برومبت / No prompt yet'); return; }
+  if (!bodyText){ (window.OmniRadToast||alert)('لا يوجد برومبت / No prompt yet', 'err'); return; }
   // Append DICOM-compatible IMAGE SPECIFICATIONS block (Sprint 4g)
   const specBlockCopy = (window.OmniRadImageStd && window.OmniRadImageStd.promptSpecBlock)
     ? window.OmniRadImageStd.promptSpecBlock(which)

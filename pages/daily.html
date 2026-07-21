@@ -160,7 +160,7 @@ function render(){
   renderStats();
 }
 $('btnCheck').addEventListener('click', () => {
-  if (state.picked < 0) return alert('Pick an answer first.');
+  if (state.picked < 0) return (window.OmniRadToast||alert)(((window.OmniRadI18n&&OmniRadI18n.lang)==='ar')?'اختر إجابة أولاً.':'Pick an answer first.', 'err');
   const { idx } = todayIndex();
   const q = QUESTIONS[idx];
   state.checked = true;

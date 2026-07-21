@@ -574,7 +574,7 @@
       const body = q(`[data-body="${name}"]`); if (body) body.style.display = state.collapsed[name] ? 'none' : 'block';
     }));
     $('btnReset').addEventListener('click', ()=>{ state.s = DEF(); populate(); render(); });
-    $('btnHist').addEventListener('click', ()=>{ alert(isAr()?'حفظ السجل يأتي في المرحلة اللاحقة.':'History save coming in a later phase.'); });
+    $('btnHist').addEventListener('click', ()=>{ (window.OmniRadToast||alert)(isAr()?'حفظ السجل يأتي في المرحلة اللاحقة.':'History save coming in a later phase.'); });
     if (FEATURE_AUTOGEN) {
       $('btnGen') && $('btnGen').addEventListener('click', doGenerate);
     }
@@ -589,7 +589,7 @@
   async function doGenerate(){
     if (!FEATURE_AUTOGEN) { console.warn('[Studio] doGenerate() called but AUTOGEN flag is off — noop.'); return; }
     const sb = window.OmniRadAuth && window.OmniRadAuth.client;
-    if (!sb){ alert(isAr()?'يلزم تسجيل الدخول.':'Sign-in required.'); return; }
+    if (!sb){ (window.OmniRadToast||alert)(isAr()?'يلزم تسجيل الدخول.':'Sign-in required.', 'err'); return; }
     const b = build();
     const s = state.s;
     const btn = $('btnGen');

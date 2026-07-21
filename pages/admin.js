@@ -328,7 +328,7 @@
   window.openInviteModal = () => { $('invEmail').value=''; $('invRole').value='viewer'; $('inviteModal').classList.add('on'); };
   document.getElementById('invSend') && document.getElementById('invSend').addEventListener('click', async ()=>{
     const email = $('invEmail').value.trim(); const role = $('invRole').value;
-    if (!email) return alert('Email required.');
+    if (!email) return toast(isAr()?'البريد الإلكتروني مطلوب.':'Email required.');
     const redirect = location.origin + location.pathname.replace(/admin\.html.*$/, 'auth.html');
     try {
       const { data, error } = await sb.auth.signInWithOtp({
@@ -349,7 +349,7 @@
     } catch(e){
       const msg = (e && (e.message || e.error_description || e.msg)) || 'unknown (see console)';
       console.error('[invite]', e);
-      alert('Invite error: ' + msg + '\n\nCheck browser console for details.');
+      toast((isAr()?'خطأ الدعوة: ':'Invite error: ') + msg);
     }
   });
   window.setUserRole = async (id, role) => {
@@ -363,7 +363,7 @@
   window.adminHardDelete = async (id, email) => {
     // Client-side owner protection (server-side also enforced)
     if ((email||'').toLowerCase() === 'omniradai@gmail.com') {
-      alert(t('adm.protectedOwner')||'This account is the platform owner and is permanently protected.');
+      toast(t('adm.protectedOwner')||(isAr()?'هذا الحساب مالك المنصّة ومحمي بشكل دائم.':'This account is the platform owner and is permanently protected.'));
       return;
     }
     const step1 = (t('adm.confirmDelete1')||'PERMANENTLY delete user %s and all their data? This CANNOT be undone.').replace('%s', email||id);
@@ -444,19 +444,19 @@
   $('mnSave').addEventListener('click', async () => {
     let letters = null;
     try { if ($('mnLetters').value.trim()) letters = JSON.parse($('mnLetters').value); }
-    catch(e){ alert('Letters JSON invalid: '+e.message); return; }
+    catch(e){ toast((isAr()?'صيغة JSON للحروف غير صالحة: ':'Letters JSON invalid: ')+e.message); return; }
     const row = {
       title_en:$('mnTitleEn').value.trim(), title_ar:$('mnTitleAr').value.trim(),
       phrase_en:$('mnPhraseEn').value.trim(), phrase_ar:$('mnPhraseAr').value.trim(),
       structure_id:$('mnStruct').value.trim()||null, region:$('mnRegion').value.trim()||null,
       letters, explanation_en:$('mnExplEn').value.trim()||null, explanation_ar:$('mnExplAr').value.trim()||null
     };
-    if (!row.title_en || !row.title_ar || !row.phrase_en || !row.phrase_ar) return alert('Title + phrase (both languages) required.');
+    if (!row.title_en || !row.title_ar || !row.phrase_en || !row.phrase_ar) return toast(isAr()?'العنوان والعبارة مطلوبان (باللغتين).':'Title + phrase (both languages) required.');
     try {
       if (editingId.mnemo){ const { error } = await sb.from('mnemonics').update(row).eq('id', editingId.mnemo); if (error) throw error; }
       else { const { error } = await sb.from('mnemonics').insert(row); if (error) throw error; }
       closeModal('mnemoModal'); toast(t('saved')); loadMnemonics();
-    } catch(e){ alert('Save error: '+e.message); }
+    } catch(e){ toast((isAr()?'خطأ الحفظ: ':'Save error: ')+e.message); }
   });
 
   /* ─── Cards ─── */
@@ -501,7 +501,7 @@
   $('cdSave').addEventListener('click', async () => {
     let options = null;
     try { if ($('cdOptions').value.trim()) options = JSON.parse($('cdOptions').value); }
-    catch(e){ alert('Options JSON invalid: '+e.message); return; }
+    catch(e){ toast((isAr()?'صيغة JSON للخيارات غير صالحة: ':'Options JSON invalid: ')+e.message); return; }
     const row = {
       card_type:$('cdType').value, level:parseInt($('cdLevel').value)||1,
       structure_id:$('cdStruct').value.trim()||null, modality:$('cdMod').value.trim()||null,
@@ -510,12 +510,12 @@
       answer_en:$('cdAnsEn').value.trim(), answer_ar:$('cdAnsAr').value.trim(),
       options
     };
-    if (!row.prompt_en || !row.prompt_ar || !row.answer_en || !row.answer_ar) return alert('Prompt + answer (both languages) required.');
+    if (!row.prompt_en || !row.prompt_ar || !row.answer_en || !row.answer_ar) return toast(isAr()?'السؤال والإجابة مطلوبان (باللغتين).':'Prompt + answer (both languages) required.');
     try {
       if (editingId.card){ const { error } = await sb.from('cards').update(row).eq('id', editingId.card); if (error) throw error; }
       else { const { error } = await sb.from('cards').insert(row); if (error) throw error; }
       closeModal('cardModal'); toast(t('saved')); loadCards();
-    } catch(e){ alert('Save error: '+e.message); }
+    } catch(e){ toast((isAr()?'خطأ الحفظ: ':'Save error: ')+e.message); }
   });
 
   /* ─── Contributors ─── */
@@ -562,12 +562,12 @@
       bio_en:$('coBioEn').value.trim()||null, bio_ar:$('coBioAr').value.trim()||null,
       link:$('coLink').value.trim()||null, sort_order:parseInt($('coSort').value)||100, active:true
     };
-    if (!row.name_en || !row.name_ar) return alert('Both names required.');
+    if (!row.name_en || !row.name_ar) return toast(isAr()?'الاسمان مطلوبان.':'Both names required.');
     try {
       if (editingId.contrib){ const { error } = await sb.from('contributors').update(row).eq('id', editingId.contrib); if (error) throw error; }
       else { const { error } = await sb.from('contributors').insert(row); if (error) throw error; }
       closeModal('contribModal'); toast(t('saved')); loadContributors();
-    } catch(e){ alert('Save error: '+e.message); }
+    } catch(e){ toast((isAr()?'خطأ الحفظ: ':'Save error: ')+e.message); }
   });
 
   /* ─── Contacts ─── */
@@ -824,12 +824,12 @@
   function permReset(){ const u=pSel(); if(!u) return; u.permissions={}; perm.dirty=true; renderPerms(); }
   async function permSave(){
     const u=pSel(); if(!u) return;
-    if (pIsOwner(u) && u.role!=='admin'){ alert(t('adm.protectedOwner')||'Owner is protected.'); return; }
+    if (pIsOwner(u) && u.role!=='admin'){ toast(t('adm.protectedOwner')||(isAr()?'المالك محمي.':'Owner is protected.')); return; }
     try {
       const { error } = await sb.rpc('admin_set_permissions', { p_user:u.id, p_role:u.role, p_overrides:pOverrides(u) });
       if (error) throw error;
       perm.dirty=false; toast(t('saved')); loadPermissions();
-    } catch(e){ alert('Save error: '+e.message); }
+    } catch(e){ toast((isAr()?'خطأ الحفظ: ':'Save error: ')+e.message); }
   }
 
   /* ─── Boot ─── */
