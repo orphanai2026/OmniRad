@@ -612,31 +612,52 @@ body{background:transparent!important}
 
   // ── Init ──────────────────────────────────────
   async function init(){
-    let tries = 0;
-    while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
-    sb = OmniRadAuth.client;
-    const { data:{ session } } = await sb.auth.getSession();
-    if (!session){ document.getElementById('gate').style.display=''; return; }
-    user = session.user;
-    const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).maybeSingle();
-    role = profile && profile.role;
-    if (!['admin','contributor'].includes(role)){ document.getElementById('gate').style.display=''; return; }
-    document.getElementById('content').style.display = '';
-    // FIX — wait for the anatomy dictionary to finish loading so autocomplete
-    //         suggestions include RadLex terms (Gallbladder etc.) instead of falling
-    //         back to "Add new" for everything.
-    if (window.OMNIRAD_ANATOMY && OMNIRAD_ANATOMY.ready){ try { await OMNIRAD_ANATOMY.ready; } catch(_){} }
-    // legacy select-based populate replaced by combobox init above; keep placeholder call for order
-    if (typeof populateOrgans === 'function' && !document.getElementById('fOrganSearch')){
-      populateOrgans();
-    } else if (document.getElementById('fOrganSearch')){
-      populateOrgans();
+    try {
+      let tries = 0;
+      while (!(window.OmniRadAuth && OmniRadAuth.client) && tries < 40){ await new Promise(r=>setTimeout(r,80)); tries++; }
+      if (!(window.OmniRadAuth && OmniRadAuth.client)){
+        showGateError('bu.err.authUnavailable', 'Could not connect. Check your internet connection and reload.', 'تعذّر الاتصال. تحقّق من الإنترنت وأعد التحميل.');
+        return;
+      }
+      sb = OmniRadAuth.client;
+      const { data:{ session } } = await sb.auth.getSession();
+      if (!session){ document.getElementById('gate').style.display=''; return; }
+      user = session.user;
+      const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).maybeSingle();
+      role = profile && profile.role;
+      if (!['admin','contributor'].includes(role)){ document.getElementById('gate').style.display=''; return; }
+      document.getElementById('content').style.display = '';
+      // FIX — wait for the anatomy dictionary to finish loading so autocomplete
+      //         suggestions include RadLex terms (Gallbladder etc.) instead of falling
+      //         back to "Add new" for everything.
+      if (window.OMNIRAD_ANATOMY && OMNIRAD_ANATOMY.ready){ try { await OMNIRAD_ANATOMY.ready; } catch(_){} }
+      // legacy select-based populate replaced by combobox init above; keep placeholder call for order
+      if (typeof populateOrgans === 'function' && !document.getElementById('fOrganSearch')){
+        populateOrgans();
+      } else if (document.getElementById('fOrganSearch')){
+        populateOrgans();
+      }
+      wireDropzone();
+      wireForm();
+      wireSeriesPicker();
+      wireNamingPicker();
+      refreshPlaneOptions();  // initial
+    } catch (e) {
+      console.error('[bulk-upload] init failed:', e);
+      showGateError('bu.err.initFailed', 'Something went wrong loading this page. Reload, or contact support if it persists.', 'حدث خطأ أثناء تحميل الصفحة. أعد التحميل، أو تواصل مع الدعم إن استمرّت المشكلة.');
     }
-    wireDropzone();
-    wireForm();
-    wireSeriesPicker();
-    wireNamingPicker();
-    refreshPlaneOptions();  // initial
+  }
+
+  function showGateError(key, en, ar){
+    const gate = document.getElementById('gate');
+    if (!gate) return;
+    const msgEl = gate.querySelector('p');
+    if (msgEl){
+      const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+      msgEl.textContent = lang === 'ar' ? ar : en;
+      msgEl.removeAttribute('data-i18n');
+    }
+    gate.style.display = '';
   }
 
   // ── Predefined series picker (Step 1a) ─────────
