@@ -177,8 +177,8 @@ body{background:transparent!important}
 
 <!-- Reject modal -->
 <div class="modal-bg" id="rejectModal">
-  <div class="modal">
-    <h3 data-i18n="rev.rejectTitle">Reject image</h3>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rejectTitle">
+    <h3 id="rejectTitle" data-i18n="rev.rejectTitle">Reject image</h3>
     <p data-i18n="rev.rejectHelp">Please provide a specific reason. The uploader will be notified.</p>
     <label data-i18n="rev.reason">Reason</label>
     <select id="rejReasonKind">
@@ -201,8 +201,8 @@ body{background:transparent!important}
 
 <!-- Revision modal -->
 <div class="modal-bg" id="revisionModal">
-  <div class="modal">
-    <h3 data-i18n="rev.revTitle">Request revision</h3>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="revTitle">
+    <h3 id="revTitle" data-i18n="rev.revTitle">Request revision</h3>
     <p data-i18n="rev.revHelp">The image will be sent back for improvement. Provide clear guidance.</p>
     <label data-i18n="rev.notes">Notes</label>
     <textarea id="revNotes" rows="4" placeholder="What needs to change?"></textarea>
@@ -299,6 +299,11 @@ body{background:transparent!important}
 
   function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.style.display = 'block'; setTimeout(()=>{ el.style.display = 'none'; }, 3200); }
   window.closeModal = id => document.getElementById(id).classList.remove('on');
+  // a11y: Escape closes any open modal
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.modal-bg.on').forEach(m => m.classList.remove('on'));
+  });
 
   async function init(){
     let tries = 0;

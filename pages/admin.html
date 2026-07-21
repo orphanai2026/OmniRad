@@ -285,7 +285,7 @@ body{background:transparent!important}
 </div>
 
 <!-- Mnemonic modal -->
-<div class="modal-bg" id="mnemoModal"><div class="modal">
+<div class="modal-bg" id="mnemoModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mnemoModalTitle">
   <h3 id="mnemoModalTitle" data-i18n="mod.addMnemo">Add mnemonic</h3>
   <div class="f2"><div class="f"><label data-i18n="lbl.titleEn">Title EN</label><input id="mnTitleEn"></div><div class="f"><label data-i18n="lbl.titleAr">Title AR</label><input id="mnTitleAr" dir="rtl"></div></div>
   <div class="f2"><div class="f"><label data-i18n="lbl.phraseEn">Phrase EN</label><input id="mnPhraseEn" placeholder="e.g. Some Lovers Try Positions"></div><div class="f"><label data-i18n="lbl.phraseAr">Phrase AR</label><input id="mnPhraseAr" dir="rtl"></div></div>
@@ -300,7 +300,7 @@ body{background:transparent!important}
 </div></div>
 
 <!-- Card modal -->
-<div class="modal-bg" id="cardModal"><div class="modal">
+<div class="modal-bg" id="cardModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cardModalTitle">
   <h3 id="cardModalTitle" data-i18n="mod.addCard">Add learning card</h3>
   <div class="f2"><div class="f"><label data-i18n="lbl.cardType">Card type</label><select id="cdType"><option value="flash">Flashcard</option><option value="mcq">Multiple choice</option><option value="image">Image-based</option></select></div><div class="f"><label data-i18n="lbl.difficulty">Difficulty (1-5)</label><input type="number" id="cdLevel" min="1" max="5" value="1"></div></div>
   <div class="f2"><div class="f"><label data-i18n="lbl.structIdReq">Structure ID</label><input id="cdStruct" placeholder="e.g. brain"></div><div class="f"><label data-i18n="lbl.modality">Modality</label><input id="cdMod" placeholder="e.g. CT"></div></div>
@@ -317,7 +317,7 @@ body{background:transparent!important}
 </div></div>
 
 <!-- Contributor modal -->
-<div class="modal-bg" id="contribModal"><div class="modal">
+<div class="modal-bg" id="contribModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="contribModalTitle">
   <h3 id="contribModalTitle" data-i18n="mod.addContrib">Add contributor</h3>
   <div class="f2"><div class="f"><label data-i18n="lbl.nameEn">Name EN</label><input id="coNameEn"></div><div class="f"><label data-i18n="lbl.nameAr">Name AR</label><input id="coNameAr" dir="rtl"></div></div>
   <div class="f2"><div class="f"><label data-i18n="lbl.roleEn">Role EN</label><input id="coRoleEn"></div><div class="f"><label data-i18n="lbl.roleAr">Role AR</label><input id="coRoleAr" dir="rtl"></div></div>
@@ -331,8 +331,8 @@ body{background:transparent!important}
 </div></div>
 
 <!-- Invite modal -->
-<div class="modal-bg" id="inviteModal"><div class="modal">
-  <h3 data-i18n="mod.inviteTitle">Invite a new user</h3>
+<div class="modal-bg" id="inviteModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="inviteModalTitle">
+  <h3 id="inviteModalTitle" data-i18n="mod.inviteTitle">Invite a new user</h3>
   <p style="color:var(--text-s);font-size:12.5px;line-height:1.6;margin-bottom:12px" data-i18n="mod.inviteHint">The user receives an email invitation. When they click the link, they set their own password and become a member.</p>
   <div class="f"><label data-i18n="lbl.email">Email</label><input id="invEmail" type="email" placeholder="user@example.com"></div>
   <div class="f"><label data-i18n="lbl.roleAssign">Initial role</label>
