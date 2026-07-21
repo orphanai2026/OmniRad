@@ -16,6 +16,18 @@
   var script = document.currentScript;
   var BASE = (script && script.getAttribute('data-base')) || '';
 
+  // Favicon — single-source injection (avoids a favicon.ico 404 on every page).
+  (function ensureFavicon(){
+    try {
+      if (document.querySelector('link[rel~="icon"]')) return;
+      var link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/svg+xml';
+      link.href = BASE + 'index-assets/icons/favicon.svg';
+      (document.head || document.documentElement).appendChild(link);
+    } catch (e) {}
+  })();
+
   // Nav model — single source of truth for every page
   var CORE = [
     { href: 'pages/atlas.html',       icon: '📖', label: 'Atlas',      i18n: 'nav.atlas' },
