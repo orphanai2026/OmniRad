@@ -6,8 +6,8 @@
 <title>OmniRad — My Profile</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.38);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--ok:#4ade80;--err:#f87171}
-[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.42);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--err:#c53030}
+:root,[data-theme="dark"]{--bg:#080e14;--bg-s:#0c1520;--bg-e:#101e2a;--bg-ov:#162030;--text:#e8f0f5;--text-s:rgba(232,240,245,.65);--text-m:rgba(232,240,245,.55);--acc:#2dd4c8;--acc-dim:rgba(45,212,200,.55);--acc-sub:rgba(45,212,200,.10);--border:rgba(45,212,200,.15);--border-s:rgba(232,240,245,.08);--nav-bg:rgba(8,14,20,.92);--acc-ink:#08100e;--ok:#4ade80;--err:#f87171}
+[data-theme="dim"]{--bg:#dde4ec;--bg-s:#e6ecf3;--bg-e:#edf2f8;--text:#0f1e2a;--text-s:rgba(15,30,42,.65);--text-m:rgba(15,30,42,.58);--acc:#0b6b64;--acc-dim:rgba(11,107,100,.55);--acc-sub:rgba(11,107,100,.10);--border:rgba(11,107,100,.15);--border-s:rgba(15,30,42,.1);--acc-ink:#fff;--ok:#0e8f4a;--err:#c53030}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--onav-h,56px);-webkit-font-smoothing:antialiased}
 body[dir="rtl"]{font-family:'Noto Sans Arabic','IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif}
@@ -516,8 +516,8 @@ body{background:transparent!important}
       const email = !!(p[k] && p[k].email);
       return `<tr>
         <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s)">${t('ev.'+k)}</td>
-        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s);text-align:center"><input type="checkbox" data-ev="${k}" data-ch="in_app" ${inApp?'checked':''}></td>
-        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s);text-align:center"><input type="checkbox" data-ev="${k}" data-ch="email" ${email?'checked':''}></td>
+        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s);text-align:center"><input type="checkbox" aria-label="In-app notification / إشعار داخل التطبيق" data-ev="${k}" data-ch="in_app" ${inApp?'checked':''}></td>
+        <td style="padding:9px 8px;border-bottom:1px dashed var(--border-s);text-align:center"><input type="checkbox" aria-label="Email notification / إشعار بريدي" data-ev="${k}" data-ch="email" ${email?'checked':''}></td>
       </tr>`;
     }).join('');
     body.querySelectorAll('input[type="checkbox"][data-ev]').forEach(cb => cb.addEventListener('change', async () => {
