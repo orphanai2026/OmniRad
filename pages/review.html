@@ -642,15 +642,15 @@ body{background:transparent!important}
     if (!slices || !slices.length) return;
     const reason = prompt('Rejection reason for the whole series:');
     if (!reason || !reason.trim()) return;
-    let ok = 0, skipped = 0;
+    let ok = 0, skipped = 0, lastErr = '';
     for (const s of slices){
       try {
         const { error } = await sb.rpc('reject_to_archive', { p_review_id: String(s.id), p_reason: reason.trim() });
         if (error) throw error;
         ok++;
-      } catch(e){ skipped++; }
+      } catch(e){ skipped++; lastErr = (e && e.message) || String(e); }
     }
-    toast(`Rejected ${ok} · skipped ${skipped}`);
+    toast(skipped ? (t('rev.err') + lastErr + ` — (rejected ${ok} · failed ${skipped})`) : `Rejected ${ok}`);
     loadList();
   }
 
