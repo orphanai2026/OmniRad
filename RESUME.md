@@ -18,7 +18,7 @@
 - **P2-7:** توحيد كل بصمات الكاش إلى رمز مؤرّخ واحد `?v=20260721` (91 مرجعاً · 20 ملفاً).
 - **تنظيف الجذر:** حُذف الملف الميّت + 4 ملفات md قديمة (INSTRUCTIONS · OMNIRAD_ISSUES · OMNIRAD_PROJECT → `docs/_archived/` · CLAUDE المكرّرة) → الجذر = README · RESUME · CLAUDE · LICENSE.
 
-**متبقٍّ من QA:** P3-9 (فحص وصولية يدوي: تباين/كيبورد/ARIA) · أرشفة `pipeline/` (اختياري).
+**متبقٍّ من QA:** فحص يدوي لمودالات review/admin (role=dialog + focus-trap) · أرشفة `pipeline/` (اختياري).
 
 **رسالة البداية للمحادثة القادمة:**
 ```
