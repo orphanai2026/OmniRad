@@ -24,6 +24,28 @@ if (!window.OMNIRAD_ANATOMY) {
 
 const A = window.OMNIRAD_ANATOMY;
 
+/* Safe id resolver — works whether or not OMNIRAD_ANATOMY exposes resolveToId().
+   FIX (21 Jul 2026): older/newer anatomy-master builds differ; calling
+   A.resolveToId() directly threw "A.resolveToId is not a function" and broke
+   every anatomical tooltip. This falls back to byId → aliasMap → EN/AR scan. */
+function resolveId(nameOrId){
+  if (nameOrId == null) return null;
+  if (A.byId && A.byId[nameOrId]) return nameOrId;
+  if (typeof A.resolveToId === 'function'){
+    try { const r = A.resolveToId(nameOrId); if (r) return r; } catch(_){}
+  }
+  const q = String(nameOrId).trim().toLowerCase();
+  const alias = A.aliasMap || {};
+  if (alias[q]) return alias[q];
+  const list = A.structures || [];
+  const hit = list.find(s =>
+    s.id === nameOrId ||
+    (s.en && s.en.toLowerCase() === q) ||
+    (s.ar && s.ar === String(nameOrId).trim())
+  );
+  return hit ? hit.id : null;
+}
+
 /* Base path back to repo root (for links). Nav script owns this info
    via data-base on <script> tag; we fall back sensibly. */
 function basePath(){
@@ -173,7 +195,7 @@ function render(struct){
 
 function showTermById(termIdOrName, anchor){
   ensurePop();
-  const id = A.byId[termIdOrName] ? termIdOrName : A.resolveToId(termIdOrName);
+  const id = A.byId[termIdOrName] ? termIdOrName : resolveId(termIdOrName);
   const s = id ? A.byId[id] : null;
   if (!s){ pop.classList.remove('on'); return; }
   currentAnchor = anchor;
@@ -231,7 +253,7 @@ window.addEventListener('resize', repos);
 /* Re-render current tooltip on language change */
 window.addEventListener('omnirad-lang', () => {
   if (currentAnchor && currentAnchor.dataset.term && pop && pop.classList.contains('on')){
-    const id = A.byId[currentAnchor.dataset.term] ? currentAnchor.dataset.term : A.resolveToId(currentAnchor.dataset.term);
+    const id = A.byId[currentAnchor.dataset.term] ? currentAnchor.dataset.term : resolveId(currentAnchor.dataset.term);
     if (id) render(A.byId[id]);
   }
 });
