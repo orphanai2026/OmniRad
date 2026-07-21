@@ -28,6 +28,41 @@
     } catch (e) {}
   })();
 
+  // Shared toast — one consistent, theme-aware notifier for every page
+  // (replaces scattered native alert() calls). window.OmniRadToast(msg, kind)
+  // kind: '' | 'err' | 'ok'. Auto-dismiss ~3.2s. RTL-aware via document.dir.
+  if (!window.OmniRadToast){
+    window.OmniRadToast = function(msg, kind){
+      try {
+        var el = document.getElementById('__omr_toast');
+        if (!el){
+          el = document.createElement('div');
+          el.id = '__omr_toast';
+          el.setAttribute('role', 'status');
+          el.setAttribute('aria-live', 'polite');
+          el.style.cssText = 'position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);'
+            + 'padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;z-index:100000;'
+            + 'box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .24s,transform .24s;'
+            + "font-family:'IBM Plex Sans','Noto Sans Arabic',sans-serif;max-width:90vw;text-align:center;pointer-events:none";
+          document.body.appendChild(el);
+        }
+        var acc = getComputedStyle(document.documentElement).getPropertyValue('--acc').trim() || '#2dd4c8';
+        var ink = getComputedStyle(document.documentElement).getPropertyValue('--acc-ink').trim() || '#08100e';
+        if (kind === 'err'){ el.style.background = '#ef4444'; el.style.color = '#fff'; }
+        else if (kind === 'ok'){ el.style.background = '#10b981'; el.style.color = '#04150f'; }
+        else { el.style.background = acc; el.style.color = ink; }
+        el.textContent = msg;
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(-50%) translateY(0)';
+        clearTimeout(window.__omrToastT);
+        window.__omrToastT = setTimeout(function(){
+          el.style.opacity = '0';
+          el.style.transform = 'translateX(-50%) translateY(20px)';
+        }, 3200);
+      } catch (e) { /* last-resort: stay silent, never block */ }
+    };
+  }
+
   // Nav model — single source of truth for every page
   var CORE = [
     { href: 'pages/atlas.html',       icon: '📖', label: 'Atlas',      i18n: 'nav.atlas' },
