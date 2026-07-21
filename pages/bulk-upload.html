@@ -890,7 +890,7 @@ body{background:transparent!important}
           if (om){ om.value = seriesOrganEntry.en; }
           if (oh){ oh.innerHTML = '<option value="'+seriesOrganEntry.en+'" selected>'+seriesOrganEntry.en+'</option>'; oh.value = seriesOrganEntry.en; }
           const mS = document.getElementById('fModality');
-          if (mS && !mS.value){ mS.value = seriesOrganEntry.defaultModality; refreshPlaneOptions(); }
+          if (mS && !mS.value){ mS.value = seriesOrganEntry.defaultModality; refreshPlaneOptions(); mS.dispatchEvent(new Event('change')); }
           setMode('series');
           const modeIndBtn = document.getElementById('modeIndividual');
           if (modeIndBtn){ modeIndBtn.disabled = true; modeIndBtn.style.opacity = '.4'; modeIndBtn.title = ((window.OmniRadI18n && OmniRadI18n.lang) === 'ar') ? 'مقفل — سلسلة محدَّدة مسبقاً' : 'Locked — predefined series selected'; }
@@ -1524,6 +1524,22 @@ body{background:transparent!important}
     search.addEventListener('focus', doSearch);
     regSel.addEventListener('change', doSearch);
     modSel.addEventListener('change', doSearch);
+
+    // ── Auto-sync the naming modality from the actual image modality field.
+    //    Prevents cross-modality LOINC picks (e.g. a SPECT+CT "Lung Views"
+    //    code being offered for a plain diagnostic CT chest series). ──
+    const imgMod = document.getElementById('fModality');
+    const IMG2LOINC = { 'CT':'CT','MRI':'MR','MR':'MR','US':'US','Ultrasound':'US','X-Ray':'XR','XR':'XR','Mammo':'MG','Mammography':'MG','NM':'NM','PET':'PT','PET/CT':'PT+CT','Fluoroscopy':'RF','DXA':'DXA' };
+    function syncModalityFromImage(){
+      if (!imgMod || !imgMod.value) return;
+      const code = IMG2LOINC[imgMod.value];
+      if (code && modSel.querySelector('option[value="'+code+'"]')){
+        modSel.value = code;
+        doSearch();
+      }
+    }
+    if (imgMod){ imgMod.addEventListener('change', syncModalityFromImage); }
+    syncModalityFromImage();
     clrBtn && clrBtn.addEventListener('click', clearSelection);
     document.addEventListener('click', e => {
       const box = document.getElementById('nmTemplateBox');
