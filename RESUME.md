@@ -15,15 +15,15 @@
 - **P1-3:** إصلاح 404 العام — `index-assets/patterns/arabic-geometry.svg` + `index-assets/icons/favicon.svg` (حقن `<link rel=icon>` من مصدر واحد في nav.js).
 - **P1-4:** `omnirad-term.js` `A.resolveToId` منشور (`?v=resolveid`).
 - **P2-5/6:** `OmniRadToast` مشترك في nav.js؛ استُبدلت كل `alert()` (admin.js · studio-app.js · studio.html · daily.html) بـtoast موحّد ثنائي اللغة.
-- بصمات كاش: nav `?v=favicon` (20 صفحة + index).
+- **P2-7:** توحيد كل بصمات الكاش إلى رمز مؤرّخ واحد `?v=20260721` (91 مرجعاً · 20 ملفاً).
+- **تنظيف الجذر:** حُذف الملف الميّت + 4 ملفات md قديمة (INSTRUCTIONS · OMNIRAD_ISSUES · OMNIRAD_PROJECT → `docs/_archived/` · CLAUDE المكرّرة) → الجذر = README · RESUME · CLAUDE · LICENSE.
 
-**متبقٍّ من QA:** P2-7 (توحيد مخطّط بصمات الكاش — تجميلي) · P3-9 (فحص وصولية يدوي: تباين/كيبورد/ARIA).
+**متبقٍّ من QA:** P3-9 (فحص وصولية يدوي: تباين/كيبورد/ARIA) · أرشفة `pipeline/` (اختياري).
 
 **رسالة البداية للمحادثة القادمة:**
 ```
 تابع من هنا — QA: P3 فحص الوصولية (a11y)
 ```
-
 ---
 
 **أُنجز اليوم (21 يوليو 2026):**
