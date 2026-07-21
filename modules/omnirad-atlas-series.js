@@ -103,7 +103,7 @@
     // Fetch the current series meta to compute inputs
     const { data: head } = await client
       .from('atlas_series_public_v')
-      .select('loinc_code, body_part_examined, modality, plane')
+      .select('loinc_code, body_part_examined, modality, plane, organ')
       .eq('series_id', seriesId).maybeSingle();
     if (!head) return [];
     try {
@@ -112,6 +112,7 @@
         p_body_part:    head.body_part_examined || null,
         p_modality:     head.modality || null,
         p_plane:        head.plane || null,
+        p_organ:        head.organ || null,
         p_exclude_series: seriesId,
         p_limit:        3
       });
