@@ -731,6 +731,7 @@ body{background:transparent!important}
       seriesSlotFiles.push({ index: seriesSlotFiles.length + 1, levelEn: label, levelAr: label, file: null, previewUrl: null, vision: null, custom: true });
       paintSlots();
     });
+    wrap.querySelectorAll('input[type=file]').forEach(inp => {
       inp.addEventListener('click', e => e.stopPropagation());
       inp.addEventListener('change', e => { const f = e.target.files[0]; if (f) setSlotFile(+inp.dataset.slotInput, f); });
     });
