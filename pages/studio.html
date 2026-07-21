@@ -203,9 +203,10 @@ body{background:transparent!important}
           <input list="anat-all" data-key="regionCustom" id="inpRegionCustom" placeholder="Custom region…" style="display:none;margin-top:6px">
         </div>
         <div class="f"><label data-i18n="fields.organ">Organ</label>
-          <select data-key="organ" id="selOrgan" disabled>
+          <select data-key="organ" id="selOrgan" disabled title="📚 = predefined multi-level series available">
             <option value="">— Select region first —</option>
           </select>
+          <div style="font-size:10.5px;color:var(--text-m);margin-top:5px" data-i18n="fields.organSeriesLegend">📚 = predefined multi-level series available for this organ</div>
           <input list="anat-region" data-key="organCustom" id="inpOrganCustom" placeholder="Custom organ…" style="display:none;margin-top:6px">
         </div>
       </div>
@@ -334,7 +335,7 @@ body{background:transparent!important}
 <script src="../modules/supabase.js"></script>
 <script src="../modules/data/anatomy-master.js?v=loinc-r2"></script>
 <script src="../modules/data/anatomy-master-v2.js?v=loinc-r2"></script>
-<script src="../modules/data/series-slices.js?v=series-v2"></script>
+<script src="../modules/data/series-slices.js?v=series-v3"></script>
 <script src="../modules/omnirad-term.js"></script>
 <script src="../modules/omnirad-search.js"></script>
 <script src="../modules/omnirad-typography.js"></script>

@@ -46,7 +46,7 @@
       'studio.gateSigninBtn': 'Sign in',
       'fields.modality': 'Modality', 'fields.view': 'View / Plane', 'fields.laterality': 'Laterality',
       'fields.sex': 'Sex', 'fields.age': 'Age group', 'fields.purpose': 'Clinical purpose',
-      'fields.region': 'Anatomical region', 'fields.organ': 'Organ', 'fields.slice': 'Slice level (optional)',
+      'fields.region': 'Anatomical region', 'fields.organ': 'Organ', 'fields.organSeriesLegend': '📚 = predefined multi-level series available for this organ', 'fields.slice': 'Slice level (optional)',
       'fields.callouts': 'Structures to label (optional)', 'fields.seriesOn': 'Generate as series (multiple anatomical levels in one prompt)', 'fields.normalPath': 'Normal / pathological',
       'fields.pathCase': 'Expected pathology', 'fields.style': 'Rendering style', 'fields.labels': 'Labels',
       'fields.labelLang': 'Label language', 'fields.segmentation': 'Segmentation overlay',
@@ -75,7 +75,7 @@
       'studio.gateSigninBtn': 'تسجيل الدخول',
       'fields.modality': 'المودلتي', 'fields.view': 'المقطع / المستوى', 'fields.laterality': 'الجانب',
       'fields.sex': 'الجنس', 'fields.age': 'الفئة العمرية', 'fields.purpose': 'الغرض السريري',
-      'fields.region': 'المنطقة التشريحية', 'fields.organ': 'العضو', 'fields.slice': 'مستوى المقطع (اختياري)',
+      'fields.region': 'المنطقة التشريحية', 'fields.organ': 'العضو', 'fields.organSeriesLegend': '📚 = تتوفّر سلسلة مستويات جاهزة لهذا العضو', 'fields.slice': 'مستوى المقطع (اختياري)',
       'fields.callouts': 'تراكيب للتسمية (اختياري)', 'fields.seriesOn': 'توليد كسلسلة (عدّة مستويات تشريحية في برومبت واحد)', 'fields.normalPath': 'طبيعي / مرضي',
       'fields.pathCase': 'الحالة المرضية المتوقّعة', 'fields.style': 'نمط الصورة', 'fields.labels': 'الوسم',
       'fields.labelLang': 'لغة التسميات', 'fields.segmentation': 'التقطيع/التلوين',
@@ -251,8 +251,9 @@
         selO.innerHTML = '<option value="">— ' + (ar?'اختر المنطقة أولاً':'Select region first') + ' —</option>';
       } else {
         selO.disabled = false;
+        const hasSeries = r0 => !!(window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(r0));
         selO.innerHTML = '<option value="">— ' + (ar?'اختر العضو':'Select organ') + ' —</option>'
-          + scoped.map(r => `<option value="${r[0]}">${ar?(r[1]||r[0]):r[0]}</option>`).join('')
+          + scoped.map(r => `<option value="${r[0]}"${hasSeries(r[0])?' data-series="1"':''}>${ar?(r[1]||r[0]):r[0]}${hasSeries(r[0])?' 📚':''}</option>`).join('')
           + `<option value="${CUSTOM}">${ar?'✏️ إدخال يدوي…':'✏️ Custom…'}</option>`;
         const cur = state.s.organ || '';
         const inList = scoped.some(r => r[0] === cur);
