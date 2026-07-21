@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#0c1520"></rect>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#2dd4c8" stroke-width="3"></rect>
+  <text x="32" y="42" font-family="&#39;Saira&#39;,&#39;IBM Plex Sans&#39;,sans-serif" font-size="30" font-weight="800" text-anchor="middle" fill="#2dd4c8" letter-spacing="-1">OR</text>
+</svg>
