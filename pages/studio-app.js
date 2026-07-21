@@ -494,6 +494,21 @@
     }
     $('negRow').style.display = state.s.negOn ? 'block' : 'none';
     $('fname').textContent = suggestedName();
+    // Organ-level "series available" badge (professional, always visible when applicable)
+    const osb = $('organSeriesBadge');
+    if (osb){
+      const e = window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(state.s.organ);
+      if (e && state.s.organ){
+        const ar = isAr();
+        osb.style.display = 'inline-flex';
+        osb.style.cssText += ';align-items:center;gap:7px;padding:5px 11px;border-radius:999px;background:var(--acc-sub,rgba(45,212,200,.1));border:1px solid var(--acc,#2dd4c8);color:var(--acc,#2dd4c8);font-size:11px;font-weight:700';
+        osb.innerHTML = `📚 <span>${ar ? `سلسلة جاهزة · ${e.slices.length} مستويات` : `Series ready · ${e.slices.length} levels`}</span>`;
+        osb.title = e.slices.map((lv,i)=>`${i+1}. ${ar?lv.ar:lv.en}`).join('\n');
+      } else {
+        osb.style.display = 'none';
+        osb.innerHTML = '';
+      }
+    }
     renderSeriesInfo();
     // Neg tag on copy buttons
     qa('.neg-tag').forEach(el => el.style.display = state.s.negOn ? 'inline' : 'none');
