@@ -327,9 +327,9 @@
             ` : ''}
           </main>
 
-          <aside class="omr-sv-pos" aria-hidden="true">
+          <aside class="omr-sv-pos">
             <div class="omr-sv-pos-lbl">${isAr?'علوي':'Superior'}</div>
-            <div class="omr-sv-pos-bar"><div class="omr-sv-pos-dot" style="top:${posPct}%"></div></div>
+            <div class="omr-sv-pos-bar" data-posbar="1" role="slider" aria-label="${isAr?'موضع الشريحة':'Slice position'}" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${state.idx+1}" tabindex="0"><div class="omr-sv-pos-dot" style="top:${posPct}%"></div></div>
             <div class="omr-sv-pos-lbl">${isAr?'سفلي':'Inferior'}</div>
             <div class="omr-sv-pos-pct mono">${Math.round(posPct)}%</div>
             <div class="omr-sv-pos-word">${esc(positionLabel)}</div>
@@ -400,6 +400,26 @@
       if (state.onOpenRelated) state.onOpenRelated(sid);
     }));
 
+    // Draggable Superior→Inferior position slider (click or drag to seek slices)
+    const posBar = root.querySelector('[data-posbar]');
+    if (posBar){
+      const seek = (clientY) => {
+        const r = posBar.getBoundingClientRect();
+        const ratio = clamp((clientY - r.top) / r.height, 0, 1);
+        const idx = Math.round(ratio * (state.slices.length - 1));
+        if (idx !== state.idx){ state.idx = idx; updateFrame(); persistState(); }
+      };
+      posBar.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        if (cineTimer){ toggleCine(); } // pause cine while scrubbing
+        seek(e.clientY);
+        const mv = ev => seek(ev.clientY);
+        const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
+        document.addEventListener('mousemove', mv);
+        document.addEventListener('mouseup', up);
+      });
+    }
+
     // Wheel / drag on stage
     const stage = root.querySelector('[data-stage]');
     if (stage){
@@ -431,6 +451,7 @@
     const posPct = total > 1 ? (state.idx/(total-1)*100) : 0;
     const dot = root.querySelector('.omr-sv-pos-dot'); if (dot) dot.style.top = posPct + '%';
     const pct = root.querySelector('.omr-sv-pos-pct'); if (pct) pct.textContent = Math.round(posPct) + '%';
+    const pbar = root.querySelector('[data-posbar]'); if (pbar) pbar.setAttribute('aria-valuenow', String(state.idx + 1));
     root.querySelectorAll('.omr-sv-thumb').forEach((t,i) => t.classList.toggle('on', i === state.idx));
     const pv = root.querySelector('[data-act="prev"]'); if (pv) pv.disabled = state.idx === 0;
     const nx = root.querySelector('[data-act="next"]'); if (nx) nx.disabled = state.idx === total - 1;
@@ -746,8 +767,9 @@
 .omr-sv-bc-foot button:hover{background:rgba(45,212,200,.1);border-color:rgba(45,212,200,.45);color:#2dd4c8}
 .omr-sv-pos{flex:0 0 68px;background:#020617;border-radius:8px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid rgba(148,163,184,.10);min-height:0}
 .omr-sv-pos-lbl{font-size:9.5px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
-.omr-sv-pos-bar{position:relative;flex:1;width:6px;background:rgba(148,163,184,.14);border-radius:3px;min-height:200px}
-.omr-sv-pos-dot{position:absolute;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#2dd4c8;box-shadow:0 0 0 3px rgba(45,212,200,.25);transition:top .18s}
+.omr-sv-pos-bar{position:relative;flex:1;width:6px;background:rgba(148,163,184,.14);border-radius:3px;min-height:200px;cursor:pointer;padding:0 9px;background-clip:content-box}
+.omr-sv-pos-bar:focus-visible{outline:2px solid #2dd4c8;outline-offset:3px}
+.omr-sv-pos-dot{position:absolute;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#2dd4c8;box-shadow:0 0 0 3px rgba(45,212,200,.25);transition:top .12s;pointer-events:none}
 .omr-sv-pos-pct{font-size:11px;color:#2dd4c8;font-weight:700}
 .omr-sv-pos-word{font-size:9.5px;color:#94a3b8;writing-mode:vertical-rl;text-align:center}
 /* Filmstrip */
