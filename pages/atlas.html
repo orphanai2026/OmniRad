@@ -634,6 +634,7 @@ function selectStructure(id){
   try { renderSubPicker(); } catch(e){ console.warn('[atlas] renderSubPicker', e); }
   try { renderInfo(); } catch(e){ console.warn('[atlas] renderInfo', e); }
   try { loadCurrent(); } catch(e){ console.warn('[atlas] loadCurrent', e); }
+  try { if (window.refreshAtlasSeriesSection) window.refreshAtlasSeriesSection(); } catch(e){ console.warn('[atlas] refreshAtlasSeriesSection', e); }
 }
 
 /* ─────── Load current image ─────── */
@@ -1201,34 +1202,46 @@ selectStructure('brain');
   // 1) Deep-link: ?series_id=X&slice=Y opens viewer immediately
   try { await window.OmniRadAtlasSeries.handleUrl(); } catch(e){ console.warn('[atlas] handleUrl', e); }
 
-  // 2) Populate the Series section (scoped to current URL organ/modality if present)
-  try {
-    const url = new URL(location.href);
-    const opts = {
-      organ:    url.searchParams.get('organ')    || undefined,
-      modality: url.searchParams.get('modality') || undefined,
-      plane:    url.searchParams.get('plane')    || undefined,
-      limit:    12
-    };
-    const rows = await window.OmniRadAtlasSeries.list(opts);
-    const box  = document.getElementById('atlasSeriesSection');
-    if (!box) return;
-    if (!rows.length){ box.innerHTML = ''; return; }
-    const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
-    const title = lang === 'ar' ? 'السلاسل التصويرية' : 'Series';
-    const sub   = lang === 'ar' ? 'اضغط أي سلسلة لفتح المشاهد الكامل' : 'Tap any series to open the full viewer';
-    box.innerHTML = `
-      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px">
-        <div>
-          <div style="font-size:12.5px;font-weight:700;color:var(--text)">📚 ${title}</div>
-          <div style="font-size:10.5px;color:var(--text-m);margin-top:2px">${sub}</div>
+  // 2) Populate the Series section — scoped to the CURRENTLY SELECTED structure.
+  //    BUG FIX (21 Jul 2026): this used to run once at load time only, reading
+  //    ?organ= from the URL at that instant. Selecting a different structure in
+  //    the sidebar (selectStructure()) never re-ran it, so the panel stayed
+  //    frozen on whichever organ the page happened to load with (e.g. Brain)
+  //    even after navigating to Liver. Now exposed as a function and re-invoked
+  //    from selectStructure() on every navigation.
+  async function refreshAtlasSeriesSection(){
+    if (!window.OmniRadAtlasSeries) return;
+    try {
+      const url = new URL(location.href);
+      const st = (typeof currentStruct === 'function') ? currentStruct() : null;
+      const opts = {
+        organ:    (st && st.en) || url.searchParams.get('organ')    || undefined,
+        modality: url.searchParams.get('modality') || undefined,
+        plane:    url.searchParams.get('plane')    || undefined,
+        limit:    12
+      };
+      const rows = await window.OmniRadAtlasSeries.list(opts);
+      const box  = document.getElementById('atlasSeriesSection');
+      if (!box) return;
+      if (!rows.length){ box.innerHTML = ''; return; }
+      const lang = (window.OmniRadI18n && OmniRadI18n.lang) || 'en';
+      const title = lang === 'ar' ? 'السلاسل التصويرية' : 'Series';
+      const sub   = lang === 'ar' ? 'اضغط أي سلسلة لفتح المشاهد الكامل' : 'Tap any series to open the full viewer';
+      box.innerHTML = `
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px">
+          <div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--text)">📚 ${title}</div>
+            <div style="font-size:10.5px;color:var(--text-m);margin-top:2px">${sub}</div>
+          </div>
+          <span style="font-size:10.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">${rows.length}</span>
         </div>
-        <span style="font-size:10.5px;color:var(--text-m);font-family:'IBM Plex Mono',monospace">${rows.length}</span>
-      </div>
-      <div class="atlas-series-grid" id="atlasSeriesGrid">${rows.map(window.OmniRadAtlasSeries.renderCard).join('')}</div>
-    `;
-    window.OmniRadAtlasSeries.attachClickHandlers(document.getElementById('atlasSeriesGrid'));
-  } catch(e){ console.warn('[atlas] series-section init', e); }
+        <div class="atlas-series-grid" id="atlasSeriesGrid">${rows.map(window.OmniRadAtlasSeries.renderCard).join('')}</div>
+      `;
+      window.OmniRadAtlasSeries.attachClickHandlers(document.getElementById('atlasSeriesGrid'));
+    } catch(e){ console.warn('[atlas] series-section init', e); }
+  }
+  window.refreshAtlasSeriesSection = refreshAtlasSeriesSection;
+  await refreshAtlasSeriesSection();
 })();
 </script>
 </body>
