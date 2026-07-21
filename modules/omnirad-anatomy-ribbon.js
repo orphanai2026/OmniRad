@@ -79,19 +79,24 @@
     return 'UNKNOWN';
   }
 
-  function dominantGroup(structures){
-    if (!Array.isArray(structures) || !structures.length) return 'UNKNOWN';
+  function dominantGroup(structures, regionHint){
+    if (!Array.isArray(structures) || !structures.length) return regionHint || 'UNKNOWN';
+    // Vessels that merely pass THROUGH a body region (e.g. the aortic arch,
+    // SVC, azygos vein or pulmonary arteries inside a chest series) should
+    // count toward that region — not flip the whole slice to "Vascular".
+    // VASCULAR stays only for dedicated vascular studies (hint absent/vascular).
+    const foldVasc = regionHint && regionHint !== 'VASCULAR';
     const counts = {};
     for (const s of structures){
-      const g = classify(s);
+      let g = classify(s);
+      if (foldVasc && g === 'VASCULAR') g = regionHint;
       counts[g] = (counts[g] || 0) + 1;
     }
     let best = 'UNKNOWN', max = 0;
     for (const g of Object.keys(counts)){
       if (counts[g] > max && g !== 'UNKNOWN'){ max = counts[g]; best = g; }
     }
-    // If all UNKNOWN, fall through
-    if (best === 'UNKNOWN' && counts.UNKNOWN) return 'UNKNOWN';
+    if (best === 'UNKNOWN') return regionHint || 'UNKNOWN';
     return best;
   }
 
@@ -119,7 +124,7 @@
     const totalSlices = sorted.length;
 
     const cells = sorted.map(s => {
-      const g = dominantGroup(s.structures || []);
+      const g = dominantGroup(s.structures || [], options.regionHint);
       const color = GROUP_COLORS[g] || GROUP_COLORS.UNKNOWN;
       const tip = (s.structures || []).slice(0, 6).join(' · ');
       return {
