@@ -61,6 +61,17 @@
     'mediastinum':{ label:'Mediast 350/40',bri:1.02, con: 1.28 }
   };
 
+  // ── Brightness / Contrast (unified per 16 Jul 2026 natural-bc decision) ──
+  //   AI-generated PNGs carry no HU/MR signal, so DICOM Window/Level presets
+  //   have no scientific basis here. We expose honest Brightness & Contrast
+  //   sliders (−100..+100) mapped to CSS filters, matching the single-image
+  //   atlas viewer (atlas.html) so behaviour is consistent platform-wide.
+  function bcFilter(st){
+    const b = Math.max(0, 1 + (st.bright||0)/100);    // 0..2
+    const c = Math.max(0, 1 + (st.contrast||0)/100);  // 0..2
+    return `brightness(${b.toFixed(2)}) contrast(${c.toFixed(2)})` + (st.invert ? ' invert(1)' : '');
+  }
+
   function ensureRoot(){
     if (root) return root;
     root = document.createElement('div');
@@ -85,7 +96,7 @@
     try {
       localStorage.setItem('omr:sv:' + state.seriesId, JSON.stringify({
         idx: state.idx, zoom: state.zoom, panX: state.panX, panY: state.panY,
-        invert: state.invert, wl: state.wl, overlayLvl: state.overlayLvl, fps: state.fps
+        invert: state.invert, bright: state.bright, contrast: state.contrast, overlayLvl: state.overlayLvl, fps: state.fps
       }));
     } catch(_){}
   }
@@ -228,9 +239,8 @@
           </button>`).join('')
       : '';
 
-    // W/L filter as CSS
-    const wl = WL_PRESETS[state.wl || 'none'];
-    const filterCss = `brightness(${wl.bri}) contrast(${wl.con})` + (state.invert ? ' invert(1)' : '');
+    // Brightness/Contrast filter as CSS (honest — no fake HU windows)
+    const filterCss = bcFilter(state);
     const transformCss = `translate(${state.panX||0}px, ${state.panY||0}px) scale(${state.zoom||1})`;
 
     // Overlay visibility levels: 0=full · 1=minimal · 2=hidden
@@ -238,10 +248,16 @@
     const showOv = olv < 2;
     const showAllOv = olv === 0;
 
-    // W/L menu shown when open
-    const wlMenu = state.wlMenu
-      ? `<div class="omr-sv-wl-menu">
-          ${Object.keys(WL_PRESETS).map(k => `<button data-wl="${k}" class="${state.wl===k?'on':''}">${esc(WL_PRESETS[k].label)}</button>`).join('')}
+    // Brightness/Contrast popover shown when open
+    const bcMenu = state.bcMenu
+      ? `<div class="omr-sv-bc-menu">
+          <label class="omr-sv-bc-row"><span>${isAr?'السطوع':'Brightness'}</span>
+            <input type="range" min="-100" max="100" step="1" value="${state.bright||0}" data-bc="bright">
+            <b class="mono" data-bc-val="bright">${state.bright||0}</b></label>
+          <label class="omr-sv-bc-row"><span>${isAr?'التباين':'Contrast'}</span>
+            <input type="range" min="-100" max="100" step="1" value="${state.contrast||0}" data-bc="contrast">
+            <b class="mono" data-bc-val="contrast">${state.contrast||0}</b></label>
+          <div class="omr-sv-bc-foot"><button data-bc-reset="1">${isAr?'إعادة الضبط':'Reset'}</button></div>
         </div>`
       : '';
 
@@ -255,7 +271,7 @@
             ${state.tier ? `<span class="omr-sv-tier tier-${esc(state.tier)}">${esc(state.tier)}</span>` : ''}
           </div>
           <div class="omr-sv-actions">
-            <button class="omr-sv-btn" data-act="wl" title="${isAr?'إعدادات النافذة/المستوى':'Window/Level'} (L)">☀ W/L</button>
+            <button class="omr-sv-btn ${state.bcMenu?'on':''}" data-act="bc" title="${isAr?'السطوع / التباين':'Brightness / Contrast'} (L)">◐ B/C</button>
             <button class="omr-sv-btn ${state.invert?'on':''}" data-act="invert" title="${isAr?'قلب':'Invert'} (I)">⇅</button>
             <button class="omr-sv-btn" data-act="zoomout" title="- (${isAr?'تصغير':'Zoom out'})">−</button>
             <button class="omr-sv-btn" data-act="zoomin"  title="+ (${isAr?'تكبير':'Zoom in'})">+</button>
@@ -278,7 +294,7 @@
           </aside>
 
           <main class="omr-sv-stage" data-stage="1">
-            ${wlMenu}
+            ${bcMenu}
             <div class="omr-sv-img-wrap"
                  style="filter:${filterCss};transform:${transformCss}">
               <img src="${esc(cur.url)}" alt="Slice ${esc(cur.slice_index)}" draggable="false">
@@ -329,10 +345,10 @@
             <button class="omr-sv-btn" data-act="next" ${state.idx===total-1?'disabled':''} title="↓">›</button>
           </div>
           <div class="omr-sv-fps">
-            <label class="mono">FPS ${state.fps||8}</label>
-            <input type="range" min="5" max="15" step="1" value="${state.fps||8}" data-fps>
+            <label class="mono">FPS ${state.fps||5}</label>
+            <input type="range" min="1" max="15" step="1" value="${state.fps||5}" data-fps>
           </div>
-          <div class="omr-sv-hint mono">↑↓ ${isAr?'شريحة':'slice'} · Wheel · Ctrl+Wheel ${isAr?'تكبير':'zoom'} · Space cine · I invert · L W/L · H overlay · O R/L · R reset · Esc</div>
+          <div class="omr-sv-hint mono">↑↓ ${isAr?'شريحة':'slice'} · Wheel · Ctrl+Wheel ${isAr?'تكبير':'zoom'} · Space cine · I invert · L B/C · H overlay · O R/L · R reset · Esc</div>
         </footer>
 
         ${relHtml ? `
@@ -357,20 +373,27 @@
     root.querySelector('[data-act="overlay"]').addEventListener('click', () => { state.overlayLvl = (state.overlayLvl+1) % 3; render(); persistState(); });
     const orientBtn = root.querySelector('[data-act="orient"]');
     if (orientBtn) orientBtn.addEventListener('click', () => { state.orient = state.orient===false; render(); persistState(); });
-    root.querySelector('[data-act="wl"]').addEventListener('click', (e) => { e.stopPropagation(); state.wlMenu = !state.wlMenu; render(); });
+    root.querySelector('[data-act="bc"]').addEventListener('click', (e) => { e.stopPropagation(); state.bcMenu = !state.bcMenu; render(); });
     root.querySelector('[data-act="snap"]').addEventListener('click', snapshot);
-    root.querySelectorAll('[data-wl]').forEach(b => b.addEventListener('click', () => {
-      state.wl = b.getAttribute('data-wl'); state.wlMenu = false; render(); persistState();
+    root.querySelectorAll('[data-bc]').forEach(inp => inp.addEventListener('input', () => {
+      const k = inp.getAttribute('data-bc');
+      state[k] = parseInt(inp.value, 10) || 0;
+      const wrap = root.querySelector('.omr-sv-img-wrap'); if (wrap) wrap.style.filter = bcFilter(state);
+      const vb = root.querySelector(`[data-bc-val="${k}"]`); if (vb) vb.textContent = state[k];
+      persistState();
     }));
+    const bcReset = root.querySelector('[data-bc-reset]');
+    if (bcReset) bcReset.addEventListener('click', () => { state.bright = 0; state.contrast = 0; render(); persistState(); });
     const fpsSlider = root.querySelector('[data-fps]');
     if (fpsSlider) fpsSlider.addEventListener('input', () => {
-      state.fps = parseInt(fpsSlider.value, 10) || 8;
+      state.fps = parseInt(fpsSlider.value, 10) || 5;
+      const lbl = fpsSlider.parentElement.querySelector('label'); if (lbl) lbl.textContent = 'FPS ' + state.fps;
       if (cineTimer){ clearInterval(cineTimer); cineTimer = null; toggleCine(); }
       persistState();
     });
     root.querySelectorAll('.omr-sv-thumb').forEach(t => t.addEventListener('click', () => {
       state.idx = parseInt(t.getAttribute('data-idx'), 10);
-      render(); persistState();
+      updateFrame(); persistState();
     }));
     root.querySelectorAll('.omr-sv-rel').forEach(el => el.addEventListener('click', () => {
       const sid = el.getAttribute('data-rel-sid');
@@ -392,13 +415,42 @@
   }
 
   // ── Interaction helpers ──────────────────────────────────────────────
+  // In-place frame patch (atlas mode) — updates ONLY what changes per slice.
+  // Critical: a full render() rebuilds the whole toolbar via innerHTML, so
+  // doing it every cine frame (several ×/sec) destroyed & recreated the Pause
+  // button between a click's mousedown and mouseup, swallowing the click — the
+  // viewer could not be paused. Patching in place keeps every control stable.
+  function updateFrame(){
+    if (!state || state.mode !== 'atlas') return render();
+    const total = state.slices.length, cur = state.slices[state.idx];
+    const isAr = ((window.OmniRadI18n && window.OmniRadI18n.lang) || 'en') === 'ar';
+    const img = root.querySelector('.omr-sv-img-wrap img');
+    if (img && img.getAttribute('src') !== cur.url) img.src = cur.url;
+    const tr = root.querySelector('.omr-sv-ov.tr b'); if (tr) tr.textContent = `Slice ${pad2(cur.slice_index)}/${pad2(total)}`;
+    const ft = root.querySelector('.omr-sv-pos-txt'); if (ft) ft.textContent = `${pad2(cur.slice_index)} / ${pad2(total)}`;
+    const posPct = total > 1 ? (state.idx/(total-1)*100) : 0;
+    const dot = root.querySelector('.omr-sv-pos-dot'); if (dot) dot.style.top = posPct + '%';
+    const pct = root.querySelector('.omr-sv-pos-pct'); if (pct) pct.textContent = Math.round(posPct) + '%';
+    root.querySelectorAll('.omr-sv-thumb').forEach((t,i) => t.classList.toggle('on', i === state.idx));
+    const pv = root.querySelector('[data-act="prev"]'); if (pv) pv.disabled = state.idx === 0;
+    const nx = root.querySelector('[data-act="next"]'); if (nx) nx.disabled = state.idx === total - 1;
+    const sb = root.querySelector('.omr-sv-side-body');
+    if (sb){
+      const structs = (cur && cur.structures) || [];
+      sb.innerHTML = structs.length
+        ? structs.map(s => `<span class="omr-sv-struct" data-omnirad-term="${esc(s)}">${esc(s)}</span>`).join('')
+        : `<span class="omr-sv-empty">${isAr?'لا بنى مسجّلة لهذه الشريحة':'No structures tagged for this slice'}</span>`;
+      if (window.OmniRadTerm && typeof window.OmniRadTerm.mount === 'function'){ try { window.OmniRadTerm.mount(sb); } catch(_){} }
+    }
+  }
+
   function go(delta){
     if (!state) return;
     const n = state.slices.length;
     const next = clamp(state.idx + delta, 0, n - 1);
     if (next === state.idx) return;
     state.idx = next;
-    render();
+    (state.mode === 'atlas' ? updateFrame() : render());
     persistState();
   }
 
@@ -416,15 +468,16 @@
   }
 
   function toggleCine(){
-    if (cineTimer){ clearInterval(cineTimer); cineTimer = null; render(); return; }
-    const fps = state.fps || (state.mode === 'atlas' ? 8 : 3);
+    const setIcon = () => { const b = root.querySelector('[data-act="cine"]'); if (b) b.textContent = cineTimer ? '⏸' : '▶'; };
+    if (cineTimer){ clearInterval(cineTimer); cineTimer = null; setIcon(); return; }
+    const fps = state.fps || (state.mode === 'atlas' ? 5 : 3);
     cineTimer = setInterval(() => {
       if (!state){ clearInterval(cineTimer); cineTimer = null; return; }
       state.idx = (state.idx + 1) % state.slices.length;
-      render();
+      (state.mode === 'atlas' ? updateFrame() : render());
       persistState();
     }, Math.round(1000 / fps));
-    render();
+    setIcon();
   }
 
   function toggleFullscreen(){
@@ -446,7 +499,7 @@
   }
   function resetView(){
     if (!state) return;
-    state.zoom = 1; state.panX = 0; state.panY = 0; state.invert = false; state.wl = 'none';
+    state.zoom = 1; state.panX = 0; state.panY = 0; state.invert = false; state.bright = 0; state.contrast = 0;
     render(); persistState();
   }
 
@@ -476,9 +529,8 @@
       const ny = origY + (ev.clientY - startY);
       state.panX = nx; state.panY = ny;
       if (wrap){
-        const wl = WL_PRESETS[state.wl || 'none'];
         wrap.style.transform = `translate(${nx}px, ${ny}px) scale(${state.zoom})`;
-        wrap.style.filter = `brightness(${wl.bri}) contrast(${wl.con})` + (state.invert ? ' invert(1)' : '');
+        wrap.style.filter = bcFilter(state);
       }
     };
     const up = () => {
@@ -502,9 +554,8 @@
       c.width  = img.naturalWidth;
       c.height = img.naturalHeight;
       const ctx = c.getContext('2d');
-      // W/L via CSS filter unavailable on 2D ctx; approximate with contrast/brightness
-      const wl = WL_PRESETS[state.wl || 'none'];
-      ctx.filter = `brightness(${wl.bri}) contrast(${wl.con})` + (state.invert ? ' invert(1)' : '');
+      // Bake the current Brightness/Contrast/Invert onto the exported PNG
+      ctx.filter = bcFilter(state);
       ctx.drawImage(img, 0, 0);
       ctx.filter = 'none';
       // Overlay text
@@ -547,7 +598,7 @@
       case '-': case '_': if (state.mode==='atlas') zoomBy(-0.25); break;
       case 'r': case 'R': if (state.mode==='atlas') resetView(); else trigger('onReject'); break;
       case 'i': case 'I': if (state.mode==='atlas'){ state.invert = !state.invert; render(); persistState(); } break;
-      case 'l': case 'L': if (state.mode==='atlas'){ state.wlMenu = !state.wlMenu; render(); } break;
+      case 'l': case 'L': if (state.mode==='atlas'){ state.bcMenu = !state.bcMenu; render(); } break;
       case 'h': case 'H': if (state.mode==='atlas'){ state.overlayLvl = (state.overlayLvl+1)%3; render(); persistState(); } break;
       case 'o': case 'O': if (state.mode==='atlas' && orientationMarkers(state.plane)){ state.orient = state.orient===false; render(); persistState(); } break;
       case 'a': case 'A': if (state.mode!=='atlas') trigger('onApprove'); break;
@@ -569,7 +620,7 @@
     ensureRoot();
     state = Object.assign({
       mode: 'review', idx: 0, cineFps: 3, fps: 3, outliers: [],
-      zoom: 1, panX: 0, panY: 0, invert: false, wl: 'none', overlayLvl: 0, wlMenu: false
+      zoom: 1, panX: 0, panY: 0, invert: false, bright: 0, contrast: 0, overlayLvl: 0, bcMenu: false
     }, opts || {});
     if (!Array.isArray(state.slices) || !state.slices.length) return;
     state.idx = clamp(state.startIndex || 0, 0, state.slices.length - 1);
@@ -589,15 +640,15 @@
   function openAtlas(opts){
     opts = opts || {};
     opts.mode = 'atlas';
-    opts.fps = opts.fps || 8;
+    opts.fps = opts.fps || 5;
     // Restore persisted state if available — but ALWAYS open at fit-to-view
     // (zoom 1, no pan). Restoring a stale zoom made images open cropped.
     const persisted = loadPersistedState(opts.seriesId);
     if (persisted){
       Object.assign(opts, {
         zoom: 1, panX: 0, panY: 0,
-        invert: persisted.invert, wl: persisted.wl,
-        overlayLvl: persisted.overlayLvl, fps: persisted.fps
+        invert: persisted.invert, bright: persisted.bright||0, contrast: persisted.contrast||0,
+        overlayLvl: persisted.overlayLvl, fps: persisted.fps || 5
       });
       if (opts.startIndex == null && persisted.idx != null) opts.startIndex = persisted.idx;
     }
@@ -686,6 +737,13 @@
 .omr-sv-wl-menu{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .omr-sv-wl-menu button{background:transparent;border:1px solid rgba(148,163,184,.2);color:#cbd5e1;padding:5px 10px;border-radius:5px;font:600 11px 'IBM Plex Sans',sans-serif;cursor:pointer}
 .omr-sv-wl-menu button.on{background:rgba(45,212,200,.16);border-color:rgba(45,212,200,.5);color:#2dd4c8}
+.omr-sv-bc-menu{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5);min-width:260px}
+.omr-sv-bc-row{display:grid;grid-template-columns:64px 1fr 38px;align-items:center;gap:10px;font:600 11.5px 'IBM Plex Sans','Noto Sans Arabic',sans-serif;color:#cbd5e1}
+.omr-sv-bc-row input[type=range]{accent-color:#2dd4c8;width:100%;cursor:pointer}
+.omr-sv-bc-row b{color:#2dd4c8;text-align:end;font-size:11px}
+.omr-sv-bc-foot{display:flex;justify-content:flex-end}
+.omr-sv-bc-foot button{background:transparent;border:1px solid rgba(148,163,184,.25);color:#cbd5e1;padding:5px 12px;border-radius:6px;font:600 11px 'IBM Plex Sans','Noto Sans Arabic',sans-serif;cursor:pointer}
+.omr-sv-bc-foot button:hover{background:rgba(45,212,200,.1);border-color:rgba(45,212,200,.45);color:#2dd4c8}
 .omr-sv-pos{flex:0 0 68px;background:#020617;border-radius:8px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid rgba(148,163,184,.10);min-height:0}
 .omr-sv-pos-lbl{font-size:9.5px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
 .omr-sv-pos-bar{position:relative;flex:1;width:6px;background:rgba(148,163,184,.14);border-radius:3px;min-height:200px}
