@@ -311,15 +311,27 @@
     'DEXA':             {en:'natural bone-density gradient (no blocky or repeating pattern)', ar:'تدرّج كثافة عظمية طبيعي (بلا كتل أو نمط متكرّر)'}
   };
   // B4 · always-on structural-realism guard, keyed by rendering style (modality);
-  // spine/vertebral organs additionally get an explicit curvature constraint.
+  // spine/vertebral organs additionally get an explicit curvature constraint;
+  // ALL organs get a universal fascial-plane/tissue-separation fidelity clause.
   function realismLine(modality, region, organ, lang){
     const L = lang === 'ar';
     const mr = MODALITY_REALISM[modality] || { en:'organic, non-repetitive texture (no tiling pattern)', ar:'نسيج عضوي غير متكرّر (بلا نمط تبليط)' };
     const isSpine = SPINE_RE.test(((region||'') + ' ' + (organ||'')));
+    const fascial = L
+      ? 'كل التراكيب التشريحية المجاورة (عضلات، أعضاء، أوعية) منفصلة بحدود نسيجية/لفافية عضوية طبيعية — بلا نمط محاك (woven/lattice) أو متكرّر في أي نسيج رخو، وبطون عضلية مميّزة باتجاه ألياف يتغيّر حسب الموقع'
+      : 'all adjacent anatomical structures (muscles, organs, vessels) show natural, organic fascial/tissue-plane separation — no woven/lattice or repeating pattern in any soft tissue, with distinct muscle bellies and fiber orientation that varies by location';
     if (L){
-      return `${mr.ar}؛ نِسَب وتفاصيل تشريحية مطابقة للتشريح البشري الحقيقي — لا مخطّط توضيحي مُبسّط${isSpine ? '؛ انحناء فقري طبيعي وسلس فيسيولوجياً، بلا انحناء حدبي مفرط أو انحراف جنبي' : ''}.`;
+      return `${mr.ar}؛ نِسَب وتفاصيل تشريحية مطابقة للحقيقة التشريحية البشرية الكاملة — لا مخطّط توضيحي مُبسّط؛ ${fascial}${isSpine ? '؛ انحناء فقري طبيعي وسلس فيسيولوجياً، بلا انحناء حدبي مفرط أو انحراف جنبي' : ''}.`;
     }
-    return `${mr.en}; anatomical proportions and detail matching real human anatomy — not a simplified schematic${isSpine ? '; physiologically normal, smooth spinal curvature, no exaggerated kyphosis or scoliotic deviation' : ''}.`;
+    return `${mr.en}; anatomical proportions and detail matching complete real human anatomical truth — not a simplified schematic; ${fascial}${isSpine ? '; physiologically normal, smooth spinal curvature, no exaggerated kyphosis or scoliotic deviation' : ''}.`;
+  }
+
+  // D15 · scope/FOV lock — keeps the generator confined to the requested region
+  // and forbids drifting into wrong/neighboring/unrelated anatomy.
+  function scopeLine(lang){
+    return lang === 'ar'
+      ? 'قصر التشريح المرسوم على المنطقة/المستوى المحدَّد أعلاه بالضبط فقط — بلا امتداد أو إضافة أو تلميح لبنى تشريحية مجاورة أو غير مرتبطة خارج حقل الرؤية المحدَّد؛ كل بنية مرسومة يجب أن تطابق التشريح البشري الحقيقي الصحيح فيسيولوجياً وموقعياً لهذه المنطقة بالضبط — تحاكي الواقع الحقيقي لا مخطّطاً تقريبياً.'
+      : 'Strictly confine the depicted anatomy to the exact region/level specified above — do not extend into, add, or hint at neighboring or unrelated anatomical structures outside the described field of view; every structure shown must match real, physiologically and positionally correct human anatomy for this exact region — mimicking true reality, not an approximate schematic.';
   }
 
   // ── Assemble ONE single-image prompt for a language ──────────────────
@@ -343,6 +355,7 @@
       P.push(`ارسم بدقّة تشريحية: ${d.findingsAr}${structs.length ? '. البنى المطلوبة: ' + structs.join('، ') : ''}.`);
       if (d.pathologyAr) P.push(`الآفة: ${d.pathologyAr}.`);
       P.push(realismLine(d.modality, d.region, d.organ, 'ar'));
+      P.push(scopeLine('ar'));
       P.push('\n═══ مواصفات الصورة ═══');
       P.push(`• الحجم: ${asp.w} × ${asp.h} بكسل بالضبط · النسبة ${asp.label}`);
       P.push('• الصيغة: PNG عالية الدقة بلا عيوب ضغط');
@@ -363,6 +376,7 @@
       P.push(`Depict, anatomically accurate: ${d.findingsEn}${structs.length ? '. Required structures: ' + structs.join(', ') : ''}.`);
       if (d.pathologyEn) P.push(`Pathology: ${d.pathologyEn}.`);
       P.push(realismLine(d.modality, d.region, d.organ, 'en'));
+      P.push(scopeLine('en'));
       P.push('\n═══ IMAGE SPECIFICATIONS ═══');
       P.push(`• Size: exactly ${asp.w} × ${asp.h} px · aspect ${asp.label}`);
       P.push('• Format: PNG, high fidelity, no compression artifacts');
@@ -400,6 +414,7 @@
       P.push('\n═══ المستويات (صورة واحدة لكل مستوى، بهذا الترتيب) ═══');
       levels.forEach((lv, i) => { P.push(`${batch.from + i}. ${lv.ar}${(lv.structures && lv.structures.length) ? ' — البنى: ' + lv.structures.join('، ') : ''}`); });
       P.push(realismLine(d.modality, d.region, s.organEn, 'ar'));
+      P.push(scopeLine('ar'));
       P.push('\n═══ مواصفات الصورة ═══');
       P.push(`• الحجم: ${asp.w} × ${asp.h} بكسل لكل صورة · النسبة ${asp.label}`);
       P.push('• الصيغة: PNG عالية الدقة · الخلفية: أسود نقي (#000000)');
@@ -418,6 +433,7 @@
       P.push('\n═══ LEVELS (one image per level, in this exact order) ═══');
       levels.forEach((lv, i) => { P.push(`${batch.from + i}. ${lv.en}${(lv.structures && lv.structures.length) ? ' — key structures: ' + lv.structures.join(', ') : ''}`); });
       P.push(realismLine(d.modality, d.region, s.organEn, 'en'));
+      P.push(scopeLine('en'));
       P.push('\n═══ IMAGE SPECIFICATIONS ═══');
       P.push(`• Size: exactly ${asp.w} × ${asp.h} px each · aspect ${asp.label}`);
       P.push('• Format: PNG, high fidelity · Background: pure black (#000000)');
