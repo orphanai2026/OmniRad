@@ -295,6 +295,33 @@
     return lang === 'ar' ? 'إسقاط' : 'projection';
   }
 
+  const SPINE_RE = /(spine|spinal|vertebr|thoracic spine|lumbar spine|cervical spine|c-spine)/i;
+  const MODALITY_REALISM = {
+    'CT':               {en:'natural trabecular bone and soft-tissue texture with organic random variation (no repeating tile pattern), realistic Hounsfield-like noise', ar:'نسيج عظمي تربيقي ورخو طبيعي بتغيّر عضوي عشوائي (بلا نمط تبليط متكرّر)، ضجيج واقعي شبيه بوحدات هاونسفيلد'},
+    'MRI':              {en:'organic MR signal texture with natural random variation (no repeating tile pattern)', ar:'نسيج إشارة رنين عضوي بتغيّر عشوائي طبيعي (بلا نمط تبليط متكرّر)'},
+    'X-Ray':             {en:'natural trabecular bone pattern and realistic soft-tissue overlap (no repeating tile pattern)', ar:'نمط عظمي تربيقي طبيعي وتراكب نسيجي رخو واقعي (بلا نمط تبليط متكرّر)'},
+    'Mammography':      {en:'natural fibroglandular tissue pattern with organic variation (no repeating tile pattern)', ar:'نمط نسيج غدّي ليفي طبيعي بتغيّر عضوي (بلا نمط تبليط متكرّر)'},
+    'Ultrasound':       {en:'natural speckle texture and realistic tissue boundaries (not uniform noise or a repeating pattern)', ar:'نسيج بقعي (speckle) طبيعي وحدود نسيجية واقعية (لا ضجيج موحّد أو نمط متكرّر)'},
+    'PET/CT':           {en:'physiologically natural, smoothly varying uptake distribution (no blocky or repeating pattern)', ar:'توزيع امتصاص فيسيولوجي طبيعي متدرّج (بلا كتل أو نمط متكرّر)'},
+    'Nuclear Medicine': {en:'physiologically natural, smoothly varying uptake distribution (no blocky or repeating pattern)', ar:'توزيع امتصاص فيسيولوجي طبيعي متدرّج (بلا كتل أو نمط متكرّر)'},
+    'Angiography':      {en:'naturally, organically branching vessel pattern (no symmetric or repeating tiling)', ar:'تفرّع وعائي عضوي طبيعي (بلا تماثل أو تبليط متكرّر)'},
+    'Fluoroscopy':      {en:'natural anatomical detail with organic tissue texture (no repeating tile pattern)', ar:'تفاصيل تشريحية طبيعية بنسيج عضوي (بلا نمط تبليط متكرّر)'},
+    'Histology':        {en:'natural, non-repeating cellular distribution and staining variation (no tiling pattern)', ar:'توزيع خلوي طبيعي غير متكرّر وتغيّر تلوين طبيعي (بلا نمط تبليط)'},
+    'Endoscopy':        {en:'natural mucosal texture and vascular pattern (no repeating tile pattern)', ar:'نسيج مخاطي وتوزيع وعائي طبيعيان (بلا نمط تبليط متكرّر)'},
+    'DEXA':             {en:'natural bone-density gradient (no blocky or repeating pattern)', ar:'تدرّج كثافة عظمية طبيعي (بلا كتل أو نمط متكرّر)'}
+  };
+  // B4 · always-on structural-realism guard, keyed by rendering style (modality);
+  // spine/vertebral organs additionally get an explicit curvature constraint.
+  function realismLine(modality, region, organ, lang){
+    const L = lang === 'ar';
+    const mr = MODALITY_REALISM[modality] || { en:'organic, non-repetitive texture (no tiling pattern)', ar:'نسيج عضوي غير متكرّر (بلا نمط تبليط)' };
+    const isSpine = SPINE_RE.test(((region||'') + ' ' + (organ||'')));
+    if (L){
+      return `${mr.ar}؛ نِسَب وتفاصيل تشريحية مطابقة للتشريح البشري الحقيقي — لا مخطّط توضيحي مُبسّط${isSpine ? '؛ انحناء فقري طبيعي وسلس فيسيولوجياً، بلا انحناء حدبي مفرط أو انحراف جنبي' : ''}.`;
+    }
+    return `${mr.en}; anatomical proportions and detail matching real human anatomy — not a simplified schematic${isSpine ? '; physiologically normal, smooth spinal curvature, no exaggerated kyphosis or scoliotic deviation' : ''}.`;
+  }
+
   // ── Assemble ONE single-image prompt for a language ──────────────────
   function assembleSingle(d, lang){
     const L = lang === 'ar';
@@ -315,6 +342,7 @@
       P.push('\n═══ التشريح (بمصطلحات RadLex/TA2) ═══');
       P.push(`ارسم بدقّة تشريحية: ${d.findingsAr}${structs.length ? '. البنى المطلوبة: ' + structs.join('، ') : ''}.`);
       if (d.pathologyAr) P.push(`الآفة: ${d.pathologyAr}.`);
+      P.push(realismLine(d.modality, d.region, d.organ, 'ar'));
       P.push('\n═══ مواصفات الصورة ═══');
       P.push(`• الحجم: ${asp.w} × ${asp.h} بكسل بالضبط · النسبة ${asp.label}`);
       P.push('• الصيغة: PNG عالية الدقة بلا عيوب ضغط');
@@ -334,6 +362,7 @@
       P.push('\n═══ ANATOMY (RadLex/TA2 terminology) ═══');
       P.push(`Depict, anatomically accurate: ${d.findingsEn}${structs.length ? '. Required structures: ' + structs.join(', ') : ''}.`);
       if (d.pathologyEn) P.push(`Pathology: ${d.pathologyEn}.`);
+      P.push(realismLine(d.modality, d.region, d.organ, 'en'));
       P.push('\n═══ IMAGE SPECIFICATIONS ═══');
       P.push(`• Size: exactly ${asp.w} × ${asp.h} px · aspect ${asp.label}`);
       P.push('• Format: PNG, high fidelity, no compression artifacts');
@@ -370,6 +399,7 @@
       P.push(rl.ar);
       P.push('\n═══ المستويات (صورة واحدة لكل مستوى، بهذا الترتيب) ═══');
       levels.forEach((lv, i) => { P.push(`${batch.from + i}. ${lv.ar}${(lv.structures && lv.structures.length) ? ' — البنى: ' + lv.structures.join('، ') : ''}`); });
+      P.push(realismLine(d.modality, d.region, s.organEn, 'ar'));
       P.push('\n═══ مواصفات الصورة ═══');
       P.push(`• الحجم: ${asp.w} × ${asp.h} بكسل لكل صورة · النسبة ${asp.label}`);
       P.push('• الصيغة: PNG عالية الدقة · الخلفية: أسود نقي (#000000)');
@@ -387,6 +417,7 @@
       P.push(rl.en);
       P.push('\n═══ LEVELS (one image per level, in this exact order) ═══');
       levels.forEach((lv, i) => { P.push(`${batch.from + i}. ${lv.en}${(lv.structures && lv.structures.length) ? ' — key structures: ' + lv.structures.join(', ') : ''}`); });
+      P.push(realismLine(d.modality, d.region, s.organEn, 'en'));
       P.push('\n═══ IMAGE SPECIFICATIONS ═══');
       P.push(`• Size: exactly ${asp.w} × ${asp.h} px each · aspect ${asp.label}`);
       P.push('• Format: PNG, high fidelity · Background: pure black (#000000)');
@@ -408,9 +439,13 @@
     d = d || {};
     if (d.series && d.series.levels && d.series.count > 0){
       const s = d.series;
-      const batches = batchPlan(s.count);
-      const en = batches.map(b => assembleSeriesBatch(d, b, 'en')).join(BATCH_DIVIDER.en);
-      const ar = batches.map(b => assembleSeriesBatch(d, b, 'ar')).join(BATCH_DIVIDER.ar);
+      const plan = batchPlan(s.count);
+      const batches = plan.map(b => Object.assign({}, b, {
+        en: assembleSeriesBatch(d, b, 'en'),
+        ar: assembleSeriesBatch(d, b, 'ar')
+      }));
+      const en = batches.map(b => b.en).join(BATCH_DIVIDER.en);
+      const ar = batches.map(b => b.ar).join(BATCH_DIVIDER.ar);
       return { en, ar, neg: negatives(true), meta: { series:true, count:s.count, batchCount:batches.length, batches } };
     }
     return { en: assembleSingle(d, 'en'), ar: assembleSingle(d, 'ar'),
