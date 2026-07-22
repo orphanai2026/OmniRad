@@ -55,8 +55,8 @@
     }
     // Fallback keyword rules for anatomy strings that aren't in CID 4031
     const RULES = [
-      [/\b(brain|skull|head|face|orbit|eye|ear|sinus|nose|dural|cerebr|pituit|pineal|jaw|mandib|maxill|tmj|larynx|pharynx|thyroid|parathyroid|salivary|parotid|dental|tooth|dent|nasal|neck|carotid|vertebral|cervical soft)/i, 'HEAD_NECK'],
-      [/\b(spine|spinal|vertebr|sacrum|coccyx|disc|cord|cervical spine|thoracic spine|lumbar|lspine|tspine|cspine)/i, 'SPINE'],
+      [/\b(brain|skull|head|face|orbit|eye|ear|sinus|nose|dural|cerebr|pituit|pineal|jaw|mandib|maxill|tmj|larynx|pharynx|thyroid|parathyroid|salivary|parotid|dental|tooth|dent|nasal|neck|carotid|vertebral artery|cervical soft)/i, 'HEAD_NECK'],
+      [/\b(spine|spinal|vertebr|sacrum|coccyx|disc|cord|conus|medullar|cauda|thecal|facet|neural foramen|cervical spine|thoracic spine|lumbar|lspine|tspine|cspine)/i, 'SPINE'],
       [/\b(chest|lung|pleura|mediast|thymus|trachea|bronch|heart|cardiac|coronary|aorta.thor|breast|rib|sternum|clavicle|scapula|shoulder|diaphragm)/i, 'CHEST'],
       [/\b(abdom|liver|hepatic|gallbladder|gall|bili|pancre|spleen|stomach|gastric|duoden|intest|small bowel|colon|appendix|kidney|renal|ureter|adrenal|periton|retroperit|mesent)/i, 'ABDOMEN'],
       [/\b(pelvis|pelvic|bladder|urethra|prostate|testis|scrotum|penis|uterus|ovary|ovarian|cervix|vagina|fallopian|placenta|fetus|rectum)/i, 'PELVIS'],
