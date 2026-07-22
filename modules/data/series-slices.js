@@ -278,11 +278,20 @@
       ]},
 
     // ── Spine (added v3) ──
-    { key:'thoracic-spine', en:'Thoracic spine', ar:'الفقرات الصدرية', aliases:['t-spine'], defaultModality:'CT', thicknessNote:'2-3mm (ACR spine protocol)',
+    { key:'thoracic-spine', en:'Thoracic spine', ar:'الفقرات الصدرية', aliases:['t-spine'], defaultModality:'CT', thicknessNote:'2-3mm bone algorithm (ACR spine protocol) — one axial section per vertebral level',
       slices:[
-        {en:'Upper thoracic (T1-T4)', ar:'الصدري العلوي (T1-T4)', structures:['vertebral body','spinal canal','costovertebral joint','neural foramen']},
-        {en:'Mid thoracic (T5-T8)', ar:'الصدري الأوسط (T5-T8)', structures:['vertebral body','spinal cord','pedicle','rib articulation']},
-        {en:'Lower thoracic (T9-T12)', ar:'الصدري السفلي (T9-T12)', structures:['vertebral body','conus medullaris region','intervertebral disc','facet joint']}
+        {en:'T1', ar:'الفقرة الصدرية T1', structures:['vertebral body','spinal canal','pedicle','costovertebral joint']},
+        {en:'T2', ar:'الفقرة الصدرية T2', structures:['vertebral body','lamina','transverse process','costotransverse joint']},
+        {en:'T3', ar:'الفقرة الصدرية T3', structures:['vertebral body','spinal canal','spinous process','rib head articulation']},
+        {en:'T4', ar:'الفقرة الصدرية T4', structures:['vertebral body','pedicle','transverse process','costovertebral joint']},
+        {en:'T5', ar:'الفقرة الصدرية T5', structures:['vertebral body','lamina','spinal canal','costotransverse joint']},
+        {en:'T6', ar:'الفقرة الصدرية T6', structures:['vertebral body','pedicle','spinous process','rib head articulation']},
+        {en:'T7', ar:'الفقرة الصدرية T7', structures:['vertebral body','transverse process','facet joint','costovertebral joint']},
+        {en:'T8', ar:'الفقرة الصدرية T8', structures:['vertebral body','spinal canal','lamina','costotransverse joint']},
+        {en:'T9', ar:'الفقرة الصدرية T9', structures:['vertebral body','pedicle','spinous process','rib head articulation']},
+        {en:'T10', ar:'الفقرة الصدرية T10', structures:['vertebral body','transverse process','facet joint','costovertebral joint']},
+        {en:'T11', ar:'الفقرة الصدرية T11', structures:['vertebral body','pedicle','spinal canal','costovertebral joint']},
+        {en:'T12', ar:'الفقرة الصدرية T12', structures:['vertebral body','spinous process','facet joint','neural foramen']}
       ]},
     { key:'sacrum-coccyx', en:'Sacrum and coccyx', ar:'العجز والعصعص', aliases:['sacrum','coccyx'], defaultModality:'CT', thicknessNote:'2-3mm (ACR spine/pelvis)',
       slices:[
