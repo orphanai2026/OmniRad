@@ -398,8 +398,8 @@
     else if (s.modality === 'Ultrasound'){ tech = `, ${s.usMode}`; techAr = `، ${arOpt('usMode',s.usMode)}`; }
     // Series output is a clean unlabeled stack for the atlas viewer — this is
     // intentional and overrides Labels/Segmentation/Style (noted in the UI).
-    const levelsEn = entry.slices.map((lv,i) => `${i+1}. ${lv.en}`).join('\n');
-    const levelsAr = entry.slices.map((lv,i) => `${i+1}. ${lv.ar}`).join('\n');
+    const levelsEn = entry.slices.map((lv,i) => `${i+1}. ${lv.en}${lv.structures && lv.structures.length ? ` — key structures: ${lv.structures.join(', ')}` : ''}`).join('\n');
+    const levelsAr = entry.slices.map((lv,i) => `${i+1}. ${lv.ar}${lv.structures && lv.structures.length ? ` — البنى الرئيسية: ${lv.structures.join('، ')}` : ''}`).join('\n');
     const en = `Generate ${N} separate individual images (not a collage) of a ${lat}${s.modality} ${s.view} section of the ${entry.en}, ${patient} patient, ${s.purpose.toLowerCase()}${tech}. Each image must show one distinct anatomical level, in this exact order:\n${levelsEn}\nEach image: 1024×1024, black background, no text or labels, no watermarks, anatomically accurate, consistent acquisition protocol across all levels, high detail, professional medical teaching material at ${s.learner.toLowerCase()} level. Output all ${N} images as separate images in the same response, in the listed order.`;
     const ar_ = `ولّد ${N} صورة منفصلة (وليست Collage واحداً) لمقطع ${modAr} ${viewAr} لـ${latAr}${entry.ar}، لمريض ${patientAr}، ${arOpt('purpose', s.purpose)}${techAr}. كل صورة تُظهر مستوى تشريحياً مختلفاً، بهذا الترتيب بالضبط:\n${levelsAr}\nكل صورة: 1024×1024، خلفية سوداء، بلا نصوص أو تسميات، بلا علامات مائية، دقيقة تشريحياً، بروتوكول تصوير موحّد عبر كل المستويات، تفاصيل عالية، مادة تعليمية طبية احترافية لمستوى ${arOpt('learner', s.learner)}. أخرج كل الصور الـ${N} كصور منفصلة في نفس الردّ وبنفس الترتيب المذكور.`;
     const neg = 'no watermarks, no distortion, no anatomical inaccuracies, no artifacts, no text overlay, no logos, no signatures, no collage, no grid layout, no low-quality rendering, no blurry regions';
