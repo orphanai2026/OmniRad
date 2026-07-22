@@ -342,7 +342,7 @@ body{background:transparent!important}
 <script src="../modules/omnirad-typography.js"></script>
 <script src="../modules/omnirad-avatars.js"></script>
 <script src="../modules/omnirad-nav.js?v=20260721" data-base="../"></script>
-<script src="../modules/omnirad-image-standard.js?v=20260721"></script>
+<script src="../modules/omnirad-image-standard.js?v=prompt-skeleton-v4"></script>
 <script src="../modules/data/loinc-bridge.js"></script>
 <script src="../modules/data/radiology-arabic.js"></script>
 <script src="../modules/omnirad-unified-search.js"></script>
@@ -352,7 +352,7 @@ body{background:transparent!important}
 <script src="../modules/omnirad-lib.js"></script>
 <script src="../modules/omnirad-cloud.js"></script>
 <script src="../modules/feature-flags.js"></script>
-<script src="./studio-app.js?v=20260721"></script>
+<script src="./studio-app.js?v=prompt-skeleton-v4"></script>
 <script>
 /* Unified quick-find → fills the Anatomy region/organ fields (fires studio-app onChange) */
 (function(){
@@ -391,14 +391,7 @@ document.addEventListener('click', function(e){
     const body = (el && el.textContent || '').trim();
     if (!body){ (window.OmniRadToast||alert)('لا يوجد برومبت / No prompt yet', 'err'); return; }
     // Include Negative prompt — critical for image generation quality
-    const negEl = document.getElementById('outNeg');
-    const negRow = document.getElementById('negRow');
-    const negVisible = negRow && negRow.style.display !== 'none';
-    const neg = negVisible ? (negEl && negEl.textContent || '').trim() : '';
-    const specBlock = (window.OmniRadImageStd && window.OmniRadImageStd.promptSpecBlock)
-      ? window.OmniRadImageStd.promptSpecBlock(isAr ? 'ar' : 'en')
-      : '';
-    const text = (neg ? (body + '\n\nNegative prompt: ' + neg) : body) + specBlock;
+    const text = body; // Skeleton v4 — outEn/outAr already contain the full prompt (specs + negatives)
     try {
       localStorage.setItem('omnirad:last-prompt', text);
       localStorage.setItem('omnirad:last-prompt-lang', isAr ? 'ar' : 'en');
@@ -419,11 +412,7 @@ document.addEventListener('click', function(e){
   const el = document.getElementById(which === 'ar' ? 'outAr' : 'outEn');
   const bodyText = (el && el.textContent || '').trim();
   if (!bodyText){ (window.OmniRadToast||alert)('لا يوجد برومبت / No prompt yet', 'err'); return; }
-  // Append DICOM-compatible IMAGE SPECIFICATIONS block (Sprint 4g)
-  const specBlockCopy = (window.OmniRadImageStd && window.OmniRadImageStd.promptSpecBlock)
-    ? window.OmniRadImageStd.promptSpecBlock(which)
-    : '';
-  const text = bodyText + specBlockCopy;
+  const text = bodyText; // Skeleton v4 — body already contains the full prompt
   // Auto-save last prompt for history/reuse
   try {
     localStorage.setItem('omnirad:last-prompt', text);

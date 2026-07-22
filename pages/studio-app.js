@@ -52,7 +52,7 @@
       'fields.labelLang': 'Label language', 'fields.segmentation': 'Segmentation overlay',
       'fields.learner': 'Learner level', 'fields.lang': 'Prompt language', 'fields.negOn': 'Include Negative prompt (recommended)',
       'fields.sequence': 'MRI sequence', 'fields.phase': 'CT contrast phase', 'fields.window': 'CT window',
-      'fields.usMode': 'Ultrasound mode', 'fields.tracer': 'Nuclear tracer', 'fields.stain': 'Histology stain',
+      'fields.usMode': 'Ultrasound mode', 'fields.tracer': 'Nuclear tracer', 'fields.colormap': 'Colormap', 'fields.stain': 'Histology stain',
       'fields.magnification': 'Magnification', 'fields.sliceThickness': 'Slice thickness', 'fields.fluoroContrast': 'Fluoroscopy contrast',
       'copy.copied': '✓ Copied!'
     },
@@ -81,7 +81,7 @@
       'fields.labelLang': 'لغة التسميات', 'fields.segmentation': 'التقطيع/التلوين',
       'fields.learner': 'مستوى المتعلّم', 'fields.lang': 'لغة البرومبت', 'fields.negOn': 'تضمين Negative prompt (موصى به)',
       'fields.sequence': 'تسلسل الرنين', 'fields.phase': 'مرحلة الصبغة CT', 'fields.window': 'نافذة CT',
-      'fields.usMode': 'وضع الموجات الصوتية', 'fields.tracer': 'المتتبّع النووي', 'fields.stain': 'صبغة نسيجية',
+      'fields.usMode': 'وضع الموجات الصوتية', 'fields.tracer': 'المتتبّع النووي', 'fields.colormap': 'خريطة الألوان', 'fields.stain': 'صبغة نسيجية',
       'fields.magnification': 'التكبير', 'fields.sliceThickness': 'سماكة المقطع', 'fields.fluoroContrast': 'صبغة التنظير الفلوري',
       'copy.copied': '✓ تم النسخ'
     }
@@ -129,6 +129,7 @@
     window:[{v:'Soft tissue',ar:'أنسجة رخوة'},{v:'Bone',ar:'عظم'},{v:'Lung',ar:'رئة'},{v:'Brain',ar:'دماغ'},{v:'Mediastinum',ar:'منصف'}],
     usMode:[{v:'B-mode grayscale',ar:'B-mode رمادي'},{v:'Color Doppler',ar:'دوبلر ملون'},{v:'Power Doppler',ar:'دوبلر قدرة'},{v:'Spectral Doppler',ar:'دوبلر طيفي'},{v:'Elastography',ar:'تصوير المرونة'}],
     tracer:[{v:'F-18 FDG',ar:'F-18 FDG'},{v:'Tc-99m MDP',ar:'Tc-99m MDP'},{v:'Tc-99m DMSA',ar:'Tc-99m DMSA'},{v:'Ga-68 DOTATATE',ar:'Ga-68 DOTATATE'},{v:'I-131',ar:'I-131'}],
+    colormap:[{v:'Hot-metal',ar:'ساخن (Hot-metal)'},{v:'Rainbow',ar:'قوس قزح'},{v:'Grayscale',ar:'رمادي'}],
     stain:[{v:'H&E',ar:'H&E'},{v:'PAS',ar:'PAS'},{v:'IHC',ar:'IHC'},{v:'Trichrome',ar:'Trichrome'}],
     magnification:[{v:'×4',ar:'×4'},{v:'×10',ar:'×10'},{v:'×20',ar:'×20'},{v:'×40',ar:'×40'},{v:'×100',ar:'×100'}],
     sliceThickness:[{v:'Per protocol',ar:'حسب البروتوكول'},{v:'1 mm',ar:'1 مم'},{v:'3 mm',ar:'3 مم'},{v:'5 mm',ar:'5 مم'}],
@@ -143,7 +144,7 @@
     style:'Educational illustration',labels:'With anatomical labels',labelLang:'Both',
     segmentation:'None',learner:'Student',lang:'Both',negOn:true,seriesOn:false,
     sequence:'T2',phase:'Non-contrast',window:'Soft tissue',
-    usMode:'B-mode grayscale',tracer:'F-18 FDG',stain:'H&E',
+    usMode:'B-mode grayscale',tracer:'F-18 FDG',colormap:'Hot-metal',stain:'H&E',
     magnification:'×10',sliceThickness:'Per protocol',fluoroContrast:'Barium contrast',
     copied:''
   });
@@ -295,8 +296,8 @@
     switch (state.s.modality){
       case 'MRI': fields.push({k:'sequence', lbl:t('fields.sequence')}, {k:'sliceThickness', lbl:t('fields.sliceThickness')}); break;
       case 'CT': fields.push({k:'phase', lbl:t('fields.phase')}, {k:'window', lbl:t('fields.window')}, {k:'sliceThickness', lbl:t('fields.sliceThickness')}); break;
-      case 'PET/CT': fields.push({k:'tracer', lbl:t('fields.tracer')}, {k:'sliceThickness', lbl:t('fields.sliceThickness')}); break;
-      case 'Nuclear Medicine': fields.push({k:'tracer', lbl:t('fields.tracer')}); break;
+      case 'PET/CT': fields.push({k:'tracer', lbl:t('fields.tracer')}, {k:'colormap', lbl:t('fields.colormap')}, {k:'sliceThickness', lbl:t('fields.sliceThickness')}); break;
+      case 'Nuclear Medicine': fields.push({k:'tracer', lbl:t('fields.tracer')}, {k:'colormap', lbl:t('fields.colormap')}); break;
       case 'Ultrasound': fields.push({k:'usMode', lbl:t('fields.usMode')}); break;
       case 'Fluoroscopy': fields.push({k:'fluoroContrast', lbl:t('fields.fluoroContrast')}); break;
       case 'Histology': fields.push({k:'stain', lbl:t('fields.stain')}, {k:'magnification', lbl:t('fields.magnification')}); break;
@@ -316,6 +317,68 @@
   /* ─── Prompt builder ─── */
   function arOpt(k, v){ const arr = OPT[k]; if (!Array.isArray(arr)) return v; const o = arr.find(x=>x.v===v); return o ? o.ar : v; }
   function build(){
+    // Prompt Skeleton v4 — authoritative builder lives in omnirad-image-standard.js
+    const d = descriptor();
+    const r = window.OmniRadImageStd.buildPrompt(d);
+    state._meta = r.meta;
+    return { en:r.en, ar:r.ar, neg:(isAr()?r.neg.ar:r.neg.en), negEn:r.neg.en, negAr:r.neg.ar, meta:r.meta };
+  }
+
+  /* Language-neutral descriptor consumed by OmniRadImageStd.buildPrompt().
+     Studio owns bilingual term resolution; the skeleton owns grammar/standards. */
+  function descriptor(){
+    const s = state.s;
+    const A = window.OMNIRAD_ANATOMY;
+    let regionAr = s.region || '', organAr = s.organ || '';
+    if (A){
+      if (s.region){ const r0 = A.regions.find(x => x.en === s.region || x.ar === s.region); if (r0) regionAr = r0.ar; }
+      if (s.organ){ const st = A.structures.find(x => x.en === s.organ); if (st) organAr = st.ar || s.organ; }
+    }
+    const latMap = { Right:['right ','الأيمن '], Left:['left ','الأيسر '], Bilateral:['bilateral ','ثنائي الجانب '], Midline:['midline ','خط الوسط '] };
+    const lat = latMap[s.laterality] || ['',''];
+    const labeled = s.labels === 'With anatomical labels';
+    const llMap = { Both:['bilingual English + Arabic','عربية وإنجليزية'], English:['English','إنجليزية'], Arabic:['Arabic','عربية'] };
+    const ll = labeled ? (llMap[s.labelLang] || ['','']) : ['',''];
+    const findings = s.normalPath === 'Normal' ? ['normal appearance','مظهر طبيعي'] : ['pathological findings','موجودات مرضية'];
+    const structures = (labeled && s.callouts) ? s.callouts.split(/[,،]/).map(x => x.trim()).filter(Boolean) : [];
+    // B2 short technique tag — CT contrast phase (window is stated in B3 RENDERING)
+    let techShortEn = '', techShortAr = '';
+    if (s.modality === 'CT'){ techShortEn = s.phase.toLowerCase(); techShortAr = arOpt('phase', s.phase); }
+    const path = (s.normalPath === 'Pathological' && s.pathCase) ? s.pathCase : '';
+    const d = {
+      modality:s.modality, modalityAr:arOpt('modality', s.modality),
+      plane:s.view, planeAr:arOpt('view', s.view) || s.view,
+      region:s.region || '', regionAr,
+      organ:s.organ || '', organAr,
+      latEn:lat[0], latAr:lat[1],
+      patientEn:`${s.sex.toLowerCase()} ${s.age.toLowerCase()}`, patientAr:`${arOpt('sex', s.sex)} ${arOpt('age', s.age)}`,
+      purposeEn:s.purpose.toLowerCase(), purposeAr:arOpt('purpose', s.purpose),
+      findingsEn:findings[0], findingsAr:findings[1],
+      sliceEn: s.slice ? ` at ${s.slice}` : '', sliceAr: s.slice ? ` عند ${s.slice}` : '',
+      techShortEn, techShortAr,
+      window:s.window, sequence:s.sequence, phase:s.phase, usMode:s.usMode,
+      tracer:s.tracer, colormap:s.colormap, colormapAr:arOpt('colormap', s.colormap),
+      fluoroContrast:s.fluoroContrast, fluoroContrastAr:arOpt('fluoroContrast', s.fluoroContrast),
+      stain:s.stain, magnification:s.magnification,
+      labeled, labelLangEn:ll[0], labelLangAr:ll[1],
+      structures,
+      pathologyEn:path, pathologyAr:path,
+      negOn:s.negOn,
+      series:null
+    };
+    if (s.seriesOn){
+      const entry = window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(s.organ);
+      if (entry){
+        d.series = {
+          organEn:entry.en, organAr:entry.ar, count:entry.slices.length,
+          levels:entry.slices.map(lv => ({ en:lv.en, ar:lv.ar, structures:lv.structures || [] }))
+        };
+      }
+    }
+    return d;
+  }
+
+  function _legacyBuild(){
     const s = state.s;
     if (s.seriesOn){
       const entry = window.OMNIRAD_SERIES_SLICES && OMNIRAD_SERIES_SLICES.find(s.organ);
@@ -426,6 +489,20 @@
       <div style="margin-top:8px;font-size:11px;color:var(--text-s)">${isAr() ? 'سماكة وصفية (مرجع ACR):' : 'Descriptive thickness (ACR reference):'} ${entry.thicknessNote}</div>
       <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--acc-dim);font-size:11px;color:var(--warn);line-height:1.6"><strong>ⓘ</strong> ${overrideMsg}</div>
     </div>`;
+    // D13 — ChatGPT ≤8 images/request → auto-batch warning + steps
+    const meta = state._meta;
+    if (meta && meta.batchCount > 1){
+      box.innerHTML += `<div style="margin-top:10px;background:rgba(245,158,11,.10);border:1px solid var(--warn,#f59e0b);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--text)">
+        <div style="font-weight:800;color:var(--warn,#f59e0b);margin-bottom:6px">⚠️ ${isAr() ? `سلسلة ${meta.count} شريحة — تتجاوز حدّ ChatGPT (٨ صور لكل طلب)` : `${meta.count}-slice series — exceeds ChatGPT's 8-image/request limit`}</div>
+        <div>${isAr() ? `قُسّمت إلى <b>${meta.batchCount} دفعات</b>. البرومبت يحوي فواصل «الدفعة التالية» — الصق كل دفعة في <b>رسالة ChatGPT جديدة</b>:` : `Split into <b>${meta.batchCount} batches</b>. The prompt contains "NEXT BATCH" dividers — paste each batch into a <b>new ChatGPT message</b>:`}</div>
+        <ol style="margin:6px 0 0;padding-inline-start:18px">
+          <li>${isAr() ? 'تأكّد أن الناتج صور منفصلة لا شبكة/كولاج.' : 'Confirm the output is separate images, not a grid/collage.'}</li>
+          <li>${isAr() ? 'إن سُلّمت الصور تتابعياً فهذا طبيعي — احفظها بالترتيب.' : 'Sequential delivery is normal — save them in order.'}</li>
+          <li>${isAr() ? 'ولّد كل الدفعات في نفس الجلسة للحفاظ على ثبات البروتوكول.' : 'Generate all batches in the same session to keep the protocol consistent.'}</li>
+          <li>${isAr() ? 'إن نفد حدّك: انتظر إعادة تعبئة النافذة (~٣ ساعات) أو ولّد وقت ازدحام أقل.' : 'If you hit your limit: wait for the rolling window (~3h) or generate at off-peak time.'}</li>
+        </ol>
+      </div>`;
+    }
   }
 
   /* ─── Warnings (modality × organ / purpose) ─── */
@@ -492,7 +569,7 @@
     if (window.OmniRadTerm && OmniRadTerm.linkText){
       try { OmniRadTerm.linkText($('outEn')); OmniRadTerm.linkText($('outAr')); } catch(e){}
     }
-    $('negRow').style.display = state.s.negOn ? 'block' : 'none';
+    $('negRow').style.display = 'none'; // negatives are embedded in the prompt body (B6)
     $('fname').textContent = suggestedName();
     // Organ-level "series available" badge (professional, always visible when applicable)
     const osb = $('organSeriesBadge');
@@ -523,9 +600,9 @@
   async function copy(kind){
     const b = build();
     let txt = '';
-    if (kind === 'en') txt = b.en + (state.s.negOn ? `\n\nNegative prompt: ${b.neg}` : '');
-    else if (kind === 'ar') txt = b.ar + (state.s.negOn ? `\n\nNegative prompt (سلبي): ${b.neg}` : '');
-    else if (kind === 'neg') txt = b.neg;
+    if (kind === 'en') txt = b.en;
+    else if (kind === 'ar') txt = b.ar;
+    else if (kind === 'neg') txt = b.negEn;
     else if (kind === 'name') txt = suggestedName();
     try { await navigator.clipboard.writeText(txt); } catch(e){ prompt('Copy manually:', txt); }
     const btn = q(`[data-copy="${kind}"]`);
