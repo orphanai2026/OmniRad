@@ -11,14 +11,16 @@
 **✅ منجَز اليوم (22 يوليو 2026 — مساءً):**
 - **Prompt Skeleton v4** — إعادة هندسة كاملة لصياغة برومت التوليد وفق أعلى معايير هندسة الأوامر (OpenAI gpt-image-2 · MedP-CLIP · RoentGen · LesionDiffusion · RadLex/TA2 · سياسة صور ChatGPT). المصدر الوحيد للحقيقة = `omnirad-image-standard.js → buildPrompt(d)` (حُذفت `promptSpecBlock` القديمة، بلا توافق خلفي).
 - **هيكل ثابت 7 كتل** + قرارات: نسبة ديناميكية حسب FOV · دور متخصّص حسب المنطقة · نافذة CT مخبوزة + texture · **colormap slot جديد** (PET/CT+NM) · إطار سلامة دائم · negatives مضمّنة بلا «no color» · background مدرك للمودالتي.
-- **D13 تقسيم آلي للسلاسل >8 صور** (حدّ ChatGPT) — دفعات متوازنة (12→6+6) بفواصل «NEXT BATCH» + تحذير مستخدم بخطوات الحلّ.
-- اختُبر E2E (مفرد · سلسلة5 · سلسلة12 مُقسّمة · PET ملوّن · aspect · batch · specialty) — كلّه سليم بلا أخطاء console.
+- **D13 تقسيم آلي للسلاسل >8 صور** (حدّ ChatGPT) — دفعات متوازنة (12→6+6) + **مبدّل دفعات (batch switcher)** في الواجهة يملأ الإخراج/النسخ/Generate بدفعة واحدة فقط (لا كل الدفعات معاً).
+- **إصلاحان بعد الاختبار الحيّ (v4b):** ترقيم مكرّر في قائمة المستويات · زرّ Generate كان يفشل مع السلاسل المُقسَّمة (كان يرسل كل الدفعات كطلب واحد).
+- **D14 — واقعية بنيوية حسب المودالتي (معتمَد):** سطر ثابت في B4 مخصّص لطبيعة نسيج كل مودالتي (CT تربيقي/HU · MRI إشارة عضوية · US speckle · Histology خلوي · PET توزيع فيسيولوجي · …) + شرط انحناء فقري طبيعي عند اكتشاف العمود الفقري (يعالج عيب انحناء حدبي مفرط + نسيج متكرّر رُصد في اختبار حيّ).
+- اختُبر E2E (مفرد · سلسلة5 · سلسلة12 مُقسّمة · PET ملوّن · 5 مودالتي لـD14 · aspect · batch · specialty) — كلّه سليم بلا أخطاء console.
 
 **📦 للرفع على GitHub (مفردة بمساراتها):**
-- `modules/omnirad-image-standard.js` → `/modules/omnirad-image-standard.js`
+- `modules/omnirad-image-standard.js` → `/modules/omnirad-image-standard.js` **(أحدث نسخة — تحوي v4b + D14)**
 - `pages/studio-app.js` → `/pages/studio-app.js`
 - `pages/studio.html` → `/pages/studio.html`
-> `bulk-upload.html` لم يُمسّ (لا يبني برومت). بصمة الكاش الجديدة: `?v=prompt-skeleton-v4`.
+> `bulk-upload.html` لم يُمسّ (لا يبني برومت). بصمة الكاش الحالية: `?v=prompt-skeleton-v4b`.
 
 **رسالة البداية للمحادثة القادمة:**
 ```
