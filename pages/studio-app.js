@@ -148,7 +148,7 @@
     magnification:'×10',sliceThickness:'Per protocol',fluoroContrast:'Barium contrast',
     copied:''
   });
-  const state = { s: DEF(), tab:'custom', collapsed:{patient:false, findings:false, tech:false, output:false} };
+  const state = { s: DEF(), tab:'custom', batchIndex:0, collapsed:{patient:false, findings:false, tech:false, output:false} };
 
   /* ─── Load from localStorage ─── */
   try { const p = JSON.parse(localStorage.getItem('omr_studio')||'null'); if (p && p.s) state.s = {...state.s, ...p.s}; } catch(e){}
@@ -321,7 +321,15 @@
     const d = descriptor();
     const r = window.OmniRadImageStd.buildPrompt(d);
     state._meta = r.meta;
-    return { en:r.en, ar:r.ar, neg:(isAr()?r.neg.ar:r.neg.en), negEn:r.neg.en, negAr:r.neg.ar, meta:r.meta };
+    let en = r.en, ar = r.ar;
+    if (r.meta.batchCount > 1){
+      // Show/send ONE batch at a time — sending the whole multi-batch text as a
+      // single ChatGPT request would defeat the "paste in a NEW message" split.
+      if (state.batchIndex >= r.meta.batchCount) state.batchIndex = 0;
+      const bi = r.meta.batches[state.batchIndex] || r.meta.batches[0];
+      en = bi.en; ar = bi.ar;
+    }
+    return { en, ar, neg:(isAr()?r.neg.ar:r.neg.en), negEn:r.neg.en, negAr:r.neg.ar, meta:r.meta, fullEn:r.en, fullAr:r.ar };
   }
 
   /* Language-neutral descriptor consumed by OmniRadImageStd.buildPrompt().
@@ -479,7 +487,7 @@
       box.innerHTML = `<div class="warn" style="display:flex"><span class="wi">⚠️</span><div>${isAr() ? 'مستويات السلسلة غير مُعرَّفة لهذا العضو بعد — اختر عضواً من القائمة الجاهزة أو استخدم برومبت فردي.' : 'Series levels are not yet defined for this organ — pick one of the ready organs, or use a single prompt.'}</div></div>`;
       return;
     }
-    const items = entry.slices.map((lv,i) => `<li>${i+1}. ${isAr() ? lv.ar : lv.en}</li>`).join('');
+    const items = entry.slices.map((lv,i) => `<li>${isAr() ? lv.ar : lv.en}</li>`).join('');
     const overrideMsg = isAr()
       ? 'وضع السلسلة يفرض: خلفية سوداء موحّدة، بلا تسميات/تلوين، حجم 1024×1024 — لأن الأطلس يعرضها كمكدّس نظيف. (تُنقل تقنية المودالتي: التسلسل/المرحلة/النافذة.)'
       : 'Series mode enforces: uniform black background, no labels/segmentation, 1024×1024 — the atlas shows them as a clean stack. (Modality technique — sequence/phase/window — is carried over.)';
@@ -492,9 +500,11 @@
     // D13 — ChatGPT ≤8 images/request → auto-batch warning + steps
     const meta = state._meta;
     if (meta && meta.batchCount > 1){
+      const switcher = meta.batches.map((bt, i) => `<button type="button" data-batch="${i}" style="padding:6px 14px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid var(--warn,#f59e0b);background:${i===state.batchIndex?'var(--warn,#f59e0b)':'transparent'};color:${i===state.batchIndex?'#1a1200':'var(--warn,#f59e0b)'}">${isAr()?`الدفعة ${i+1}/${meta.batchCount}`:`Batch ${i+1}/${meta.batchCount}`} (${bt.count})</button>`).join('');
       box.innerHTML += `<div style="margin-top:10px;background:rgba(245,158,11,.10);border:1px solid var(--warn,#f59e0b);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--text)">
         <div style="font-weight:800;color:var(--warn,#f59e0b);margin-bottom:6px">⚠️ ${isAr() ? `سلسلة ${meta.count} شريحة — تتجاوز حدّ ChatGPT (٨ صور لكل طلب)` : `${meta.count}-slice series — exceeds ChatGPT's 8-image/request limit`}</div>
-        <div>${isAr() ? `قُسّمت إلى <b>${meta.batchCount} دفعات</b>. البرومبت يحوي فواصل «الدفعة التالية» — الصق كل دفعة في <b>رسالة ChatGPT جديدة</b>:` : `Split into <b>${meta.batchCount} batches</b>. The prompt contains "NEXT BATCH" dividers — paste each batch into a <b>new ChatGPT message</b>:`}</div>
+        <div>${isAr() ? `قُسّمت إلى <b>${meta.batchCount} دفعات</b>. انقر فوق زر الدفعة لملء الإخراج/النسخ/توليد بمحتواها فقط — ثم افتح <b>رسالة ChatGPT جديدة</b> للدفعة التالية:` : `Split into <b>${meta.batchCount} batches</b>. Click a batch button above to load it into Output/Copy/Generate — then open a <b>new ChatGPT message</b> for the next one:`}</div>
+        <div style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap">${switcher}</div>
         <ol style="margin:6px 0 0;padding-inline-start:18px">
           <li>${isAr() ? 'تأكّد أن الناتج صور منفصلة لا شبكة/كولاج.' : 'Confirm the output is separate images, not a grid/collage.'}</li>
           <li>${isAr() ? 'إن سُلّمت الصور تتابعياً فهذا طبيعي — احفظها بالترتيب.' : 'Sequential delivery is normal — save them in order.'}</li>
@@ -614,6 +624,7 @@
     const el = e.target; const k = el.dataset.key; if (!k) return;
     const v = el.type === 'checkbox' ? el.checked : el.value;
     const CUSTOM = '__custom__';
+    if (['organ','organCustom','seriesOn','modality'].includes(k)) state.batchIndex = 0;
     // Region select — handle custom-entry toggle
     if (k === 'region'){
       const inp = $('inpRegionCustom');
@@ -641,6 +652,7 @@
   }
 
   function bindEvents(){
+    document.addEventListener('click', e => { const bb = e.target.closest('[data-batch]'); if (bb){ state.batchIndex = parseInt(bb.dataset.batch, 10) || 0; render(); } });
     qa('input[data-key], select[data-key]').forEach(el => el.addEventListener('input', onChange));
     qa('input[data-key], select[data-key]').forEach(el => el.addEventListener('change', onChange));
     qa('[data-copy]').forEach(el => el.addEventListener('click', ()=>copy(el.dataset.copy)));
